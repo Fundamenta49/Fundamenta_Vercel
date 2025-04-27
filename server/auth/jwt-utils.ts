@@ -10,7 +10,10 @@ const JWT_REFRESH_EXPIRES_IN = '7d'; // 7 days for refresh token
 interface JwtPayload {
   userId: number;
   email: string;
+  name?: string;
   role?: string;
+  emailVerified?: boolean;
+  privacyConsent?: boolean;
 }
 
 // Type for tokens response

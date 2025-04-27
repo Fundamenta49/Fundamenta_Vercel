@@ -141,9 +141,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/auth', authRoutes);
   
   // Mount mentorship routes (for parent/teacher portal)
-  const mentorshipRouter = express.Router();
-  registerMentorshipRoutes(mentorshipRouter);
-  app.use(mentorshipRouter);
+  app.use('/api/mentorship', registerMentorshipRoutes);
   app.post("/api/chat", async (req, res) => {
     try {
       // Enhanced debug logging to understand the incoming request better

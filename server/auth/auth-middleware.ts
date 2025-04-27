@@ -1,105 +1,94 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
 import { verifyToken } from './jwt-utils';
-import { db } from '../db';
-import { users, User } from '@shared/schema';
-import { eq } from 'drizzle-orm';
 
-// User type matching the UserType in mentorship-routes
-export interface UserType {
-  id: number;
-  username: string;
-  email?: string;
-  role?: string;
-  name?: string;
-}
-
-// Extended Request type to include authenticated user
+// Define authenticated request interface
 export interface AuthenticatedRequest extends Request {
-  user?: UserType;
+  user?: {
+    id: number;
+    name: string;
+    email: string;
+    role?: string;
+    emailVerified?: boolean;
+    privacyConsent?: boolean;
+  };
 }
 
-/**
- * Middleware to authenticate API requests using JWT
- * This extracts the token from Authorization header or cookies
- */
-export async function authenticateJWT(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  try {
-    // Get token from Authorization header or cookie
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.startsWith('Bearer ')
-      ? authHeader.substring(7) // Remove 'Bearer ' prefix
-      : req.cookies?.access_token;
-
-    if (!token) {
-      return res.status(401).json({ message: 'Authentication required' });
+// Define express request + user interface
+declare global {
+  namespace Express {
+    interface User {
+      id: number;
+      name: string;
+      email: string;
+      role?: string;
+      emailVerified?: boolean;
+      privacyConsent?: boolean;
     }
-
-    // Verify the token
-    const payload = verifyToken(token);
-    if (!payload) {
-      return res.status(401).json({ message: 'Invalid or expired token' });
+    
+    interface Request {
+      user?: User;
     }
-
-    // Get user from database
-    const [user] = await db.select().from(users).where(eq(users.id, payload.userId));
-    if (!user) {
-      return res.status(401).json({ message: 'User not found' });
-    }
-
-    // Attach user to request with type matching UserType interface
-    req.user = {
-      id: user.id,
-      username: user.name, // Use name as username
-      email: user.email,
-      role: user.role || undefined,
-      name: user.name
-    };
-    next();
-  } catch (error) {
-    console.error('Authentication error:', error);
-    return res.status(401).json({ message: 'Authentication failed' });
   }
 }
 
-/**
- * Middleware to check if a request has a valid user (optional authentication)
- * This does not block the request if authentication fails
- */
-export async function optionalAuthenticate(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+// Middleware to authenticate JWT tokens
+export function authenticateJWT(req: Request, res: Response, next: NextFunction) {
   try {
     // Get token from Authorization header or cookie
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.startsWith('Bearer ')
-      ? authHeader.substring(7)
-      : req.cookies?.access_token;
-
-    // If no token, continue without authentication
+    const token = req.cookies?.access_token || extractBearerToken(req);
+    
     if (!token) {
-      return next();
+      return res.status(401).json({ error: 'Authentication required' });
     }
-
-    // Verify the token
+    
+    // Verify token
     const payload = verifyToken(token);
     if (!payload) {
-      return next(); // Continue without authentication
+      return res.status(401).json({ error: 'Invalid token' });
     }
-
-    // Get user from database
-    const [user] = await db.select().from(users).where(eq(users.id, payload.userId));
-    if (user) {
-      // Attach user to request with type matching UserType interface
-      req.user = {
-        id: user.id,
-        username: user.name, // Use name as username
-        email: user.email,
-        role: user.role || undefined,
-        name: user.name
-      };
-    }
+    
+    // Add user data to request
+    (req as AuthenticatedRequest).user = {
+      id: payload.userId,
+      name: payload.name || '',
+      email: payload.email,
+      role: payload.role || 'user',
+      emailVerified: payload.emailVerified || false,
+      privacyConsent: payload.privacyConsent || false,
+    };
     
     next();
   } catch (error) {
-    // Continue without authentication in case of error
-    next();
+    console.error('Authentication error:', error);
+    res.status(401).json({ error: 'Authentication failed' });
   }
+}
+
+// Helper function to extract bearer token from Authorization header
+function extractBearerToken(req: Request): string | null {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.substring(7);
+  }
+  return null;
+}
+
+// Middleware to check if user is authenticated (alias for compatibility)
+export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
+  return authenticateJWT(req, res, next);
+}
+
+// Middleware to check if user has specific role
+export function hasRole(roles: string[]) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    if (!roles.includes(req.user.role || "")) {
+      return res.status(403).json({ message: "Forbidden: Insufficient permissions" });
+    }
+    
+    next();
+  };
 }

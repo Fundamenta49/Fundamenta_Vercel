@@ -202,16 +202,49 @@ export class MemStorage implements IStorage {
     return newConnection;
   }
   
+  // Alias for mentorship routes
+  async createConnection(connection: InsertUserConnection): Promise<UserConnection> {
+    return this.createUserConnection(connection);
+  }
+  
   async getUserConnectionByCode(code: string): Promise<UserConnection | undefined> {
     return Array.from(this.userConnections.values()).find(
       (conn) => conn.connectionCode === code
     );
   }
   
+  // Alias for mentorship routes
+  async getConnectionByCode(code: string): Promise<UserConnection | undefined> {
+    return this.getUserConnectionByCode(code);
+  }
+  
   async getUserConnections(userId: number, role: 'mentor' | 'student'): Promise<UserConnection[]> {
     return Array.from(this.userConnections.values()).filter(
       (conn) => role === 'mentor' ? conn.mentorId === userId : conn.studentId === userId
     );
+  }
+
+  // Added for mentorship routes
+  async getConnectionsByMentorId(mentorId: number): Promise<UserConnection[]> {
+    return Array.from(this.userConnections.values()).filter(
+      (conn) => conn.mentorId === mentorId
+    );
+  }
+
+  async getConnectionsByStudentId(studentId: number): Promise<UserConnection[]> {
+    return Array.from(this.userConnections.values()).filter(
+      (conn) => conn.studentId === studentId
+    );
+  }
+
+  async getPendingConnectionsByStudentId(studentId: number): Promise<UserConnection[]> {
+    return Array.from(this.userConnections.values()).filter(
+      (conn) => conn.studentId === studentId && conn.status === "pending"
+    );
+  }
+
+  async getConnection(id: number): Promise<UserConnection | undefined> {
+    return this.userConnections.get(id);
   }
   
   async updateUserConnection(id: number, updates: Partial<InsertUserConnection>): Promise<UserConnection | undefined> {
@@ -229,8 +262,18 @@ export class MemStorage implements IStorage {
     return updatedConnection;
   }
   
+  // Alias for mentorship routes
+  async updateConnection(id: number, updates: Partial<InsertUserConnection>): Promise<UserConnection | undefined> {
+    return this.updateUserConnection(id, updates);
+  }
+  
   async deleteUserConnection(id: number): Promise<boolean> {
     return this.userConnections.delete(id);
+  }
+  
+  // Alias for mentorship routes
+  async deleteConnection(id: number): Promise<boolean> {
+    return this.deleteUserConnection(id);
   }
   
   // Parent/Teacher Portal - Custom Pathways
