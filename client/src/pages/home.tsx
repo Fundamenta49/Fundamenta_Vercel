@@ -28,13 +28,7 @@ const features = [
     href: "/career",
     color: "text-blue-500",
   },
-  {
-    title: "Jungle Path Demo",
-    description: "Experience our new gamified learning adventure system",
-    icon: Activity,
-    href: "/jungle-path-demo",
-    color: "text-emerald-500",
-  },
+
   {
     title: "Wellness & Nutrition",
     description: "Access mental health resources, meditation guides, and nutrition advice",
