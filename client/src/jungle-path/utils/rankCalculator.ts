@@ -1,125 +1,131 @@
-/**
- * Rank Calculator
- * Utilities for handling the jungle-themed rank progression system
- */
-import { UserRank } from '@/shared/arcade-schema';
-import { getRankStyle } from '../styles/theme';
-
-// Jungle-themed rank definitions
-export const JUNGLE_RANKS = [
-  { level: 1, title: "Newcomer", pointsNeeded: 0, description: "Your first steps into the mysterious jungle." },
-  { level: 2, title: "Explorer", pointsNeeded: 100, description: "You've begun to understand the jungle's secrets." },
-  { level: 3, title: "Pathfinder", pointsNeeded: 250, description: "You can now navigate the twisting jungle paths." },
-  { level: 4, title: "Trailblazer", pointsNeeded: 500, description: "You forge new routes through uncharted territory." },
-  { level: 5, title: "Jungle Guardian", pointsNeeded: 1000, description: "You've mastered the jungle's mysteries." }
-];
-
-// Extended ranks beyond the core progression
-export const EXTENDED_JUNGLE_RANKS = [
-  ...JUNGLE_RANKS,
-  { level: 6, title: "Jungle Master", pointsNeeded: 2000, description: "Your wisdom transcends the jungle itself." },
-  { level: 7, title: "Ancient Guide", pointsNeeded: 3500, description: "You've attained knowledge from the jungle's ancient past." },
-  { level: 8, title: "Temple Keeper", pointsNeeded: 5000, description: "You safeguard the jungle's most sacred temples." },
-  { level: 9, title: "Spirit Walker", pointsNeeded: 7500, description: "You commune with the ancient spirits of the jungle." },
-  { level: 10, title: "Jungle Legend", pointsNeeded: 10000, description: "Your name echoes throughout the jungle's history." }
-];
+import { UserRank, RankInfo } from '../types/rank';
 
 /**
- * Calculate rank data based on points
+ * Jungle explorer ranks definition
  */
-export const calculateRank = (points: number) => {
-  // Find the current rank
-  let currentRank = JUNGLE_RANKS[0];
-  let nextRank = JUNGLE_RANKS[1];
-  
-  for (let i = 0; i < JUNGLE_RANKS.length; i++) {
-    if (points >= JUNGLE_RANKS[i].pointsNeeded) {
-      currentRank = JUNGLE_RANKS[i];
-      nextRank = JUNGLE_RANKS[i + 1] || JUNGLE_RANKS[i];
-    } else {
-      break;
-    }
+export const JUNGLE_RANKS: RankInfo[] = [
+  {
+    level: 0,
+    title: 'Newcomer',
+    description: 'You have just arrived at the jungle\'s edge, eager to begin your adventure.',
+    minPoints: 0,
+    maxPoints: 100,
+    color: '#94C973', // Canopy Light
+    perks: [
+      'Access to Explorer\'s Basecamp',
+      'Basic quest discovery',
+      'Jungle map overview'
+    ]
+  },
+  {
+    level: 1,
+    title: 'Explorer',
+    description: 'You have ventured into the jungle and begun to discover its mysteries.',
+    minPoints: 100,
+    maxPoints: 300,
+    color: '#3B82C4', // River Blue
+    perks: [
+      'Access to River of Resources',
+      'Access to Ancient Wellness Trail',
+      'Companion selection',
+      'Enhanced quest rewards'
+    ]
+  },
+  {
+    level: 2,
+    title: 'Pathfinder',
+    description: 'You have mastered basic navigation and can now access deeper jungle territories.',
+    minPoints: 300,
+    maxPoints: 600,
+    color: '#E6B933', // Temple Gold
+    perks: [
+      'Access to Temple of Knowledge',
+      'Access to Emergency Waterfall',
+      'Access to Peak Performance Summit',
+      'Advanced companion interactions',
+      'Quest chaining abilities'
+    ]
+  },
+  {
+    level: 3,
+    title: 'Trailblazer',
+    description: 'Your expertise has grown, allowing you to tackle the jungle\'s most challenging regions.',
+    minPoints: 600,
+    maxPoints: 1000,
+    color: '#E67E33', // Sunset Orange
+    perks: [
+      'Access to Transformation Volcano',
+      'Access to Crystal Cave of Reflection',
+      'Premium companion unlocks',
+      'Challenge quest access',
+      'Discovery sharing abilities'
+    ]
+  },
+  {
+    level: 4,
+    title: 'Jungle Guardian',
+    description: 'You have mastered the jungle\'s secrets and now help guide others through its challenges.',
+    minPoints: 1000,
+    maxPoints: Number.MAX_SAFE_INTEGER,
+    color: '#1E4A3D', // Jungle Green
+    perks: [
+      'Access to Hidden Valley of Mastery',
+      'Full companion collection',
+      'Master quest access',
+      'Mentor abilities',
+      'Special recognition'
+    ]
   }
-  
-  // Calculate progress percentage to next rank
-  const currentPoints = points - currentRank.pointsNeeded;
-  const pointsForNextRank = nextRank.pointsNeeded - currentRank.pointsNeeded;
-  const progressPercentage = currentRank === nextRank ? 100 : Math.min(100, (currentPoints / pointsForNextRank) * 100);
-  
-  return {
-    currentRank,
-    nextRank,
-    progress: {
-      current: currentPoints,
-      required: pointsForNextRank,
-      percentage: progressPercentage
-    },
-    style: getRankStyle(currentRank.title)
-  };
-};
+];
 
 /**
- * Get the display properties for a rank, including styling
+ * Calculate user's jungle rank based on points
  */
-export const getRankDisplay = (rank: UserRank) => {
-  // Find the matching jungle rank
-  const jungleRank = JUNGLE_RANKS.find(r => r.level === rank.level) || JUNGLE_RANKS[0];
-  
-  // Get the next rank
-  const nextRankIndex = JUNGLE_RANKS.findIndex(r => r.level === rank.level) + 1;
-  const nextRank = nextRankIndex < JUNGLE_RANKS.length ? JUNGLE_RANKS[nextRankIndex] : jungleRank;
+export const calculateRank = (userPoints: number): UserRank => {
+  // Find the right rank based on points
+  const currentRank = JUNGLE_RANKS.find(
+    (rank, index) => 
+      userPoints >= rank.minPoints && 
+      (index === JUNGLE_RANKS.length - 1 || userPoints < JUNGLE_RANKS[index + 1].minPoints)
+  ) || JUNGLE_RANKS[0];
   
   // Calculate progress to next rank
-  const pointsEarned = rank.currentPoints - jungleRank.pointsNeeded;
-  const pointsRequired = nextRank.pointsNeeded - jungleRank.pointsNeeded;
-  const progressPercentage = jungleRank === nextRank ? 100 : Math.min(100, (pointsEarned / pointsRequired) * 100);
+  const isMaxRank = currentRank.level === JUNGLE_RANKS.length - 1;
+  const nextRank = isMaxRank ? null : JUNGLE_RANKS[currentRank.level + 1];
+  
+  let progress = 0;
+  if (nextRank) {
+    const pointsInCurrentRank = userPoints - currentRank.minPoints;
+    const pointsRequiredForNextRank = nextRank.minPoints - currentRank.minPoints;
+    progress = Math.min(pointsInCurrentRank / pointsRequiredForNextRank, 1);
+  } else {
+    // Max rank - show progress as complete
+    progress = 1;
+  }
   
   return {
-    rank: jungleRank,
-    nextRank,
-    progress: {
-      current: pointsEarned,
-      required: pointsRequired,
-      percentage: progressPercentage
-    },
-    style: getRankStyle(jungleRank.title)
+    level: currentRank.level,
+    title: currentRank.title,
+    points: userPoints,
+    nextRankPoints: nextRank ? nextRank.minPoints : currentRank.maxPoints,
+    progress,
+    color: currentRank.color,
+    badgeUrl: undefined // To be implemented when we have badge assets
   };
 };
 
 /**
- * Check if user has reached a rank milestone
+ * Get rank name by level
  */
-export const hasReachedNewRank = (previousPoints: number, currentPoints: number): boolean => {
-  // Get previous rank
-  const previousRank = JUNGLE_RANKS.find(
-    (rank, index, array) => 
-      previousPoints >= rank.pointsNeeded && 
-      (index === array.length - 1 || previousPoints < array[index + 1].pointsNeeded)
-  );
-  
-  // Get current rank
-  const currentRank = JUNGLE_RANKS.find(
-    (rank, index, array) => 
-      currentPoints >= rank.pointsNeeded && 
-      (index === array.length - 1 || currentPoints < array[index + 1].pointsNeeded)
-  );
-  
-  // Compare ranks to see if a new one was reached
-  return previousRank?.level !== currentRank?.level;
+export const getRankName = (level: number): string => {
+  const rank = JUNGLE_RANKS.find(r => r.level === level);
+  return rank ? rank.title : 'Unknown';
 };
 
 /**
- * Get recommended achievements based on rank progression
+ * Get rank color by level
  */
-export const getRecommendedAchievements = (currentRank: number) => {
-  // Each rank has specific achievements that are recommended
-  const RANK_ACHIEVEMENT_FOCUS: Record<number, string[]> = {
-    1: ["fin-budget-basics", "fit-first-workout", "learn-first-course"],
-    2: ["fin-savings-starter", "car-resume-ready", "well-meal-planner"],
-    3: ["fin-investment-initiate", "car-interview-ace", "well-nutrition-novice"],
-    4: ["fit-yoga-beginner", "emerg-first-aid", "learn-cooking-basics"],
-    5: ["fin-debt-destroyer", "fit-consistency", "emerg-safety-plan"]
-  };
-  
-  return RANK_ACHIEVEMENT_FOCUS[currentRank] || RANK_ACHIEVEMENT_FOCUS[1];
+export const getRankColor = (level: number): string => {
+  const rank = JUNGLE_RANKS.find(r => r.level === level);
+  return rank ? rank.color : '#94C973'; // Default to Newcomer color
 };

@@ -1,148 +1,146 @@
+import { JungleZone } from '../types/zone';
+
+// Define jungle zones (categories mapped to jungle areas)
+const JUNGLE_ZONES: JungleZone[] = [
+  {
+    id: 'basecamp',
+    name: 'Explorer\'s Basecamp',
+    description: 'Where all journeys begin. Learn the fundamentals of jungle exploration.',
+    category: 'basics',
+    mapX: 50,
+    mapY: 80,
+    color: '#94C973', // Canopy Light
+    iconName: 'Tent',
+    requiredRank: 0,
+    connectedTo: ['river', 'ancient-trail']
+  },
+  {
+    id: 'river',
+    name: 'River of Resources',
+    description: 'Navigate the currents of financial wisdom and resource management.',
+    category: 'finance',
+    mapX: 30,
+    mapY: 60,
+    color: '#3B82C4', // River Blue
+    iconName: 'Waves',
+    requiredRank: 1,
+    connectedTo: ['basecamp', 'temple', 'waterfall']
+  },
+  {
+    id: 'ancient-trail',
+    name: 'Ancient Wellness Trail',
+    description: 'Follow paths of physical and mental wellbeing known to ancient explorers.',
+    category: 'wellness',
+    mapX: 70,
+    mapY: 65,
+    color: '#94C973', // Canopy Light
+    iconName: 'Leaf',
+    requiredRank: 1,
+    connectedTo: ['basecamp', 'temple', 'mountaintop']
+  },
+  {
+    id: 'temple',
+    name: 'Temple of Knowledge',
+    description: 'Discover the ancient wisdom of career development and professional growth.',
+    category: 'career',
+    mapX: 50,
+    mapY: 40,
+    color: '#E6B933', // Temple Gold
+    iconName: 'Building',
+    requiredRank: 2,
+    connectedTo: ['river', 'ancient-trail', 'volcano', 'crystal-cave']
+  },
+  {
+    id: 'waterfall',
+    name: 'Emergency Waterfall',
+    description: 'Learn essential survival skills for handling life\'s unexpected challenges.',
+    category: 'emergency',
+    mapX: 20,
+    mapY: 35,
+    color: '#C24D4D', // Clay Red
+    iconName: 'Shield',
+    requiredRank: 2,
+    connectedTo: ['river', 'volcano']
+  },
+  {
+    id: 'mountaintop',
+    name: 'Peak Performance Summit',
+    description: 'Reach new heights in physical fitness and mental performance.',
+    category: 'fitness',
+    mapX: 80,
+    mapY: 40,
+    color: '#8B8682', // Stone Gray
+    iconName: 'Mountain',
+    requiredRank: 2,
+    connectedTo: ['ancient-trail', 'crystal-cave']
+  },
+  {
+    id: 'volcano',
+    name: 'Transformation Volcano',
+    description: 'Powerful lessons for major life transformations and overcoming obstacles.',
+    category: 'transformation',
+    mapX: 30,
+    mapY: 20,
+    color: '#E67E33', // Sunset Orange
+    iconName: 'Flame',
+    requiredRank: 3,
+    connectedTo: ['temple', 'waterfall', 'hidden-valley']
+  },
+  {
+    id: 'crystal-cave',
+    name: 'Crystal Cave of Reflection',
+    description: 'Discover deeper insights about yourself and your personal journey.',
+    category: 'personal',
+    mapX: 70,
+    mapY: 20,
+    color: '#724E91', // Shadow Purple
+    iconName: 'Diamond',
+    requiredRank: 3,
+    connectedTo: ['temple', 'mountaintop', 'hidden-valley']
+  },
+  {
+    id: 'hidden-valley',
+    name: 'Hidden Valley of Mastery',
+    description: 'The most advanced challenges and deepest wisdom for true jungle masters.',
+    category: 'advanced',
+    mapX: 50,
+    mapY: 10,
+    color: '#1E4A3D', // Jungle Green
+    iconName: 'Star',
+    requiredRank: 4,
+    connectedTo: ['volcano', 'crystal-cave']
+  }
+];
+
 /**
- * Zone Utilities
- * Functionality for managing jungle zones, their styling, and progression
+ * Check if a zone is unlocked based on user rank
  */
-import { AchievementCategory } from '@/shared/arcade-schema';
-import { getZoneStyle } from '../styles/theme';
-
-// Zone-specific styling and structure data
-export interface ZoneData {
-  id: string;
-  name: string;
-  description: string;
-  category: AchievementCategory;
-  icon: string;
-  position: {
-    x: number;
-    y: number;
-  };
-  connections: string[]; // IDs of connected zones
-  requiredRank: number;
-  styles: {
-    primary: string;
-    secondary: string;
-    accent: string;
-    icon: string;
-    buttonClass: string;
-    iconBg: string;
-    textClass: string;
-    cardClass: string;
-    progressClass: string;
-  };
-}
-
-// Map category to zone name
-export const ZONE_NAMES: Record<AchievementCategory, string> = {
-  finance: "Treasury Temple",
-  career: "Career Canyon",
-  wellness: "Wellness Waterfall",
-  fitness: "Fitness Peaks",
-  learning: "Scholar's Grove",
-  emergency: "Guardian Ruins",
-  general: "Central Clearing"
+export const isZoneUnlocked = (zoneCategory: string, userRank: number): boolean => {
+  const zone = JUNGLE_ZONES.find(z => z.category === zoneCategory);
+  if (!zone) return false;
+  return userRank >= zone.requiredRank;
 };
 
-// Map category to zone descriptions
-export const ZONE_DESCRIPTIONS: Record<AchievementCategory, string> = {
-  finance: "Ancient stone temples housing the secrets of wealth and resource management.",
-  career: "A vast canyon where the paths of many successful explorers have been carved.",
-  wellness: "A serene waterfall area where healing plants and balanced living can be studied.",
-  fitness: "Challenging mountain terrain that builds strength and endurance in those who climb.",
-  learning: "A sacred grove where the wisest sages share knowledge from all disciplines.",
-  emergency: "Ruins of an ancient guardian civilization that mastered protection techniques.",
-  general: "The central hub where all jungle paths converge. The starting point for new explorers."
+/**
+ * Get zone by category
+ */
+export const getZoneByCategory = (category: string): JungleZone | undefined => {
+  return JUNGLE_ZONES.find(zone => zone.category === category);
 };
 
-// Get full zone data for a specific zone
-export const getZoneData = (category: AchievementCategory): ZoneData => {
-  // Positioning is based on a 800x600 SVG viewBox
-  // Each zone has a specific position on the map
-  const ZONE_POSITIONS: Record<AchievementCategory, {x: number, y: number}> = {
-    general: { x: 400, y: 300 },    // Center
-    finance: { x: 600, y: 200 },    // Upper right
-    career: { x: 200, y: 200 },     // Upper left
-    wellness: { x: 500, y: 400 },   // Lower right
-    fitness: { x: 300, y: 400 },    // Lower left
-    learning: { x: 400, y: 150 },   // Top center
-    emergency: { x: 400, y: 450 }   // Bottom center
-  };
-
-  // Which zones are connected to each other
-  const ZONE_CONNECTIONS: Record<AchievementCategory, AchievementCategory[]> = {
-    general: ["finance", "career", "wellness", "fitness", "learning", "emergency"],
-    finance: ["general", "learning", "wellness"],
-    career: ["general", "learning", "fitness"],
-    wellness: ["general", "finance", "emergency"],
-    fitness: ["general", "career", "emergency"],
-    learning: ["general", "finance", "career"],
-    emergency: ["general", "wellness", "fitness"]
-  };
-
-  // Required rank to unlock each zone (general is always available)
-  const ZONE_RANK_REQUIREMENTS: Record<AchievementCategory, number> = {
-    general: 1,   // Available from the beginning
-    finance: 1,   // Available from the beginning
-    career: 1,    // Available from the beginning
-    wellness: 2,  // Requires rank 2 (Novice)
-    fitness: 2,   // Requires rank 2 (Novice)
-    learning: 3,  // Requires rank 3 (Apprentice)
-    emergency: 4  // Requires rank 4 (Adept)
-  };
-
-  return {
-    id: category,
-    name: ZONE_NAMES[category],
-    description: ZONE_DESCRIPTIONS[category],
-    category,
-    icon: getZoneStyle(category).icon,
-    position: ZONE_POSITIONS[category],
-    connections: ZONE_CONNECTIONS[category],
-    requiredRank: ZONE_RANK_REQUIREMENTS[category],
-    styles: getZoneStyle(category)
-  };
+/**
+ * Get all jungle zones
+ */
+export const getAllZones = (): JungleZone[] => {
+  return [...JUNGLE_ZONES];
 };
 
-// Get available zones based on user's rank
-export const getAvailableZones = (userRank: number): AchievementCategory[] => {
-  return Object.entries(ZONE_RANK_REQUIREMENTS)
-    .filter(([_, requiredRank]) => userRank >= requiredRank)
-    .map(([category]) => category as AchievementCategory);
-};
-
-// Map a standard category to a zone-specific class
-export const getZoneClassForCategory = (category: AchievementCategory): string => {
-  const zoneStyle = getZoneStyle(category);
-  return zoneStyle.cardClass;
-};
-
-// Map of zone-specific difficulty/intensity
-export const ZONE_INTENSITY: Record<AchievementCategory, number> = {
-  general: 1,    // Easiest/introductory
-  finance: 2,    // Moderate difficulty
-  career: 2,     // Moderate difficulty
-  wellness: 2,   // Moderate difficulty
-  fitness: 3,    // Higher difficulty
-  learning: 3,   // Higher difficulty
-  emergency: 4   // Most challenging
-};
-
-// Helper interfaces
-interface ZoneRequirement {
-  id: AchievementCategory;
-  name: string;
-  requiredRank: number;
-}
-
-// Get a list of all zones with their unlock requirements
-export const getAllZoneRequirements = (): ZoneRequirement[] => {
-  return Object.values(AchievementCategory.enum).map(category => ({
-    id: category as AchievementCategory,
-    name: ZONE_NAMES[category as AchievementCategory],
-    requiredRank: ZONE_RANK_REQUIREMENTS[category as AchievementCategory]
-  })).sort((a, b) => a.requiredRank - b.requiredRank);
-};
-
-// Utility function to check if a zone is unlocked for a specific rank
-export const isZoneUnlocked = (zone: AchievementCategory, rank: number): boolean => {
-  return rank >= ZONE_RANK_REQUIREMENTS[zone];
+/**
+ * Get connected zones
+ */
+export const getConnectedZones = (zoneId: string): JungleZone[] => {
+  const zone = JUNGLE_ZONES.find(z => z.id === zoneId);
+  if (!zone) return [];
+  
+  return JUNGLE_ZONES.filter(z => zone.connectedTo.includes(z.id));
 };
