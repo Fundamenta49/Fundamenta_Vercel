@@ -147,14 +147,14 @@ export default function YogaGridInterface() {
 
   return (
     <div className="space-y-4">
-      <Card className="border-0 md:shadow-sm rounded-2xl overflow-hidden">
-        {/* iOS-style gradient header bar */}
-        <div className="h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"></div>
+      <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
+        {/* iOS-style gradient header bar - made more vibrant */}
+        <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
         
         <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-xl font-medium text-gray-800">
+              <CardTitle className="text-xl font-semibold text-gray-800">
                 Yoga Practice
               </CardTitle>
               <CardDescription className="text-sm text-gray-500 mt-1">
