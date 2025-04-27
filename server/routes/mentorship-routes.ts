@@ -1,11 +1,24 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Router, Request, Response, NextFunction, RequestHandler } from "express";
 import { z } from "zod";
 import { storage } from "../storage";
 
-// Extended Request type with user property
-interface AuthRequest extends Request {
-  user: any;
-  isAuthenticated(): boolean;
+// Define the user interface
+interface UserType {
+  id: number;
+  username: string;
+  email?: string;
+  role?: string;
+  name?: string;
+}
+
+// Declare module augmentation for express Request
+declare global {
+  namespace Express {
+    interface Request {
+      user?: UserType;
+      isAuthenticated(): boolean;
+    }
+  }
 }
 import { 
   connectionTypes, 
@@ -18,7 +31,7 @@ import {
 import { randomBytes } from "crypto";
 
 // Authentication middleware
-function isAuthenticated(req: AuthRequest, res: Response, next: NextFunction) {
+function isAuthenticated(req: Request, res: Response, next: NextFunction) {
   if (req.isAuthenticated()) {
     return next();
   }
@@ -27,12 +40,12 @@ function isAuthenticated(req: AuthRequest, res: Response, next: NextFunction) {
 
 // Role check middleware
 function hasRole(roles: string[]) {
-  return (req: AuthRequest, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     
-    if (roles.includes(req.user.role)) {
+    if (req.user && req.user.role && roles.includes(req.user.role)) {
       return next();
     }
     
@@ -47,8 +60,12 @@ export default function registerMentorshipRoutes(router: Router) {
   // ==========================================
   
   // Generate a connection code for a student
-  router.post("/api/connections/generate-code", isAuthenticated, async (req, res) => {
+  router.post("/api/connections/generate-code", isAuthenticated, async (req: Request, res: Response) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const mentorId = req.user.id;
       const { studentName } = req.body;
       
@@ -78,6 +95,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Verify and activate a connection using a code
   router.post("/api/connections/verify-code", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const studentId = req.user.id;
       const { connectionCode } = req.body;
       
@@ -116,6 +137,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Get all connections for a user (either as mentor or student)
   router.get("/api/connections", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const userId = req.user.id;
       const role = req.query.role as string || "mentor";
       
@@ -370,8 +395,14 @@ export default function registerMentorshipRoutes(router: Router) {
   // Update a module
   router.put("/api/modules/:id", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const moduleId = parseInt(req.params.id);
-      const module = await storage.customPathwayModules.get(moduleId);
+      // Get the module using the storage interface method
+      const modules = await storage.getCustomPathwayModules(0); // Get all modules
+      const module = modules.find(m => m.id === moduleId);
       
       if (!module) {
         return res.status(404).json({ message: "Module not found" });
@@ -402,8 +433,14 @@ export default function registerMentorshipRoutes(router: Router) {
   // Delete a module
   router.delete("/api/modules/:id", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const moduleId = parseInt(req.params.id);
-      const module = await storage.customPathwayModules.get(moduleId);
+      // Get the module using the storage interface method
+      const modules = await storage.getCustomPathwayModules(0); // Get all modules
+      const module = modules.find(m => m.id === moduleId);
       
       if (!module) {
         return res.status(404).json({ message: "Module not found" });
