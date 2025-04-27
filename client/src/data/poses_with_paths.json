@@ -1,92 +1,92 @@
 [
   {
     "id": "mountain",
-    "filename": "/images/yoga/mountain.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Mountain Pose (Tadasana)"
   },
   {
     "id": "child",
-    "filename": "/images/yoga/child.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Child's Pose (Balasana)"
   },
   {
     "id": "corpse",
-    "filename": "/images/yoga/corpse.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Corpse Pose (Savasana)"
   },
   {
     "id": "downward_dog",
-    "filename": "/images/yoga/downward_dog.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Downward-Facing Dog (Adho Mukha Svanasana)"
   },
   {
     "id": "crow",
-    "filename": "/images/yoga/crow.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Crow Pose (Bakasana)"
   },
   {
     "id": "boat",
-    "filename": "/images/yoga/boat.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Boat Pose (Navasana)"
   },
   {
     "id": "cat_cow",
-    "filename": "/images/yoga/cat_cow.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Cat-Cow Pose (Marjaryasana-Bitilasana)"
   },
   {
     "id": "forward_fold",
-    "filename": "/images/yoga/forward_fold.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Forward Fold (Uttanasana)"
   },
   {
     "id": "tree",
-    "filename": "/images/yoga/tree.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Tree Pose (Vrksasana)"
   },
   {
     "id": "warrior_1",
-    "filename": "/images/yoga/warrior_1.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Warrior I (Virabhadrasana I)"
   },
   {
     "id": "warrior_2",
-    "filename": "/images/yoga/warrior_2.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Warrior II (Virabhadrasana II)"
   },
   {
     "id": "triangle",
-    "filename": "/images/yoga/triangle.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Triangle Pose (Trikonasana)"
   },
   {
     "id": "chair",
-    "filename": "/images/yoga/chair.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Chair Pose (Utkatasana)"
   },
   {
     "id": "bridge",
-    "filename": "/images/yoga/bridge.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Bridge Pose (Setu Bandha Sarvangasana)"
   },
   {
     "id": "half_moon",
-    "filename": "/images/yoga/half_moon.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Half Moon Pose (Ardha Chandrasana)"
   },
   {
     "id": "eagle",
-    "filename": "/images/yoga/eagle.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Eagle Pose (Garudasana)"
   },
   {
     "id": "pigeon",
-    "filename": "/images/yoga/pigeon.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Pigeon Pose (Eka Pada Rajakapotasana)"
   },
   {
     "id": "side_plank",
-    "filename": "/images/yoga/side_plank.jpg",
+    "filename": "/images/yoga-poses/original_yoga_image.jpg",
     "name": "Side Plank (Vasisthasana)"
   }
 ]
