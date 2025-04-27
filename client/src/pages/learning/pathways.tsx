@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation } from "wouter";
 import { ArrowLeft, BarChart3, Lock, Rocket, Unlock, Palmtree, Leaf } from "lucide-react";
 import { useJungleTheme } from "../../jungle-path/contexts/JungleThemeContext";
+import { getAllZones } from "../../jungle-path/utils/zoneUtils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,11 +19,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   fetchUserProgress, 
   trackModuleProgress, 
-  enrichPathwaysWithProgress,
-  LearningPathway
+  enrichPathwaysWithProgress
 } from "@/lib/learning-progress";
 import { useToast } from "@/hooks/use-toast";
-import { learningPathways } from "./pathways-data";
+import { learningPathways, LearningPathway } from "./pathways-data";
 
 // Category colors for styling
 const categoryColors = {
@@ -256,16 +256,26 @@ export default function LearningPathwaysPage() {
                   return (
                     <Card 
                       key={pathway.id} 
-                      className={`border ${pathway.isLocked ? 'opacity-80' : ''}`}
+                      className={`border ${pathway.isLocked ? 'opacity-80' : ''} ${
+                        isJungleTheme 
+                          ? 'border-2 border-[#94C973] bg-[#1E4A3D]/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]' 
+                          : ''
+                      }`}
                     >
-                      <CardHeader className="pb-2">
+                      <CardHeader className={`pb-2 ${isJungleTheme ? 'border-b border-[#94C973]/30 text-white' : ''}`}>
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-2">
-                            <div className={`rounded-full p-1.5 ${categoryColors[pathway.category as keyof typeof categoryColors] || "bg-gray-100 text-gray-700"}`}>
+                            <div className={`rounded-full p-1.5 ${
+                              isJungleTheme 
+                                ? "bg-[#94C973] text-[#1E4A3D]" 
+                                : categoryColors[pathway.category as keyof typeof categoryColors] || "bg-gray-100 text-gray-700"
+                            }`}>
                               {pathway.icon}
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <CardTitle className="text-lg">{pathway.title}</CardTitle>
+                              <CardTitle className={`text-lg ${isJungleTheme ? 'text-[#E6B933]' : ''}`}>
+                                {isJungleTheme && pathway.jungleTitle ? pathway.jungleTitle : pathway.title}
+                              </CardTitle>
                               {pathway.isLocked && (
                                 <TooltipProvider>
                                   <Tooltip>
@@ -284,8 +294,8 @@ export default function LearningPathwaysPage() {
                             {pathway.modules.length} modules
                           </Badge>
                         </div>
-                        <CardDescription className="mt-1">
-                          {pathway.description}
+                        <CardDescription className={`mt-1 ${isJungleTheme ? 'text-[#94C973]' : ''}`}>
+                          {isJungleTheme && pathway.jungleDescription ? pathway.jungleDescription : pathway.description}
                         </CardDescription>
                         
                         {pathway.isLocked && getPrerequisiteInfo(pathway)}
@@ -302,43 +312,67 @@ export default function LearningPathwaysPage() {
                           
                           <div>
                             <Button 
-                              variant="link" 
-                              className="p-0 h-auto text-sm font-medium"
+                              variant={isJungleTheme ? "default" : "link"}
+                              className={`${isJungleTheme 
+                                ? 'bg-[#E6B933] text-[#1E4A3D] hover:bg-[#E67E22] transition-colors duration-300 text-sm font-medium' 
+                                : 'p-0 h-auto text-sm font-medium'}`}
                               onClick={() => togglePathDetails(pathway.id)}
                               disabled={pathway.isLocked}
                             >
                               {pathway.isLocked 
                                 ? "Locked" 
                                 : expandedPath === pathway.id 
-                                  ? "Hide Modules" 
-                                  : "View Modules"
+                                  ? isJungleTheme ? "Hide Quests" : "Hide Modules" 
+                                  : isJungleTheme ? "View Quests" : "View Modules"
                               }
                             </Button>
                             
                             {!pathway.isLocked && expandedPath === pathway.id && (
                               <div className="mt-3 space-y-3">
-                                <Separator />
+                                <Separator className={isJungleTheme ? 'bg-[#94C973]/30' : ''} />
                                 
                                 {pathway.modules.map((module, index) => (
-                                  <div key={module.id} className="flex items-center justify-between">
+                                  <div key={module.id} className={`flex items-center justify-between ${
+                                    isJungleTheme ? 'bg-[#162E26] rounded-md px-3 py-2 border border-[#94C973]/30' : ''
+                                  }`}>
                                     <div className="flex items-center gap-2">
                                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
-                                        module.complete ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
+                                        isJungleTheme
+                                          ? module.complete 
+                                            ? "bg-[#E6B933] text-[#1E4A3D]" 
+                                            : "bg-[#94C973]/20 text-[#94C973]"
+                                          : module.complete 
+                                            ? "bg-green-100 text-green-700" 
+                                            : "bg-gray-100 text-gray-700"
                                       }`}>
                                         {index + 1}
                                       </div>
-                                      <span className={`${module.complete ? "text-green-700 font-medium" : "text-gray-700"}`}>
-                                        {module.title}
+                                      <span className={`${
+                                        isJungleTheme
+                                          ? module.complete 
+                                            ? "text-[#E6B933] font-medium" 
+                                            : "text-white"
+                                          : module.complete 
+                                            ? "text-green-700 font-medium" 
+                                            : "text-gray-700"
+                                      }`}>
+                                        {isJungleTheme && module.jungleTitle ? module.jungleTitle : module.title}
                                       </span>
                                     </div>
                                     
                                     <Button 
-                                      variant="outline" 
+                                      variant={isJungleTheme ? "default" : "outline"}
                                       size="sm"
-                                      className="h-7 text-xs"
+                                      className={isJungleTheme 
+                                        ? "h-7 text-xs bg-[#94C973] text-[#1E4A3D] hover:bg-[#E6B933] border-none transition-all duration-300" 
+                                        : "h-7 text-xs"
+                                      }
                                       onClick={() => handleModuleView(pathway.id, module.id)}
                                     >
-                                      {module.complete ? "Revisit" : "Start"}
+                                      {module.complete 
+                                        ? isJungleTheme ? "Continue Quest" : "Revisit" 
+                                        : isJungleTheme ? "Begin Quest" : "Start"
+                                      }
                                     </Button>
                                   </div>
                                 ))}
