@@ -285,8 +285,7 @@ export default function YogaGridMobile() {
                           unlocked={isUnlocked}
                           achievement={achievement ? {
                             masteryLevel: achievement.masteryLevel || 0,
-                            bestScore: achievement.bestScore || 0,
-                            lastPracticedDate: achievement.lastPracticedDate
+                            bestScore: achievement.bestScore || 0
                           } : undefined}
                         />
                       </div>

@@ -19,6 +19,7 @@ import axios from 'axios';
 import { getYogaPoseWithDefaults } from '../lib/yoga-poses-data';
 import posesWithPaths from '../data/poses_with_paths.json';
 import { getYogaPoseThumbnail, getYogaPoseVideoInfo } from '../lib/yoga-pose-thumbnails';
+import { EmbeddedYouTubePlayer } from './embedded-youtube-player';
 
 interface YogaPosePopoutProps {
   pose: YogaPoseProgression & {
