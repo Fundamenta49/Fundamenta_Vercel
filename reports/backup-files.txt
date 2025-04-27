@@ -1,2 +1,3 @@
+client/src/components/yoga-pose-popout.tsx.bak
 client/src/lib/temp-fix.js
 client/src/pages/learning/courses/template-page.tsx
