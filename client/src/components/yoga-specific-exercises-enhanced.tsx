@@ -282,8 +282,8 @@ const YogaSpecificExercisesEnhanced = () => {
   
   return (
     <div className="mx-auto w-full max-w-4xl">
-      {/* Apple-inspired ultra-minimalist container - full width on mobile with subtle border */}
-      <div className="w-full bg-white border-l-4 border-pink-300 md:border-l-0 md:shadow-md md:border md:border-pink-100 md:rounded-xl overflow-hidden">
+      {/* Apple-inspired ultra-minimalist container - clean borders and no background on mobile */}
+      <div className="w-full bg-white border-l-0 sm:border-l-0 md:shadow-md md:border md:border-gray-100 md:rounded-xl overflow-hidden">
         <div className="p-2 md:p-4 bg-white">
           {/* Header section with simplified styling */}
           <h2 className="text-xl md:text-2xl font-medium text-gray-800 pl-1 mb-1 md:mb-2">Yoga Practice</h2>
@@ -308,19 +308,19 @@ const YogaSpecificExercisesEnhanced = () => {
               <TabsList className="w-full overflow-x-auto flex md:grid md:grid-cols-4 no-scrollbar rounded-full bg-gray-100 p-0.5 border border-gray-200">
                 <TabsTrigger 
                   value="beginner" 
-                  className="flex-1 whitespace-nowrap text-sm py-1.5 px-3 md:px-4 rounded-full data-[state=active]:bg-white data-[state=active]:text-pink-800 data-[state=active]:shadow-sm"
+                  className="flex-1 whitespace-nowrap text-sm py-1.5 px-3 md:px-4 rounded-full data-[state=active]:bg-white data-[state=active]:text-gray-800 data-[state=active]:shadow-sm"
                 >
                   Beginner
                 </TabsTrigger>
                 <TabsTrigger 
                   value="intermediate" 
-                  className="flex-1 whitespace-nowrap text-sm py-1.5 px-3 md:px-4 rounded-full data-[state=active]:bg-white data-[state=active]:text-pink-800 data-[state=active]:shadow-sm"
+                  className="flex-1 whitespace-nowrap text-sm py-1.5 px-3 md:px-4 rounded-full data-[state=active]:bg-white data-[state=active]:text-gray-800 data-[state=active]:shadow-sm"
                 >
                   Intermediate
                 </TabsTrigger>
                 <TabsTrigger 
                   value="advanced" 
-                  className="flex-1 whitespace-nowrap text-sm py-1.5 px-3 md:px-4 rounded-full data-[state=active]:bg-white data-[state=active]:text-pink-800 data-[state=active]:shadow-sm"
+                  className="flex-1 whitespace-nowrap text-sm py-1.5 px-3 md:px-4 rounded-full data-[state=active]:bg-white data-[state=active]:text-gray-800 data-[state=active]:shadow-sm"
                 >
                   Advanced
                 </TabsTrigger>
@@ -344,7 +344,7 @@ const YogaSpecificExercisesEnhanced = () => {
             {/* Beginner tab content with minimalist styling on mobile */}
             <TabsContent value="beginner" className="pt-0 md:pt-3">
               {/* iOS-style minimal section header */}
-              <div className="mb-2 md:mb-3 pl-1 border-b border-gray-100 pb-1 md:border-l-2 md:border-b-0 md:border-pink-400 md:pl-2 md:py-1 md:p-3 md:rounded-md">
+              <div className="mb-2 md:mb-3 pl-1 border-b border-gray-100 pb-1 md:border-l-2 md:border-b-0 md:border-gray-300 md:pl-2 md:py-1 md:p-3 md:rounded-md">
                 <h3 className="font-medium text-gray-800 text-sm md:text-base">Beginner Poses</h3>
                 {/* Description only on desktop */}
                 <p className="hidden md:block text-xs md:text-sm text-gray-600 mt-1">
@@ -368,7 +368,7 @@ const YogaSpecificExercisesEnhanced = () => {
             
             {/* Intermediate tab content with minimalist styling on mobile */}
             <TabsContent value="intermediate" className="pt-0 md:pt-3">
-              <div className="mb-2 md:mb-3 pl-1 border-b border-gray-100 pb-1 md:border-l-2 md:border-b-0 md:border-pink-400 md:pl-2 md:py-1 md:p-3 md:rounded-md">
+              <div className="mb-2 md:mb-3 pl-1 border-b border-gray-100 pb-1 md:border-l-2 md:border-b-0 md:border-gray-300 md:pl-2 md:py-1 md:p-3 md:rounded-md">
                 <h3 className="font-medium text-gray-800 text-sm md:text-base">Intermediate Poses</h3>
                 <p className="hidden md:block text-xs md:text-sm text-gray-600 mt-1">
                   These poses build on fundamentals to incorporate balance, strength, and flexibility.
@@ -391,7 +391,7 @@ const YogaSpecificExercisesEnhanced = () => {
             
             {/* Advanced tab content with minimalist styling on mobile */}
             <TabsContent value="advanced" className="pt-0 md:pt-3">
-              <div className="mb-2 md:mb-3 pl-1 border-b border-gray-100 pb-1 md:border-l-2 md:border-b-0 md:border-pink-400 md:pl-2 md:py-1 md:p-3 md:rounded-md">
+              <div className="mb-2 md:mb-3 pl-1 border-b border-gray-100 pb-1 md:border-l-2 md:border-b-0 md:border-gray-300 md:pl-2 md:py-1 md:p-3 md:rounded-md">
                 <h3 className="font-medium text-gray-800 text-sm md:text-base">Advanced Poses</h3>
                 <p className="hidden md:block text-xs md:text-sm text-gray-600 mt-1">
                   These challenging poses require strength, flexibility, and body awareness.
