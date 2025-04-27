@@ -326,7 +326,7 @@ const YogaSpecificExercisesEnhanced = () => {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="recommendations" 
-                  className="flex-1 whitespace-nowrap text-sm py-1.5 px-3 md:px-4 rounded-full data-[state=active]:bg-white data-[state=active]:text-pink-800 data-[state=active]:shadow-sm"
+                  className="flex-1 whitespace-nowrap text-sm py-1.5 px-3 md:px-4 rounded-full data-[state=active]:bg-white data-[state=active]:text-gray-800 data-[state=active]:shadow-sm"
                 >
                   For You
                 </TabsTrigger>
@@ -357,7 +357,7 @@ const YogaSpecificExercisesEnhanced = () => {
                     key={exercise.id}
                     exercise={exercise}
                     category="beginner"
-                    sectionColor="#FF3B77"
+                    sectionColor="#6B7280"
                     loadExerciseVideo={findExerciseVideo}
                     onShowExerciseDetail={handleShowDetail}
                     fallbackVideos={allFallbacks}
@@ -380,7 +380,7 @@ const YogaSpecificExercisesEnhanced = () => {
                     key={exercise.id}
                     exercise={exercise}
                     category="intermediate"
-                    sectionColor="#FF3B77"
+                    sectionColor="#6B7280"
                     loadExerciseVideo={findExerciseVideo}
                     onShowExerciseDetail={handleShowDetail}
                     fallbackVideos={allFallbacks}
@@ -403,7 +403,7 @@ const YogaSpecificExercisesEnhanced = () => {
                     key={exercise.id}
                     exercise={exercise}
                     category="advanced"
-                    sectionColor="#FF3B77"
+                    sectionColor="#6B7280"
                     loadExerciseVideo={findExerciseVideo}
                     onShowExerciseDetail={handleShowDetail}
                     fallbackVideos={allFallbacks}
