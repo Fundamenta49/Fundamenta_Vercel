@@ -79,16 +79,19 @@ export function PrivacyConsentModal({ onConsent, onDecline }: PrivacyConsentModa
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogContent className="sm:max-w-[500px]">
+      <AlertDialogContent className="sm:max-w-[500px] bg-white text-gray-800">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-2xl">Privacy Consent</AlertDialogTitle>
+          <AlertDialogTitle className="text-2xl text-gray-900">Privacy Consent</AlertDialogTitle>
+          <AlertDialogDescription className="sr-only">
+            Please review our privacy policy and consent to our data practices
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="space-y-4 py-2">
-          <p className="font-medium text-foreground">
+          <p className="font-medium text-gray-800">
             Your privacy is important to us at Fundamenta Life Skills.
           </p>
           
-          <div className="space-y-2 text-sm">
+          <div className="space-y-2 text-sm text-gray-700">
             <p>
               We use your personal information to provide and improve our services.
               This includes:
@@ -117,7 +120,7 @@ export function PrivacyConsentModal({ onConsent, onDecline }: PrivacyConsentModa
               understood our{" "}
               <Link 
                 href="/privacy-policy" 
-                className="text-primary underline underline-offset-4"
+                className="text-orange-600 underline underline-offset-4"
               >
                 Privacy Policy
               </Link>{" "}
@@ -126,10 +129,10 @@ export function PrivacyConsentModal({ onConsent, onDecline }: PrivacyConsentModa
           </div>
         </div>
         <AlertDialogFooter className="mt-6">
-          <AlertDialogCancel onClick={handleDecline}>
+          <AlertDialogCancel onClick={handleDecline} className="bg-gray-200 text-gray-800 hover:bg-gray-300">
             Decline
           </AlertDialogCancel>
-          <AlertDialogAction onClick={handleConsent} className="bg-primary">
+          <AlertDialogAction onClick={handleConsent} className="bg-orange-600 text-white hover:bg-orange-700">
             I Consent
           </AlertDialogAction>
         </AlertDialogFooter>
