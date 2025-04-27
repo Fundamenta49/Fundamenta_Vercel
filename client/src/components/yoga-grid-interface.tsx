@@ -205,24 +205,54 @@ export default function YogaGridInterface() {
             </div>
           </div>
           
-          {/* Active challenges section - Scrollable horizontally on mobile, grid on larger screens */}
+          {/* Active challenges section - iOS-inspired design */}
           {availableChallenges.length > 0 && (
-            <div className="mb-4">
-              <h3 className="text-sm sm:text-base font-medium mb-2 text-gray-800">Active Challenges</h3>
-              <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-3 gap-3 overflow-x-auto pb-2 -mx-3 sm:mx-0 px-3 sm:px-0 hide-scrollbar">
+            <div className="mb-6">
+              {/* iOS-style section header with styled title */}
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base sm:text-lg font-medium text-gray-800 flex items-center">
+                  <span>Active Challenges</span>
+                  <Badge className="ml-2 text-xs bg-blue-100 text-blue-700 border-0 rounded-full px-2">
+                    {availableChallenges.length}
+                  </Badge>
+                </h3>
+              </div>
+              
+              {/* Apple-style scrollable cards on mobile, grid on larger screens */}
+              <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-3 gap-4 overflow-x-auto pb-3 -mx-3 sm:mx-0 px-3 sm:px-0 hide-scrollbar">
                 {availableChallenges.map(challenge => (
-                  <div key={challenge.id} className="min-w-[200px] sm:min-w-0 flex-shrink-0 sm:flex-shrink-initial">
-                    <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-3 h-full hover:shadow-md transition-shadow">
-                      <div className="flex flex-col h-full">
-                        <h4 className="font-medium text-sm mb-1">{challenge.name}</h4>
-                        <p className="text-xs text-gray-500 mb-2 line-clamp-2 flex-grow">
+                  <div key={challenge.id} className="min-w-[240px] sm:min-w-0 flex-shrink-0 sm:flex-shrink-initial">
+                    <div className="bg-white rounded-2xl shadow-sm h-full hover:shadow-md transition-all duration-300 hover:translate-y-[-2px] overflow-hidden border-0">
+                      {/* Card with visual header bar showing difficulty */}
+                      <div className={`h-1.5 ${
+                        challenge.difficulty === 'beginner' ? 'bg-green-400' : 
+                        challenge.difficulty === 'intermediate' ? 'bg-blue-400' : 
+                        'bg-purple-400'
+                      }`} />
+                      
+                      <div className="p-4 flex flex-col h-full">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-medium text-sm">{challenge.name}</h4>
+                          <Badge className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 border-0 rounded-full">
+                            {challenge.durationDays}d
+                          </Badge>
+                        </div>
+                        
+                        <p className="text-xs text-gray-600 mb-3 line-clamp-2 flex-grow">
                           {challenge.description}
                         </p>
+                        
                         <div className="flex items-center justify-between">
-                          <Badge className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 border-0">
+                          <Badge className={`text-xs px-2 py-1 rounded-full ${
+                            challenge.difficulty === 'beginner' ? 'bg-green-50 text-green-700' : 
+                            challenge.difficulty === 'intermediate' ? 'bg-blue-50 text-blue-700' : 
+                            'bg-purple-50 text-purple-700'
+                          } border-0`}>
                             {challenge.difficulty}
                           </Badge>
-                          <span className="text-xs text-gray-500">{challenge.durationDays} days</span>
+                          <Button variant="ghost" size="sm" className="h-7 px-2 text-xs rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 border-0">
+                            Start
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -237,16 +267,19 @@ export default function YogaGridInterface() {
             Object.entries(posesByLevel)
               .sort(([levelA], [levelB]) => parseInt(levelA) - parseInt(levelB))
               .map(([level, poses]) => (
-                <div key={level} className="mb-4 sm:mb-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm sm:text-base font-medium text-gray-800">Level {level} Poses</h3>
-                    <Badge className="text-xs bg-transparent border border-gray-200 text-gray-600">
-                      <Info className="h-3 w-3 mr-1" />
-                      {poses.length} poses
-                    </Badge>
+                <div key={level} className="mb-6 sm:mb-8">
+                  {/* iOS-style section header with pill badge */}
+                  <div className="flex flex-wrap items-center justify-between mb-3">
+                    <h3 className="text-base sm:text-lg font-medium text-gray-800 flex items-center">
+                      <span>Level {level} Poses</span>
+                      <Badge className="ml-2 text-xs bg-gray-100 text-gray-700 border-0 rounded-full px-2">
+                        {poses.length}
+                      </Badge>
+                    </h3>
                   </div>
                   
-                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
+                  {/* Apple-inspired grid with larger thumbnails */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     {poses.map(pose => {
                       // Check if pose is unlocked
                       const isUnlocked = isPoseUnlocked ? isPoseUnlocked(pose.id) : true;

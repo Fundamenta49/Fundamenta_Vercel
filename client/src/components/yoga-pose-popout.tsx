@@ -223,12 +223,12 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Card 
-          className={`cursor-pointer hover:shadow-md transition-shadow duration-300 border overflow-hidden ${!unlocked ? 'opacity-75' : ''} border-gray-200 rounded-xl shadow-sm`}
+          className={`cursor-pointer overflow-hidden transition-all duration-300 border-0 rounded-2xl shadow-sm hover:shadow-md hover:translate-y-[-2px] ${!unlocked ? 'opacity-85' : ''}`}
         >
           <div className="aspect-square relative bg-gray-50">
             {isLoadingImage ? (
               <div className="flex items-center justify-center h-full">
-                <div className="animate-pulse w-8 h-8 rounded-full bg-gray-200" />
+                <div className="animate-pulse w-10 h-10 rounded-full bg-gray-200" />
               </div>
             ) : (
               <div 
@@ -243,7 +243,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                 <img 
                   src={getYogaPoseThumbnail(pose.id)}
                   alt={pose.name} 
-                  className="object-cover w-full h-full group-hover:opacity-90 transition-opacity"
+                  className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105"
                   style={{ objectFit: 'cover' }}
                   onError={(e) => {
                     console.log(`Thumbnail failed to load for ${pose.id}, trying alternative format`);
@@ -264,54 +264,58 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                   }}
                 />
                 
-                {/* Mobile-optimized video indication */}
+                {/* Apple-style video indicator with translucent background */}
                 {pose.id && getYogaPoseVideoInfo(pose.id) && (
-                  <div className="absolute bottom-1.5 right-1.5 sm:bottom-2 sm:right-2 bg-black/70 text-white text-[10px] sm:text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded flex items-center">
-                    <Youtube className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-0.5 sm:mr-1" />
-                    <span className="truncate max-w-[80px] sm:max-w-[120px]">{getYogaPoseVideoInfo(pose.id)?.title.split('(')[0] || 'Video'}</span>
+                  <div className="absolute bottom-2 right-2 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full flex items-center shadow-sm">
+                    <Youtube className="w-3 h-3 mr-1" />
+                    <span className="truncate max-w-[60px] sm:max-w-[80px]">Watch</span>
                   </div>
                 )}
                 
-                {/* Play button overlay - more subtle on mobile */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <div className="bg-black/70 rounded-full p-1.5 sm:p-2">
-                    <Youtube className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+                {/* iOS-style play button overlay with blur effect */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">
+                  <div className="opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 bg-white/20 backdrop-blur-md rounded-full p-3 shadow-lg">
+                    <Youtube className="w-5 h-5 text-white" />
                   </div>
                 </div>
               </div>
             )}
             
+            {/* iOS-style lock overlay with blur effect */}
             {!unlocked && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                <div className="text-white text-center px-3">
-                  <LockIcon className="h-5 w-5 sm:h-6 sm:w-6 mx-auto mb-0.5 sm:mb-1" />
-                  <p className="text-xs sm:text-sm">Complete level {pose.levelRequired - 1} first</p>
+              <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center">
+                <div className="text-white text-center px-4 py-3 bg-black/30 backdrop-blur-sm rounded-xl shadow-sm">
+                  <LockIcon className="h-6 w-6 mx-auto mb-1" stroke="white" strokeWidth={1.5} />
+                  <p className="text-sm font-medium">Level {pose.levelRequired - 1} required</p>
                 </div>
               </div>
             )}
             
+            {/* Achievement badge with iOS-style translucent effect */}
             {achievement && achievement.masteryLevel > 0 && (
-              <div className="absolute top-1 right-1 sm:top-2 sm:right-2">
-                <Badge className="h-4 sm:h-5 px-1 sm:px-1.5 bg-gray-900/70 text-white text-[10px] sm:text-xs">
-                  <Award className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
+              <div className="absolute top-2 right-2">
+                <Badge className="bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 border-0 rounded-full shadow-sm">
+                  <Award className="h-3 w-3 mr-1" strokeWidth={2} />
                   {achievement.masteryLevel}/5
                 </Badge>
               </div>
             )}
           </div>
           
-          <CardContent className="p-1.5 sm:p-2">
-            <div className="text-xs sm:text-sm font-medium text-gray-900 truncate">{pose.name}</div>
+          <CardContent className="p-3">
+            <div className="text-sm font-medium text-gray-900 truncate">{pose.name}</div>
             {pose.sanskritName && (
-              <div className="text-[10px] sm:text-xs text-gray-500 italic truncate">{pose.sanskritName}</div>
+              <div className="text-xs text-gray-500 italic truncate">{pose.sanskritName}</div>
             )}
-            <div className="flex items-center justify-between mt-1">
-              <Badge variant="outline" className="text-[10px] sm:text-xs capitalize px-1 sm:px-2 py-0 h-4 sm:h-5 bg-transparent border-gray-200">
+            <div className="flex items-center justify-between mt-2">
+              <Badge variant="outline" className="text-xs capitalize px-2 py-0 rounded-full bg-gray-50 border-gray-100 text-gray-700">
                 {pose.difficulty}
               </Badge>
-              <Button variant="ghost" size="sm" className="h-5 sm:h-7 px-1.5 sm:px-2 text-[10px] sm:text-xs text-gray-700 hover:text-gray-900" disabled={!unlocked}>
-                Practice
-              </Button>
+              {unlocked && (
+                <Button variant="ghost" size="sm" className="h-7 px-2 text-xs rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 border-0">
+                  Practice
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
