@@ -177,6 +177,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Update a connection (e.g., change access level or status)
   router.put("/api/connections/:id", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const userId = req.user.id;
       const connectionId = parseInt(req.params.id);
       
@@ -206,6 +210,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Delete a connection
   router.delete("/api/connections/:id", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const userId = req.user.id;
       const connectionId = parseInt(req.params.id);
       
@@ -236,6 +244,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Create a new custom pathway
   router.post("/api/pathways", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const creatorId = req.user.id;
       
       // Validate the request body
@@ -257,6 +269,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Get all pathways created by the user
   router.get("/api/pathways", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const creatorId = req.user.id;
       const pathways = await storage.getCustomPathwaysByCreator(creatorId);
       
@@ -270,6 +286,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Get a specific pathway by ID
   router.get("/api/pathways/:id", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const pathwayId = parseInt(req.params.id);
       const pathway = await storage.getCustomPathway(pathwayId);
       
@@ -304,6 +324,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Update a pathway
   router.put("/api/pathways/:id", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const pathwayId = parseInt(req.params.id);
       const pathway = await storage.getCustomPathway(pathwayId);
       
@@ -329,6 +353,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Delete a pathway
   router.delete("/api/pathways/:id", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const pathwayId = parseInt(req.params.id);
       const pathway = await storage.getCustomPathway(pathwayId);
       
@@ -358,6 +386,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Add a module to a pathway
   router.post("/api/pathways/:id/modules", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const pathwayId = parseInt(req.params.id);
       const pathway = await storage.getCustomPathway(pathwayId);
       
@@ -475,6 +507,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Assign a pathway to a student
   router.post("/api/pathways/:id/assign", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const pathwayId = parseInt(req.params.id);
       const assignerId = req.user.id;
       const { studentId, dueDate } = req.body;
@@ -524,6 +560,10 @@ export default function registerMentorshipRoutes(router: Router) {
   // Get assignments for a student
   router.get("/api/students/:id/assignments", isAuthenticated, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
       const studentId = parseInt(req.params.id);
       const userId = req.user.id;
       
