@@ -40,7 +40,8 @@ router.get("/connections", isAuthenticated, (async (req: AuthRequest, res) => {
     // For each connection, fetch the related user details
     const enrichedMentorConnections = await Promise.all(
       mentorConnections.map(async (connection) => {
-        const targetUser = await storage.getUser(connection.studentId);
+        // Only fetch target user if studentId is not null
+        const targetUser = connection.studentId ? await storage.getUser(connection.studentId) : null;
         return {
           ...connection,
           targetUser: targetUser ? {
@@ -56,7 +57,7 @@ router.get("/connections", isAuthenticated, (async (req: AuthRequest, res) => {
 
     const enrichedStudentConnections = await Promise.all(
       studentConnections.map(async (connection) => {
-        const sourceUser = await storage.getUser(connection.mentorId);
+        const sourceUser = connection.mentorId ? await storage.getUser(connection.mentorId) : null;
         return {
           ...connection,
           sourceUser: sourceUser ? {
@@ -94,7 +95,7 @@ router.get("/connections/pending", isAuthenticated, (async (req: AuthRequest, re
     // Enrich with mentor details
     const enrichedPendingConnections = await Promise.all(
       pendingConnections.map(async (connection) => {
-        const mentorUser = await storage.getUser(connection.mentorId);
+        const mentorUser = connection.mentorId ? await storage.getUser(connection.mentorId) : null;
         return {
           ...connection,
           mentor: mentorUser ? {
@@ -129,7 +130,7 @@ router.post("/connections/create", isAuthenticated, (async (req: AuthRequest, re
     const connectionCode = generatePairingCode();
     
     // If studentEmail is provided, try to find that student
-    let studentId = null;
+    let studentId: number | null = null;
     if (studentEmail) {
       const student = await storage.getUserByEmail(studentEmail);
       if (student) {
@@ -147,7 +148,7 @@ router.post("/connections/create", isAuthenticated, (async (req: AuthRequest, re
     // Create a new connection
     const newConnection = await storage.createConnection({
       mentorId: userId,
-      studentId: studentId || null, // If no student found, leave as null for now
+      studentId, // Will be null if no student found
       connectionType,
       status: studentId ? connectionStatuses.PENDING : connectionStatuses.PENDING,
       connectionCode,

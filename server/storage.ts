@@ -194,6 +194,7 @@ export class MemStorage implements IStorage {
       id,
       createdAt: now,
       updatedAt: now,
+      studentId: connection.studentId || null, // Ensure studentId is never undefined
       status: connection.status || "pending",
       accessLevel: connection.accessLevel || "standard",
       connectionCode: connection.connectionCode || null,
@@ -251,9 +252,15 @@ export class MemStorage implements IStorage {
     const connection = this.userConnections.get(id);
     if (!connection) return undefined;
     
+    // Ensure studentId is never undefined
+    const safeUpdates = {
+      ...updates,
+      studentId: updates.studentId !== undefined ? (updates.studentId || null) : connection.studentId
+    };
+    
     const updatedConnection: UserConnection = {
       ...connection,
-      ...updates,
+      ...safeUpdates,
       id, // Ensure ID doesn't change
       updatedAt: new Date(),
     };
