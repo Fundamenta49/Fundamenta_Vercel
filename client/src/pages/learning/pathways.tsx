@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation } from "wouter";
-import { ArrowLeft, BarChart3, Lock, Rocket, Unlock } from "lucide-react";
+import { ArrowLeft, BarChart3, Lock, Rocket, Unlock, Palmtree, Leaf } from "lucide-react";
+import { useJungleTheme } from "../../jungle-path/contexts/JungleThemeContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +41,7 @@ export default function LearningPathwaysPage() {
   const [expandedPath, setExpandedPath] = React.useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { isJungleTheme, toggleJungleTheme } = useJungleTheme();
   
   // For demo purposes, we'll use a hardcoded user ID
   // In a real app, this would come from authentication context
@@ -84,8 +86,18 @@ export default function LearningPathwaysPage() {
       .find(p => p.id === pathwayId)
       ?.modules.find(m => m.id === moduleId);
       
-    if (module) {
-      navigate(module.path);
+    if (module && module.href) {
+      navigate(module.href);
+    } else {
+      // If no href is available, go to the jungle-themed page
+      navigate('/learning/jungle-pathways');
+      toast({
+        title: "Module Navigation",
+        description: "This module is available in adventure mode. Enabling jungle theme.",
+      });
+      if (!isJungleTheme) {
+        toggleJungleTheme();
+      }
     }
   };
   
@@ -110,7 +122,9 @@ export default function LearningPathwaysPage() {
   };
   
   return (
-    <div className="container mx-auto px-4 py-6 max-w-6xl">
+    <div className={`container mx-auto px-4 py-6 max-w-6xl ${
+      isJungleTheme ? 'bg-[#1E4A3D]/10 rounded-lg shadow-inner' : ''
+    }`}>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
           <Button 
@@ -128,14 +142,25 @@ export default function LearningPathwaysPage() {
           </h1>
         </div>
 
-        <Button 
-          variant="outline"
-          onClick={() => navigate('/learning/analytics')}
-          className="flex items-center"
-        >
-          <BarChart3 className="h-4 w-4 mr-2" />
-          View Analytics
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant={isJungleTheme ? "default" : "outline"}
+            onClick={toggleJungleTheme}
+            className="flex items-center transition-all transform hover:scale-105"
+          >
+            <Palmtree className="h-4 w-4 mr-2" />
+            {isJungleTheme ? "Adventure Mode: ON" : "Adventure Mode"}
+          </Button>
+
+          <Button 
+            variant="outline"
+            onClick={() => navigate('/learning/analytics')}
+            className="flex items-center"
+          >
+            <BarChart3 className="h-4 w-4 mr-2" />
+            View Analytics
+          </Button>
+        </div>
       </div>
 
       <div className="mb-6">
