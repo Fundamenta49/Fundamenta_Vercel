@@ -282,52 +282,76 @@ const YogaSpecificExercisesEnhanced = () => {
   
   return (
     <div className="mx-auto w-full max-w-4xl">
-      <Card className="shadow-md border-pink-100">
-        <div className="p-4 bg-gradient-to-r from-pink-50 to-white">
-          <h2 className="text-2xl font-semibold text-pink-700 mb-2">Yoga Practice</h2>
-          <p className="text-gray-600 mb-4">
+      {/* Apple-inspired minimalist container - removed nested Card for mobile */}
+      <div className="bg-white md:shadow-md md:border md:border-pink-100 md:rounded-xl overflow-hidden">
+        <div className="p-3 md:p-4 bg-white">
+          {/* Header section with simplified styling */}
+          <h2 className="text-xl md:text-2xl font-medium text-gray-800 mb-1 md:mb-2">Yoga Practice</h2>
+          
+          {/* Collapsible description for mobile - only shows on larger screens by default */}
+          <p className="hidden md:block text-gray-600 mb-4">
             Yoga combines physical postures, breathing techniques, and meditation to improve strength, flexibility, and mental wellbeing.
-            Choose your level below to get started.
           </p>
           
-          {/* Activity-specific recommendations and profile prompt */}
-          <ActivitySpecificRecommendations 
-            activityType="yoga"
-            onStartWorkout={handleStartWorkout} 
-          />
-          
+          {/* Error alert with iOS-style design */}
           {error && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3 mb-4 flex items-start">
-              <AlertCircle className="text-yellow-500 mr-2 flex-shrink-0 h-5 w-5 mt-0.5" />
-              <p className="text-sm text-yellow-700">{error}</p>
+            <div className="bg-yellow-50 border-l-4 border-yellow-500 p-2 md:p-3 mb-3 flex items-start rounded-r">
+              <AlertCircle className="text-yellow-500 mr-2 flex-shrink-0 h-4 w-4 mt-0.5" />
+              <p className="text-xs md:text-sm text-yellow-700">{error}</p>
             </div>
           )}
           
+          {/* iOS-style tab navigation */}
           <Tabs defaultValue="beginner" value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full grid grid-cols-4 bg-pink-100">
-              <TabsTrigger value="beginner" className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800">
-                Beginner
-              </TabsTrigger>
-              <TabsTrigger value="intermediate" className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800">
-                Intermediate
-              </TabsTrigger>
-              <TabsTrigger value="advanced" className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800">
-                Advanced
-              </TabsTrigger>
-              <TabsTrigger value="recommendations" className="data-[state=active]:bg-pink-200 data-[state=active]:text-pink-800">
-                For You
-              </TabsTrigger>
-            </TabsList>
+            {/* Horizontal scrollable tabs for mobile */}
+            <div className="relative mb-2 md:mb-4">
+              <TabsList className="w-full overflow-x-auto flex md:grid md:grid-cols-4 no-scrollbar rounded-full bg-gray-100 p-0.5 border border-gray-200">
+                <TabsTrigger 
+                  value="beginner" 
+                  className="flex-1 whitespace-nowrap text-sm py-1.5 px-3 md:px-4 rounded-full data-[state=active]:bg-white data-[state=active]:text-pink-800 data-[state=active]:shadow-sm"
+                >
+                  Beginner
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="intermediate" 
+                  className="flex-1 whitespace-nowrap text-sm py-1.5 px-3 md:px-4 rounded-full data-[state=active]:bg-white data-[state=active]:text-pink-800 data-[state=active]:shadow-sm"
+                >
+                  Intermediate
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="advanced" 
+                  className="flex-1 whitespace-nowrap text-sm py-1.5 px-3 md:px-4 rounded-full data-[state=active]:bg-white data-[state=active]:text-pink-800 data-[state=active]:shadow-sm"
+                >
+                  Advanced
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="recommendations" 
+                  className="flex-1 whitespace-nowrap text-sm py-1.5 px-3 md:px-4 rounded-full data-[state=active]:bg-white data-[state=active]:text-pink-800 data-[state=active]:shadow-sm"
+                >
+                  For You
+                </TabsTrigger>
+              </TabsList>
+            </div>
             
-            <TabsContent value="beginner" className="pt-4">
-              <div className="mb-3 bg-pink-50 p-3 rounded-md">
-                <h3 className="font-medium text-pink-800 mb-1">Beginner Poses</h3>
-                <p className="text-sm text-gray-600">
+            {/* Activity recommendations - only show this component on the recommendations tab on mobile */}
+            <div className={`${activeTab === 'recommendations' ? 'block' : 'hidden md:block'} mb-4`}>
+              <ActivitySpecificRecommendations 
+                activityType="yoga"
+                onStartWorkout={handleStartWorkout} 
+              />
+            </div>
+            
+            {/* Beginner tab content with simplified mobile styling */}
+            <TabsContent value="beginner" className="pt-1 md:pt-3">
+              {/* Collapsible description with iOS-style design */}
+              <div className="mb-3 border-l-2 border-pink-400 pl-2 py-1 md:p-3 md:rounded-md">
+                <h3 className="font-medium text-gray-800 text-sm md:text-base">Beginner Poses</h3>
+                {/* Show abbreviated description on mobile, full on desktop */}
+                <p className="hidden md:block text-xs md:text-sm text-gray-600 mt-1">
                   These foundational poses focus on proper alignment and building body awareness.
-                  Perfect for those new to yoga or returning after a break.
                 </p>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {YOGA_EXERCISES.beginner.map((exercise) => (
                   <EnhancedExerciseCard 
                     key={exercise.id}
@@ -342,15 +366,15 @@ const YogaSpecificExercisesEnhanced = () => {
               </div>
             </TabsContent>
             
-            <TabsContent value="intermediate" className="pt-4">
-              <div className="mb-3 bg-pink-50 p-3 rounded-md">
-                <h3 className="font-medium text-pink-800 mb-1">Intermediate Poses</h3>
-                <p className="text-sm text-gray-600">
+            {/* Intermediate tab content with simplified mobile styling */}
+            <TabsContent value="intermediate" className="pt-1 md:pt-3">
+              <div className="mb-3 border-l-2 border-pink-400 pl-2 py-1 md:p-3 md:rounded-md">
+                <h3 className="font-medium text-gray-800 text-sm md:text-base">Intermediate Poses</h3>
+                <p className="hidden md:block text-xs md:text-sm text-gray-600 mt-1">
                   These poses build on fundamentals to incorporate balance, strength, and flexibility.
-                  Suitable for practitioners with a solid foundation in basic poses.
                 </p>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {YOGA_EXERCISES.intermediate.map((exercise) => (
                   <EnhancedExerciseCard 
                     key={exercise.id}
@@ -365,15 +389,15 @@ const YogaSpecificExercisesEnhanced = () => {
               </div>
             </TabsContent>
             
-            <TabsContent value="advanced" className="pt-4">
-              <div className="mb-3 bg-pink-50 p-3 rounded-md">
-                <h3 className="font-medium text-pink-800 mb-1">Advanced Poses</h3>
-                <p className="text-sm text-gray-600">
+            {/* Advanced tab content with simplified mobile styling */}
+            <TabsContent value="advanced" className="pt-1 md:pt-3">
+              <div className="mb-3 border-l-2 border-pink-400 pl-2 py-1 md:p-3 md:rounded-md">
+                <h3 className="font-medium text-gray-800 text-sm md:text-base">Advanced Poses</h3>
+                <p className="hidden md:block text-xs md:text-sm text-gray-600 mt-1">
                   These challenging poses require strength, flexibility, and body awareness.
-                  Approach with patience and proper preparation.
                 </p>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {YOGA_EXERCISES.advanced.map((exercise) => (
                   <EnhancedExerciseCard 
                     key={exercise.id}
@@ -388,8 +412,9 @@ const YogaSpecificExercisesEnhanced = () => {
               </div>
             </TabsContent>
             
-            {/* Recommendations Tab */}
-            <TabsContent value="recommendations" className="pt-4">
+            {/* Recommendations Tab with simplified mobile styling */}
+            <TabsContent value="recommendations" className="pt-1 md:pt-3">
+              {/* On desktop, this is duplicated from above, but on mobile it's the main display */}
               <ActivitySpecificRecommendations 
                 activityType="yoga" 
                 onStartWorkout={handleStartWorkout}
@@ -397,7 +422,9 @@ const YogaSpecificExercisesEnhanced = () => {
             </TabsContent>
           </Tabs>
         </div>
-      </Card>
+      </div>
+
+      {/* Adding scrollbar styles via global CSS instead of JSX */}
     </div>
   );
 };

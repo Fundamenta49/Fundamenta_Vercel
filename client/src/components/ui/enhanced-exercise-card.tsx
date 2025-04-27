@@ -177,61 +177,67 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
     >
       <Card className="overflow-hidden border shadow-sm hover:shadow-md transition-shadow duration-200">
         <CardContent className="p-0">
-          {/* Card Header - Always visible */}
+          {/* Card Header - Always visible - iOS-style with cleaner spacing */}
           <div 
-            className="p-4 cursor-pointer transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-900"
+            className="p-3 md:p-4 cursor-pointer transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-900"
             onClick={handleToggle}
             style={{
-              borderLeft: isOpen ? `4px solid ${sectionColor}` : '4px solid transparent',
+              borderLeft: isOpen ? `3px solid ${sectionColor}` : '3px solid transparent',
             }}
           >
-            <div className="flex items-center justify-between">
-              <div className="flex-1 pr-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-lg text-gray-900">{exercise.name}</h3>
+            <div className="flex items-start md:items-center justify-between">
+              <div className="flex-1 pr-3">
+                {/* Mobile-optimized header with stacked elements */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                  <h3 className="font-medium text-base md:text-lg text-gray-900">{exercise.name}</h3>
                   <Badge 
                     variant="outline" 
-                    className={`text-xs font-medium ${getDifficultyColor()}`}
+                    className={`text-[10px] md:text-xs font-medium w-fit ${getDifficultyColor()}`}
                   >
                     {exercise.difficulty}
                   </Badge>
                 </div>
-                <p className="text-sm text-gray-600 line-clamp-2">{exercise.description}</p>
+                <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mt-0.5 md:mt-1">{exercise.description}</p>
               </div>
               
-              <div className="flex flex-col items-center gap-1">
+              {/* iOS-style toggle button with tap-friendly size */}
+              <div className="flex-shrink-0">
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  className="h-8 w-8 p-0 rounded-full"
+                  className="h-8 w-8 p-0 rounded-full -mt-1"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleToggle();
                   }}
                 >
                   {isOpen ? (
-                    <ChevronUp className="h-5 w-5 text-gray-500" />
+                    <ChevronUp className="h-4 w-4 md:h-5 md:w-5 text-gray-500" />
                   ) : (
-                    <ChevronDown className="h-5 w-5 text-gray-500" />
+                    <ChevronDown className="h-4 w-4 md:h-5 md:w-5 text-gray-500" />
                   )}
                   <span className="sr-only">{isOpen ? 'Collapse' : 'Expand'}</span>
                 </Button>
               </div>
             </div>
             
-            {/* Quick info tags */}
-            <div className="flex flex-wrap gap-2 mt-2">
+            {/* Simplified info tags with subtle separators */}
+            <div className="flex flex-wrap items-center gap-2 mt-1.5 md:mt-2 text-[10px] md:text-xs text-gray-500">
               {exercise.equipment.length > 0 && exercise.equipment[0] !== 'none' && (
-                <div className="flex items-center text-xs text-gray-500">
-                  <Dumbbell className="h-3 w-3 mr-1" />
-                  <span>{exercise.equipment.join(', ')}</span>
+                <div className="flex items-center">
+                  <Dumbbell className="h-2.5 w-2.5 md:h-3 md:w-3 mr-1" />
+                  <span className="truncate max-w-[120px] md:max-w-none">{exercise.equipment.join(', ')}</span>
                 </div>
               )}
               
+              {exercise.equipment.length > 0 && exercise.muscleGroups.length > 0 && (
+                <span className="text-gray-300">•</span>
+              )}
+              
               {exercise.muscleGroups.length > 0 && (
-                <div className="flex items-center text-xs text-gray-500">
-                  <Flame className="h-3 w-3 mr-1" />
-                  <span>{exercise.muscleGroups.slice(0, 2).join(', ')}{exercise.muscleGroups.length > 2 ? '...' : ''}</span>
+                <div className="flex items-center">
+                  <Flame className="h-2.5 w-2.5 md:h-3 md:w-3 mr-1" />
+                  <span className="truncate max-w-[120px] md:max-w-none">{exercise.muscleGroups.slice(0, 2).join(', ')}{exercise.muscleGroups.length > 2 ? '...' : ''}</span>
                 </div>
               )}
             </div>
@@ -261,28 +267,31 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
                   </Button>
                 </div>
                 
-                <div className="p-4 pt-6">
+                {/* iOS-styled content with improved spacing and typography */}
+                <div className="p-3 md:p-4 pt-6">
                   {/* Media section - Video or Image */}
-                  <div className="mb-4">
+                  <div className="mb-3 md:mb-4">
                     {isLoading ? (
-                      <Skeleton className="w-full h-48 rounded-md" />
+                      <Skeleton className="w-full h-40 md:h-48 rounded-lg" />
                     ) : exerciseVideo ? (
-                      <div className="relative rounded-md overflow-hidden">
+                      <div className="relative rounded-lg overflow-hidden bg-black/5">
                         <EmbeddedYouTubePlayer
                           videoId={exerciseVideo.id}
                           title={exerciseVideo.title}
-                          height={isVideoExpanded ? "350px" : "225px"}
+                          height={isVideoExpanded ? "300px" : "200px"}
                           width="100%"
                         />
                         
-                        <div className="absolute top-0 left-0 w-full p-2 bg-gradient-to-b from-black/50 to-transparent">
-                          <h4 className="text-white text-sm font-medium line-clamp-1">{exerciseVideo.title}</h4>
+                        {/* iOS-style video title overlay */}
+                        <div className="absolute top-0 left-0 w-full p-2 bg-gradient-to-b from-black/60 to-transparent">
+                          <h4 className="text-white text-xs md:text-sm font-medium line-clamp-1">{exerciseVideo.title}</h4>
                         </div>
                         
+                        {/* iOS-style control button */}
                         <Button
                           variant="secondary"
                           size="sm"
-                          className="absolute bottom-2 right-2 bg-white/80 hover:bg-white text-gray-900"
+                          className="absolute bottom-2 right-2 bg-white/90 hover:bg-white text-gray-800 text-xs rounded-full shadow-sm py-1 h-7"
                           onClick={() => setIsVideoExpanded(!isVideoExpanded)}
                         >
                           {isVideoExpanded ? 'Collapse' : 'Expand'}
@@ -293,14 +302,14 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
                         <img 
                           src={exercise.imageUrl} 
                           alt={exercise.name} 
-                          className="w-full h-48 object-cover rounded-md" 
+                          className="w-full h-40 md:h-48 object-cover rounded-lg bg-black/5" 
                         />
                         
                         {loadExerciseVideo && (
                           <Button
                             variant="secondary"
                             size="sm"
-                            className="absolute bottom-2 right-2 bg-white/80 hover:bg-white text-gray-900 shadow-md"
+                            className="absolute bottom-2 right-2 bg-white/90 hover:bg-white text-gray-800 text-xs rounded-full shadow-sm py-1.5 h-8"
                             onClick={(e) => {
                               e.stopPropagation();
                               loadVideo();
@@ -309,7 +318,7 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
                           >
                             {isLoading ? (
                               <span className="flex items-center">
-                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg className="animate-spin mr-1.5 h-3 w-3 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
@@ -317,7 +326,7 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
                               </span>
                             ) : (
                               <span className="flex items-center">
-                                <Play className="h-4 w-4 mr-1" />
+                                <Play className="h-3 w-3 mr-1.5" />
                                 View Video
                               </span>
                             )}
@@ -325,50 +334,50 @@ export function EnhancedExerciseCard<T extends BaseExercise>({
                         )}
                       </div>
                     ) : (
-                      <div className="w-full h-32 bg-gray-100 rounded-md flex items-center justify-center">
-                        <p className="text-gray-500 text-sm">No image available</p>
+                      <div className="w-full h-24 md:h-32 bg-gray-50 rounded-lg flex items-center justify-center">
+                        <p className="text-gray-400 text-xs md:text-sm">No image available</p>
                       </div>
                     )}
                   </div>
                   
-                  {/* Instructions */}
-                  <div className="mb-4">
-                    <h4 className="font-medium text-gray-900 mb-2 flex items-center">
-                      <BarChart className="h-4 w-4 mr-1 text-gray-500" />
+                  {/* Instruction section with iOS-style design */}
+                  <div className="mb-3 md:mb-4">
+                    <h4 className="font-medium text-gray-800 text-sm md:text-base mb-1.5 md:mb-2 flex items-center">
+                      <BarChart className="h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5 text-gray-500" />
                       Instructions
                     </h4>
-                    <ol className="list-decimal pl-5 space-y-1 text-gray-700">
+                    <ol className="list-decimal pl-4 md:pl-5 space-y-0.5 md:space-y-1 text-gray-700">
                       {exercise.instructions.map((instruction, idx) => (
-                        <li key={idx} className="text-sm">{instruction}</li>
+                        <li key={idx} className="text-xs md:text-sm py-0.5">{instruction}</li>
                       ))}
                     </ol>
                   </div>
                   
-                  {/* Benefits - if available */}
+                  {/* Benefits section with iOS-style design */}
                   {exercise.benefits && exercise.benefits.length > 0 && (
-                    <div className="mb-4">
-                      <h4 className="font-medium text-gray-900 mb-2 flex items-center">
-                        <Flame className="h-4 w-4 mr-1 text-pink-500" />
+                    <div className="mb-3 md:mb-4">
+                      <h4 className="font-medium text-gray-800 text-sm md:text-base mb-1.5 md:mb-2 flex items-center">
+                        <Flame className="h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5 text-pink-500" />
                         Benefits
                       </h4>
-                      <ul className="list-disc pl-5 space-y-1 text-gray-700">
+                      <ul className="list-disc pl-4 md:pl-5 space-y-0.5 md:space-y-1 text-gray-700">
                         {exercise.benefits.map((benefit, idx) => (
-                          <li key={idx} className="text-sm">{benefit}</li>
+                          <li key={idx} className="text-xs md:text-sm py-0.5">{benefit}</li>
                         ))}
                       </ul>
                     </div>
                   )}
                   
-                  {/* Tips - if available */}
+                  {/* Tips section with iOS-style design */}
                   {exercise.tips && exercise.tips.length > 0 && (
-                    <div className="mb-4">
-                      <h4 className="font-medium text-gray-900 mb-2 flex items-center">
-                        <Info className="h-4 w-4 mr-1 text-blue-500" />
+                    <div className="mb-3 md:mb-4">
+                      <h4 className="font-medium text-gray-800 text-sm md:text-base mb-1.5 md:mb-2 flex items-center">
+                        <Info className="h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5 text-blue-500" />
                         Tips
                       </h4>
-                      <ul className="list-disc pl-5 space-y-1 text-gray-700">
+                      <ul className="list-disc pl-4 md:pl-5 space-y-0.5 md:space-y-1 text-gray-700">
                         {exercise.tips.map((tip, idx) => (
-                          <li key={idx} className="text-sm">{tip}</li>
+                          <li key={idx} className="text-xs md:text-sm py-0.5">{tip}</li>
                         ))}
                       </ul>
                     </div>
