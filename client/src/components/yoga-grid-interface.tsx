@@ -235,16 +235,16 @@ export default function YogaGridInterface() {
             Object.entries(posesByLevel)
               .sort(([levelA], [levelB]) => parseInt(levelA) - parseInt(levelB))
               .map(([level, poses]) => (
-                <div key={level} className="mb-5">
+                <div key={level} className="mb-4 sm:mb-5">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-base font-medium text-gray-800">Level {level} Poses</h3>
+                    <h3 className="text-sm sm:text-base font-medium text-gray-800">Level {level} Poses</h3>
                     <Badge className="text-xs bg-transparent border border-gray-200 text-gray-600">
                       <Info className="h-3 w-3 mr-1" />
                       {poses.length} poses
                     </Badge>
                   </div>
                   
-                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
                     {poses.map(pose => {
                       // Check if pose is unlocked
                       const isUnlocked = isPoseUnlocked ? isPoseUnlocked(pose.id) : true;
