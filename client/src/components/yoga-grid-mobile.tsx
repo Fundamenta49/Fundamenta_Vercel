@@ -253,9 +253,9 @@ export default function YogaGridMobile() {
           Object.entries(posesByLevel)
             .sort(([levelA], [levelB]) => parseInt(levelA) - parseInt(levelB))
             .map(([level, poses]: [string, any[]]) => (
-              <div key={level} className="px-4 sm:px-6 py-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-base font-medium text-gray-800">Level {level} Poses</h3>
+              <div key={level} className="px-4 sm:px-6 py-4 sm:py-4 mb-6 sm:mb-3">
+                <div className="flex items-center justify-between mb-5 sm:mb-3 pb-2 border-b border-gray-100">
+                  <h3 className="text-lg sm:text-base font-medium text-gray-800">Level {level} Poses</h3>
                   <Badge variant="outline" className="text-xs bg-gray-50 rounded-full">
                     {poses.length} poses
                   </Badge>
@@ -270,7 +270,7 @@ export default function YogaGridMobile() {
                     const achievement = userProgress?.poseAchievements?.[pose.id];
                     
                     return (
-                      <div key={pose.id} className="group">
+                      <div key={pose.id} className="group mb-8 sm:mb-0">
                         <YogaPosePopout 
                           pose={{
                             ...pose,

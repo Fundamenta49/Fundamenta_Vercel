@@ -239,9 +239,9 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger asChild className="block w-full h-full">
         <Card 
-          className={`cursor-pointer overflow-hidden transition-all duration-300 border-0 rounded-2xl shadow-sm hover:shadow-md hover:translate-y-[-2px] ${!unlocked ? 'opacity-85' : ''}`}
+          className={`cursor-pointer overflow-hidden transition-all duration-300 border-0 rounded-2xl shadow-sm hover:shadow-md hover:translate-y-[-2px] ${!unlocked ? 'opacity-85' : ''} ${isMobile ? 'w-full mx-auto max-w-md' : ''}`}
         >
           {/* iOS-style subtle gradient accent at top */}
           <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
@@ -327,17 +327,17 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
             )}
           </div>
           
-          <CardContent className="p-3">
-            <div className="text-sm font-medium text-gray-900 truncate">{pose.name}</div>
+          <CardContent className={`${isMobile ? 'p-4' : 'p-3'}`}>
+            <div className={`${isMobile ? 'text-base' : 'text-sm'} font-medium text-gray-900 truncate`}>{pose.name}</div>
             {pose.sanskritName && (
-              <div className="text-xs text-gray-500 italic truncate">{pose.sanskritName}</div>
+              <div className={`${isMobile ? 'text-sm' : 'text-xs'} text-gray-500 italic truncate`}>{pose.sanskritName}</div>
             )}
             <div className="flex items-center justify-between mt-2">
-              <Badge variant="outline" className="text-xs capitalize px-2 py-0 rounded-full bg-gray-50 border-gray-100 text-gray-700">
+              <Badge variant="outline" className={`${isMobile ? 'text-sm' : 'text-xs'} capitalize px-2 py-0.5 rounded-full bg-gray-50 border-gray-100 text-gray-700`}>
                 {pose.difficulty}
               </Badge>
               {unlocked && (
-                <Button variant="ghost" size="sm" className="h-7 px-2 text-xs rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 border-0">
+                <Button variant="ghost" size="sm" className={`h-7 px-3 ${isMobile ? 'text-sm' : 'text-xs'} rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 border-0`}>
                   Practice
                 </Button>
               )}
