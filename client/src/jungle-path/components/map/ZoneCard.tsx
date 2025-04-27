@@ -1,31 +1,22 @@
 import React from 'react';
-import { useLocation } from 'wouter';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { Lock, ArrowRight } from 'lucide-react';
-import { ZONE_ICONS } from '../../data/zones';
-import { getZoneStyle } from '../../styles/theme';
-import { AchievementCategory } from '@/shared/arcade-schema';
+import { JungleZone } from '../../types/zone';
+import { Lock, MapPin } from 'lucide-react';
 
 interface ZoneCardProps {
-  zone: {
-    id: string;
-    name: string;
-    description: string;
-    category: AchievementCategory;
-    requiredRank: number;
-  };
-  progress: number;
+  zone: JungleZone;
+  progress: number; // 0-100
   isUnlocked: boolean;
   questCount: number;
   completedQuests: number;
+  onClick?: () => void;
   className?: string;
-  compact?: boolean;
 }
 
 /**
- * Card component representing a zone in the jungle map
+ * ZoneCard displays a jungle zone as a card with progress information
  */
 const ZoneCard: React.FC<ZoneCardProps> = ({
   zone,
@@ -33,78 +24,70 @@ const ZoneCard: React.FC<ZoneCardProps> = ({
   isUnlocked,
   questCount,
   completedQuests,
-  className = '',
-  compact = false
+  onClick,
+  className = ''
 }) => {
-  const [, navigate] = useLocation();
-  const zoneStyle = getZoneStyle(zone.category);
-  const ZoneIcon = ZONE_ICONS[zone.category];
-  
-  // If zone is locked, show locked version
-  if (!isUnlocked) {
-    return (
-      <Card className={`border-2 border-dashed border-gray-200 bg-gray-50 ${className}`}>
-        <CardContent className={`${compact ? 'p-3' : 'p-4'} flex items-center gap-3`}>
-          <div className="rounded-full bg-gray-100 p-2 flex-shrink-0">
-            <Lock className="h-5 w-5 text-gray-400" />
-          </div>
-          <div>
-            <h3 className="font-medium text-gray-400">Locked Zone</h3>
-            <p className="text-xs text-gray-400">
-              Reach rank {zone.requiredRank} to unlock
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-  
   return (
     <Card 
-      className={`border-2 ${zoneStyle.cardClass} hover:shadow-md transition-all ${className}`}
-      onClick={() => !compact && navigate(`/jungle/${zone.category}`)}
+      className={`overflow-hidden ${className} ${isUnlocked ? 'hover:shadow-md cursor-pointer' : 'opacity-80'}`}
+      onClick={() => isUnlocked && onClick && onClick()}
     >
-      <CardContent className={`${compact ? 'p-3' : 'p-4'} flex items-center gap-3`}>
-        <div className={`rounded-full ${zoneStyle.iconBg} p-2 flex-shrink-0`}>
-          <ZoneIcon className={`h-5 w-5 ${zoneStyle.textClass}`} />
-        </div>
-        <div className="flex-1">
-          <h3 className={`font-medium ${zoneStyle.textClass}`}>{zone.name}</h3>
-          {!compact && (
-            <p className="text-xs text-gray-600 mt-1">
-              {zone.description.length > 60 
-                ? zone.description.substring(0, 60) + '...' 
-                : zone.description}
-            </p>
+      <div className="h-2" style={{ backgroundColor: zone.color }}></div>
+      
+      <CardContent className="pt-4">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="font-bold text-lg">{zone.name}</h3>
+          
+          {!isUnlocked && (
+            <Lock size={18} className="text-muted-foreground" />
           )}
-          <div className="mt-2 space-y-1">
+        </div>
+        
+        <p className="text-sm text-muted-foreground mb-3">
+          {zone.description}
+        </p>
+        
+        {isUnlocked ? (
+          <div className="mb-1">
+            <div className="flex justify-between text-sm mb-1">
+              <span>Zone Progress</span>
+              <span>{progress}%</span>
+            </div>
             <Progress 
               value={progress} 
-              className={`h-1.5 ${zoneStyle.progressClass}`} 
+              className="h-1.5"
+              style={{
+                '--progress-foreground': zone.color
+              } as React.CSSProperties} 
             />
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>{completedQuests} of {questCount} quests</span>
-              <span>{progress}% complete</span>
+            <div className="text-xs text-muted-foreground mt-1">
+              {completedQuests} of {questCount} quests completed
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center text-sm text-muted-foreground mb-2">
+            <MapPin size={14} className="mr-1" />
+            <span>Requires Rank {zone.requiredRank}</span>
+          </div>
+        )}
       </CardContent>
       
-      {!compact && (
-        <CardFooter className="pt-0">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className={`w-full ${zoneStyle.buttonClass}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/jungle/${zone.category}`);
-            }}
-          >
-            Explore Zone <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </CardFooter>
-      )}
+      <CardFooter className="pt-0">
+        <Button 
+          variant={isUnlocked ? "default" : "outline"}
+          size="sm"
+          className="w-full"
+          disabled={!isUnlocked}
+          style={isUnlocked ? { backgroundColor: zone.color } : {}}
+        >
+          {isUnlocked 
+            ? completedQuests === questCount && questCount > 0
+              ? 'Zone Completed'
+              : 'Explore Zone'
+            : 'Zone Locked'
+          }
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

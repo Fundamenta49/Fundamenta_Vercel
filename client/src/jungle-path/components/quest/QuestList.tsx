@@ -1,231 +1,135 @@
-import React, { useState } from 'react';
-import { AchievementCategory } from '@/shared/arcade-schema';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { 
-  FilterX, 
-  Search, 
-  Clock, 
-  Sparkles, 
-  TrendingUp, 
-  Check, 
-  Clock3 
-} from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { JungleQuest } from '../../types/quest';
 import QuestCard from './QuestCard';
-import { JungleQuest } from '../../data/quests';
-import { ZONE_NAMES } from '../../utils/zoneUtils';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { getZoneByCategory, getAllZones } from '../../utils/zoneUtils';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
+
+type UserAchievements = Record<string, { 
+  unlockedAt: string | null;
+  progress: number;
+}>;
 
 interface QuestListProps {
   quests: JungleQuest[];
-  userAchievements: Record<string, { unlockedAt: Date | null, progress: number }>;
+  userAchievements: UserAchievements;
   userRank: number;
-  maxColumns?: 1 | 2 | 3 | 4;
+  onQuestClick?: (questId: string) => void;
   showFilters?: boolean;
   className?: string;
 }
 
-type SortOption = 'newest' | 'difficulty' | 'points' | 'time';
-type FilterOption = 'all' | 'inProgress' | 'completed' | 'locked' | 'unlocked';
-
 /**
- * Displays a filterable, sortable grid of jungle quests
+ * QuestList displays a filterable grid of quest cards
  */
 const QuestList: React.FC<QuestListProps> = ({
   quests,
   userAchievements,
   userRank,
-  maxColumns = 3,
+  onQuestClick,
   showFilters = true,
   className = ''
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeZone, setActiveZone] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<SortOption>('newest');
-  const [filterBy, setFilterBy] = useState<FilterOption>('all');
+  const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   
-  // Extract all unique zones from quests
-  const zones = ['all', ...new Set(quests.map(q => q.category))];
+  // Get all available zone categories
+  const availableCategories = useMemo(() => {
+    const categories = new Set(quests.map(quest => quest.category));
+    return ['all', ...Array.from(categories)];
+  }, [quests]);
   
-  // Filter quests by search, zone, and status
-  const filteredQuests = quests.filter(quest => {
-    // Check search term
-    const matchesSearch = searchTerm === '' || 
-      quest.jungleTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      quest.jungleDescription.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    // Check zone
-    const matchesZone = activeZone === 'all' || quest.category === activeZone;
-    
-    // Check status filter
-    const userAchievement = userAchievements[quest.id];
-    const isCompleted = userAchievement?.unlockedAt !== null;
-    const isInProgress = !isCompleted && (userAchievement?.progress || 0) > 0;
-    const isUnlocked = quest.prerequisiteQuests.every(prereqId => 
-      userAchievements[prereqId]?.unlockedAt !== null
-    );
-    
-    let matchesFilter = true;
-    switch (filterBy) {
-      case 'inProgress':
-        matchesFilter = isInProgress;
-        break;
-      case 'completed':
-        matchesFilter = isCompleted;
-        break;
-      case 'locked':
-        matchesFilter = !isUnlocked;
-        break;
-      case 'unlocked':
-        matchesFilter = isUnlocked && !isCompleted;
-        break;
-      default:
-        matchesFilter = true;
+  // Filter quests based on active category and search query
+  const filteredQuests = useMemo(() => {
+    return quests.filter(quest => {
+      // Filter by category
+      if (activeCategory !== 'all' && quest.category !== activeCategory) {
+        return false;
+      }
+      
+      // Filter by search query
+      if (searchQuery.trim() !== '') {
+        const searchLower = searchQuery.toLowerCase();
+        return (
+          quest.jungleTitle.toLowerCase().includes(searchLower) ||
+          quest.jungleDescription.toLowerCase().includes(searchLower) ||
+          quest.originalTitle.toLowerCase().includes(searchLower)
+        );
+      }
+      
+      return true;
+    });
+  }, [quests, activeCategory, searchQuery]);
+  
+  // Handle quest card click
+  const handleQuestClick = (questId: string) => {
+    if (onQuestClick) {
+      onQuestClick(questId);
     }
-    
-    return matchesSearch && matchesZone && matchesFilter;
-  });
-  
-  // Sort filtered quests
-  const sortedQuests = [...filteredQuests].sort((a, b) => {
-    switch (sortBy) {
-      case 'difficulty':
-        const difficultyOrder = {
-          'beginner': 1,
-          'explorer': 2,
-          'pathfinder': 3,
-          'master': 4,
-          'legendary': 5
-        };
-        return (difficultyOrder[a.difficulty] || 0) - (difficultyOrder[b.difficulty] || 0);
-      case 'points':
-        return b.points - a.points;
-      case 'time':
-        return a.estimatedTime - b.estimatedTime;
-      case 'newest':
-      default:
-        // Newest is default, no specific sorting
-        return 0;
-    }
-  });
-  
-  // Column class based on maxColumns
-  const columnClass = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-1 sm:grid-cols-2',
-    3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-    4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-  }[maxColumns];
+  };
   
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={className}>
       {showFilters && (
-        <div className="space-y-3">
-          <div className="flex flex-wrap gap-2">
-            <div className="relative flex-1">
-              <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search quests..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            
-            <Tabs 
-              value={sortBy} 
-              onValueChange={(value) => setSortBy(value as SortOption)}
-              className="hidden sm:block"
-            >
-              <TabsList className="h-10">
-                <TabsTrigger value="newest" className="text-xs px-2">
-                  <Clock3 className="h-3 w-3 mr-1" />
-                  Newest
-                </TabsTrigger>
-                <TabsTrigger value="difficulty" className="text-xs px-2">
-                  <TrendingUp className="h-3 w-3 mr-1" />
-                  Difficulty
-                </TabsTrigger>
-                <TabsTrigger value="points" className="text-xs px-2">
-                  <Sparkles className="h-3 w-3 mr-1" />
-                  Points
-                </TabsTrigger>
-                <TabsTrigger value="time" className="text-xs px-2">
-                  <Clock className="h-3 w-3 mr-1" />
-                  Time
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
+        <div className="mb-4 space-y-3">
+          {/* Search input */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              placeholder="Search quests..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
           </div>
           
-          <div className="flex flex-wrap gap-2 items-center">
-            <Tabs 
-              value={activeZone} 
-              onValueChange={setActiveZone}
-            >
-              <TabsList className="h-8">
-                <TabsTrigger value="all" className="text-xs px-2">
-                  All Zones
-                </TabsTrigger>
-                {zones.filter(z => z !== 'all').map(zone => (
-                  <TabsTrigger key={zone} value={zone} className="text-xs px-2">
-                    {ZONE_NAMES[zone as AchievementCategory]}
+          {/* Category filter */}
+          <Tabs 
+            value={activeCategory} 
+            onValueChange={setActiveCategory}
+            className="w-full"
+          >
+            <TabsList className="w-full overflow-x-auto flex flex-nowrap justify-start">
+              {availableCategories.map(category => {
+                const zone = category !== 'all' 
+                  ? getZoneByCategory(category) 
+                  : null;
+                
+                return (
+                  <TabsTrigger 
+                    key={category} 
+                    value={category}
+                    className="flex-shrink-0"
+                    style={
+                      category === activeCategory && zone
+                        ? { borderColor: zone.color }
+                        : {}
+                    }
+                  >
+                    {category === 'all' 
+                      ? 'All Quests' 
+                      : zone?.name || category.charAt(0).toUpperCase() + category.slice(1)
+                    }
                   </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
-            
-            <div className="flex gap-2 ml-auto">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className={`text-xs h-8 ${filterBy === 'inProgress' ? 'bg-blue-50 border-blue-200' : ''}`}
-                onClick={() => setFilterBy(filterBy === 'inProgress' ? 'all' : 'inProgress')}
-              >
-                <Clock className="h-3 w-3 mr-1" />
-                In Progress
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className={`text-xs h-8 ${filterBy === 'completed' ? 'bg-green-50 border-green-200' : ''}`}
-                onClick={() => setFilterBy(filterBy === 'completed' ? 'all' : 'completed')}
-              >
-                <Check className="h-3 w-3 mr-1" />
-                Completed
-              </Button>
-              {searchTerm || filterBy !== 'all' || activeZone !== 'all' ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-xs h-8"
-                  onClick={() => {
-                    setSearchTerm('');
-                    setFilterBy('all');
-                    setActiveZone('all');
-                  }}
-                >
-                  <FilterX className="h-3 w-3 mr-1" />
-                  Clear
-                </Button>
-              ) : null}
-            </div>
-          </div>
+                );
+              })}
+            </TabsList>
+          </Tabs>
         </div>
       )}
       
-      {sortedQuests.length > 0 ? (
-        <div className={`grid ${columnClass} gap-4`}>
-          {sortedQuests.map(quest => {
+      {filteredQuests.length === 0 ? (
+        <div className="text-center py-8 text-muted-foreground">
+          <p>No quests found. Try adjusting your search or filters.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredQuests.map(quest => {
             const userAchievement = userAchievements[quest.id] || { unlockedAt: null, progress: 0 };
-            const isCompleted = userAchievement.unlockedAt !== null;
             const progress = userAchievement.progress || 0;
-            
-            // Check if quest is unlocked (prerequisites met)
-            const isUnlocked = quest.prerequisiteQuests.every(prereqId => 
-              userAchievements[prereqId]?.unlockedAt !== null
-            );
+            const isUnlocked = userRank >= quest.requiredRank;
+            const isCompleted = userAchievement.unlockedAt !== null && progress >= 100;
             
             return (
               <QuestCard
@@ -234,23 +138,10 @@ const QuestList: React.FC<QuestListProps> = ({
                 progress={progress}
                 isUnlocked={isUnlocked}
                 isCompleted={isCompleted}
+                onClick={() => handleQuestClick(quest.id)}
               />
             );
           })}
-        </div>
-      ) : (
-        <div className="py-8 text-center border rounded-lg bg-gray-50">
-          <p className="text-gray-500">No quests match your search or filters</p>
-          <Button
-            variant="link"
-            onClick={() => {
-              setSearchTerm('');
-              setFilterBy('all');
-              setActiveZone('all');
-            }}
-          >
-            Clear all filters
-          </Button>
         </div>
       )}
     </div>

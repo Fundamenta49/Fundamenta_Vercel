@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import React from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { JUNGLE_RANKS } from '../../utils/rankCalculator';
-import RankBadge from './RankBadge';
-import { Star, Sparkles, Trophy } from 'lucide-react';
+import confetti from 'canvas-confetti';
 
 interface RankUpCelebrationProps {
   isOpen: boolean;
@@ -13,7 +12,7 @@ interface RankUpCelebrationProps {
 }
 
 /**
- * Celebration modal shown when a user levels up to a new rank in the jungle
+ * RankUpCelebration shows a celebration modal when a user ranks up
  */
 const RankUpCelebration: React.FC<RankUpCelebrationProps> = ({
   isOpen,
@@ -21,100 +20,101 @@ const RankUpCelebration: React.FC<RankUpCelebrationProps> = ({
   previousRank,
   newRank
 }) => {
-  const previousRankData = JUNGLE_RANKS.find(r => r.level === previousRank) || JUNGLE_RANKS[0];
-  const newRankData = JUNGLE_RANKS.find(r => r.level === newRank) || JUNGLE_RANKS[1];
-  
-  // Play celebration sound if available
-  useEffect(() => {
-    if (isOpen) {
-      // Could implement sound effects here if supported
-      const timer = setTimeout(() => {
-        // Auto-close after 10 seconds if user doesn't interact
-        onClose();
-      }, 10000);
+  const previousRankData = JUNGLE_RANKS.find(rank => rank.level === previousRank);
+  const newRankData = JUNGLE_RANKS.find(rank => rank.level === newRank);
+
+  // Trigger confetti effect when dialog opens
+  React.useEffect(() => {
+    if (isOpen && typeof window !== 'undefined') {
+      const duration = 3 * 1000;
+      const animationEnd = Date.now() + duration;
       
-      return () => clearTimeout(timer);
+      const randomInRange = (min: number, max: number) => {
+        return Math.random() * (max - min) + min;
+      };
+      
+      // Use the new rank color for the confetti
+      const colors = [
+        newRankData?.color || '#E6B933',
+        '#ffffff', 
+        '#94C973'
+      ];
+      
+      const confettiInterval = setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+        
+        if (timeLeft <= 0) {
+          clearInterval(confettiInterval);
+          return;
+        }
+        
+        confetti({
+          particleCount: 3,
+          angle: randomInRange(55, 125),
+          spread: randomInRange(50, 70),
+          origin: { x: randomInRange(0.1, 0.9), y: randomInRange(0.1, 0.3) },
+          colors: colors,
+          gravity: 0.8,
+          scalar: 1.2,
+          drift: 0,
+          ticks: 300
+        });
+      }, 150);
+      
+      return () => {
+        clearInterval(confettiInterval);
+      };
     }
-  }, [isOpen, onClose]);
-  
-  if (!isOpen) return null;
+  }, [isOpen, newRankData?.color]);
+
+  // If we don't have rank data, don't show anything
+  if (!previousRankData || !newRankData) {
+    return null;
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="border-2 border-amber-300 bg-gradient-to-b from-amber-50 to-white max-w-md">
-        <div className="absolute -top-2 -left-2">
-          <Sparkles className="h-8 w-8 text-amber-400" />
-        </div>
-        <div className="absolute -top-2 -right-2">
-          <Sparkles className="h-8 w-8 text-amber-400" />
-        </div>
-        
-        <DialogHeader className="text-center">
-          <DialogTitle className="text-2xl text-amber-800 flex items-center justify-center gap-2">
-            <Trophy className="h-6 w-6 text-amber-500" />
-            Rank Advancement!
-            <Trophy className="h-6 w-6 text-amber-500" />
+    <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-center text-2xl font-bold">
+            Rank Up!
           </DialogTitle>
-          <DialogDescription className="text-gray-600">
-            Your jungle expertise has reached new heights!
-          </DialogDescription>
         </DialogHeader>
         
-        <div className="py-4 flex flex-col items-center space-y-6">
-          <div className="flex items-center justify-center gap-6 w-full">
-            <div className="flex flex-col items-center">
-              <RankBadge rank={previousRank} size="md" showTitle={true} />
-              <p className="mt-2 text-sm text-gray-500">Previous Rank</p>
-            </div>
-            
-            <div className="flex flex-col items-center justify-center">
-              <Star className="h-8 w-8 text-amber-500" />
-              <div className="h-0.5 w-12 bg-amber-300" />
-            </div>
-            
-            <div className="flex flex-col items-center">
-              <div className="animate-bounce">
-                <RankBadge rank={newRank} size="lg" showTitle={true} />
-              </div>
-              <p className="mt-2 text-sm font-semibold text-amber-800">New Rank!</p>
-            </div>
+        <div className="py-6">
+          <div 
+            className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center"
+            style={{ 
+              backgroundColor: newRankData.color,
+              animation: 'celebrationPulse 1.5s infinite, celebrationGlow 2s infinite'
+            }}
+          >
+            <span className="text-3xl font-bold text-white">{newRank}</span>
           </div>
           
-          <div className="text-center p-4 bg-white border border-amber-200 rounded-lg">
-            <h3 className="font-medium text-amber-800">Rank Abilities Unlocked</h3>
-            <p className="mt-1 text-sm text-gray-600">{newRankData.description}</p>
-            
-            {newRank >= 2 && (
-              <ul className="mt-3 text-sm text-left space-y-2">
-                {newRank >= 2 && <li className="flex gap-2 items-center">
-                  <div className="h-2 w-2 rounded-full bg-green-500" />
-                  <span>Access to Wellness and Fitness zones</span>
-                </li>}
-                {newRank >= 3 && <li className="flex gap-2 items-center">
-                  <div className="h-2 w-2 rounded-full bg-purple-500" />
-                  <span>Access to Scholar's Grove advanced quests</span>
-                </li>}
-                {newRank >= 4 && <li className="flex gap-2 items-center">
-                  <div className="h-2 w-2 rounded-full bg-red-500" />
-                  <span>Access to Guardian Ruins emergency training</span>
-                </li>}
-                {newRank >= 5 && <li className="flex gap-2 items-center">
-                  <div className="h-2 w-2 rounded-full bg-amber-500" />
-                  <span>Access to all jungle companions and special expeditions</span>
-                </li>}
-              </ul>
-            )}
+          <h3 className="text-center text-xl font-bold mb-2">
+            You are now a {newRankData.title}!
+          </h3>
+          
+          <p className="text-center text-muted-foreground mb-4">
+            {newRankData.description}
+          </p>
+          
+          <div className="bg-muted p-3 rounded-md">
+            <h4 className="font-semibold mb-2">New abilities unlocked:</h4>
+            <ul className="space-y-1 pl-5 list-disc">
+              {newRankData.perks.map((perk, index) => (
+                <li key={index} className="text-sm">{perk}</li>
+              ))}
+            </ul>
           </div>
         </div>
         
-        <div className="flex justify-center">
-          <Button 
-            onClick={onClose}
-            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white"
-          >
-            Continue My Jungle Journey
+        <DialogFooter className="flex justify-center">
+          <Button onClick={onClose} className="w-full sm:w-auto" style={{ backgroundColor: newRankData.color }}>
+            Continue Your Journey
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

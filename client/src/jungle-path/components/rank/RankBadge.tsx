@@ -1,72 +1,49 @@
 import React from 'react';
-import { Shield, Award, Medal, Crown, Star } from 'lucide-react';
-import { getRankStyle } from '../../styles/theme';
+import { UserRank } from '../../types/rank';
 import { JUNGLE_RANKS } from '../../utils/rankCalculator';
 
 interface RankBadgeProps {
-  rank: number;
-  size?: 'sm' | 'md' | 'lg';
+  userRank: UserRank;
   showTitle?: boolean;
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
 /**
- * Displays a jungle-themed badge for the user's current rank
+ * RankBadge displays the user's jungle rank as a visual badge
  */
-const RankBadge: React.FC<RankBadgeProps> = ({ 
-  rank, 
-  size = 'md', 
+const RankBadge: React.FC<RankBadgeProps> = ({
+  userRank,
   showTitle = false,
-  className = '' 
+  size = 'md',
+  className = ''
 }) => {
-  // Find the rank data
-  const rankData = JUNGLE_RANKS.find(r => r.level === rank) || JUNGLE_RANKS[0];
-  const rankStyle = getRankStyle(rankData.title);
+  const rankData = JUNGLE_RANKS.find(rank => rank.level === userRank.level);
   
-  // Size classes
+  // Determine size class
   const sizeClasses = {
-    sm: 'h-8 w-8 text-xs',
-    md: 'h-12 w-12 text-sm',
-    lg: 'h-16 w-16 text-lg'
+    sm: 'w-8 h-8 text-xs',
+    md: 'w-12 h-12 text-sm',
+    lg: 'w-16 h-16 text-base'
   };
   
-  // Different icons for different ranks
-  const RankIcon = () => {
-    switch (rankData.title.toLowerCase()) {
-      case 'newcomer':
-        return <Shield className="h-1/2 w-1/2" />;
-      case 'explorer':
-        return <Award className="h-1/2 w-1/2" />;
-      case 'pathfinder':
-        return <Medal className="h-1/2 w-1/2" />;
-      case 'trailblazer':
-        return <Crown className="h-1/2 w-1/2" />;
-      case 'jungle guardian':
-      case 'jungle master':
-      case 'ancient guide':
-      case 'temple keeper':
-      case 'spirit walker':
-      case 'jungle legend':
-        return <Star className="h-1/2 w-1/2" />;
-      default:
-        return <Shield className="h-1/2 w-1/2" />;
-    }
-  };
-
+  const sizeClass = sizeClasses[size];
+  
   return (
     <div className={`flex flex-col items-center ${className}`}>
       <div 
-        className={`${rankStyle.badge} rounded-full flex items-center justify-center ${sizeClasses[size]} shadow-sm`}
-        title={`${rankData.title} - Level ${rankData.level}`}
+        className={`rounded-full flex items-center justify-center ${sizeClass}`}
+        style={{ 
+          backgroundColor: rankData?.color || '#94C973',
+          boxShadow: '0 2px 6px rgba(0, 0, 0, 0.2)'
+        }}
+        aria-label={`Rank: ${rankData?.title || 'Unknown'}`}
       >
-        <div className="flex flex-col items-center justify-center">
-          <RankIcon />
-          <span className="font-bold text-center">{rank}</span>
-        </div>
+        <span className="font-bold text-white">{userRank.level}</span>
       </div>
       
-      {showTitle && (
-        <span className="mt-1 text-xs font-medium text-center">{rankData.title}</span>
+      {showTitle && rankData && (
+        <span className="mt-1 text-sm font-medium">{rankData.title}</span>
       )}
     </div>
   );

@@ -1,9 +1,8 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Lock, Star } from 'lucide-react';
-import { Companion } from '../../data/companions';
+import { Companion } from '../../types/companion';
+import { Lock, CheckCircle } from 'lucide-react';
 
 interface CompanionCardProps {
   companion: Companion;
@@ -11,133 +10,96 @@ interface CompanionCardProps {
   isActive: boolean;
   onSelect: (companionId: string) => void;
   className?: string;
-  compact?: boolean;
 }
 
 /**
- * Displays a jungle companion character card with information and selection
+ * CompanionCard displays a jungle companion character that can be selected
  */
 const CompanionCard: React.FC<CompanionCardProps> = ({
   companion,
   isUnlocked,
   isActive,
   onSelect,
-  className = '',
-  compact = false
+  className = ''
 }) => {
-  // Helper to get tier badge color
-  const getTierBadgeStyle = (tier: string) => {
-    switch (tier) {
-      case 'tier1': return 'bg-blue-100 text-blue-800 border-blue-300';
-      case 'tier2': return 'bg-purple-100 text-purple-800 border-purple-300';
-      case 'tier3': return 'bg-amber-100 text-amber-800 border-amber-300';
-      default: return 'bg-green-100 text-green-800 border-green-300';
+  const handleSelect = () => {
+    if (isUnlocked) {
+      onSelect(companion.id);
     }
   };
   
-  // For locked companions, show a locked version
-  if (!isUnlocked) {
-    return (
-      <Card className={`border-2 border-dashed border-gray-200 bg-gray-50 ${className}`}>
-        <CardHeader className="pb-2 relative">
-          <div className="absolute top-3 right-3">
-            <Badge variant="outline" className={getTierBadgeStyle(companion.tier)}>
-              {companion.tier === 'free' ? 'Free' : 
-               companion.tier === 'tier1' ? 'Tier 1' : 
-               companion.tier === 'tier2' ? 'Tier 2' : 'Tier 3'}
-            </Badge>
-          </div>
-          <div className="flex items-center gap-2 opacity-60">
-            <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
-              <Lock className="h-6 w-6 text-gray-400" />
-            </div>
-            <div>
-              <CardTitle className="text-sm">Mystery Companion</CardTitle>
-              <CardDescription>Locked</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-xs text-gray-500 italic">
-            {companion.tier === 'free' 
-              ? `Complete the "${companion.unlockRequirements.join(', ')}" quest to unlock this companion.`
-              : `Subscribe to ${companion.tier === 'tier1' ? 'Tier 1' : companion.tier === 'tier2' ? 'Tier 2' : 'Tier 3'} to unlock this companion.`
-            }
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Determine personality badges
+  const getPersonalityBadge = (personality: Companion['personality']) => {
+    switch (personality) {
+      case 'friendly':
+        return <span className="px-2 py-0.5 text-xs rounded-full bg-[#94C973] text-white">Friendly</span>;
+      case 'wise':
+        return <span className="px-2 py-0.5 text-xs rounded-full bg-[#724E91] text-white">Wise</span>;
+      case 'energetic':
+        return <span className="px-2 py-0.5 text-xs rounded-full bg-[#E67E33] text-white">Energetic</span>;
+      case 'cautious':
+        return <span className="px-2 py-0.5 text-xs rounded-full bg-[#3B82C4] text-white">Cautious</span>;
+      case 'bold':
+        return <span className="px-2 py-0.5 text-xs rounded-full bg-[#C24D4D] text-white">Bold</span>;
+      default:
+        return null;
+    }
+  };
   
   return (
-    <Card className={`border-2 ${isActive ? 'border-amber-300 bg-amber-50' : 'hover:border-amber-200'} transition-all ${className}`}>
-      <CardHeader className={`${compact ? 'p-3' : 'pb-2'} relative`}>
-        <div className="absolute top-3 right-3 flex gap-1">
-          <Badge variant="outline" className={getTierBadgeStyle(companion.tier)}>
-            {companion.tier === 'free' ? 'Free' : 
-             companion.tier === 'tier1' ? 'Tier 1' : 
-             companion.tier === 'tier2' ? 'Tier 2' : 'Tier 3'}
-          </Badge>
+    <Card
+      className={`overflow-hidden ${
+        isActive ? 'ring-2' : ''
+      } ${isUnlocked ? 'hover:shadow-md' : 'opacity-70'} ${className}`}
+      style={{ 
+        ringColor: isActive ? companion.color : 'transparent' 
+      }}
+    >
+      <div className="h-2" style={{ backgroundColor: companion.color }}></div>
+      
+      <CardContent className="p-4">
+        <div className="flex justify-between mb-3">
+          <div>
+            <h3 className="font-bold">{companion.name}</h3>
+            <p className="text-sm text-muted-foreground">{companion.species}</p>
+          </div>
           
-          {isActive && (
-            <Badge className="bg-amber-100 text-amber-800 border-amber-300">
-              <Star className="h-3 w-3 mr-1" /> Active
-            </Badge>
-          )}
+          {!isUnlocked ? (
+            <Lock className="text-muted-foreground" size={20} />
+          ) : isActive ? (
+            <CheckCircle style={{ color: companion.color }} size={20} />
+          ) : null}
         </div>
         
-        <div className="flex items-center gap-3">
-          <div className="h-16 w-16 rounded-full bg-amber-100 border-2 border-amber-300 flex items-center justify-center">
-            {/* This would normally be an actual image */}
-            <div className="font-bold text-2xl text-amber-800">
-              {companion.name.charAt(0)}
-            </div>
-          </div>
-          <div>
-            <CardTitle className={compact ? 'text-sm' : 'text-base'}>
-              {companion.name}
-            </CardTitle>
-            <CardDescription>
-              {companion.type.charAt(0).toUpperCase() + companion.type.slice(1)}
-            </CardDescription>
-          </div>
-        </div>
-      </CardHeader>
-      
-      {!compact && (
-        <CardContent>
-          <p className="text-sm text-gray-600 italic mb-3">
-            "{companion.messages.greeting}"
-          </p>
-          
-          <div className="text-xs text-gray-500 space-y-2">
-            <div className="flex gap-2">
-              <span className="font-medium">Specialty:</span>
-              <span>{companion.specialtyZone}</span>
-            </div>
-            <div className="flex gap-2">
-              <span className="font-medium">Personality:</span>
-              <span>{companion.personality}</span>
-            </div>
-          </div>
-        </CardContent>
-      )}
-      
-      <CardFooter className={compact ? 'p-3 pt-0' : ''}>
-        <Button 
-          variant={isActive ? "outline" : "default"}
-          size="sm"
-          className={`w-full ${isActive ? 'border-amber-300 text-amber-800 bg-amber-50 hover:bg-amber-100' : 'bg-amber-600 hover:bg-amber-700 text-white'}`}
-          onClick={() => onSelect(companion.id)}
+        <div 
+          className="w-16 h-16 mx-auto mb-3 rounded-full bg-muted flex items-center justify-center"
+          style={{ border: `2px solid ${companion.color}` }}
         >
-          {isActive ? (
-            <>
-              <MessageCircle className="h-4 w-4 mr-2" />
-              Chat with {companion.name.split(' ')[0]}
-            </>
-          ) : (
-            <>Select Companion</>
-          )}
+          {/* Placeholder for companion avatar */}
+          <span className="text-2xl">{companion.species.charAt(0)}</span>
+        </div>
+        
+        <p className="text-sm text-center mb-3">{companion.description}</p>
+        
+        <div className="flex justify-center space-x-2 mb-2">
+          {getPersonalityBadge(companion.personality)}
+        </div>
+      </CardContent>
+      
+      <CardFooter className="p-3 pt-0">
+        <Button
+          onClick={handleSelect}
+          disabled={!isUnlocked}
+          variant={isActive ? "outline" : "default"}
+          className="w-full"
+          style={!isActive && isUnlocked ? { backgroundColor: companion.color } : {}}
+        >
+          {isUnlocked
+            ? isActive
+              ? 'Currently Active'
+              : 'Select Companion'
+            : 'Locked'
+          }
         </Button>
       </CardFooter>
     </Card>

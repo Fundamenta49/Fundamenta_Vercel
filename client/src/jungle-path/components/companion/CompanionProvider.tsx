@@ -1,110 +1,177 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Companion, getUnlockedCompanions, getCompanionForZone } from '../../data/companions';
-import { AchievementCategory } from '@/shared/arcade-schema';
+import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import { Companion } from '../../types/companion';
+
+// Sample companion data
+const COMPANIONS: Companion[] = [
+  {
+    id: 'owl',
+    name: 'Professor Hoot',
+    species: 'Owl',
+    description: 'A wise owl who guides you through the knowledge temples.',
+    avatarSrc: '/companions/owl.svg', // Placeholder path
+    color: '#724E91', // Shadow Purple
+    specialtyZones: ['temple', 'crystal-cave'],
+    personality: 'wise',
+    introMessage: 'Greetings, explorer! I am Professor Hoot, keeper of ancient knowledge. I shall guide you through the mysteries of the temple.',
+    tips: [
+      {
+        id: 'tip1',
+        text: 'Remember to take notes on your discoveries. The greatest explorers are also the most diligent record-keepers.',
+        context: ['temple', 'learning']
+      },
+      {
+        id: 'tip2',
+        text: 'When faced with a complex challenge, break it down into smaller parts, just as you would map an unexplored territory section by section.',
+        context: ['difficulty', 'challenge']
+      }
+    ]
+  },
+  {
+    id: 'monkey',
+    name: 'Zippy',
+    species: 'Monkey',
+    description: 'An energetic monkey who helps you navigate the jungle canopy.',
+    avatarSrc: '/companions/monkey.svg', // Placeholder path
+    color: '#94C973', // Canopy Light
+    specialtyZones: ['ancient-trail', 'mountaintop'],
+    personality: 'energetic',
+    introMessage: 'Hey there! I\'m Zippy! Ready to swing through the jungle and tackle some awesome challenges?',
+    tips: [
+      {
+        id: 'tip1',
+        text: 'Sometimes the best path isn\'t a straight line! Look for creative ways to approach your goals.',
+        context: ['wellness', 'fitness']
+      },
+      {
+        id: 'tip2',
+        text: 'Don\'t forget to stretch and move around regularly during your journey. Even a quick movement break keeps your energy up!',
+        context: ['wellness', 'energy']
+      }
+    ]
+  },
+  {
+    id: 'turtle',
+    name: 'Shelly',
+    species: 'Turtle',
+    description: 'A patient turtle who helps you manage resources and plan ahead.',
+    avatarSrc: '/companions/turtle.svg', // Placeholder path
+    color: '#3B82C4', // River Blue
+    specialtyZones: ['river', 'waterfall'],
+    personality: 'cautious',
+    introMessage: 'Hello, young explorer. I am Shelly. Take your time, plan wisely, and you will navigate even the most challenging rapids.',
+    tips: [
+      {
+        id: 'tip1',
+        text: 'Remember that consistent small steps will carry you further than occasional bursts of effort.',
+        context: ['finance', 'planning']
+      },
+      {
+        id: 'tip2',
+        text: 'Before diving into new waters, take a moment to survey what lies ahead. Preparation prevents many missteps.',
+        context: ['caution', 'preparation']
+      }
+    ]
+  }
+];
 
 interface CompanionContextType {
   companions: Companion[];
   activeCompanion: Companion | null;
   setActiveCompanion: (companionId: string) => void;
-  showCompanionDialog: boolean;
-  setShowCompanionDialog: (show: boolean) => void;
-  currentZone: AchievementCategory | null;
-  setCurrentZone: (zone: AchievementCategory | null) => void;
-  getCompanionById: (id: string) => Companion | undefined;
-  isCompanionUnlocked: (companionId: string) => boolean;
+  dialogVisible: boolean;
+  showCompanionDialog: () => void;
+  hideCompanionDialog: () => void;
+  getRandomTip: (context?: string) => string | null;
 }
 
-const CompanionContext = createContext<CompanionContextType>({
-  companions: [],
-  activeCompanion: null,
-  setActiveCompanion: () => {},
-  showCompanionDialog: false,
-  setShowCompanionDialog: () => {},
-  currentZone: null,
-  setCurrentZone: () => {},
-  getCompanionById: () => undefined,
-  isCompanionUnlocked: () => false
-});
+const CompanionContext = createContext<CompanionContextType | undefined>(undefined);
 
 interface CompanionProviderProps {
-  children: React.ReactNode;
-  userAchievements: string[];
-  userTier: string;
+  children: ReactNode;
+  userAchievements: string[]; // Array of achievement IDs the user has completed
+  userTier: 'free' | 'tier1' | 'tier2';
 }
 
-export const CompanionProvider: React.FC<CompanionProviderProps> = ({ 
-  children, 
-  userAchievements, 
-  userTier 
+/**
+ * Provider component for the companion system
+ */
+export const CompanionProvider: React.FC<CompanionProviderProps> = ({
+  children,
+  userAchievements,
+  userTier
 }) => {
-  // Get unlocked companions based on user achievements and subscription tier
-  const unlockedCompanions = getUnlockedCompanions(userAchievements, userTier);
+  const [companions] = useState<Companion[]>(COMPANIONS);
+  const [activeCompanion, setActiveCompanionState] = useState<Companion | null>(null);
+  const [dialogVisible, setDialogVisible] = useState<boolean>(false);
   
-  const [companions, setCompanions] = useState<Companion[]>(unlockedCompanions);
-  const [activeCompanionId, setActiveCompanionId] = useState<string | null>(null);
-  const [showCompanionDialog, setShowCompanionDialog] = useState(false);
-  const [currentZone, setCurrentZone] = useState<AchievementCategory | null>(null);
-  
-  // Get the active companion object
-  const activeCompanion = companions.find(c => c.id === activeCompanionId) || null;
-  
-  // Update companions when user achievements or tier changes
-  useEffect(() => {
-    const newUnlockedCompanions = getUnlockedCompanions(userAchievements, userTier);
-    setCompanions(newUnlockedCompanions);
-    
-    // Set default active companion if none selected
-    if (!activeCompanionId && newUnlockedCompanions.length > 0) {
-      setActiveCompanionId(newUnlockedCompanions[0].id);
-    }
-  }, [userAchievements, userTier]);
-  
-  // Update active companion when zone changes (if applicable)
-  useEffect(() => {
-    if (currentZone) {
-      const zoneCompanion = getCompanionForZone(currentZone, companions);
-      if (zoneCompanion) {
-        setActiveCompanionId(zoneCompanion.id);
-      }
-    }
-  }, [currentZone, companions]);
-  
-  // Set active companion
+  // Set the active companion by ID
   const setActiveCompanion = (companionId: string) => {
-    setActiveCompanionId(companionId);
-    setShowCompanionDialog(true);
+    const companion = companions.find(c => c.id === companionId);
+    if (companion) {
+      setActiveCompanionState(companion);
+      // When switching companions, show their intro message
+      setDialogVisible(true);
+    }
   };
   
-  // Get a companion by ID
-  const getCompanionById = (id: string) => {
-    return companions.find(c => c.id === id);
+  // Show the companion dialog
+  const showCompanionDialog = () => {
+    setDialogVisible(true);
   };
   
-  // Check if a companion is unlocked
-  const isCompanionUnlocked = (companionId: string) => {
-    return companions.some(c => c.id === companionId);
+  // Hide the companion dialog
+  const hideCompanionDialog = () => {
+    setDialogVisible(false);
   };
   
-  const contextValue = {
+  // Get a random tip appropriate for the current context
+  const getRandomTip = (context?: string): string | null => {
+    if (!activeCompanion) return null;
+    
+    const relevantTips = activeCompanion.tips.filter(tip => 
+      !context || tip.context.includes(context)
+    );
+    
+    if (relevantTips.length === 0) return null;
+    
+    const randomTip = relevantTips[Math.floor(Math.random() * relevantTips.length)];
+    return randomTip.text;
+  };
+  
+  // Set default companion on mount
+  useEffect(() => {
+    if (companions.length > 0 && !activeCompanion) {
+      setActiveCompanionState(companions[0]);
+    }
+  }, [companions, activeCompanion]);
+  
+  // Context value
+  const value = {
     companions,
     activeCompanion,
     setActiveCompanion,
+    dialogVisible,
     showCompanionDialog,
-    setShowCompanionDialog,
-    currentZone,
-    setCurrentZone,
-    getCompanionById,
-    isCompanionUnlocked
+    hideCompanionDialog,
+    getRandomTip
   };
   
   return (
-    <CompanionContext.Provider value={contextValue}>
+    <CompanionContext.Provider value={value}>
       {children}
     </CompanionContext.Provider>
   );
 };
 
-// Custom hook to use the companion context
-export const useCompanion = () => useContext(CompanionContext);
-
-export default CompanionContext;
+/**
+ * Custom hook to access the companion context
+ */
+export const useCompanion = (): CompanionContextType => {
+  const context = useContext(CompanionContext);
+  
+  if (context === undefined) {
+    throw new Error('useCompanion must be used within a CompanionProvider');
+  }
+  
+  return context;
+};
