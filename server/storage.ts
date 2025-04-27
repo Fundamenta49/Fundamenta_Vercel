@@ -1,15 +1,59 @@
-import { User, InsertUser, Conversation, InsertConversation } from "@shared/schema";
+import { 
+  User, InsertUser, 
+  Conversation, InsertConversation, 
+  UserConnection, InsertUserConnection,
+  CustomPathway, InsertCustomPathway,
+  CustomPathwayModule, InsertCustomPathwayModule,
+  AssignedPathway, InsertAssignedPathway,
+  ProgressNote, InsertProgressNote
+} from "@shared/schema";
 import { ChatMessage } from "@shared/types";
 import session from "express-session";
 
 export interface IStorage {
+  // User management
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined>;
+  
+  // Conversations
   getConversations(userId: number): Promise<Conversation[]>;
   createConversation(conversation: InsertConversation): Promise<Conversation>;
   addMessage(conversationId: number, message: ChatMessage): Promise<void>;
+  
+  // Parent/Teacher Portal - Connections
+  createUserConnection(connection: InsertUserConnection): Promise<UserConnection>;
+  getUserConnectionByCode(code: string): Promise<UserConnection | undefined>;
+  getUserConnections(userId: number, role: 'mentor' | 'student'): Promise<UserConnection[]>;
+  updateUserConnection(id: number, updates: Partial<InsertUserConnection>): Promise<UserConnection | undefined>;
+  deleteUserConnection(id: number): Promise<boolean>;
+  
+  // Parent/Teacher Portal - Custom Pathways
+  createCustomPathway(pathway: InsertCustomPathway): Promise<CustomPathway>;
+  getCustomPathway(id: number): Promise<CustomPathway | undefined>;
+  getCustomPathwaysByCreator(creatorId: number): Promise<CustomPathway[]>;
+  updateCustomPathway(id: number, updates: Partial<InsertCustomPathway>): Promise<CustomPathway | undefined>;
+  deleteCustomPathway(id: number): Promise<boolean>;
+  
+  // Parent/Teacher Portal - Custom Pathway Modules
+  createCustomPathwayModule(module: InsertCustomPathwayModule): Promise<CustomPathwayModule>;
+  getCustomPathwayModules(pathwayId: number): Promise<CustomPathwayModule[]>;
+  updateCustomPathwayModule(id: number, updates: Partial<InsertCustomPathwayModule>): Promise<CustomPathwayModule | undefined>;
+  deleteCustomPathwayModule(id: number): Promise<boolean>;
+  
+  // Parent/Teacher Portal - Assigned Pathways
+  assignPathway(assignment: InsertAssignedPathway): Promise<AssignedPathway>;
+  getAssignedPathways(studentId: number): Promise<AssignedPathway[]>;
+  getAssignedPathwaysByAssigner(assignerId: number): Promise<AssignedPathway[]>;
+  updateAssignedPathwayStatus(id: number, status: string, progress?: number): Promise<AssignedPathway | undefined>;
+  
+  // Parent/Teacher Portal - Progress Notes
+  addProgressNote(note: InsertProgressNote): Promise<ProgressNote>;
+  getProgressNotes(studentId: number, pathwayId?: number): Promise<ProgressNote[]>;
+  
+  // Session
   sessionStore: session.Store;
 }
 
@@ -19,15 +63,39 @@ const MemoryStore = createMemoryStore(session);
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private conversations: Map<number, Conversation>;
+  private userConnections: Map<number, UserConnection>;
+  private customPathways: Map<number, CustomPathway>;
+  private customPathwayModules: Map<number, CustomPathwayModule>;
+  private assignedPathways: Map<number, AssignedPathway>;
+  private progressNotes: Map<number, ProgressNote>;
+  
   private currentUserId: number;
   private currentConversationId: number;
+  private currentConnectionId: number;
+  private currentPathwayId: number;
+  private currentModuleId: number;
+  private currentAssignmentId: number;
+  private currentNoteId: number;
+  
   sessionStore: session.Store;
 
   constructor() {
     this.users = new Map();
     this.conversations = new Map();
+    this.userConnections = new Map();
+    this.customPathways = new Map();
+    this.customPathwayModules = new Map();
+    this.assignedPathways = new Map();
+    this.progressNotes = new Map();
+    
     this.currentUserId = 1;
     this.currentConversationId = 1;
+    this.currentConnectionId = 1;
+    this.currentPathwayId = 1;
+    this.currentModuleId = 1;
+    this.currentAssignmentId = 1;
+    this.currentNoteId = 1;
+    
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000, // 24 hours
     });
@@ -64,6 +132,21 @@ export class MemStorage implements IStorage {
     this.users.set(id, user);
     return user;
   }
+  
+  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
+    const user = this.users.get(id);
+    if (!user) return undefined;
+    
+    const updatedUser: User = {
+      ...user,
+      ...updates,
+      id, // Ensure ID doesn't change
+      updatedAt: new Date(),
+    };
+    
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
 
   async getConversations(userId: number): Promise<Conversation[]> {
     return Array.from(this.conversations.values()).filter(
@@ -99,6 +182,235 @@ export class MemStorage implements IStorage {
     // Update the last message timestamp
     conversation.lastMessageAt = new Date();
     this.conversations.set(conversationId, conversation);
+  }
+  
+  // Parent/Teacher Portal - Connections
+  
+  async createUserConnection(connection: InsertUserConnection): Promise<UserConnection> {
+    const id = this.currentConnectionId++;
+    const now = new Date();
+    const newConnection: UserConnection = {
+      ...connection,
+      id,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.userConnections.set(id, newConnection);
+    return newConnection;
+  }
+  
+  async getUserConnectionByCode(code: string): Promise<UserConnection | undefined> {
+    return Array.from(this.userConnections.values()).find(
+      (conn) => conn.connectionCode === code
+    );
+  }
+  
+  async getUserConnections(userId: number, role: 'mentor' | 'student'): Promise<UserConnection[]> {
+    return Array.from(this.userConnections.values()).filter(
+      (conn) => role === 'mentor' ? conn.mentorId === userId : conn.studentId === userId
+    );
+  }
+  
+  async updateUserConnection(id: number, updates: Partial<InsertUserConnection>): Promise<UserConnection | undefined> {
+    const connection = this.userConnections.get(id);
+    if (!connection) return undefined;
+    
+    const updatedConnection: UserConnection = {
+      ...connection,
+      ...updates,
+      id, // Ensure ID doesn't change
+      updatedAt: new Date(),
+    };
+    
+    this.userConnections.set(id, updatedConnection);
+    return updatedConnection;
+  }
+  
+  async deleteUserConnection(id: number): Promise<boolean> {
+    return this.userConnections.delete(id);
+  }
+  
+  // Parent/Teacher Portal - Custom Pathways
+  
+  async createCustomPathway(pathway: InsertCustomPathway): Promise<CustomPathway> {
+    const id = this.currentPathwayId++;
+    const now = new Date();
+    const newPathway: CustomPathway = {
+      ...pathway,
+      id,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.customPathways.set(id, newPathway);
+    return newPathway;
+  }
+  
+  async getCustomPathway(id: number): Promise<CustomPathway | undefined> {
+    return this.customPathways.get(id);
+  }
+  
+  async getCustomPathwaysByCreator(creatorId: number): Promise<CustomPathway[]> {
+    return Array.from(this.customPathways.values()).filter(
+      (pathway) => pathway.creatorId === creatorId
+    );
+  }
+  
+  async updateCustomPathway(id: number, updates: Partial<InsertCustomPathway>): Promise<CustomPathway | undefined> {
+    const pathway = this.customPathways.get(id);
+    if (!pathway) return undefined;
+    
+    const updatedPathway: CustomPathway = {
+      ...pathway,
+      ...updates,
+      id, // Ensure ID doesn't change
+      updatedAt: new Date(),
+    };
+    
+    this.customPathways.set(id, updatedPathway);
+    return updatedPathway;
+  }
+  
+  async deleteCustomPathway(id: number): Promise<boolean> {
+    // First, delete all modules associated with this pathway
+    const modules = await this.getCustomPathwayModules(id);
+    modules.forEach(module => this.customPathwayModules.delete(module.id));
+    
+    // Then delete the pathway itself
+    return this.customPathways.delete(id);
+  }
+  
+  // Parent/Teacher Portal - Custom Pathway Modules
+  
+  async createCustomPathwayModule(module: InsertCustomPathwayModule): Promise<CustomPathwayModule> {
+    const id = this.currentModuleId++;
+    const now = new Date();
+    const newModule: CustomPathwayModule = {
+      ...module,
+      id,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.customPathwayModules.set(id, newModule);
+    return newModule;
+  }
+  
+  async getCustomPathwayModules(pathwayId: number): Promise<CustomPathwayModule[]> {
+    return Array.from(this.customPathwayModules.values())
+      .filter(module => module.pathwayId === pathwayId)
+      .sort((a, b) => a.order - b.order); // Sort by order field
+  }
+  
+  async updateCustomPathwayModule(id: number, updates: Partial<InsertCustomPathwayModule>): Promise<CustomPathwayModule | undefined> {
+    const module = this.customPathwayModules.get(id);
+    if (!module) return undefined;
+    
+    const updatedModule: CustomPathwayModule = {
+      ...module,
+      ...updates,
+      id, // Ensure ID doesn't change
+      updatedAt: new Date(),
+    };
+    
+    this.customPathwayModules.set(id, updatedModule);
+    return updatedModule;
+  }
+  
+  async deleteCustomPathwayModule(id: number): Promise<boolean> {
+    return this.customPathwayModules.delete(id);
+  }
+  
+  // Parent/Teacher Portal - Assigned Pathways
+  
+  async assignPathway(assignment: InsertAssignedPathway): Promise<AssignedPathway> {
+    const id = this.currentAssignmentId++;
+    const now = new Date();
+    const newAssignment: AssignedPathway = {
+      ...assignment,
+      id,
+      status: assignment.status || 'assigned',
+      progress: assignment.progress || 0,
+      createdAt: now,
+      updatedAt: now,
+      startedAt: null,
+      completedAt: null,
+    };
+    this.assignedPathways.set(id, newAssignment);
+    return newAssignment;
+  }
+  
+  async getAssignedPathways(studentId: number): Promise<AssignedPathway[]> {
+    return Array.from(this.assignedPathways.values()).filter(
+      (assignment) => assignment.studentId === studentId
+    );
+  }
+  
+  async getAssignedPathwaysByAssigner(assignerId: number): Promise<AssignedPathway[]> {
+    return Array.from(this.assignedPathways.values()).filter(
+      (assignment) => assignment.assignedBy === assignerId
+    );
+  }
+  
+  async updateAssignedPathwayStatus(id: number, status: string, progress?: number): Promise<AssignedPathway | undefined> {
+    const assignment = this.assignedPathways.get(id);
+    if (!assignment) return undefined;
+    
+    const now = new Date();
+    const updates: Partial<AssignedPathway> = {
+      status,
+      updatedAt: now
+    };
+    
+    // Set progress if provided
+    if (typeof progress === 'number') {
+      updates.progress = progress;
+    }
+    
+    // Set started time if transitioning to in_progress for the first time
+    if (status === 'in_progress' && !assignment.startedAt) {
+      updates.startedAt = now;
+    }
+    
+    // Set completed time if transitioning to completed
+    if (status === 'completed' && !assignment.completedAt) {
+      updates.completedAt = now;
+      updates.progress = 100; // Set progress to 100% when completed
+    }
+    
+    const updatedAssignment: AssignedPathway = {
+      ...assignment,
+      ...updates,
+    };
+    
+    this.assignedPathways.set(id, updatedAssignment);
+    return updatedAssignment;
+  }
+  
+  // Parent/Teacher Portal - Progress Notes
+  
+  async addProgressNote(note: InsertProgressNote): Promise<ProgressNote> {
+    const id = this.currentNoteId++;
+    const now = new Date();
+    const newNote: ProgressNote = {
+      ...note,
+      id,
+      createdAt: now,
+      updatedAt: now,
+    };
+    this.progressNotes.set(id, newNote);
+    return newNote;
+  }
+  
+  async getProgressNotes(studentId: number, pathwayId?: number): Promise<ProgressNote[]> {
+    let notes = Array.from(this.progressNotes.values())
+      .filter(note => note.studentId === studentId);
+    
+    // Filter by pathway if provided
+    if (pathwayId) {
+      notes = notes.filter(note => note.pathwayId === pathwayId);
+    }
+    
+    // Sort by most recent first
+    return notes.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 }
 

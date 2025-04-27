@@ -37,6 +37,34 @@ export const skillLevels = {
 
 export type SkillLevel = keyof typeof skillLevels;
 
+// User roles for parent/teacher portal
+export const userRoles = {
+  USER: "user",
+  STUDENT: "student",
+  PARENT: "parent",
+  TEACHER: "teacher",
+  ADMIN: "admin",
+} as const;
+
+export type UserRole = keyof typeof userRoles;
+
+// Connection types for user relationships
+export const connectionTypes = {
+  PARENT_CHILD: "parent_child",
+  TEACHER_STUDENT: "teacher_student",
+} as const;
+
+export type ConnectionType = keyof typeof connectionTypes;
+
+// Connection status options
+export const connectionStatuses = {
+  PENDING: "pending",
+  ACTIVE: "active",
+  REJECTED: "rejected",
+} as const;
+
+export type ConnectionStatus = keyof typeof connectionStatuses;
+
 // User Table
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -98,6 +126,74 @@ export const learningProgress = pgTable("learning_progress", {
 
 
 
+// User Connections Table for parent/teacher-student relationships
+export const userConnections = pgTable("user_connections", {
+  id: serial("id").primaryKey(),
+  mentorId: integer("mentor_id").notNull().references(() => users.id), // Parent or teacher
+  studentId: integer("student_id").notNull().references(() => users.id), // Child or student
+  connectionType: text("connection_type").notNull(), // "parent_child" or "teacher_student"
+  status: text("status").notNull().default("pending"), // "pending", "active", "rejected"
+  accessLevel: text("access_level").notNull().default("standard"), // "standard", "full", "limited"
+  connectionCode: text("connection_code"), // For initial pairing
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Custom Learning Pathways Table
+export const customPathways = pgTable("custom_pathways", {
+  id: serial("id").primaryKey(),
+  creatorId: integer("creator_id").notNull().references(() => users.id), // Parent or teacher
+  title: text("title").notNull(),
+  description: text("description"),
+  category: text("category").default("general"),
+  isTemplate: boolean("is_template").default(false), // For reusable pathways
+  isPublic: boolean("is_public").default(false), // Whether other educators can see/use this pathway
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Custom Pathway Modules Table
+export const customPathwayModules = pgTable("custom_pathway_modules", {
+  id: serial("id").primaryKey(),
+  pathwayId: integer("pathway_id").notNull().references(() => customPathways.id),
+  title: text("title").notNull(),
+  description: text("description"),
+  content: jsonb("content"), // Structured content or references
+  order: integer("order").notNull(),
+  estimatedDuration: integer("estimated_duration"), // In minutes
+  skillLevel: text("skill_level").default("foundational"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Assigned Pathways Table
+export const assignedPathways = pgTable("assigned_pathways", {
+  id: serial("id").primaryKey(),
+  pathwayId: integer("pathway_id").notNull().references(() => customPathways.id),
+  studentId: integer("student_id").notNull().references(() => users.id),
+  assignedBy: integer("assigned_by").notNull().references(() => users.id),
+  dueDate: timestamp("due_date"),
+  status: text("status").default("assigned"), // "assigned", "in_progress", "completed"
+  progress: real("progress").default(0), // Percentage of completion (0-100)
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Progress Notes Table
+export const progressNotes = pgTable("progress_notes", {
+  id: serial("id").primaryKey(),
+  studentId: integer("student_id").notNull().references(() => users.id),
+  authorId: integer("author_id").notNull().references(() => users.id),
+  pathwayId: integer("pathway_id").references(() => customPathways.id),
+  moduleId: integer("module_id").references(() => customPathwayModules.id),
+  note: text("note").notNull(),
+  visibility: text("visibility").default("mentor_only"), // "mentor_only", "student_visible"
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 // Sessions Table for express-session with connect-pg-simple
 export const sessions = pgTable("sessions", {
   sid: varchar("sid").notNull().primaryKey(),
@@ -123,6 +219,22 @@ export const insertLearningProgressSchema = createInsertSchema(learningProgress)
 
 
   
+// Add new schemas for the parent/teacher portal tables
+export const insertUserConnectionSchema = createInsertSchema(userConnections)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+
+export const insertCustomPathwaySchema = createInsertSchema(customPathways)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+
+export const insertCustomPathwayModuleSchema = createInsertSchema(customPathwayModules)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+
+export const insertAssignedPathwaySchema = createInsertSchema(assignedPathways)
+  .omit({ id: true, createdAt: true, updatedAt: true, startedAt: true, completedAt: true });
+
+export const insertProgressNoteSchema = createInsertSchema(progressNotes)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+
 export const insertSessionSchema = createInsertSchema(sessions);
 
 // Define TypeScript types
@@ -130,6 +242,26 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertUserType = InsertUser; // Backward compatibility
 export type SelectUserType = User; // Backward compatibility
+
+// Connection types
+export type InsertUserConnection = z.infer<typeof insertUserConnectionSchema>;
+export type UserConnection = typeof userConnections.$inferSelect;
+
+// Custom pathway types
+export type InsertCustomPathway = z.infer<typeof insertCustomPathwaySchema>;
+export type CustomPathway = typeof customPathways.$inferSelect;
+
+// Custom pathway module types
+export type InsertCustomPathwayModule = z.infer<typeof insertCustomPathwayModuleSchema>;
+export type CustomPathwayModule = typeof customPathwayModules.$inferSelect;
+
+// Assigned pathway types
+export type InsertAssignedPathway = z.infer<typeof insertAssignedPathwaySchema>;
+export type AssignedPathway = typeof assignedPathways.$inferSelect;
+
+// Progress note types
+export type InsertProgressNote = z.infer<typeof insertProgressNoteSchema>;
+export type ProgressNote = typeof progressNotes.$inferSelect;
 
 export type InsertConversation = z.infer<typeof insertConversationSchema>;
 export type Conversation = typeof conversations.$inferSelect;
