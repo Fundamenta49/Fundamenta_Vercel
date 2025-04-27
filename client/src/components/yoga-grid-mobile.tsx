@@ -288,7 +288,8 @@ export default function YogaGridMobile() {
                           achievement={achievement ? {
                             masteryLevel: achievement.masteryLevel || 0,
                             bestScore: achievement.bestScore || 0,
-                            lastPracticedDate: achievement.lastPracticedDate || achievement.completionDate
+                            // Use completionDate as lastPracticedDate
+                            lastPracticedDate: achievement.completionDate
                           } : undefined}
                         />
                       </div>

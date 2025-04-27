@@ -29,6 +29,7 @@ interface YogaPosePopoutProps {
     level?: number;
     imageUrl?: string;
     category?: string;
+    youtubeId?: string; // Added YouTube ID for direct video playing
   };
   unlocked: boolean;
   achievement?: {
@@ -214,13 +215,23 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
   };
 
   // Function to handle showing YouTube video within the existing tab
-  const [currentVideoId, setCurrentVideoId] = useState<string | undefined>(undefined);
+  // Use optional chaining to safely access youtubeId
+  const [currentVideoId, setCurrentVideoId] = useState<string | undefined>(pose.youtubeId);
   
   const openYouTubeVideo = (videoId: string | undefined) => {
     if (!videoId) return;
     setCurrentVideoId(videoId);
     setActiveTab("video"); // Switch to video tab
   };
+  
+  // Check for youtubeId from pose data and set it automatically
+  useEffect(() => {
+    // Use type assertion to handle the property access
+    const youtubeId = (pose as any).youtubeId;
+    if (youtubeId && !currentVideoId) {
+      setCurrentVideoId(youtubeId);
+    }
+  }, [pose, currentVideoId]);
 
   // Render mastery stars
   const renderMasteryStars = (level: number) => {
