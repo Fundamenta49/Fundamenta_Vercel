@@ -57,6 +57,8 @@ import LearningAnalyticsDashboard from "@/pages/learning/analytics";
 import SavedQuizzesPage from "@/pages/learning/saved-quizzes";
 import DesignShowcasePage from "@/pages/design-showcase";
 import LoginPage from "@/pages/login";
+import AuthPage from "@/pages/auth-page";
+import PrivacyPolicyPage from "@/pages/privacy-policy";
 import { AuthProvider } from "@/lib/auth-context";
 import AdminPage from "@/pages/admin";
 import PersonalityTestPage from "@/pages/admin/personality-test";
@@ -123,15 +125,35 @@ function FitnessRedirect() {
   return null;
 }
 
+// Component to handle redirects from /login to /auth
+function AuthRedirect() {
+  const [, navigate] = useLocation();
+  
+  useEffect(() => {
+    // Redirect to new auth page
+    navigate('/auth');
+  }, [navigate]);
+  
+  return null;
+}
+
 function Router() {
-  // Define a separate route configuration for the login page
+  // Define a separate route configuration for the auth pages
   return (
     <Switch>
-      <Route path="/login">
-        {/* Login page is completely separated from app layout */}
-        <div className="login-container">
-          <LoginPage />
+      <Route path="/auth">
+        {/* Auth page is completely separated from app layout */}
+        <div className="auth-container">
+          <AuthPage />
         </div>
+      </Route>
+      <Route path="/login">
+        {/* Redirect old login page to new auth page */}
+        <AuthRedirect />
+      </Route>
+      <Route path="/privacy-policy">
+        {/* Privacy policy page without protected route */}
+        <PrivacyPolicyPage />
       </Route>
       <Route>
         <Layout>
