@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, FilterIcon, Info, Award } from "lucide-react";
+import { Search, FilterIcon, Info, Award, Play, Youtube } from "lucide-react";
 import { useYogaProgression } from '../contexts/yoga-progression-context';
 import { yogaPoses, yogaChallenges } from '../data/yoga-poses-progression';
 // Using the regular pose popout component instead of the mobile version for now
@@ -34,6 +34,7 @@ export default function YogaGridMobile() {
   const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredPoses, setFilteredPoses] = useState<any[]>([]);
+  const [selectedYoutubeId, setSelectedYoutubeId] = useState<string | null>(null);
   
   // Get user progression context
   const { currentLevel, isPoseUnlocked, userProgress } = useYogaProgression();
@@ -62,43 +63,40 @@ export default function YogaGridMobile() {
     return 1;
   };
   
-  // Process the poses data with accurate image paths - memoized to prevent infinite re-renders
+  // Process the poses data with YouTube thumbnails - memoized to prevent infinite re-renders
   const processedYogaPoses = React.useMemo(() => {
     return yogaPoses.map(pose => {
-      // Find matching pose in posesWithPaths for the correct image path
+      // Find matching pose in posesWithPaths for the name
       const poseWithPath = posesWithPaths.find(p => p.id === pose.id);
+      
+      // Get YouTube video ID for this pose
+      const youtubeId = yogaYoutubeIds[pose.id as keyof typeof yogaYoutubeIds];
       
       // Determine pose level based on ID
       const poseLevel = getPoseLevel(pose.id);
+
+      // Create YouTube thumbnail URL
+      const youtubeThumbUrl = youtubeId 
+        ? `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg` 
+        : `/images/yoga-poses/original_yoga_image.jpg`;
   
-      // If we found this pose in posesWithPaths, use that exact image path
-      if (poseWithPath && poseWithPath.filename) {
-        // Construct the complete pose object with the correct image path
-        return {
-          ...pose,
-          // Use the exact path from poses_with_paths.json
-          imageUrl: poseWithPath.filename,
-          
-          // Include the level in the pose data
-          level: poseLevel,
-          
-          // Use the name from poses_with_paths if available
-          ...(poseWithPath.name && {
-            name: poseWithPath.name.split('(')[0].trim(),
-            sanskritName: poseWithPath.name.includes('(') 
-              ? poseWithPath.name.match(/\((.*)\)/)?.[1] || pose.sanskritName 
-              : pose.sanskritName
-          })
-        };
-      }
-      
-      // If pose not found in posesWithPaths, use a default path
+      // Construct the complete pose object
       return {
         ...pose,
-        // Set a default image URL based on the pose ID
-        imageUrl: `/images/yoga-poses/${pose.id}.png`,
+        // Use YouTube thumbnail as imageUrl
+        imageUrl: youtubeThumbUrl,
+        // Store YouTube ID for video playback
+        youtubeId: youtubeId || null,
         // Include the level in the pose data
-        level: poseLevel
+        level: poseLevel,
+        
+        // Use the name from poses_with_paths if available
+        ...(poseWithPath?.name && {
+          name: poseWithPath.name.split('(')[0].trim(),
+          sanskritName: poseWithPath.name.includes('(') 
+            ? poseWithPath.name.match(/\((.*)\)/)?.[1] || pose.sanskritName 
+            : pose.sanskritName
+        })
       };
     });
   }, []);
@@ -279,6 +277,26 @@ export default function YogaGridMobile() {
                                 alt={pose.name}
                                 className="w-full h-full object-cover"
                               />
+                            )}
+                            
+                            {/* YouTube video indicator */}
+                            {pose.youtubeId && isUnlocked && (
+                              <div 
+                                className="absolute inset-0 bg-black/10 hover:bg-black/30 flex items-center justify-center transition-all duration-200 cursor-pointer group"
+                                onClick={() => {
+                                  // Open YouTube video in a new tab
+                                  window.open(`https://www.youtube.com/watch?v=${pose.youtubeId}`, '_blank');
+                                  // Track this activity
+                                  console.log(`Opening YouTube video for ${pose.name}: ${pose.youtubeId}`);
+                                }}
+                              >
+                                <div className="p-2 rounded-full bg-red-600/80 backdrop-blur-sm border border-white/20 shadow-md transform scale-90 group-hover:scale-100 transition-transform">
+                                  <Play className="h-5 w-5 text-white fill-white" />
+                                </div>
+                                <div className="absolute bottom-2 right-2">
+                                  <Youtube className="h-4 w-4 text-white" />
+                                </div>
+                              </div>
                             )}
                             
                             {!isUnlocked && (
