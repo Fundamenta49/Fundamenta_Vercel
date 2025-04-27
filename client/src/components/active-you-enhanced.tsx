@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast, toast } from "@/hooks/use-toast";
 import HIITSpecificExercisesEnhanced from './hiit-specific-exercises-enhanced';
-import YogaSpecificExercisesEnhanced from './yoga-specific-exercises-enhanced';
+import YogaSpecificExercisesMobile from './yoga-specific-exercises-mobile';
 import StretchSpecificExercisesEnhanced from './stretch-specific-exercises-enhanced';
 import RunningSpecificExercisesEnhanced from './running-specific-exercises-enhanced';
 import WeightliftingSpecificExercisesEnhanced from './weightlifting-specific-exercises-enhanced';
@@ -102,7 +102,7 @@ export default function ActiveYouEnhanced() {
                   Regular practice can improve flexibility, strength, balance, and mental wellbeing.
                 </p>
               </div>
-              <YogaSpecificExercisesEnhanced />
+              <YogaSpecificExercisesMobile />
             </TabsContent>
             
             <TabsContent value="running" className="mt-0">
