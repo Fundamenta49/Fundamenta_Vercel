@@ -145,15 +145,18 @@ export default function YogaGridMobile() {
   ).slice(0, 3);
 
   return (
-    <div className="space-y-4">
-      {/* Modern Apple-inspired minimal design */}
-      <div className="bg-white rounded-xl overflow-hidden">
-        {/* Header Section with minimal styling - no pink */}
-        <div className="p-3 sm:p-5 border-b border-gray-100">
+    <div className="pb-16">
+      {/* iOS-style container with subtle shadow */}
+      <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-4">
+        {/* Elegant iOS-style gradient header */}
+        <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+        
+        {/* Header Section with Apple-inspired minimal styling */}
+        <div className="p-4 sm:p-6 border-b border-gray-100">
           <div className="flex justify-between items-center mb-1">
-            <h2 className="text-lg font-medium text-gray-800">Yoga Practice</h2>
-            <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-200 border-0">
-              <Award className="h-3 w-3 mr-1" />
+            <h2 className="text-xl font-medium text-gray-800">Yoga Practice</h2>
+            <Badge className="bg-gray-50 text-gray-800 hover:bg-gray-100 border-0 shadow-sm px-3 py-1 rounded-full">
+              <Award className="h-3.5 w-3.5 mr-1.5 text-blue-500" />
               Level {currentLevelNum}
             </Badge>
           </div>
@@ -162,14 +165,14 @@ export default function YogaGridMobile() {
           </p>
         </div>
         
-        {/* Filters - iOS style */}
-        <div className="px-3 sm:px-5 pt-3">
-          <div className="flex flex-col sm:flex-row gap-2">
+        {/* Filters - iOS style with translucent effect */}
+        <div className="sticky top-0 z-10 px-4 sm:px-6 py-4 bg-white/95 backdrop-blur-md border-b border-gray-100">
+          <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search poses..."
-                className="pl-9 border border-gray-200 rounded-full h-9 text-sm focus:ring-gray-300 focus:border-gray-300"
+                className="pl-9 rounded-xl border-gray-200 bg-gray-50/80 h-10 text-sm focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -177,28 +180,28 @@ export default function YogaGridMobile() {
             
             <div className="sm:w-auto">
               <Tabs value={difficultyFilter} onValueChange={setDifficultyFilter}>
-                <TabsList className="h-9 bg-gray-100 p-1 rounded-full">
+                <TabsList className="bg-gray-100/80 p-1 rounded-xl">
                   <TabsTrigger 
                     value="all" 
-                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                    className="rounded-lg text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm"
                   >
                     All
                   </TabsTrigger>
                   <TabsTrigger 
                     value="beginner" 
-                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                    className="rounded-lg text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm"
                   >
                     Beginner
                   </TabsTrigger>
                   <TabsTrigger 
                     value="intermediate" 
-                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                    className="rounded-lg text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm"
                   >
                     Medium
                   </TabsTrigger>
                   <TabsTrigger 
                     value="advanced" 
-                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                    className="rounded-lg text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm"
                   >
                     Advanced
                   </TabsTrigger>
@@ -208,24 +211,33 @@ export default function YogaGridMobile() {
           </div>
         </div>
         
-        {/* Challenges - Clean minimal cards with 4px border instead of pink background */}
+        {/* Challenges - iOS-style cards with subtle gradient border */}
         {availableChallenges.length > 0 && (
-          <div className="px-3 sm:px-5 py-3">
-            <h3 className="text-base font-medium mb-2 text-gray-800">Active Challenges</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 overflow-x-auto no-scrollbar pb-1">
+          <div className="px-4 sm:px-6 py-4">
+            <h3 className="text-base font-medium mb-3 text-gray-800 flex items-center">
+              Active Challenges
+              <Badge variant="outline" className="ml-2 bg-gray-50 text-xs px-2 py-0.5 rounded-full">
+                {availableChallenges.length}
+              </Badge>
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pb-1">
               {availableChallenges.map(challenge => (
-                <div key={challenge.id} className="min-w-[240px]">
-                  <div className="bg-white border border-gray-200 rounded-xl p-3 h-full">
-                    <div className="flex flex-col h-full">
-                      <h4 className="font-medium text-sm mb-1">{challenge.name}</h4>
-                      <p className="text-xs text-gray-500 mb-2 line-clamp-2 flex-grow">
-                        {challenge.description}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <Badge variant="outline" className="bg-transparent text-xs px-2 py-0.5">
-                          {challenge.difficulty}
-                        </Badge>
-                        <span className="text-xs text-gray-400">{challenge.durationDays} days</span>
+                <div key={challenge.id} className="min-w-[240px] group">
+                  <div className="bg-white rounded-xl shadow-sm overflow-hidden h-full border border-gray-100 transition-all duration-200 hover:shadow-md hover:border-blue-200">
+                    {/* Small gradient accent at top of each card */}
+                    <div className="h-1 bg-gradient-to-r from-blue-400 to-purple-400"></div>
+                    <div className="p-4">
+                      <div className="flex flex-col h-full">
+                        <h4 className="font-medium text-sm mb-1">{challenge.name}</h4>
+                        <p className="text-xs text-gray-500 mb-3 line-clamp-2 flex-grow">
+                          {challenge.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <Badge variant="outline" className="bg-gray-50 text-xs px-2.5 py-0.5 rounded-full">
+                            {challenge.difficulty}
+                          </Badge>
+                          <span className="text-xs text-gray-400">{challenge.durationDays} days</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -240,15 +252,15 @@ export default function YogaGridMobile() {
           Object.entries(posesByLevel)
             .sort(([levelA], [levelB]) => parseInt(levelA) - parseInt(levelB))
             .map(([level, poses]) => (
-              <div key={level} className="px-3 sm:px-5 py-3">
-                <div className="flex items-center justify-between mb-2">
+              <div key={level} className="px-4 sm:px-6 py-4">
+                <div className="flex items-center justify-between mb-3">
                   <h3 className="text-base font-medium text-gray-800">Level {level} Poses</h3>
-                  <Badge variant="outline" className="text-xs bg-transparent">
+                  <Badge variant="outline" className="text-xs bg-gray-50 rounded-full">
                     {poses.length} poses
                   </Badge>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                   {poses.map(pose => {
                     // Check if pose is unlocked
                     const isUnlocked = isPoseUnlocked ? isPoseUnlocked(pose.id) : true;
@@ -256,49 +268,55 @@ export default function YogaGridMobile() {
                     // Get user achievement for this pose if any
                     const achievement = userProgress?.poseAchievements?.[pose.id];
                     
-                    // Using the original YogaPosePopout component with styles contained within
                     return (
-                      <div key={pose.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                        <div className="aspect-square relative overflow-hidden bg-gray-100">
-                          {pose.imageUrl && (
-                            <img 
-                              src={pose.imageUrl} 
-                              alt={pose.name}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                          
-                          {!isUnlocked && (
-                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                              <div className="text-white text-center p-2">
-                                <Info className="h-8 w-8 mx-auto mb-1" />
-                                <p className="text-sm font-medium">Complete level {pose.levelRequired - 1} first</p>
+                      <div key={pose.id} className="group">
+                        <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 transition-all duration-200 group-hover:shadow-md group-hover:border-blue-200">
+                          <div className="aspect-square relative overflow-hidden">
+                            {pose.imageUrl && (
+                              <img 
+                                src={pose.imageUrl} 
+                                alt={pose.name}
+                                className="w-full h-full object-cover"
+                              />
+                            )}
+                            
+                            {!isUnlocked && (
+                              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+                                <div className="text-white text-center p-2">
+                                  <Info className="h-8 w-8 mx-auto mb-1" />
+                                  <p className="text-sm font-medium">Complete level {pose.levelRequired - 1} first</p>
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
+                            
+                            {achievement && achievement.masteryLevel > 0 && (
+                              <div className="absolute top-2 right-2">
+                                <Badge className="bg-white/90 backdrop-blur-sm text-gray-900 border-0 shadow-sm">
+                                  <Award className="h-3 w-3 mr-1 text-amber-500" />
+                                  {achievement.masteryLevel}/5
+                                </Badge>
+                              </div>
+                            )}
+                          </div>
                           
-                          {achievement && achievement.masteryLevel > 0 && (
-                            <div className="absolute top-2 right-2">
-                              <Badge className="bg-white/90 text-gray-900 border-0">
-                                <Award className="h-3 w-3 mr-1 text-amber-500" />
-                                {achievement.masteryLevel}/5
+                          <div className="p-3">
+                            <div className="font-medium text-sm text-gray-900">{pose.name}</div>
+                            {pose.sanskritName && (
+                              <div className="text-xs text-gray-500 italic mb-1.5">{pose.sanskritName}</div>
+                            )}
+                            <div className="flex items-center justify-between mt-1.5">
+                              <Badge variant="outline" className="bg-gray-50 text-xs capitalize rounded-full px-2.5">
+                                {pose.difficulty}
                               </Badge>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="h-7 px-2.5 text-xs rounded-full text-blue-600 hover:text-blue-700 hover:bg-blue-50" 
+                                disabled={!isUnlocked}
+                              >
+                                Practice <ArrowRight className="ml-1 h-3 w-3" />
+                              </Button>
                             </div>
-                          )}
-                        </div>
-                        
-                        <div className="p-2">
-                          <div className="mb-0.5 font-medium text-sm">{pose.name}</div>
-                          {pose.sanskritName && (
-                            <div className="text-xs text-gray-500 italic mb-1">{pose.sanskritName}</div>
-                          )}
-                          <div className="flex items-center justify-between mt-1">
-                            <Badge variant="outline" className="bg-transparent text-xs capitalize">
-                              {pose.difficulty}
-                            </Badge>
-                            <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" disabled={!isUnlocked}>
-                              Practice <ArrowRight className="ml-1 h-3 w-3" />
-                            </Button>
                           </div>
                         </div>
                       </div>
@@ -308,19 +326,23 @@ export default function YogaGridMobile() {
               </div>
             ))
         ) : (
-          <div className="text-center py-10 px-3">
-            <p className="text-gray-500 text-sm">
-              {searchTerm ? "No poses match your search. Try different keywords." : "No poses available at your level yet."}
-            </p>
-            {searchTerm && (
-              <Button 
-                variant="outline" 
-                className="mt-4 rounded-full border-gray-200 text-gray-700 hover:bg-gray-50"
-                onClick={() => setSearchTerm("")}
-              >
-                Clear Search
-              </Button>
-            )}
+          <div className="flex flex-col items-center justify-center py-12 px-4">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center">
+              <Info className="h-12 w-12 text-gray-400 mb-3 mx-auto" />
+              <h3 className="text-lg font-medium text-gray-900 mb-1">No poses found</h3>
+              <p className="text-gray-500 max-w-md">
+                {searchTerm ? "No poses match your search. Try different keywords." : "No poses available at your level yet."}
+              </p>
+              {searchTerm && (
+                <Button 
+                  variant="outline" 
+                  className="mt-4 rounded-full border-gray-200 text-gray-700 hover:bg-gray-50"
+                  onClick={() => setSearchTerm("")}
+                >
+                  Clear Search
+                </Button>
+              )}
+            </div>
           </div>
         )}
       </div>

@@ -171,9 +171,9 @@ export default function ActiveYou({ defaultTab = 'meditation' }: ActiveYouProps)
             </p>
             
             {/* Apple-inspired iOS design */}
-            <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
-              {/* Use existing YogaGridInterface with clean styling */}
-              <YogaGridInterface />
+            <div>
+              {/* Use the iOS-styled YogaGridMobile component */}
+              <YogaGridMobile />
             </div>
             
             {/* Remove the main YogaVision dialog since each pose card has its own integrated camera */}
