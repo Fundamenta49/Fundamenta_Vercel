@@ -1,4 +1,5 @@
 import type { Express } from "express";
+import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { orchestrateAIResponse } from "./ai/index";
@@ -37,6 +38,7 @@ import financeRoutes from './routes/finance';
 import poseImagesRoutes from './routes/pose-images';
 import workoutRoutes from './routes/workout';
 import authRoutes from './auth/auth-routes';
+import registerMentorshipRoutes from './routes/mentorship-routes';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { getOccupationInterviewQuestions } from './career-one-stop-service';
 import { userGuideService } from './services/user-guide-service';
@@ -137,6 +139,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Mount auth routes
   app.use('/api/auth', authRoutes);
+  
+  // Mount mentorship routes (for parent/teacher portal)
+  const mentorshipRouter = express.Router();
+  registerMentorshipRoutes(mentorshipRouter);
+  app.use(mentorshipRouter);
   app.post("/api/chat", async (req, res) => {
     try {
       // Enhanced debug logging to understand the incoming request better
