@@ -1,0 +1,15 @@
+
+Fundamenta Jungle Expedition MVP Package
+-----------------------------------------
+Executive Summary:
+
+The Jungle Path gamification theme is a narrative-driven redesign of the Fundamenta platform designed to improve engagement, retention, and user immersion. 
+This guide outlines the visual, UX, narrative, technical, and QA standards for building the Jungle Path MVP using the existing React/TypeScript/Tailwind infrastructure.
+
+This package includes:
+1. Jungle Expedition Style Guide & Implementation Rulebook
+2. Jungle Quest Mapping Table
+3. Jungle Companion System Implementation Guide
+4. Mobile Wireframe Guide
+
+Each document has been structured for direct development handoff, ensuring clear, scalable implementation aligned with the platform's vision.
