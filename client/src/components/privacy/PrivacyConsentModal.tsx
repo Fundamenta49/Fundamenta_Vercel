@@ -82,49 +82,49 @@ export function PrivacyConsentModal({ onConsent, onDecline }: PrivacyConsentModa
       <AlertDialogContent className="sm:max-w-[500px]">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-2xl">Privacy Consent</AlertDialogTitle>
-          <AlertDialogDescription className="space-y-4">
-            <p className="font-medium text-foreground">
-              Your privacy is important to us at Fundamenta Life Skills.
+        </AlertDialogHeader>
+        <div className="space-y-4 py-2">
+          <p className="font-medium text-foreground">
+            Your privacy is important to us at Fundamenta Life Skills.
+          </p>
+          
+          <div className="space-y-2 text-sm">
+            <p>
+              We use your personal information to provide and improve our services.
+              This includes:
             </p>
             
-            <div className="space-y-2 text-sm">
-              <p>
-                We use your personal information to provide and improve our services.
-                This includes:
-              </p>
-              
-              <ul className="list-disc pl-5 space-y-1">
-                <li>Storing your data securely with encryption</li>
-                <li>Personalizing your learning experience</li>
-                <li>Providing progress tracking and recommendations</li>
-                <li>Sending important notifications about your account</li>
-              </ul>
-              
-              <p className="mt-4">
-                We implement modern security practices including:
-              </p>
-              
-              <ul className="list-disc pl-5 space-y-1">
-                <li>Secure password hashing</li>
-                <li>HTTPS-only connections</li>
-                <li>JWT token authentication</li>
-                <li>Regular security audits</li>
-              </ul>
-              
-              <p className="mt-4">
-                By clicking "I Consent", you acknowledge that you have read and
-                understood our{" "}
-                <Link 
-                  href="/privacy-policy" 
-                  className="text-primary underline underline-offset-4"
-                >
-                  Privacy Policy
-                </Link>{" "}
-                and consent to our data practices.
-              </p>
-            </div>
-          </AlertDialogDescription>
-        </AlertDialogHeader>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Storing your data securely with encryption</li>
+              <li>Personalizing your learning experience</li>
+              <li>Providing progress tracking and recommendations</li>
+              <li>Sending important notifications about your account</li>
+            </ul>
+            
+            <p className="mt-4">
+              We implement modern security practices including:
+            </p>
+            
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Secure password hashing</li>
+              <li>HTTPS-only connections</li>
+              <li>JWT token authentication</li>
+              <li>Regular security audits</li>
+            </ul>
+            
+            <p className="mt-4">
+              By clicking "I Consent", you acknowledge that you have read and
+              understood our{" "}
+              <Link 
+                href="/privacy-policy" 
+                className="text-primary underline underline-offset-4"
+              >
+                Privacy Policy
+              </Link>{" "}
+              and consent to our data practices.
+            </p>
+          </div>
+        </div>
         <AlertDialogFooter className="mt-6">
           <AlertDialogCancel onClick={handleDecline}>
             Decline
