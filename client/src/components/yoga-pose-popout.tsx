@@ -516,15 +516,12 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
               {currentVideoId ? (
                 <div className="w-full max-w-screen-md mx-auto">
                   <div className="aspect-video w-full rounded-lg overflow-hidden shadow-sm mb-3 sm:mb-4">
-                    <iframe
+                    <EmbeddedYouTubePlayer
+                      videoId={currentVideoId}
+                      title={getYogaPoseVideoInfo(pose.id)?.title || pose.name + " Tutorial"}
                       className="w-full h-full"
-                      src={`https://www.youtube.com/embed/${currentVideoId}?autoplay=1`}
-                      title="YouTube video player"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      style={{ width: "calc(100% + 8px)", marginLeft: "-4px", marginRight: "-4px" }}
-                    ></iframe>
+                      onError={() => console.log(`Error loading video for ${pose.name}`)}
+                    />
                   </div>
                   
                   <div className="px-4 sm:px-6">
