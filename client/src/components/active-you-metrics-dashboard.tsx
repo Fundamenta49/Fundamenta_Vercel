@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { 
   Award, 
   Calendar, 
@@ -29,7 +30,10 @@ import {
 } from 'lucide-react';
 
 import { getFitnessActivityStats } from '@/lib/active-you-integration';
-import { ActivityType } from '@/contexts/activity-profile-context';
+import { ExerciseType } from '@/modules/active-you/context/module-context';
+
+// Using ExerciseType as ActivityType for consistency with existing code
+type ActivityType = ExerciseType;
 
 // Map activity types to their icons
 const activityIcons: Record<ActivityType, React.ReactNode> = {

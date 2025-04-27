@@ -1,13 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 import HIITSpecificExercisesEnhanced from './hiit-specific-exercises-enhanced';
 import YogaSpecificExercisesEnhanced from './yoga-specific-exercises-enhanced';
 import StretchSpecificExercisesEnhanced from './stretch-specific-exercises-enhanced';
 import RunningSpecificExercisesEnhanced from './running-specific-exercises-enhanced';
 import WeightliftingSpecificExercisesEnhanced from './weightlifting-specific-exercises-enhanced';
 import MeditationSpecificExercisesEnhanced from './meditation-specific-exercises-enhanced';
+import ActiveYouMetricsDashboard from './active-you-metrics-dashboard';
 import { Activity } from 'lucide-react';
+import { ActivityType } from '@/contexts/activity-profile-context';
+import { trackFitnessActivity, getFitnessActivityStats } from '@/lib/active-you-integration';
 
 // Export the StretchingIcon for backward compatibility with active-you.tsx
 export const StretchingIcon = Activity;

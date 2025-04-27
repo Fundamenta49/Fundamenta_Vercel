@@ -1,6 +1,9 @@
-import { ActivityType } from "@/contexts/activity-profile-context";
 import { ACHIEVEMENTS } from "@/shared/arcade-schema";
 import { toast } from "@/hooks/use-toast";
+import { ExerciseType } from "@/modules/active-you/context/module-context";
+
+// Using ExerciseType as ActivityType for consistency with existing code
+type ActivityType = ExerciseType;
 
 // Interface for tracking fitness activity progress
 export interface FitnessActivity {
@@ -14,23 +17,27 @@ export interface FitnessActivity {
 }
 
 // Map of activity types to their corresponding learning path IDs
-const ACTIVITY_TO_LEARNING_PATH: Record<ActivityType, string[]> = {
+const ACTIVITY_TO_LEARNING_PATH: Partial<Record<ActivityType, string[]>> = {
   yoga: ["wellness-mindfulness", "stress-management"],
   running: ["fitness-cardio", "goal-setting"],
   weightlifting: ["fitness-strength", "consistency-building"],
   hiit: ["fitness-endurance", "time-management"],
   stretch: ["wellness-recovery", "injury-prevention"],
-  meditation: ["wellness-mindfulness", "mental-health"]
+  meditation: ["wellness-mindfulness", "mental-health"],
+  // The "activeyou" tab is a profile view, not an actual activity type
+  activeyou: []
 };
 
 // Map of activity types to their corresponding achievement IDs
-const ACTIVITY_TO_ACHIEVEMENTS: Record<ActivityType, string[]> = {
+const ACTIVITY_TO_ACHIEVEMENTS: Partial<Record<ActivityType, string[]>> = {
   yoga: ["fit-yoga-beginner", "fit-consistency"],
   running: ["fit-first-workout", "fit-consistency"],
   weightlifting: ["fit-first-workout", "fit-consistency", "fit-strength-milestone"],
   hiit: ["fit-first-workout", "fit-consistency", "fit-intensity-master"],
   stretch: ["fit-first-workout", "fit-flexibility-focus"],
-  meditation: ["well-mindfulness-starter", "well-mental-master"]
+  meditation: ["well-mindfulness-starter", "well-mental-master"],
+  // The "activeyou" tab is a profile view, not an actual activity type
+  activeyou: []
 };
 
 // Map of milestone counts to achievements
