@@ -144,86 +144,107 @@ export default function YogaGridInterface() {
   ).slice(0, 3);
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+    <div className="space-y-4">
+      <Card className="border md:shadow-sm rounded-lg">
+        <CardHeader className="p-3 sm:p-5 border-b border-gray-100">
+          <CardTitle className="flex items-center justify-between text-lg font-medium text-gray-800">
             <span>Yoga Practice</span>
-            <Badge variant="outline" className="ml-2 flex items-center">
-              <Award className="h-3.5 w-3.5 mr-1" />
+            <Badge className="ml-2 flex items-center bg-gray-100 text-gray-800 hover:bg-gray-200 border-0">
+              <Award className="h-3 w-3 mr-1" />
               Level {currentLevelNum}
             </Badge>
           </CardTitle>
-          <CardDescription>
-            Explore different yoga poses and practice with AI form feedback.
+          <CardDescription className="hidden sm:block text-sm text-gray-500">
+            Explore poses suited to your level and track your progress.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-6">
+        <CardContent className="p-3 sm:p-5">
+          {/* Filters - iOS style */}
+          <div className="flex flex-col sm:flex-row gap-2 mb-4">
             <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search poses..."
-                className="pl-9"
+                className="pl-9 border border-gray-200 rounded-full h-9 text-sm focus:ring-gray-300 focus:border-gray-300"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             
-            <div className="flex items-center gap-2">
-              <FilterIcon className="h-4 w-4 text-muted-foreground" />
-              <Tabs value={difficultyFilter} onValueChange={setDifficultyFilter} className="w-full">
-                <TabsList>
-                  <TabsTrigger value="all">All</TabsTrigger>
-                  <TabsTrigger value="beginner">Beginner</TabsTrigger>
-                  <TabsTrigger value="intermediate">Medium</TabsTrigger>
-                  <TabsTrigger value="advanced">Advanced</TabsTrigger>
+            <div className="sm:w-auto">
+              <Tabs value={difficultyFilter} onValueChange={setDifficultyFilter}>
+                <TabsList className="h-9 bg-gray-100 p-1 rounded-full">
+                  <TabsTrigger 
+                    value="all" 
+                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                  >
+                    All
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="beginner" 
+                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                  >
+                    Beginner
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="intermediate" 
+                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                  >
+                    Medium
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="advanced" 
+                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900"
+                  >
+                    Advanced
+                  </TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
           </div>
           
-          {/* Active challenges section */}
+          {/* Active challenges section - iOS-style cards */}
           {availableChallenges.length > 0 && (
-            <div className="mb-6">
-              <h3 className="text-lg font-medium mb-3">Active Challenges</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="mb-4">
+              <h3 className="text-base font-medium mb-2 text-gray-800">Active Challenges</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 overflow-x-auto pb-1">
                 {availableChallenges.map(challenge => (
-                  <Card key={challenge.id} className="hover:border-primary cursor-pointer transition-all">
-                    <CardContent className="p-4">
+                  <div key={challenge.id} className="min-w-[240px]">
+                    <div className="bg-white border border-gray-200 rounded-xl p-3 h-full hover:border-gray-300 transition-colors">
                       <div className="flex flex-col h-full">
-                        <h4 className="font-medium text-base mb-1">{challenge.name}</h4>
-                        <p className="text-sm text-muted-foreground mb-3 flex-grow">
+                        <h4 className="font-medium text-sm mb-1">{challenge.name}</h4>
+                        <p className="text-xs text-gray-500 mb-2 line-clamp-2 flex-grow">
                           {challenge.description}
                         </p>
                         <div className="flex items-center justify-between">
-                          <Badge variant="secondary">{challenge.difficulty}</Badge>
-                          <span className="text-xs text-muted-foreground">{challenge.durationDays} days</span>
+                          <Badge className="text-xs px-2 py-0.5 bg-gray-100 text-gray-800 hover:bg-gray-200 border-0">
+                            {challenge.difficulty}
+                          </Badge>
+                          <span className="text-xs text-gray-400">{challenge.durationDays} days</span>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
           )}
           
-          {/* Render poses by level */}
+          {/* Render poses by level - iOS style */}
           {Object.keys(posesByLevel).length > 0 ? (
             Object.entries(posesByLevel)
               .sort(([levelA], [levelB]) => parseInt(levelA) - parseInt(levelB))
               .map(([level, poses]) => (
-                <div key={level} className="mb-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-medium">Level {level} Poses</h3>
-                    <Badge variant="outline" className="text-xs flex items-center">
+                <div key={level} className="mb-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-base font-medium text-gray-800">Level {level} Poses</h3>
+                    <Badge className="text-xs bg-transparent border border-gray-200 text-gray-600">
                       <Info className="h-3 w-3 mr-1" />
                       {poses.length} poses
                     </Badge>
                   </div>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                     {poses.map(pose => {
                       // Check if pose is unlocked
                       const isUnlocked = isPoseUnlocked ? isPoseUnlocked(pose.id) : true;
@@ -248,14 +269,14 @@ export default function YogaGridInterface() {
                 </div>
               ))
           ) : (
-            <div className="text-center py-10">
-              <p className="text-muted-foreground">
+            <div className="text-center py-8 px-3">
+              <p className="text-gray-500">
                 {searchTerm ? "No poses match your search. Try different keywords." : "No poses available at your level yet."}
               </p>
               {searchTerm && (
                 <Button 
                   variant="outline" 
-                  className="mt-4"
+                  className="mt-3 text-sm h-8"
                   onClick={() => setSearchTerm("")}
                 >
                   Clear Search
