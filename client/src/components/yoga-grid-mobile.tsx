@@ -11,6 +11,7 @@ import { yogaPoses, yogaChallenges } from '../data/yoga-poses-progression';
 import { ArrowRight } from "lucide-react";
 import updatedPoses from '../data/updated_poses.json';
 import posesWithPaths from '../data/poses_with_paths.json';
+import yogaYoutubeIds from '../data/yoga_youtube_ids.json';
 import { getYogaPoseWithDefaults } from '../lib/yoga-poses-data';
 
 // Create an adapter interface to handle type discrepancies
@@ -145,17 +146,17 @@ export default function YogaGridMobile() {
   ).slice(0, 3);
 
   return (
-    <div className="pb-16">
-      {/* iOS-style container with subtle shadow */}
-      <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-4">
-        {/* Elegant iOS-style gradient header */}
-        <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+    <div className="pb-16 max-w-4xl mx-auto">
+      {/* iOS-style container with ultra-minimal design */}
+      <div className="bg-white/90 backdrop-blur-xl rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-4">
+        {/* iOS-style subtle gradient header */}
+        <div className="h-1 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
         
-        {/* Header Section with Apple-inspired minimal styling */}
-        <div className="p-4 sm:p-6 border-b border-gray-100">
-          <div className="flex justify-between items-center mb-1">
-            <h2 className="text-xl font-medium text-gray-800">Yoga Practice</h2>
-            <Badge className="bg-gray-50 text-gray-800 hover:bg-gray-100 border-0 shadow-sm px-3 py-1 rounded-full">
+        {/* Header Section with Apple-inspired ultra-minimal styling */}
+        <div className="p-5 sm:p-6 border-b border-gray-50">
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-xl font-medium text-gray-800 tracking-tight">Yoga Practice</h2>
+            <Badge className="bg-gray-50/80 backdrop-blur-sm text-gray-800 hover:bg-gray-100 border-0 shadow-sm px-3 py-1 rounded-full">
               <Award className="h-3.5 w-3.5 mr-1.5 text-blue-500" />
               Level {currentLevelNum}
             </Badge>
@@ -165,14 +166,14 @@ export default function YogaGridMobile() {
           </p>
         </div>
         
-        {/* Filters - iOS style with translucent effect */}
-        <div className="sticky top-0 z-10 px-4 sm:px-6 py-4 bg-white/95 backdrop-blur-md border-b border-gray-100">
+        {/* Filters - iOS 17 style with SF Pro-inspired design */}
+        <div className="sticky top-0 z-10 px-5 sm:px-6 py-4 bg-white/95 backdrop-blur-xl border-b border-gray-50">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search poses..."
-                className="pl-9 rounded-xl border-gray-200 bg-gray-50/80 h-10 text-sm focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
+                className="pl-9 rounded-full border-gray-100 bg-gray-50/60 h-10 text-sm focus:ring-1 focus:ring-blue-100 focus:border-blue-200"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -180,28 +181,28 @@ export default function YogaGridMobile() {
             
             <div className="sm:w-auto">
               <Tabs value={difficultyFilter} onValueChange={setDifficultyFilter}>
-                <TabsList className="bg-gray-100/80 p-1 rounded-xl">
+                <TabsList className="bg-gray-50/60 backdrop-blur-sm p-1 rounded-full">
                   <TabsTrigger 
                     value="all" 
-                    className="rounded-lg text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm"
+                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm"
                   >
                     All
                   </TabsTrigger>
                   <TabsTrigger 
                     value="beginner" 
-                    className="rounded-lg text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm"
+                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm"
                   >
                     Beginner
                   </TabsTrigger>
                   <TabsTrigger 
                     value="intermediate" 
-                    className="rounded-lg text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm"
+                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm"
                   >
                     Medium
                   </TabsTrigger>
                   <TabsTrigger 
                     value="advanced" 
-                    className="rounded-lg text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm"
+                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm"
                   >
                     Advanced
                   </TabsTrigger>
@@ -211,29 +212,29 @@ export default function YogaGridMobile() {
           </div>
         </div>
         
-        {/* Challenges - iOS-style cards with subtle gradient border */}
+        {/* Challenges - iOS 17 style cards with minimal design */}
         {availableChallenges.length > 0 && (
-          <div className="px-4 sm:px-6 py-4">
-            <h3 className="text-base font-medium mb-3 text-gray-800 flex items-center">
+          <div className="px-5 sm:px-6 py-5">
+            <h3 className="text-base font-medium mb-4 text-gray-800 flex items-center">
               Active Challenges
-              <Badge variant="outline" className="ml-2 bg-gray-50 text-xs px-2 py-0.5 rounded-full">
+              <Badge variant="outline" className="ml-2 bg-gray-50/60 text-xs px-2.5 py-0.5 rounded-full border-0">
                 {availableChallenges.length}
               </Badge>
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pb-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 pb-1">
               {availableChallenges.map(challenge => (
                 <div key={challenge.id} className="min-w-[240px] group">
-                  <div className="bg-white rounded-xl shadow-sm overflow-hidden h-full border border-gray-100 transition-all duration-200 hover:shadow-md hover:border-blue-200">
-                    {/* Small gradient accent at top of each card */}
-                    <div className="h-1 bg-gradient-to-r from-blue-400 to-purple-400"></div>
+                  <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden h-full border border-gray-50 transition-all duration-200 hover:shadow-md hover:border-blue-100">
+                    {/* iOS 17 style thin gradient accent */}
+                    <div className="h-0.5 bg-gradient-to-r from-blue-300 to-indigo-400"></div>
                     <div className="p-4">
                       <div className="flex flex-col h-full">
-                        <h4 className="font-medium text-sm mb-1">{challenge.name}</h4>
-                        <p className="text-xs text-gray-500 mb-3 line-clamp-2 flex-grow">
+                        <h4 className="font-medium text-sm mb-1 text-gray-800">{challenge.name}</h4>
+                        <p className="text-xs text-gray-500 mb-3 line-clamp-2 flex-grow leading-relaxed">
                           {challenge.description}
                         </p>
                         <div className="flex items-center justify-between">
-                          <Badge variant="outline" className="bg-gray-50 text-xs px-2.5 py-0.5 rounded-full">
+                          <Badge variant="outline" className="bg-gray-50/60 backdrop-blur-sm text-xs px-2.5 py-0.5 rounded-full border-0">
                             {challenge.difficulty}
                           </Badge>
                           <span className="text-xs text-gray-400">{challenge.durationDays} days</span>
