@@ -257,7 +257,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
           {/* iOS-style subtle gradient accent at top */}
           <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
           
-          <div className={`relative bg-gray-50 ${isMobile ? 'aspect-video' : 'aspect-square'}`}>
+          <div className="relative bg-gray-50 aspect-video">
             {isLoadingImage ? (
               <div className="flex items-center justify-center h-full">
                 <div className="animate-pulse w-10 h-10 rounded-full bg-gray-200" />
@@ -339,7 +339,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
             )}
           </div>
           
-          <CardContent className={`${isMobile ? 'p-4' : 'p-3'}`}>
+          <CardContent className={`${isMobile ? 'p-3' : 'p-2'}`}>
             <div className={`${isMobile ? 'text-base' : 'text-sm'} font-medium text-gray-900 truncate`}>{pose.name}</div>
             {pose.sanskritName && (
               <div className={`${isMobile ? 'text-sm' : 'text-xs'} text-gray-500 italic truncate`}>{pose.sanskritName}</div>

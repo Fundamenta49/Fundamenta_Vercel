@@ -146,7 +146,7 @@ export default function YogaGridMobile() {
   ).slice(0, 3);
 
   return (
-    <div className="pb-16 w-full max-w-full sm:max-w-4xl mx-auto px-1 sm:px-4">
+    <div className="pb-16 w-full max-w-full sm:max-w-5xl lg:max-w-6xl mx-auto px-1 sm:px-4">
       {/* iOS-style container with ultra-minimal design */}
       <div className="bg-white/90 backdrop-blur-xl rounded-2xl overflow-hidden shadow-sm border border-gray-100 mb-4 w-full">
         {/* iOS-style subtle gradient header */}
@@ -261,7 +261,7 @@ export default function YogaGridMobile() {
                   </Badge>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
                   {poses.map((pose: any) => {
                     // Check if pose is unlocked
                     const isUnlocked = isPoseUnlocked ? isPoseUnlocked(pose.id) : true;
