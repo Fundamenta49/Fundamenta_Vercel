@@ -1,31 +1,40 @@
 /**
- * JungleQuest type represents a learning module transformed into a jungle-themed quest
+ * Represents a learning module transformed into a jungle quest
  */
 export interface JungleQuest {
-  // Original identification
   id: string;
   originalTitle: string;
   originalDescription: string;
-  
-  // Jungle theme transformed content
   jungleTitle: string;
   jungleDescription: string;
-  
-  // Classification and metadata
   category: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
-  points: number;
-  estimatedTime: number; // in minutes
-  
-  // Logical structure
-  prerequisites?: string[];
-  unlocks?: string[];
-  
-  // Quest properties
-  zone: string;
+  estimatedTime: number;
   requiredRank: number;
-  
-  // Visual styling
-  imagePath?: string;
-  iconName?: string;
+  difficulty?: 'beginner' | 'intermediate' | 'advanced';
+  rewards?: {
+    points: number;
+    badges?: string[];
+  };
+}
+
+/**
+ * Represents a user's progress on a specific quest
+ */
+export interface QuestProgress {
+  questId: string;
+  progress: number; // 0-100
+  startedAt: string | null;
+  completedAt: string | null;
+  currentStep?: number;
+  totalSteps?: number;
+}
+
+/**
+ * Represents a quest reward that a user receives upon completion
+ */
+export interface QuestReward {
+  questId: string;
+  type: 'points' | 'badge' | 'item';
+  value: number | string;
+  receivedAt: string;
 }

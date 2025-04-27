@@ -1,133 +1,120 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Card, CardContent } from '@/components/ui/card';
-import { MessageCircle, HelpCircle, Sparkles } from 'lucide-react';
-import { Companion, getRandomCompanionMessage } from '../../data/companions';
-import { AchievementCategory } from '@/shared/arcade-schema';
+import { Companion } from '../../types/companion';
 
 interface CompanionDialogProps {
   isOpen: boolean;
   onClose: () => void;
   companion: Companion;
-  currentZone?: AchievementCategory;
 }
 
-type MessageType = 'greeting' | 'encouragement' | 'celebration' | 'tips';
-
 /**
- * Interactive dialog for communicating with a jungle companion
+ * CompanionDialog displays a dialog with companion interactions and tips
  */
 const CompanionDialog: React.FC<CompanionDialogProps> = ({
   isOpen,
   onClose,
-  companion,
-  currentZone
+  companion
 }) => {
-  const [activeTab, setActiveTab] = useState<MessageType>('greeting');
-  const [animateMessage, setAnimateMessage] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>('chat');
   
-  // Get the appropriate message based on the selected tab
-  const getMessage = (): string => {
-    switch (activeTab) {
-      case 'greeting':
-        return companion.messages.greeting;
-      case 'encouragement':
-        return getRandomCompanionMessage(companion, 'encouragement');
-      case 'celebration':
-        return getRandomCompanionMessage(companion, 'celebration');
-      case 'tips':
-        if (currentZone && companion.messages.tips[currentZone]) {
-          return companion.messages.tips[currentZone];
-        }
-        return companion.messages.tips.general || "I have no specific tips for this zone.";
-      default:
-        return companion.messages.greeting;
-    }
-  };
-  
-  // Animate message when it changes
-  const handleTabChange = (value: string) => {
-    setAnimateMessage(true);
-    setActiveTab(value as MessageType);
-    setTimeout(() => setAnimateMessage(false), 500);
-  };
-  
-  if (!isOpen) return null;
-
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <span>Conversation with {companion.name}</span>
-          </DialogTitle>
-          <DialogDescription>
-            Your {companion.type} companion from the {companion.specialtyZone} zone
-          </DialogDescription>
+        <DialogHeader className="flex items-center space-x-4 pb-2 border-b">
+          <div 
+            className="w-12 h-12 rounded-full flex items-center justify-center bg-muted"
+            style={{ border: `2px solid ${companion.color}` }}
+          >
+            {/* Placeholder for companion avatar */}
+            <span className="text-2xl">{companion.species.charAt(0)}</span>
+          </div>
+          <div>
+            <h2 className="text-lg font-bold">{companion.name}</h2>
+            <p className="text-sm text-muted-foreground">{companion.species} Companion</p>
+          </div>
         </DialogHeader>
         
-        <div className="flex items-center space-x-4 py-2">
-          <div className="h-16 w-16 rounded-full bg-amber-100 border-2 border-amber-300 flex items-center justify-center">
-            {/* This would normally be an actual image */}
-            <div className="font-bold text-2xl text-amber-800">
-              {companion.name.charAt(0)}
-            </div>
-          </div>
-          
-          <div className="flex-1">
-            <h3 className="text-sm font-medium">{companion.name}</h3>
-            <p className="text-xs text-gray-500">
-              {companion.personality.charAt(0).toUpperCase() + companion.personality.slice(1)} {companion.type}
-            </p>
-          </div>
-        </div>
-        
-        <Tabs 
-          defaultValue="greeting" 
-          value={activeTab} 
-          onValueChange={handleTabChange}
-          className="w-full"
-        >
-          <TabsList className="grid grid-cols-4">
-            <TabsTrigger value="greeting">
-              <MessageCircle className="h-4 w-4 mr-1 md:mr-2" />
-              <span className="hidden md:inline">Greet</span>
-            </TabsTrigger>
-            <TabsTrigger value="encouragement">
-              <Sparkles className="h-4 w-4 mr-1 md:mr-2" />
-              <span className="hidden md:inline">Encourage</span>
-            </TabsTrigger>
-            <TabsTrigger value="celebration">
-              <Sparkles className="h-4 w-4 mr-1 md:mr-2" />
-              <span className="hidden md:inline">Celebrate</span>
-            </TabsTrigger>
-            <TabsTrigger value="tips">
-              <HelpCircle className="h-4 w-4 mr-1 md:mr-2" />
-              <span className="hidden md:inline">Tips</span>
-            </TabsTrigger>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid grid-cols-2 w-full">
+            <TabsTrigger value="chat">Chat</TabsTrigger>
+            <TabsTrigger value="tips">Tips & Hints</TabsTrigger>
           </TabsList>
           
-          <Card className="mt-4 border-amber-200">
-            <CardContent className="pt-4">
-              <div 
-                className={`text-sm italic text-gray-600 p-3 rounded-lg bg-amber-50 
-                  ${animateMessage ? 'opacity-0 transition-opacity duration-300' : 'opacity-100 transition-opacity duration-300'}`}
+          <TabsContent value="chat" className="pt-4">
+            <div 
+              className="rounded-lg p-4 mb-4"
+              style={{ backgroundColor: `${companion.color}20` }}
+            >
+              <p className="text-sm">{companion.introMessage}</p>
+            </div>
+            
+            <div className="rounded-lg border p-4 mb-4 min-h-[100px] max-h-[150px] overflow-y-auto">
+              <p className="text-sm text-muted-foreground italic">
+                Your conversation with {companion.name} will be shown here.
+                This feature will keep track of your interactions and provide context-aware guidance.
+              </p>
+            </div>
+            
+            <div className="flex space-x-2">
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="flex-grow"
+                disabled
               >
-                "{getMessage()}"
+                Ask for help
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline"
+                className="flex-grow"
+                disabled
+              >
+                Request tip
+              </Button>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="tips" className="pt-4">
+            <div className="space-y-4">
+              <div className="rounded-lg border p-4">
+                <h3 className="text-sm font-medium mb-2">Helpful Tips</h3>
+                <ul className="space-y-3">
+                  {companion.tips.map(tip => (
+                    <li key={tip.id} className="text-sm flex">
+                      <span className="text-[#94C973] mr-2">•</span>
+                      <span>{tip.text}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </CardContent>
-          </Card>
+              
+              <div className="rounded-lg border p-4">
+                <h3 className="text-sm font-medium mb-2">Specialty Areas</h3>
+                <div className="flex flex-wrap gap-2">
+                  {companion.specialtyZones.map(zone => (
+                    <span
+                      key={zone}
+                      className="px-2 py-1 text-xs rounded-full bg-muted"
+                    >
+                      {zone.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </TabsContent>
         </Tabs>
         
-        <DialogFooter className="sm:justify-start">
-          <Button 
-            type="button" 
-            variant="ghost"
+        <DialogFooter>
+          <Button
             onClick={onClose}
+            style={{ backgroundColor: companion.color }}
           >
-            Close
+            Continue Journey
           </Button>
         </DialogFooter>
       </DialogContent>
