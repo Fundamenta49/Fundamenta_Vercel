@@ -8,7 +8,8 @@ import {
   setAuthCookies, 
   clearAuthCookies, 
   setConsentCookie, 
-  hasConsentCookie 
+  hasConsentCookie,
+  clearConsentCookie
 } from './cookie-utils';
 import { AuthenticatedRequest, authenticateJWT } from './auth-middleware';
 import { z } from 'zod';
@@ -246,6 +247,17 @@ router.get('/consent', (req: Request, res: Response) => {
   const hasConsent = hasConsentCookie(req);
   
   res.json({ hasConsent });
+});
+
+/**
+ * Withdraw privacy consent
+ * DELETE /api/auth/consent
+ */
+router.delete('/consent', (req: Request, res: Response) => {
+  // Clear the consent cookie
+  clearConsentCookie(res);
+  
+  res.status(200).json({ message: 'Privacy consent withdrawn successfully' });
 });
 
 export default router;

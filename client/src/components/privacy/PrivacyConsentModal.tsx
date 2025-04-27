@@ -126,6 +126,10 @@ export function PrivacyConsentModal({ onConsent, onDecline }: PrivacyConsentModa
               </Link>{" "}
               and consent to our data practices.
             </p>
+            
+            <p className="mt-4 text-sm italic">
+              You may withdraw your consent at any time by visiting your account settings.
+            </p>
           </div>
         </div>
         <AlertDialogFooter className="mt-6">

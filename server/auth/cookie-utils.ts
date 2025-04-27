@@ -77,3 +77,11 @@ export function setConsentCookie(res: Response): void {
 export function hasConsentCookie(req: Request): boolean {
   return req.cookies[COOKIE_NAMES.CONSENT] === 'granted';
 }
+
+/**
+ * Clear privacy consent cookie
+ * @param res Express Response object
+ */
+export function clearConsentCookie(res: Response): void {
+  res.clearCookie(COOKIE_NAMES.CONSENT, { path: '/' });
+}

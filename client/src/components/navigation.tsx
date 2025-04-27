@@ -30,7 +30,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
-import { TourSettings } from "@/components/tour-settings";
+import { AccountSettings } from "@/components/account-settings";
 import { Separator } from "@/components/ui/separator";
 import NotificationPanel from "@/components/notification-panel";
 
@@ -309,7 +309,7 @@ export default function Navigation() {
               <div className="flex justify-center my-2">
                 <NotificationPanel />
               </div>
-              <TourSettings />
+              <AccountSettings />
             </div>
           </div>
         </SheetContent>
@@ -477,9 +477,9 @@ export default function Navigation() {
             <NotificationPanel />
           </div>
           
-          {/* Tour Settings */}
+          {/* Account Settings */}
           <div>
-            <TourSettings />
+            <AccountSettings />
           </div>
         </div>
       </div>
