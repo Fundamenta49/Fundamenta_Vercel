@@ -225,6 +225,9 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
         <Card 
           className={`cursor-pointer overflow-hidden transition-all duration-300 border-0 rounded-2xl shadow-sm hover:shadow-md hover:translate-y-[-2px] ${!unlocked ? 'opacity-85' : ''}`}
         >
+          {/* iOS-style subtle gradient accent at top */}
+          <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+          
           <div className="aspect-square relative bg-gray-50">
             {isLoadingImage ? (
               <div className="flex items-center justify-center h-full">
@@ -266,7 +269,7 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                 
                 {/* Apple-style video indicator with translucent background */}
                 {pose.id && getYogaPoseVideoInfo(pose.id) && (
-                  <div className="absolute bottom-2 right-2 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full flex items-center shadow-sm">
+                  <div className="absolute bottom-2 right-2 bg-white/40 backdrop-blur-md text-gray-900 text-xs px-2 py-1 rounded-full flex items-center shadow-sm">
                     <Youtube className="w-3 h-3 mr-1" />
                     <span className="truncate max-w-[60px] sm:max-w-[80px]">Watch</span>
                   </div>
@@ -294,8 +297,8 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
             {/* Achievement badge with iOS-style translucent effect */}
             {achievement && achievement.masteryLevel > 0 && (
               <div className="absolute top-2 right-2">
-                <Badge className="bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 border-0 rounded-full shadow-sm">
-                  <Award className="h-3 w-3 mr-1" strokeWidth={2} />
+                <Badge className="bg-white/70 backdrop-blur-md text-gray-900 text-xs px-2 py-1 border-0 rounded-full shadow-sm">
+                  <Award className="h-3 w-3 mr-1 text-amber-500" strokeWidth={2} />
                   {achievement.masteryLevel}/5
                 </Badge>
               </div>
