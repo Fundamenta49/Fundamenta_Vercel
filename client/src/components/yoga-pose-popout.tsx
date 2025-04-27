@@ -254,15 +254,19 @@ export default function YogaPosePopout({ pose, unlocked, achievement }: YogaPose
                     // Try a different YouTube thumbnail format
                     const videoId = getYogaPoseVideoInfo(pose.id)?.videoId;
                     if (videoId) {
-                      e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+                      e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
                       
-                      // Add a second error handler in case hqdefault also fails
+                      // Add a second error handler in case mqdefault also fails
                       e.currentTarget.onerror = () => {
                         console.log(`Alternative thumbnail also failed for ${pose.id}, trying sddefault format`);
                         e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/sddefault.jpg`;
                         
                         // Final fallback if all YouTube formats fail
-                        e.currentTarget.onerror = null;
+                        e.currentTarget.onerror = () => {
+                          console.log(`All YouTube thumbnails failed for ${pose.id}, using default fallback`);
+                          e.currentTarget.src = `/images/yoga-poses/original_yoga_image.jpg`;
+                          e.currentTarget.onerror = null;
+                        };
                       };
                     }
                   }}

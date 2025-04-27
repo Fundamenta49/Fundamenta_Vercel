@@ -126,9 +126,10 @@ export const getYogaPoseThumbnail = (poseId: string): string => {
   if (poseId in POSE_THUMBNAILS) {
     const { videoId } = POSE_THUMBNAILS[poseId];
     
-    // Use high quality thumbnail format
-    // We'll use maxresdefault for better quality thumbnails
-    return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+    // Use high quality thumbnail format with fallback options
+    return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    // Note: We use hqdefault.jpg as it's more reliably available than maxresdefault.jpg
+    // maxresdefault often 404s for older/smaller videos
   }
   
   // Fallback based on difficulty level if no specific thumbnail defined
@@ -163,7 +164,7 @@ export const getYogaPoseVideoInfo = (poseId: string): {
   if (poseId in POSE_THUMBNAILS) {
     const { videoId, title, channelTitle } = POSE_THUMBNAILS[poseId];
     return {
-      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+      thumbnailUrl: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
       videoId,
       title,
       channelTitle,

@@ -77,9 +77,9 @@ export default function YogaGridMobile() {
       // Determine pose level based on ID
       const poseLevel = getPoseLevel(pose.id);
 
-      // Create YouTube thumbnail URL - using higher quality thumbnails
+      // Create YouTube thumbnail URL - using reliable thumbnail format
       const youtubeThumbUrl = youtubeId 
-        ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg` 
+        ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` 
         : `/images/yoga-poses/original_yoga_image.jpg`;
   
       // Construct the complete pose object
