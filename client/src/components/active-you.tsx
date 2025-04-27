@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { StretchingIcon } from "./active-you-enhanced";
 import HIITSpecificExercisesEnhanced from './hiit-specific-exercises-enhanced';
-import YogaSpecificExercisesEnhanced from './yoga-specific-exercises-enhanced';
+import YogaSpecificExercisesMobile from './yoga-specific-exercises-mobile';
 import StretchSpecificExercisesEnhanced from './stretch-specific-exercises-enhanced';
 import RunningSpecificExercisesEnhanced from './running-specific-exercises-enhanced';
 import WeightliftingSpecificExercisesEnhanced from './weightlifting-specific-exercises-enhanced';
