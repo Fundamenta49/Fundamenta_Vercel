@@ -147,61 +147,73 @@ export default function YogaGridInterface() {
 
   return (
     <div className="space-y-4">
-      <Card className="border md:shadow-sm rounded-lg">
-        <CardHeader className="p-3 sm:p-5 border-b border-gray-100">
-          <CardTitle className="flex items-center justify-between text-lg font-medium text-gray-800">
-            <span>Yoga Practice</span>
-            <Badge className="ml-2 flex items-center bg-gray-100 text-gray-800 hover:bg-gray-200 border-0">
-              <Award className="h-3 w-3 mr-1" />
+      <Card className="border-0 md:shadow-sm rounded-2xl overflow-hidden">
+        {/* iOS-style gradient header bar */}
+        <div className="h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"></div>
+        
+        <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-xl font-medium text-gray-800">
+                Yoga Practice
+              </CardTitle>
+              <CardDescription className="text-sm text-gray-500 mt-1">
+                Explore poses suited to your level and advance your journey.
+              </CardDescription>
+            </div>
+            <Badge className="px-3 py-1 text-sm flex items-center bg-blue-50 text-blue-700 rounded-full border-0 shadow-sm">
+              <Award className="h-4 w-4 mr-1.5" strokeWidth={2} />
               Level {currentLevelNum}
             </Badge>
-          </CardTitle>
-          <CardDescription className="hidden sm:block text-sm text-gray-500">
-            Explore poses suited to your level and track your progress.
-          </CardDescription>
+          </div>
         </CardHeader>
-        <CardContent className="p-3 sm:p-5">
-          {/* Filters - Enhanced iOS style for mobile */}
-          <div className="flex flex-col gap-3 mb-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search poses..."
-                className="pl-9 border border-gray-200 rounded-full h-9 text-sm focus:ring-blue-200 focus:border-blue-300"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            
-            <div className="w-full overflow-x-auto pb-1 hide-scrollbar">
-              <Tabs value={difficultyFilter} onValueChange={setDifficultyFilter}>
-                <TabsList className="h-9 bg-gray-100 p-1 rounded-full w-full inline-flex">
-                  <TabsTrigger 
-                    value="all" 
-                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 flex-1 min-w-[60px]"
-                  >
-                    All
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="beginner" 
-                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 flex-1 min-w-[80px]"
-                  >
-                    Beginner
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="intermediate" 
-                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 flex-1 min-w-[80px]"
-                  >
-                    Medium
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="advanced" 
-                    className="rounded-full text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 flex-1 min-w-[80px]"
-                  >
-                    Advanced
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
+        
+        <CardContent className="p-4 sm:p-6 bg-gray-50">
+          {/* iOS-style search and filters */}
+          <div className="bg-white rounded-xl p-4 shadow-sm mb-6">
+            <div className="flex flex-col gap-4">
+              {/* Stylish search field with subtle shadow */}
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search yoga poses..."
+                  className="pl-10 border border-gray-200 rounded-full h-10 text-sm focus:ring-blue-200 focus:border-blue-300 shadow-sm"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              
+              {/* iOS-style pill filters */}
+              <div className="w-full overflow-x-auto hide-scrollbar">
+                <Tabs value={difficultyFilter} onValueChange={setDifficultyFilter}>
+                  <TabsList className="h-10 bg-gray-100 p-1 rounded-full w-full inline-flex">
+                    <TabsTrigger 
+                      value="all" 
+                      className="rounded-full text-xs font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm flex-1 min-w-[70px]"
+                    >
+                      All Poses
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="beginner" 
+                      className="rounded-full text-xs font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm flex-1 min-w-[80px]"
+                    >
+                      Beginner
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="intermediate" 
+                      className="rounded-full text-xs font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm flex-1 min-w-[80px]"
+                    >
+                      Medium
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="advanced" 
+                      className="rounded-full text-xs font-medium data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm flex-1 min-w-[80px]"
+                    >
+                      Advanced
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
             </div>
           </div>
           
