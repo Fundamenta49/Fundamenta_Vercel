@@ -9,6 +9,7 @@ import { TourProvider } from "@/components/home-tour";
 import RobotFundi from "@/components/robot-fundi";
 import ChatCalendarConnector from "@/components/chat-calendar-connector";
 import { ActivityProfileProvider } from "@/contexts/activity-profile-context";
+import { JungleThemeProvider } from "./jungle-path/contexts/JungleThemeContext";
 import MyPathPage from "@/pages/mypath";
 import JunglePathDemoPage from "@/pages/jungle-path-demo";
 
@@ -414,9 +415,11 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <ActivityProfileProvider>
-          <TourProvider>
-            <Router />
-          </TourProvider>
+          <JungleThemeProvider defaultEnabled={true}>
+            <TourProvider>
+              <Router />
+            </TourProvider>
+          </JungleThemeProvider>
         </ActivityProfileProvider>
       </AuthProvider>
     </QueryClientProvider>
