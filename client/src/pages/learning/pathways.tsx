@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "wouter";
-import { ArrowLeft, BarChart3, Lock, Rocket, Unlock, Palmtree, Leaf } from "lucide-react";
+import { ArrowLeft, BarChart3, Lock, Rocket, Unlock, Leaf, Trees } from "lucide-react";
 import { useJungleTheme } from "../../jungle-path/contexts/JungleThemeContext";
 import { getAllZones } from "../../jungle-path/utils/zoneUtils";
 import { Button } from "@/components/ui/button";
@@ -151,7 +151,7 @@ export default function LearningPathwaysPage() {
             onClick={toggleJungleTheme}
             className="flex items-center transition-all transform hover:scale-105"
           >
-            <Palmtree className="h-4 w-4 mr-2" />
+            <Trees className="h-4 w-4 mr-2" />
             {isJungleTheme ? "Adventure Mode: ON" : "Adventure Mode"}
           </Button>
 

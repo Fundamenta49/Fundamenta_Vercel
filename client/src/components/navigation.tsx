@@ -330,20 +330,7 @@ export default function Navigation() {
                 </button>
               </div>
               
-              <div className="mt-2">
-                <button 
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left",
-                    isNavItemActive("/jungle-path-demo")
-                      ? `bg-emerald-100 text-emerald-700`
-                      : `text-gray-700 hover:bg-gray-50`
-                  )}
-                  onClick={() => handleNavigation("/jungle-path-demo")}
-                >
-                  <Palmtree className={cn("h-5 w-5", isNavItemActive("/jungle-path-demo") ? "text-emerald-700" : "text-gray-600")} />
-                  <span className="font-medium">Jungle Path Demo</span>
-                </button>
-              </div>
+
             </div>
             
             {/* Notification Panel & Help Buttons */}
