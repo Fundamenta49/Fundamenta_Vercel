@@ -1,7 +1,7 @@
 import React from 'react';
 import { useJungleFundi } from '../contexts/JungleFundiContext';
 import { useJungleTheme } from '../contexts/JungleThemeContext';
-import { Compass, Map, TreePine, Trees, Mountain, Leaf } from 'lucide-react';
+import FundiAvatarEnhanced from '../../components/fundi-avatar-enhanced';
 
 export function JungleFundi() {
   const { 
@@ -24,31 +24,19 @@ export function JungleFundi() {
             : 'left-1/2 transform -translate-x-1/2'
       } bottom-4 flex items-end gap-3 transition-all duration-500 ease-in-out animate-fadeIn`}
     >
-      {/* Fundi Character */}
-      <div className="relative h-16 w-16 bg-[#E6B933] rounded-full overflow-hidden border-2 border-[#94C973] shadow-lg flex items-center justify-center animate-bounce-light">
-        {/* Jungle decorations */}
-        <Leaf className="absolute top-0 right-0 h-4 w-4 text-[#94C973] rotate-45" />
-        <Leaf className="absolute top-1 left-1 h-3 w-3 text-[#94C973] -rotate-15" />
-        
-        <div className="relative flex items-center justify-center">
-          {/* Base Fundi with jungle hat */}
-          <div className="text-[#1E4A3D] text-3xl font-bold">F</div>
-          <Trees className="absolute -top-3 -right-2 h-5 w-5 text-[#1E4A3D]" />
-          <Mountain className="absolute -bottom-3 -left-10 h-4 w-4 text-[#4D3C14] opacity-70" />
-        </div>
+      {/* Standard Fundi Avatar - Using existing implementation */}
+      <div className="relative">
+        <FundiAvatarEnhanced
+          size="lg"
+          category="learning"
+          glowEffect={true}
+          withShadow={true}
+        />
       </div>
       
-      {/* Speech Bubble */}
-      <div className="relative max-w-xs sm:max-w-sm bg-white p-4 rounded-lg border-2 border-[#94C973] shadow-xl">
-        {/* Decorative elements */}
-        <div className="absolute -top-2 -left-2 bg-[#94C973] h-5 w-5 rounded-full flex items-center justify-center">
-          <Compass className="h-3 w-3 text-white" />
-        </div>
-        <div className="absolute -top-2 -right-2 bg-[#E6B933] h-5 w-5 rounded-full flex items-center justify-center">
-          <Map className="h-3 w-3 text-[#1E4A3D]" />
-        </div>
-        
-        {/* Speech content */}
+      {/* Speech Bubble - Simple jungle-themed styling with good readability */}
+      <div className="relative max-w-xs sm:max-w-sm bg-white p-4 rounded-lg border border-[#94C973] shadow-md">
+        {/* Speech content - Clear, readable text */}
         <p className="text-sm text-[#1E4A3D] font-medium">{fundiMessage}</p>
         
         {/* Bubble pointer */}
