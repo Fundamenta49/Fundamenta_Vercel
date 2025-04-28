@@ -8,6 +8,7 @@
 @import './styles/fullscreen-dialog-fix.css';
 @import './styles/dialog-fixes.css';
 @import './styles/financial-dashboard-fix.css'; /* New fix for financial dashboard fullscreen */
+@import './styles/jungle-theme.css'; /* Jungle theme styling */
 
 @tailwind base;
 @tailwind components;

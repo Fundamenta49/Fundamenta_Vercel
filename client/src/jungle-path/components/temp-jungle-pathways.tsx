@@ -239,7 +239,7 @@ export default function JunglePathwaysPage() {
   );
   
   return (
-    <div className={isJungleTheme ? jungleStyles.dashboard : "container mx-auto py-8"}>
+    <div className={isJungleTheme ? `${jungleStyles.dashboard} jungle-theme` : "container mx-auto py-8"}>
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header with back button */}
         <div className="flex items-center mb-6">

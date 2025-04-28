@@ -126,7 +126,7 @@ export default function LearningPathwaysPage() {
   
   return (
     <div className={`container mx-auto px-4 py-6 max-w-6xl ${
-      isJungleTheme ? 'bg-[#1E4A3D]/10 rounded-lg shadow-inner' : ''
+      isJungleTheme ? 'bg-[#1E4A3D]/10 rounded-lg shadow-inner jungle-theme' : ''
     }`}>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">

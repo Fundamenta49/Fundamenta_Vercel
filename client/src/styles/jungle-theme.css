@@ -1,35 +1,108 @@
-/* Jungle theme enhancements */
-.jungle-theme .card {
+/* Jungle theme enhancements with higher specificity selectors */
+.jungle-theme .card,
+html body .jungle-theme .card,
+html body.jungle-theme .card,
+html body .jungle-theme div[class*="card"],
+.jungle-theme div[class*="card"] {
   border: 2px solid #E6B933 !important;
   background-color: #1E4A3D !important;
   color: white !important;
   box-shadow: 0 4px 12px rgba(230, 185, 51, 0.2) !important;
+  border-radius: 0.5rem !important;
 }
 
-.jungle-theme .card h3 {
+.jungle-theme .card h3,
+.jungle-theme div[class*="card"] h3,
+.jungle-theme .card [class*="CardTitle"],
+.jungle-theme div[class*="card"] [class*="CardTitle"] {
   color: #E6B933 !important;
+  font-weight: 600 !important;
 }
 
-.jungle-theme .card p {
+.jungle-theme .card p,
+.jungle-theme div[class*="card"] p,
+.jungle-theme .card [class*="CardDescription"],
+.jungle-theme div[class*="card"] [class*="CardDescription"] {
   color: #94C973 !important;
 }
 
-.jungle-theme .card button {
+.jungle-theme .card button,
+.jungle-theme div[class*="card"] button,
+.jungle-theme .card [class*="Button"],
+.jungle-theme div[class*="card"] [class*="Button"] {
   background-color: #E6B933 !important;
   color: #1E4A3D !important;
   border-color: #E6B933 !important;
+  font-weight: 500 !important;
 }
 
-.jungle-theme .card button:hover {
+.jungle-theme .card button:hover,
+.jungle-theme div[class*="card"] button:hover,
+.jungle-theme .card [class*="Button"]:hover,
+.jungle-theme div[class*="card"] [class*="Button"]:hover {
   background-color: #DCAA14 !important;
 }
 
-.jungle-theme .tabs-list {
+/* Tab styling */
+.jungle-theme [role="tablist"],
+.jungle-theme .tabs-list,
+html body .jungle-theme [role="tablist"],
+html body .jungle-theme .tabs-list {
   background-color: #162E26 !important;
   border-color: #E6B933 !important;
 }
 
-.jungle-theme [data-state="active"] {
+.jungle-theme [data-state="active"],
+html body .jungle-theme [data-state="active"],
+.jungle-theme [role="tab"][data-state="active"],
+html body .jungle-theme [role="tab"][data-state="active"] {
   color: #E6B933 !important;
   border-bottom: 2px solid #E6B933 !important;
+  font-weight: 600 !important;
+}
+
+/* Make sure borders stay visible in all states */
+.jungle-theme .card:hover,
+.jungle-theme div[class*="card"]:hover,
+html body .jungle-theme .card:hover,
+html body .jungle-theme div[class*="card"]:hover {
+  border: 2px solid #E6B933 !important;
+}
+
+/* Fix for progress bars in cards */
+.jungle-theme .card [role="progressbar"],
+.jungle-theme div[class*="card"] [role="progressbar"] {
+  background-color: #162E26 !important;
+  height: 0.625rem !important;
+  overflow: hidden !important;
+  border-radius: 9999px !important;
+}
+
+.jungle-theme .card [role="progressbar"] > div,
+.jungle-theme div[class*="card"] [role="progressbar"] > div {
+  background-color: #94C973 !important;
+  height: 100% !important;
+}
+
+/* Module styling refinements */
+.jungle-theme [class*="module"],
+.jungle-theme div[class*="module"] {
+  background-color: #162E26 !important;
+  border: 1px solid rgba(148, 201, 115, 0.3) !important;
+  border-radius: 0.375rem !important;
+  padding: 0.5rem 0.75rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Quest completion indicators */
+.jungle-theme .completed-indicator,
+.jungle-theme [class*="completed-indicator"] {
+  background-color: #E6B933 !important;
+  color: #1E4A3D !important;
+}
+
+.jungle-theme .incomplete-indicator,
+.jungle-theme [class*="incomplete-indicator"] {
+  background-color: rgba(148, 201, 115, 0.2) !important;
+  color: #94C973 !important;
 }
