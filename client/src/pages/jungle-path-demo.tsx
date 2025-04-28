@@ -1,5 +1,6 @@
 import React from 'react';
 import JungleDemoCard from '@/components/jungle-demo-card';
+import FundiDemoCard from '@/components/fundi-demo-card';
 
 export default function JunglePathDemoPage() {
   return (
@@ -9,8 +10,9 @@ export default function JunglePathDemoPage() {
         This demo showcases the Jungle Path theme's ability to transform standard learning content into an immersive, adventure-themed experience without changing the underlying educational value.
       </p>
       
-      <div className="flex justify-center">
+      <div className="flex flex-col md:flex-row gap-8 justify-center items-center flex-wrap">
         <JungleDemoCard />
+        <FundiDemoCard />
       </div>
       
       <div className="mt-12 max-w-2xl mx-auto">
@@ -41,7 +43,7 @@ export default function JunglePathDemoPage() {
           <div className="p-4 border rounded-lg">
             <h3 className="font-medium mb-2">Fundi Integration</h3>
             <p className="text-sm text-muted-foreground">
-              The Fundi guide provides contextual help and encouragement with jungle-themed messaging without changing the familiar avatar.
+              The Fundi guide transforms into a jungle explorer with a safari hat and green accents when in jungle mode, providing contextual adventure-themed guidance.
             </p>
           </div>
         </div>

@@ -21,7 +21,8 @@ import {
   Trophy,
   Gamepad2,
   Calendar,
-  Map
+  Map,
+  Palmtree
 } from "lucide-react";
 import {
   Sheet,
@@ -329,6 +330,21 @@ export default function Navigation() {
                   <span className="font-medium">MyPath</span>
                 </button>
               </div>
+              
+              <div className="mt-2">
+                <button 
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left",
+                    isNavItemActive("/jungle-path-demo")
+                      ? `bg-emerald-100 text-emerald-700`
+                      : `text-gray-700 hover:bg-gray-50`
+                  )}
+                  onClick={() => handleNavigation("/jungle-path-demo")}
+                >
+                  <Palmtree className={cn("h-5 w-5", isNavItemActive("/jungle-path-demo") ? "text-emerald-700" : "text-gray-600")} />
+                  <span className="font-medium">Jungle Path Demo</span>
+                </button>
+              </div>
             </div>
             
             {/* Notification Panel & Help Buttons */}
@@ -524,6 +540,42 @@ export default function Navigation() {
                 <Map className={cn(
                   "h-5 w-5", 
                   isNavItemActive("/mypath") ? themeColors.iconColor : "text-gray-600"
+                )} />
+              </button>
+            </div>
+          )}
+          
+          {/* Jungle Path Demo Link */}
+          {!isMinimized ? (
+            <div className="mt-2">
+              <button 
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors w-full text-left",
+                  isNavItemActive("/jungle-path-demo")
+                    ? `bg-emerald-100 text-emerald-700`
+                    : `text-gray-700 hover:bg-gray-50`
+                )}
+                onClick={() => handleNavigation("/jungle-path-demo")}
+              >
+                <Palmtree className={cn("h-5 w-5", isNavItemActive("/jungle-path-demo") ? "text-emerald-700" : "text-gray-600")} />
+                <span className="font-medium">Jungle Path Demo</span>
+              </button>
+            </div>
+          ) : (
+            <div className="mt-3 flex flex-col items-center">
+              <button
+                onClick={() => handleNavigation("/jungle-path-demo")}
+                className={cn(
+                  "p-2 rounded-md",
+                  isNavItemActive("/jungle-path-demo")
+                    ? "bg-emerald-100"
+                    : "hover:bg-gray-100"
+                )}
+                title="Jungle Path Demo"
+              >
+                <Palmtree className={cn(
+                  "h-5 w-5", 
+                  isNavItemActive("/jungle-path-demo") ? "text-emerald-700" : "text-gray-600"
                 )} />
               </button>
             </div>
