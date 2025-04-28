@@ -148,7 +148,16 @@ export default function LearningPathwaysPage() {
         <div className="flex items-center gap-3">
           <Button 
             variant={isJungleTheme ? "default" : "outline"}
-            onClick={toggleJungleTheme}
+            onClick={() => {
+              // If not in adventure mode, toggle it on and navigate to jungle pathways
+              if (!isJungleTheme) {
+                toggleJungleTheme();
+                navigate('/learning/jungle-pathways');
+              } else {
+                // If already in adventure mode, toggle it off
+                toggleJungleTheme();
+              }
+            }}
             className="flex items-center transition-all transform hover:scale-105"
           >
             <Trees className="h-4 w-4 mr-2" />
