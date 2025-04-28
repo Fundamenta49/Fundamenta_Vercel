@@ -384,6 +384,7 @@ function Router() {
               <JunglePathwaysPage />
             </Route>
             <Route path="/jungle-path-demo">
+              {/* Making the jungle path demo accessible without login */}
               <JunglePathDemoPage />
             </Route>
             <Route path="/learning/analytics">
