@@ -2,6 +2,7 @@ import React from 'react';
 import JungleDemoCard from '@/components/jungle-demo-card';
 import FundiDemoCard from '@/components/fundi-demo-card';
 import StandardFundiDemo from '@/components/standard-fundi-demo';
+import FundiBotDemo from '@/components/fundi-bot-demo';
 
 export default function JunglePathDemoPage() {
   return (
@@ -15,6 +16,7 @@ export default function JunglePathDemoPage() {
         <JungleDemoCard />
         <FundiDemoCard />
         <StandardFundiDemo />
+        <FundiBotDemo />
       </div>
       
       <div className="mt-12 max-w-2xl mx-auto">
