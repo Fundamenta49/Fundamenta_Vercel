@@ -1,9 +1,15 @@
-/* Jungle theme enhancements with higher specificity selectors */
+/* Jungle theme enhancements with maximum specificity selectors */
 .jungle-theme .card,
 html body .jungle-theme .card,
 html body.jungle-theme .card,
 html body .jungle-theme div[class*="card"],
-.jungle-theme div[class*="card"] {
+.jungle-theme div[class*="card"],
+.jungle-theme *[class*="Card"],
+html body .jungle-theme *[class*="Card"],
+.jungle-theme div:not([class]),
+.jungle-theme [style*="border"],
+.jungle-theme [class*="expedition"],
+[class*="expedition"] {
   border: 2px solid #E6B933 !important;
   background-color: #1E4A3D !important;
   color: white !important;
@@ -65,8 +71,17 @@ html body .jungle-theme [role="tab"][data-state="active"] {
 .jungle-theme .card:hover,
 .jungle-theme div[class*="card"]:hover,
 html body .jungle-theme .card:hover,
-html body .jungle-theme div[class*="card"]:hover {
+html body .jungle-theme div[class*="card"]:hover,
+/* Target all cards universally */
+.jungle-theme [class*="expedition"],
+[class^="jungle"] *,
+[class*="jungle"] *,
+[data-expedition],
+div[style*="--card-border-color"],
+[style*="--card-border-color"] > div > div {
   border: 2px solid #E6B933 !important;
+  border-color: #E6B933 !important;
+  background-color: #1E4A3D !important;
 }
 
 /* Fix for progress bars in cards */

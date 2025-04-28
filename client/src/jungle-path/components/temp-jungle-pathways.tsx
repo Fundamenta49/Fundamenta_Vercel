@@ -336,7 +336,10 @@ export default function JunglePathwaysPage() {
           
           {/* All tabs content uses the same component with filtering */}
           <TabsContent value={activeTab} className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6" style={{ 
+              "--card-border-color": "#E6B933",
+              "--card-bg-color": "#1E4A3D"
+            } as React.CSSProperties}>
               {filteredPathways.map(pathway => (
                 <div 
                   key={pathway.id}

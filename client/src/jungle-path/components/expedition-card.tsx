@@ -78,8 +78,10 @@ const ExpeditionCard: React.FC<ExpeditionCardProps> = ({
   return (
     <Card 
       className={expeditionStyles.card}
+      data-expedition="true"
+      data-jungle-card="true"
       style={{
-        borderColor: zoneColor || "#E6B933",
+        borderColor: "#E6B933", // Force gold border for consistency
         borderWidth: "2px",
         borderStyle: "solid",
         boxShadow: `0 4px 12px ${zoneColor || "#E6B933"}33`
