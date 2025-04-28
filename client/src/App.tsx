@@ -417,7 +417,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <ActivityProfileProvider>
-          <JungleThemeProvider defaultEnabled={true}>
+          <JungleThemeProvider defaultEnabled={false}>
             <JungleFundiProvider>
               <TourProvider>
                 <Router />
