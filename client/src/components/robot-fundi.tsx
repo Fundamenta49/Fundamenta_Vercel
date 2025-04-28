@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { useAIEventStore } from '@/lib/ai-event-system';
+import { useJungleTheme } from '@/jungle-path/contexts/JungleThemeContext';
 
 interface RobotFundiProps {
   speaking?: boolean;
@@ -60,6 +61,7 @@ export default function RobotFundi({
   const [dragEndTime, setDragEndTime] = useState(0);
   const [isMinimized, setIsMinimized] = useState(getStoredMinimizedState());
   const { lastResponse } = useAIEventStore();
+  const { isJungleTheme } = useJungleTheme();
   
   // For double tap detection - new approach using click counter
   const clickCountRef = useRef(0);
@@ -581,8 +583,29 @@ export default function RobotFundi({
         }}
         onClick={handleOpenChat}
       >
-        {/* Robot head */}
-        <rect x="25" y="20" width="50" height="40" rx="10" fill="#e6e6e6" />
+        {/* Jungle hat for themed mode */}
+        {isJungleTheme && (
+          <>
+            {/* Safari/explorer hat */}
+            <ellipse cx="50" cy="20" rx="28" ry="8" fill="#E6B933" />
+            <path d="M30 20 Q50 5 70 20" fill="#C49A2B" stroke="#BF8C25" strokeWidth="1" />
+            <rect x="35" y="13" width="30" height="7" rx="2" fill="#BF8C25" />
+            {/* Small leaf on hat */}
+            <path d="M65 14 Q70 10 68 16" fill="#2A6D4D" stroke="#2A6D4D" strokeWidth="1" />
+            {/* Hat band */}
+            <path d="M28 20 C28 20, 72 20, 72 20" stroke="#5A3D1C" strokeWidth="2" fill="none" />
+          </>
+        )}
+        
+        {/* Robot head - green-tinted for jungle mode */}
+        <rect 
+          x="25" 
+          y="20" 
+          width="50" 
+          height="40" 
+          rx="10" 
+          fill={isJungleTheme ? "#ECEFD2" : "#e6e6e6"} 
+        />
         <rect x="30" y="30" width="40" height="20" rx="5" fill="#222" />
         
         {/* Eyes - change based on emotions */}
@@ -687,11 +710,21 @@ export default function RobotFundi({
         <rect x="45" y="15" width="10" height="5" rx="2.5" fill={color} />
         <rect x="47.5" y="10" width="5" height="5" rx="2.5" fill="#e6e6e6" />
         
-        {/* Robot body */}
+        {/* Robot body - with optional jungle styling */}
         <path 
           d="M30,60 C30,80 30,90 50,90 C70,90 70,80 70,60 Z" 
-          fill="#f5f5f5" 
+          fill={isJungleTheme ? "#EFF3D6" : "#f5f5f5"} 
         />
+        
+        {/* Jungle shoulder strap when theme is active */}
+        {isJungleTheme && (
+          <path 
+            d="M40,60 L35,90" 
+            stroke="#2A6D4D" 
+            strokeWidth="5" 
+            strokeLinecap="round"
+          />
+        )}
         
         {/* Mouth/Speaker - changes with speaking state */}
         {speaking ? (
