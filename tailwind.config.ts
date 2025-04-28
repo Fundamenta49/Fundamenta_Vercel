@@ -94,10 +94,20 @@ export default {
           "75%": { opacity: "0.5", transform: "scale(1.25)" },
           "100%": { opacity: "0.3", transform: "scale(1.2)" },
         },
+        "fadeIn": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "bounce-light": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-5px)" },
+        },
       },
       animation: {
         "swipe-hint": "swipe-hint 1.5s ease-in-out infinite",
         "pulse-slow": "pulse-slow 3s ease-in-out infinite",
+        "fadeIn": "fadeIn 0.5s ease-out",
+        "bounce-light": "bounce-light 2s ease-in-out infinite",
       },
     },
   },
