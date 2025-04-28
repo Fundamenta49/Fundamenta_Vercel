@@ -11,7 +11,6 @@ import ChatCalendarConnector from "@/components/chat-calendar-connector";
 import { ActivityProfileProvider } from "@/contexts/activity-profile-context";
 import { JungleThemeProvider } from "./jungle-path/contexts/JungleThemeContext";
 import { JungleFundiProvider } from "./jungle-path/contexts/JungleFundiContext";
-import { JungleFundi } from "./jungle-path/components/JungleFundi";
 import MyPathPage from "@/pages/mypath";
 import JunglePathDemoPage from "@/pages/jungle-path-demo";
 
@@ -421,7 +420,6 @@ function App() {
             <JungleFundiProvider>
               <TourProvider>
                 <Router />
-                <JungleFundi />
               </TourProvider>
             </JungleFundiProvider>
           </JungleThemeProvider>
