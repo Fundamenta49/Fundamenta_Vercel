@@ -204,9 +204,35 @@ export class OpenAIProvider implements AIProvider {
         throw new Error("Empty response from OpenAI");
       }
       
-      const parsedResponse = JSON.parse(response.choices[0].message.content);
-      // Use zod to validate and ensure we have the right format
-      return AIResponseSchema.parse(parsedResponse);
+      try {
+        // First try to parse as JSON
+        const parsedResponse = JSON.parse(response.choices[0].message.content);
+        
+        // If we get an object directly with no 'response' field, wrap it
+        if (typeof parsedResponse === 'object' && parsedResponse !== null && !parsedResponse.response) {
+          // If there's a 'content' field, use that as the response
+          if (parsedResponse.content) {
+            parsedResponse.response = parsedResponse.content;
+            delete parsedResponse.content; // Remove content to avoid duplication
+          } else {
+            // Wrap the object in a standard format with original as response
+            return {
+              response: JSON.stringify(parsedResponse),
+              sentiment: "neutral"
+            };
+          }
+        }
+        
+        // Use zod to validate and ensure we have the right format
+        return AIResponseSchema.parse(parsedResponse);
+      } catch (parseError) {
+        // If parsing fails, use the raw content as the response
+        console.log("OpenAI response was not valid JSON, using raw text");
+        return {
+          response: response.choices[0].message.content,
+          sentiment: "neutral"
+        };
+      }
     } catch (error) {
       console.error("OpenAI error:", error);
       
