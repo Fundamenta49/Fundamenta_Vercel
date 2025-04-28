@@ -81,7 +81,7 @@ export default function JunglePathwaysPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { isJungleTheme } = useJungleTheme();
-  const { setFundiMessage, showZoneGuidance, setShowFundi } = useJungleFundi();
+  const { showZoneGuidance, sendJungleMessage } = useJungleFundi();
   
   // Update Fundi with tab-specific guidance
   useEffect(() => {
@@ -97,10 +97,9 @@ export default function JunglePathwaysPage() {
       const zoneType = zoneMapping[activeTab] || 'riverlands';
       showZoneGuidance(zoneType as any);
     } else if (isJungleTheme && activeTab === 'all') {
-      setFundiMessage("Welcome to the jungle expedition routes! I'll help you navigate through these different regions of knowledge. Which area would you like to explore first?");
-      setShowFundi(true);
+      sendJungleMessage("Welcome to the jungle expedition routes! I'll help you navigate through these different regions of knowledge. Which area would you like to explore first?");
     }
-  }, [activeTab, isJungleTheme, setFundiMessage, showZoneGuidance, setShowFundi]);
+  }, [activeTab, isJungleTheme, showZoneGuidance, sendJungleMessage]);
   
   // For demo purposes, we'll use a hardcoded user ID
   const userId = 1;
@@ -318,8 +317,7 @@ export default function JunglePathwaysPage() {
                     if (isJungleTheme) {
                       // Show pathway-specific Fundi message on hover
                       const pathwayName = pathway.jungleTitle || pathway.title;
-                      setFundiMessage(`The ${pathwayName} path will take you through some fascinating territory! It contains ${pathway.modules.length} quests to complete. You've made ${getPathwayProgress(pathway.id)}% progress so far.`);
-                      setShowFundi(true);
+                      sendJungleMessage(`The ${pathwayName} path will take you through some fascinating territory! It contains ${pathway.modules.length} quests to complete. You've made ${getPathwayProgress(pathway.id)}% progress so far.`);
                     }
                   }}
                 >
