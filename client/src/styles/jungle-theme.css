@@ -1,0 +1,35 @@
+/* Jungle theme enhancements */
+.jungle-theme .card {
+  border: 2px solid #E6B933 !important;
+  background-color: #1E4A3D !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(230, 185, 51, 0.2) !important;
+}
+
+.jungle-theme .card h3 {
+  color: #E6B933 !important;
+}
+
+.jungle-theme .card p {
+  color: #94C973 !important;
+}
+
+.jungle-theme .card button {
+  background-color: #E6B933 !important;
+  color: #1E4A3D !important;
+  border-color: #E6B933 !important;
+}
+
+.jungle-theme .card button:hover {
+  background-color: #DCAA14 !important;
+}
+
+.jungle-theme .tabs-list {
+  background-color: #162E26 !important;
+  border-color: #E6B933 !important;
+}
+
+.jungle-theme [data-state="active"] {
+  color: #E6B933 !important;
+  border-bottom: 2px solid #E6B933 !important;
+}
