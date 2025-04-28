@@ -365,7 +365,17 @@ export default function JunglePathwaysPage() {
                       toggleExpanded={() => setExpandedPath(expandedPath === pathway.id ? null : pathway.id)}
                     />
                   ) : (
-                    <Card>
+                    <Card 
+                      data-jungle-card="true"
+                      data-expedition="true"
+                      style={{
+                        borderColor: "#E6B933",
+                        borderWidth: "2px",
+                        borderStyle: "solid",
+                        backgroundColor: "#1E4A3D",
+                        color: "white"
+                      }}
+                    >
                       <CardHeader>
                         <div className="flex justify-between items-start">
                           <CardTitle className="text-lg flex items-center">
