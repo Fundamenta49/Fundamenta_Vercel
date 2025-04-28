@@ -385,7 +385,10 @@ export default function RobotFundi({
     tour: '#6366f1',
   };
 
-  const color = categoryColors[category] || categoryColors.general;
+  // When in jungle mode, use jungle theme colors regardless of category
+  const color = isJungleTheme 
+    ? '#2A6D4D' // Jungle green for eyes/features when in jungle mode 
+    : (categoryColors[category] || categoryColors.general);
 
   // This function handles ONLY opening the chat, separate from any drag handling
   const openChatOnly = (e: React.MouseEvent) => {
@@ -706,9 +709,9 @@ export default function RobotFundi({
           </>
         )}
         
-        {/* Antenna */}
+        {/* Antenna - jungle-colored with green light when in jungle theme */}
         <rect x="45" y="15" width="10" height="5" rx="2.5" fill={color} />
-        <rect x="47.5" y="10" width="5" height="5" rx="2.5" fill="#e6e6e6" />
+        <rect x="47.5" y="10" width="5" height="5" rx="2.5" fill={isJungleTheme ? "#AECBA9" : "#e6e6e6"} />
         
         {/* Robot body - with optional jungle styling */}
         <path 
