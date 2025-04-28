@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "wouter";
 import { 
   ArrowLeft, Award, BookOpen, Clock, Dumbbell, 
@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { PATHWAYS_DATA } from "./pathways-data.ts";
 import { trackModuleProgress } from "@/lib/learning-progress";
 import { useJungleTheme } from "../../jungle-path/contexts/JungleThemeContext";
+import { useJungleFundi } from "../../jungle-path/contexts/JungleFundiContext";
 import { getAllZones } from "../../jungle-path/utils/zoneUtils";
 
 // Jungle Path styling
@@ -80,6 +81,26 @@ export default function JunglePathwaysPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { isJungleTheme } = useJungleTheme();
+  const { setFundiMessage, showZoneGuidance, setShowFundi } = useJungleFundi();
+  
+  // Update Fundi with tab-specific guidance
+  useEffect(() => {
+    if (isJungleTheme && activeTab !== 'all') {
+      // Map category to zone type for Fundi guidance
+      const zoneMapping: Record<string, any> = {
+        'financial': 'ancient-ruins',
+        'wellness': 'riverlands',
+        'career': 'canopy',
+        'life-skills': 'cave-system'
+      };
+      
+      const zoneType = zoneMapping[activeTab] || 'riverlands';
+      showZoneGuidance(zoneType as any);
+    } else if (isJungleTheme && activeTab === 'all') {
+      setFundiMessage("Welcome to the jungle expedition routes! I'll help you navigate through these different regions of knowledge. Which area would you like to explore first?");
+      setShowFundi(true);
+    }
+  }, [activeTab, isJungleTheme, setFundiMessage, showZoneGuidance, setShowFundi]);
   
   // For demo purposes, we'll use a hardcoded user ID
   const userId = 1;
@@ -293,6 +314,14 @@ export default function JunglePathwaysPage() {
                     borderColor: getZoneColor(pathway.category),
                     boxShadow: `0 4px 12px ${getZoneColor(pathway.category)}33`
                   } : {}}
+                  onMouseEnter={() => {
+                    if (isJungleTheme) {
+                      // Show pathway-specific Fundi message on hover
+                      const pathwayName = pathway.jungleTitle || pathway.title;
+                      setFundiMessage(`The ${pathwayName} path will take you through some fascinating territory! It contains ${pathway.modules.length} quests to complete. You've made ${getPathwayProgress(pathway.id)}% progress so far.`);
+                      setShowFundi(true);
+                    }
+                  }}
                 >
                   <CardHeader className={isJungleTheme ? jungleStyles.cardHeader : ""}>
                     <div className="flex justify-between items-start">

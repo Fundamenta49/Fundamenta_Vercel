@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useJungleTheme } from './JungleThemeContext';
+import { QuestType, ZoneType, getFundiGuidance, getFundiZoneTip, getRandomEncouragement } from '../utils/fundiGuidance';
 
 interface JungleFundiContextType {
   isGuideMode: boolean;
@@ -10,6 +11,10 @@ interface JungleFundiContextType {
   setFundiPosition: (position: 'left' | 'right' | 'center') => void;
   showFundi: boolean;
   setShowFundi: (show: boolean) => void;
+  // New helper methods for contextual guidance
+  showQuestGuidance: (questType: QuestType, phase: 'intro' | 'hint' | 'completion', hintIndex?: number) => void;
+  showZoneGuidance: (zone: ZoneType) => void;
+  showEncouragement: () => void;
 }
 
 const JungleFundiContext = createContext<JungleFundiContextType | undefined>(undefined);
@@ -36,6 +41,25 @@ export function JungleFundiProvider({ children }: { children: React.ReactNode })
     setIsGuideMode(!isGuideMode);
   };
 
+  // Helper methods for contextual guidance
+  const showQuestGuidance = (questType: QuestType, phase: 'intro' | 'hint' | 'completion', hintIndex = 0) => {
+    const message = getFundiGuidance(questType, phase, hintIndex);
+    setFundiMessage(message);
+    setShowFundi(true);
+  };
+
+  const showZoneGuidance = (zone: ZoneType) => {
+    const message = getFundiZoneTip(zone);
+    setFundiMessage(message);
+    setShowFundi(true);
+  };
+
+  const showEncouragement = () => {
+    const message = getRandomEncouragement();
+    setFundiMessage(message);
+    setShowFundi(true);
+  };
+
   return (
     <JungleFundiContext.Provider
       value={{
@@ -47,6 +71,9 @@ export function JungleFundiProvider({ children }: { children: React.ReactNode })
         setFundiPosition,
         showFundi,
         setShowFundi,
+        showQuestGuidance,
+        showZoneGuidance,
+        showEncouragement,
       }}
     >
       {children}
