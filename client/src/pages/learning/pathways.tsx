@@ -285,7 +285,7 @@ export default function LearningPathwaysPage() {
                                 ? "bg-[#94C973] text-[#1E4A3D]" 
                                 : categoryColors[pathway.category as keyof typeof categoryColors] || "bg-gray-100 text-gray-700"
                             }`}>
-                              {pathway.icon}
+                              {React.createElement(pathway.icon)}
                             </div>
                             <div className="flex items-center gap-1.5">
                               <CardTitle className={`text-lg ${isJungleTheme ? 'text-[#E6B933]' : ''}`}>
