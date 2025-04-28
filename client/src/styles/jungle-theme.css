@@ -1,7 +1,9 @@
-/* Only style expedition cards in jungle theme mode */
-.jungle-theme [data-expedition="true"],
-.jungle-theme div[data-jungle-card="true"],
-.jungle-theme .expedition-card {
+/* Jungle theme enhancements with higher specificity selectors */
+.jungle-theme .card,
+html body .jungle-theme .card,
+html body.jungle-theme .card,
+html body .jungle-theme div[class*="card"],
+.jungle-theme div[class*="card"] {
   border: 2px solid #E6B933 !important;
   background-color: #1E4A3D !important;
   color: white !important;
@@ -9,33 +11,35 @@
   border-radius: 0.5rem !important;
 }
 
-/* Override text colors only for expedition cards */
-.jungle-theme [data-expedition="true"] [class*="CardTitle"],
-.jungle-theme div[data-jungle-card="true"] [class*="CardTitle"],
-.jungle-theme .expedition-card [class*="CardTitle"] {
+.jungle-theme .card h3,
+.jungle-theme div[class*="card"] h3,
+.jungle-theme .card [class*="CardTitle"],
+.jungle-theme div[class*="card"] [class*="CardTitle"] {
   color: #E6B933 !important;
   font-weight: 600 !important;
 }
 
-.jungle-theme [data-expedition="true"] [class*="CardDescription"],
-.jungle-theme div[data-jungle-card="true"] [class*="CardDescription"],
-.jungle-theme .expedition-card [class*="CardDescription"] {
+.jungle-theme .card p,
+.jungle-theme div[class*="card"] p,
+.jungle-theme .card [class*="CardDescription"],
+.jungle-theme div[class*="card"] [class*="CardDescription"] {
   color: #94C973 !important;
 }
 
-/* Button styling for jungle cards */
-.jungle-theme [data-expedition="true"] button,
-.jungle-theme div[data-jungle-card="true"] button,
-.jungle-theme .expedition-card button {
+.jungle-theme .card button,
+.jungle-theme div[class*="card"] button,
+.jungle-theme .card [class*="Button"],
+.jungle-theme div[class*="card"] [class*="Button"] {
   background-color: #E6B933 !important;
   color: #1E4A3D !important;
   border-color: #E6B933 !important;
   font-weight: 500 !important;
 }
 
-.jungle-theme [data-expedition="true"] button:hover,
-.jungle-theme div[data-jungle-card="true"] button:hover,
-.jungle-theme .expedition-card button:hover {
+.jungle-theme .card button:hover,
+.jungle-theme div[class*="card"] button:hover,
+.jungle-theme .card [class*="Button"]:hover,
+.jungle-theme div[class*="card"] [class*="Button"]:hover {
   background-color: #DCAA14 !important;
 }
 
@@ -57,28 +61,25 @@ html body .jungle-theme [role="tab"][data-state="active"] {
   font-weight: 600 !important;
 }
 
-/* Make sure borders stay visible in hover states */
-.jungle-theme [data-expedition="true"]:hover,
-.jungle-theme div[data-jungle-card="true"]:hover,
-.jungle-theme .expedition-card:hover {
+/* Make sure borders stay visible in all states */
+.jungle-theme .card:hover,
+.jungle-theme div[class*="card"]:hover,
+html body .jungle-theme .card:hover,
+html body .jungle-theme div[class*="card"]:hover {
   border: 2px solid #E6B933 !important;
-  border-color: #E6B933 !important;
-  background-color: #1E4A3D !important;
 }
 
-/* Fix for progress bars in expedition cards */
-.jungle-theme [data-expedition="true"] [role="progressbar"],
-.jungle-theme div[data-jungle-card="true"] [role="progressbar"],
-.jungle-theme .expedition-card [role="progressbar"] {
+/* Fix for progress bars in cards */
+.jungle-theme .card [role="progressbar"],
+.jungle-theme div[class*="card"] [role="progressbar"] {
   background-color: #162E26 !important;
   height: 0.625rem !important;
   overflow: hidden !important;
   border-radius: 9999px !important;
 }
 
-.jungle-theme [data-expedition="true"] [role="progressbar"] > div,
-.jungle-theme div[data-jungle-card="true"] [role="progressbar"] > div,
-.jungle-theme .expedition-card [role="progressbar"] > div {
+.jungle-theme .card [role="progressbar"] > div,
+.jungle-theme div[class*="card"] [role="progressbar"] > div {
   background-color: #94C973 !important;
   height: 100% !important;
 }

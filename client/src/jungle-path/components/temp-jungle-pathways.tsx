@@ -336,10 +336,7 @@ export default function JunglePathwaysPage() {
           
           {/* All tabs content uses the same component with filtering */}
           <TabsContent value={activeTab} className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6" style={{ 
-              "--card-border-color": "#E6B933",
-              "--card-bg-color": "#1E4A3D"
-            } as React.CSSProperties}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredPathways.map(pathway => (
                 <div 
                   key={pathway.id}
@@ -365,17 +362,7 @@ export default function JunglePathwaysPage() {
                       toggleExpanded={() => setExpandedPath(expandedPath === pathway.id ? null : pathway.id)}
                     />
                   ) : (
-                    <Card 
-                      data-jungle-card="true"
-                      data-expedition="true"
-                      style={{
-                        borderColor: "#E6B933",
-                        borderWidth: "2px",
-                        borderStyle: "solid",
-                        backgroundColor: "#1E4A3D",
-                        color: "white"
-                      }}
-                    >
+                    <Card>
                       <CardHeader>
                         <div className="flex justify-between items-start">
                           <CardTitle className="text-lg flex items-center">
