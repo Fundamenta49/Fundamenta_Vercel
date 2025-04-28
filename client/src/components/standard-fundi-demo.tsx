@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { RefreshCw } from 'lucide-react';
 
 export default function StandardFundiDemo() {
+  const [isWaving, setIsWaving] = useState(false);
+
+  // Handle hover events
+  const handleMouseEnter = () => setIsWaving(true);
+  const handleMouseLeave = () => setIsWaving(false);
+
   return (
     <Card className="w-[350px] mb-6 overflow-hidden">
       <CardHeader>
@@ -13,14 +17,18 @@ export default function StandardFundiDemo() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex justify-center">
-        <div className="w-64 h-64 flex items-center justify-center">
+        <div 
+          className="w-64 h-64 flex items-center justify-center"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
           <svg
             width="200"
             height="220"
             viewBox="0 0 200 220"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="robot-svg"
+            className="transition-all duration-300"
           >
             {/* Antenna */}
             <circle cx="100" cy="20" r="10" fill="#0099FF" />
@@ -74,13 +82,18 @@ export default function StandardFundiDemo() {
               fill="none"
             />
             
-            {/* Right Arm - Waving */}
+            {/* Right Arm - Waving with CSS transform */}
             <path
               d="M130 100 L150 80 L155 70"
               stroke="#0099FF"
               strokeWidth="12"
               strokeLinecap="round"
               fill="none"
+              style={{
+                transformOrigin: '130px 100px',
+                transform: isWaving ? 'rotate(-15deg)' : 'rotate(0deg)',
+                transition: 'transform 0.5s ease-in-out'
+              }}
             />
             
             {/* Base */}
@@ -102,22 +115,7 @@ export default function StandardFundiDemo() {
       </CardContent>
       <CardFooter className="border-t flex justify-between items-center">
         <span className="text-sm text-muted-foreground">Standard Design</span>
-        
-        <style jsx>{`
-          @keyframes wave {
-            0% { transform: rotate(0deg); }
-            20% { transform: rotate(15deg); }
-            40% { transform: rotate(0deg); }
-            60% { transform: rotate(15deg); }
-            80% { transform: rotate(0deg); }
-            100% { transform: rotate(0deg); }
-          }
-          
-          .robot-svg:hover path:nth-of-type(4) {
-            animation: wave 2.5s ease-in-out;
-            transform-origin: 150px 80px;
-          }
-        `}</style>
+        <span className="text-xs text-muted-foreground">(Hover for animation)</span>
       </CardFooter>
     </Card>
   );

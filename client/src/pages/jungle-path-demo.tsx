@@ -1,6 +1,7 @@
 import React from 'react';
 import JungleDemoCard from '@/components/jungle-demo-card';
 import FundiDemoCard from '@/components/fundi-demo-card';
+import StandardFundiDemo from '@/components/standard-fundi-demo';
 
 export default function JunglePathDemoPage() {
   return (
@@ -13,6 +14,7 @@ export default function JunglePathDemoPage() {
       <div className="flex flex-col md:flex-row gap-8 justify-center items-center flex-wrap">
         <JungleDemoCard />
         <FundiDemoCard />
+        <StandardFundiDemo />
       </div>
       
       <div className="mt-12 max-w-2xl mx-auto">
