@@ -25,15 +25,15 @@ const jungleStyles = {
   dashboard: "bg-[#1E4A3D] text-white min-h-screen",
   
   // Card styles - matching the expedition card format
-  card: "border-2 border-[#E6B933] bg-[#1E4A3D] rounded-md shadow-md backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.01]",
+  card: "border-2 border-[#E6B933] bg-[#1E4A3D] rounded-md shadow-md backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.01] border-solid",
   cardHeader: "border-b border-[#94C973]/30 pt-4 pb-2 px-4",
   cardContent: "p-4",
   cardTitle: "text-[#E6B933] font-semibold text-xl",
   
   // Tab styles
   tabs: "bg-[#1E4A3D] border-[#E6B933]/50",
-  tabsList: "bg-[#162E26] border border-[#E6B933]/50 rounded-md",
-  tabsTrigger: "data-[state=active]:bg-[#162E26] data-[state=active]:text-[#E6B933] data-[state=active]:border-b-2 data-[state=active]:border-[#E6B933] text-[#94C973]",
+  tabsList: "bg-[#162E26] border border-[#E6B933]/50 rounded-md overflow-hidden",
+  tabsTrigger: "data-[state=active]:bg-[#162E26] data-[state=active]:text-[#E6B933] data-[state=active]:border-b-2 data-[state=active]:border-[#E6B933] text-[#94C973] relative data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[2px] data-[state=active]:after:bg-[#E6B933]",
   
   // Button styles - matching the gold buttons from the screenshot
   button: "bg-[#E6B933] text-[#1E4A3D] hover:bg-[#DCAA14] font-medium transition-colors duration-300 rounded-md",
@@ -285,30 +285,50 @@ export default function JunglePathwaysPage() {
             <TabsTrigger 
               value="all" 
               className={isJungleTheme ? jungleStyles.tabsTrigger : ""}
+              style={isJungleTheme && activeTab === "all" ? {
+                color: "#E6B933",
+                borderBottom: "2px solid #E6B933"
+              } : {}}
             >
               All Routes
             </TabsTrigger>
             <TabsTrigger 
               value="financial" 
               className={isJungleTheme ? jungleStyles.tabsTrigger : ""}
+              style={isJungleTheme && activeTab === "financial" ? {
+                color: "#E6B933",
+                borderBottom: "2px solid #E6B933"
+              } : {}}
             >
               Finance
             </TabsTrigger>
             <TabsTrigger 
               value="wellness" 
               className={isJungleTheme ? jungleStyles.tabsTrigger : ""}
+              style={isJungleTheme && activeTab === "wellness" ? {
+                color: "#E6B933",
+                borderBottom: "2px solid #E6B933"
+              } : {}}
             >
               Wellness
             </TabsTrigger>
             <TabsTrigger 
               value="career" 
               className={isJungleTheme ? jungleStyles.tabsTrigger : ""}
+              style={isJungleTheme && activeTab === "career" ? {
+                color: "#E6B933",
+                borderBottom: "2px solid #E6B933"
+              } : {}}
             >
               Career
             </TabsTrigger>
             <TabsTrigger 
               value="life-skills" 
               className={isJungleTheme ? jungleStyles.tabsTrigger : ""}
+              style={isJungleTheme && activeTab === "life-skills" ? {
+                color: "#E6B933",
+                borderBottom: "2px solid #E6B933"
+              } : {}}
             >
               Life Skills
             </TabsTrigger>

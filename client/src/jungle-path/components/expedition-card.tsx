@@ -79,8 +79,10 @@ const ExpeditionCard: React.FC<ExpeditionCardProps> = ({
     <Card 
       className={expeditionStyles.card}
       style={{
-        borderColor: zoneColor,
-        boxShadow: `0 4px 12px ${zoneColor}33`
+        borderColor: zoneColor || "#E6B933",
+        borderWidth: "2px",
+        borderStyle: "solid",
+        boxShadow: `0 4px 12px ${zoneColor || "#E6B933"}33`
       }}
     >
       <CardHeader className={expeditionStyles.cardHeader}>
