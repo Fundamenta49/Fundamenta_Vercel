@@ -105,6 +105,31 @@ export default function StandardFundiDemo() {
               fill="none"
             />
             
+            {/* Arms */}
+            {/* Left Arm */}
+            <g style={{ transform: isHovering ? 'translateY(2px)' : 'translateY(0px)', transition: 'transform 0.5s ease-in-out' }}>
+              <path
+                d="M55 95 C45 95 35 100 30 105"
+                stroke="#E0E0E0"
+                strokeWidth="5"
+                strokeLinecap="round"
+                fill="none"
+              />
+              <circle cx="30" cy="105" r="5" fill="#F0F0F0" stroke="#E0E0E0" strokeWidth="1" />
+            </g>
+            
+            {/* Right Arm */}
+            <g style={{ transform: isHovering ? 'rotate(-10deg) translateY(-2px)' : 'rotate(0deg)', transformOrigin: '115px 95px', transition: 'transform 0.5s ease-in-out' }}>
+              <path
+                d="M115 95 C125 95 135 100 140 105"
+                stroke="#E0E0E0"
+                strokeWidth="5"
+                strokeLinecap="round"
+                fill="none"
+              />
+              <circle cx="140" cy="105" r="5" fill="#F0F0F0" stroke="#E0E0E0" strokeWidth="1" />
+            </g>
+            
             {/* Center Button/Power Core */}
             <circle 
               cx="85" 
