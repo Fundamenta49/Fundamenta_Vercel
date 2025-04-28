@@ -383,6 +383,9 @@ function Router() {
             <Route path="/learning/jungle-pathways">
               <JunglePathwaysPage />
             </Route>
+            <Route path="/jungle-path-demo">
+              <JunglePathDemoPage />
+            </Route>
             <Route path="/learning/analytics">
               <ProtectedRoute>
                 <LearningAnalyticsDashboard />
@@ -397,9 +400,6 @@ function Router() {
               <ProtectedRoute>
                 <MyPathPage />
               </ProtectedRoute>
-            </Route>
-            <Route path="/jungle-path-demo">
-              <JunglePathDemoPage />
             </Route>
             <Route component={NotFound} />
           </Switch>
