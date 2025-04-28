@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAIEventStore } from "@/lib/ai-event-system";
+import { useJungleTheme } from "@/jungle-path/contexts/JungleThemeContext";
 
 interface RobotFundiProps {
   speaking?: boolean;
@@ -21,6 +22,8 @@ export default function RobotFundi({
   emotion = 'neutral',
   onOpen
 }: RobotFundiProps) {
+  // Get jungle theme state
+  const { isJungleTheme } = useJungleTheme();
   // Get stored minimized state from localStorage or use default
   const getStoredMinimizedState = () => {
     if (typeof window !== 'undefined') {
@@ -102,6 +105,7 @@ export default function RobotFundi({
     xl: 'w-32 h-32'   // 128px
   };
 
+  // Define color schemes based on theme
   const categoryColors: Record<string, string> = {
     finance: '#22c55e',
     career: '#3b82f6',
@@ -113,8 +117,23 @@ export default function RobotFundi({
     general: '#6366f1',
     tour: '#6366f1',
   };
-
-  const color = categoryColors[category] || categoryColors.general;
+  
+  // Jungle-themed colors override standard colors when jungle theme is active
+  const jungleCategoryColors: Record<string, string> = {
+    finance: '#E6B933', // Investment gold
+    career: '#E6B933', // Jungle gold
+    wellness: '#E6B933', // Jungle gold
+    learning: '#E6B933', // Jungle gold
+    emergency: '#E6B933', // Jungle gold
+    cooking: '#E6B933', // Jungle gold
+    fitness: '#E6B933', // Jungle gold
+    general: '#E6B933', // Jungle gold - primary jungle theme color
+    tour: '#E6B933', // Jungle gold
+  };
+  
+  // Use jungle colors when jungle theme is active, otherwise use standard colors
+  const activeColorMap = isJungleTheme ? jungleCategoryColors : categoryColors;
+  const color = activeColorMap[category] || activeColorMap.general;
   
   // Function to handle tap/click events in a unified way
   const handleTapEvent = (e: React.MouseEvent | React.TouchEvent) => {
@@ -257,8 +276,32 @@ export default function RobotFundi({
         onClick={handleTapEvent}
       >
         {/* Robot head */}
-        <rect x="25" y="20" width="50" height="40" rx="10" fill="#e6e6e6" />
+        <rect x="25" y="20" width="50" height="40" rx="10" fill={isJungleTheme ? "#e6e6e6" : "#e6e6e6"} />
         <rect x="30" y="30" width="40" height="20" rx="5" fill="#222" />
+        
+        {/* Safari hat - only visible in jungle theme */}
+        {isJungleTheme && (
+          <>
+            {/* Hat brim */}
+            <ellipse 
+              cx="50" 
+              cy="20" 
+              rx="30" 
+              ry="8" 
+              fill="#E6B933" 
+              opacity="0.9"
+            />
+            {/* Hat crown */}
+            <ellipse 
+              cx="50" 
+              cy="15" 
+              rx="16" 
+              ry="6" 
+              fill="#E6B933" 
+              opacity="0.9" 
+            />
+          </>
+        )}
         
         {/* Eyes - change based on emotions */}
         {emotion === 'happy' || lastResponse?.sentiment === 'encouraging' ? (
@@ -365,8 +408,43 @@ export default function RobotFundi({
         {/* Robot body */}
         <path 
           d="M30,60 C30,80 30,90 50,90 C70,90 70,80 70,60 Z" 
-          fill="#f5f5f5" 
+          fill={isJungleTheme ? "#e0e0e0" : "#f5f5f5"} 
         />
+        
+        {/* Jungle-themed explorer vest and elements - only visible in jungle theme */}
+        {isJungleTheme && (
+          <>
+            {/* Explorer vest */}
+            <path 
+              d="M35,65 L40,75 L50,80 L60,75 L65,65" 
+              fill="#1E4A3D" 
+              opacity="0.9"
+            />
+            
+            {/* Shoulder straps */}
+            <path 
+              d="M37,65 L39,60 L43,60 L41,65" 
+              fill="#1E4A3D" 
+              opacity="0.9"
+            />
+            <path 
+              d="M63,65 L61,60 L57,60 L59,65" 
+              fill="#1E4A3D" 
+              opacity="0.9"
+            />
+            
+            {/* Explorer badge */}
+            <circle 
+              cx="55" 
+              cy="70" 
+              r="3.5" 
+              fill="#E6B933" 
+              stroke="#1E4A3D"
+              strokeWidth="0.5"
+              opacity="0.95"
+            />
+          </>
+        )}
         
         {/* Mouth/Speaker - changes with speaking state */}
         {speaking ? (
