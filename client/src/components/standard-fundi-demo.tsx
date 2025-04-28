@@ -43,25 +43,16 @@ export default function StandardFundiDemo() {
             }}
           >
             {/* Head/Top Section */}
-            <ellipse cx="85" cy="50" rx="40" ry="35" fill="#F0F0F0" stroke="#E0E0E0" strokeWidth="1" />
-            
-            {/* Ear Pieces */}
             <path 
-              d="M44 50 C40 47 38 53 42 56 L48 56 C52 53 50 47 46 50 Z" 
-              fill="#F0F0F0" 
-              stroke="#E0E0E0" 
-              strokeWidth="1"
-            />
-            <path 
-              d="M126 50 C130 47 132 53 128 56 L122 56 C118 53 120 47 124 50 Z" 
-              fill="#F0F0F0" 
-              stroke="#E0E0E0" 
+              d="M45 50 C45 25 125 25 125 50 L125 60 C125 65 45 65 45 60 Z"
+              fill="#F0F0F0"
+              stroke="#E0E0E0"
               strokeWidth="1"
             />
             
             {/* Face/Visor */}
             <path 
-              d="M60 50 C60 40 110 40 110 50 L110 65 C110 75 60 75 60 65 Z"
+              d="M60 50 C60 48 110 48 110 50 L110 65 C110 75 60 75 60 65 Z"
               fill="#00005A"
               stroke="#00005A"
               strokeWidth="1"
@@ -107,27 +98,27 @@ export default function StandardFundiDemo() {
             
             {/* Arms */}
             {/* Left Arm */}
-            <g style={{ transform: isHovering ? 'translateY(2px)' : 'translateY(0px)', transition: 'transform 0.5s ease-in-out' }}>
+            <g style={{ transform: isHovering ? 'translateY(1px)' : 'translateY(0px)', transition: 'transform 0.5s ease-in-out' }}>
               <path
-                d="M55 95 C45 95 35 100 30 105"
+                d="M55 95 L25 95"
                 stroke="#E0E0E0"
-                strokeWidth="5"
+                strokeWidth="2"
                 strokeLinecap="round"
                 fill="none"
               />
-              <circle cx="30" cy="105" r="5" fill="#F0F0F0" stroke="#E0E0E0" strokeWidth="1" />
+              <circle cx="22" cy="95" r="3" fill="#E0E0E0" />
             </g>
             
             {/* Right Arm */}
-            <g style={{ transform: isHovering ? 'rotate(-10deg) translateY(-2px)' : 'rotate(0deg)', transformOrigin: '115px 95px', transition: 'transform 0.5s ease-in-out' }}>
+            <g style={{ transform: isHovering ? 'rotate(-5deg) translateY(-1px)' : 'rotate(0deg)', transformOrigin: '115px 95px', transition: 'transform 0.5s ease-in-out' }}>
               <path
-                d="M115 95 C125 95 135 100 140 105"
+                d="M115 95 L145 95"
                 stroke="#E0E0E0"
-                strokeWidth="5"
+                strokeWidth="2"
                 strokeLinecap="round"
                 fill="none"
               />
-              <circle cx="140" cy="105" r="5" fill="#F0F0F0" stroke="#E0E0E0" strokeWidth="1" />
+              <circle cx="148" cy="95" r="3" fill="#E0E0E0" />
             </g>
             
             {/* Center Button/Power Core */}
