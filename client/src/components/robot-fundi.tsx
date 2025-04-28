@@ -589,14 +589,16 @@ export default function RobotFundi({
         {/* Jungle hat for themed mode */}
         {isJungleTheme && (
           <>
-            {/* Safari/explorer hat */}
-            <ellipse cx="50" cy="20" rx="28" ry="8" fill="#E6B933" />
-            <path d="M30 20 Q50 5 70 20" fill="#C49A2B" stroke="#BF8C25" strokeWidth="1" />
+            {/* Safari/explorer hat - bigger and more prominent */}
+            <ellipse cx="50" cy="20" rx="30" ry="9" fill="#E6B933" />
+            <path d="M30 20 Q50 5 70 20" fill="#C49A2B" stroke="#BF8C25" strokeWidth="1.5" />
             <rect x="35" y="13" width="30" height="7" rx="2" fill="#BF8C25" />
             {/* Small leaf on hat */}
-            <path d="M65 14 Q70 10 68 16" fill="#2A6D4D" stroke="#2A6D4D" strokeWidth="1" />
+            <path d="M65 14 Q70 10 68 16" fill="#2A6D4D" stroke="#2A6D4D" strokeWidth="1.5" />
+            {/* Second leaf */}
+            <path d="M62 12 Q65 8 67 13" fill="#2A6D4D" stroke="#2A6D4D" strokeWidth="1" />
             {/* Hat band */}
-            <path d="M28 20 C28 20, 72 20, 72 20" stroke="#5A3D1C" strokeWidth="2" fill="none" />
+            <path d="M28 20 C28 20, 72 20, 72 20" stroke="#5A3D1C" strokeWidth="2.5" fill="none" />
           </>
         )}
         
@@ -719,14 +721,43 @@ export default function RobotFundi({
           fill={isJungleTheme ? "#EFF3D6" : "#f5f5f5"} 
         />
         
-        {/* Jungle shoulder strap when theme is active */}
+        {/* Jungle adventure outfit */}
         {isJungleTheme && (
-          <path 
-            d="M40,60 L35,90" 
-            stroke="#2A6D4D" 
-            strokeWidth="5" 
-            strokeLinecap="round"
-          />
+          <>
+            {/* Left shoulder strap */}
+            <path 
+              d="M40,60 L35,90" 
+              stroke="#2A6D4D" 
+              strokeWidth="5" 
+              strokeLinecap="round"
+            />
+            {/* Right shoulder strap */}
+            <path 
+              d="M60,60 L65,90" 
+              stroke="#2A6D4D" 
+              strokeWidth="5" 
+              strokeLinecap="round"
+            />
+            {/* Explorer badge */}
+            <circle 
+              cx="50" 
+              cy="65" 
+              r="7" 
+              fill="#E6B933" 
+              stroke="#5A3D1C" 
+              strokeWidth="1"
+            />
+            <path 
+              d="M46,65 L54,65" 
+              stroke="#5A3D1C" 
+              strokeWidth="1.5"
+            />
+            <path 
+              d="M50,61 L50,69" 
+              stroke="#5A3D1C" 
+              strokeWidth="1.5"
+            />
+          </>
         )}
         
         {/* Mouth/Speaker - changes with speaking state */}
