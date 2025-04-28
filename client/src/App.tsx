@@ -12,7 +12,6 @@ import { ActivityProfileProvider } from "@/contexts/activity-profile-context";
 import { JungleThemeProvider } from "./jungle-path/contexts/JungleThemeContext";
 import { JungleFundiProvider } from "./jungle-path/contexts/JungleFundiContext";
 import MyPathPage from "@/pages/mypath";
-import JunglePathDemoPage from "@/pages/jungle-path-demo";
 
 // Import cooking pages
 import CookingPage from "@/pages/cooking";
@@ -382,10 +381,6 @@ function Router() {
             </Route>
             <Route path="/learning/jungle-pathways">
               <JunglePathwaysPage />
-            </Route>
-            <Route path="/jungle-path-demo">
-              {/* Making the jungle path demo accessible without login */}
-              <JunglePathDemoPage />
             </Route>
             <Route path="/learning/analytics">
               <ProtectedRoute>
