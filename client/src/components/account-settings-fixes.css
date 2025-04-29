@@ -21,6 +21,9 @@
   border-radius: 1rem !important;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
   border: 1px solid rgba(229, 231, 235, 0.8) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 /* Hide any unwanted dropdowns when account settings dialog is open */
@@ -80,7 +83,10 @@
   width: 100%;
   padding: 0.5rem 0.25rem;
   overflow-y: auto;
-  max-height: 400px !important;
+  max-height: 350px !important;
+  height: auto !important; 
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Fix spacing in profile section */
@@ -206,8 +212,12 @@
   
   /* Adjust content height for mobile */
   .settings-content-area {
-    max-height: 50vh !important;
+    max-height: 45vh !important;
     padding: 0 !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    position: relative !important;
+    scrollbar-width: thin !important;
   }
   
   /* Make inputs more touch-friendly */
