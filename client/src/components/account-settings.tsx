@@ -298,7 +298,7 @@ export function AccountSettings() {
                 </TabsTrigger>
               </TabsList>
               
-              <div className="h-[450px] mt-4 overflow-y-auto pr-1 settings-content-area" style={{ minHeight: '450px' }}>
+              <div className="mt-3 overflow-y-auto pr-1 settings-content-area">
                 <TabsContent value="profile" className="space-y-4">
                   <div className="avatar-container">
                     <Avatar className="h-14 w-14">

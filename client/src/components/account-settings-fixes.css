@@ -9,14 +9,17 @@
 /* Basic centering approach for the dialog */
 .account-settings-dialog {
   position: fixed !important;
-  max-width: 475px !important;
+  max-width: 450px !important;
   width: 95% !important;
-  max-height: 90vh !important;
+  max-height: 80vh !important;
   transform: translate(-50%, -50%) !important;
   left: 50% !important;
   top: 50% !important;
   margin: 0 !important;
   z-index: 50 !important;
+  padding: 1.25rem !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Hide any unwanted dropdowns when account settings dialog is open */
@@ -42,9 +45,31 @@
 /* Improve tabs styling */
 .settings-tabs-list {
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   border-radius: 0.375rem;
   overflow: hidden;
+  background-color: #f1f5f9 !important;
+  padding: 0.25rem !important;
+}
+
+.account-settings-dialog [role="tab"] {
+  font-weight: 500;
+  padding: 0.5rem 0;
+  flex: 1;
+  text-align: center;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.account-settings-dialog [role="tab"][data-state="active"] {
+  background-color: white !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Make tab content area cleaner */
+.account-settings-dialog [role="tabpanel"] {
+  padding: 0.5rem 0.25rem;
 }
 
 /* Content area styling */
@@ -52,15 +77,40 @@
   width: 100%;
   padding: 0.5rem 0.25rem;
   overflow-y: auto;
+  max-height: 400px !important;
 }
 
 /* Fix spacing in profile section */
 .account-settings-dialog .avatar-container {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 1.25rem;
+  margin-bottom: 1.75rem;
   width: 100%;
+  padding-bottom: 0.75rem;
+}
+
+/* Better heading and text styling */
+.account-settings-dialog h3 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.account-settings-dialog p {
+  margin-bottom: 0.75rem;
+}
+
+/* Improve dialog header appearance */
+.account-settings-dialog [data-radix-dialog-header] {
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+/* Style description text */
+.account-settings-dialog [data-radix-dialog-description] {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0.85;
 }
 
 /* Ensure dialog footer has consistent styling */
@@ -77,6 +127,25 @@
 .account-settings-dialog button.account-settings-close-button {
   font-weight: 500;
   transition: all 0.2s ease;
+  background-color: #2563eb !important;
+  color: white !important;
+  min-width: 120px;
+  border-radius: 6px;
+}
+
+.account-settings-dialog button.account-settings-close-button:hover {
+  background-color: #1d4ed8 !important;
+}
+
+/* Style the profile update button */
+.account-settings-dialog button:has(.mr-2.h-4.w-4) {
+  background-color: #2563eb;
+  color: white;
+  border-color: transparent;
+}
+
+.account-settings-dialog button:has(.mr-2.h-4.w-4):hover {
+  background-color: #1d4ed8;
 }
 
 /* Small screen optimizations */
@@ -111,7 +180,21 @@
 
 /* Mobile optimizations */
 @media (max-width: 640px) {
-  /* Make inputs larger and more touch-friendly */
+  /* Optimize dialog for mobile */
+  .account-settings-dialog {
+    width: 90% !important;
+    max-width: 90% !important;
+    padding: 1rem !important;
+    max-height: 85vh !important;
+  }
+  
+  /* Adjust content height for mobile */
+  .settings-content-area {
+    max-height: 50vh !important;
+    padding: 0 !important;
+  }
+  
+  /* Make inputs more touch-friendly */
   .account-settings-dialog input,
   .account-settings-dialog .input {
     height: 2.75rem;
@@ -126,27 +209,44 @@
     font-size: 1rem;
   }
   
+  /* Full-width close button for mobile */
   .account-settings-close-button {
     width: 100%;
+    margin-top: 1rem;
   }
   
+  /* Center align footer buttons */
   .account-settings-dialog-footer {
     justify-content: center;
-    padding-top: 1.25rem;
+    padding-top: 1rem;
+    margin-top: 1rem;
   }
   
+  /* Adjust spacing for mobile view */
   .account-settings-dialog [role="tabpanel"] {
-    padding: 0 0.25rem;
+    padding: 0;
   }
   
-  /* Improve spacing on mobile */
-  .account-settings-dialog .space-y-3 > div,
-  .account-settings-dialog .space-y-4 > div {
+  /* Make dialog header more compact on mobile */
+  .account-settings-dialog [data-radix-dialog-header] {
     margin-bottom: 1rem;
   }
   
-  /* Make content scrollable but not too tall on mobile */
-  .settings-content-area {
-    max-height: 55vh;
+  /* Compact avatar section on mobile */
+  .account-settings-dialog .avatar-container {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  /* Make tabs more touch-friendly on mobile */
+  .settings-tabs-list {
+    margin-bottom: 1rem;
+  }
+  
+  .account-settings-dialog [role="tab"] {
+    padding: 0.625rem 0;
+    font-size: 0.9rem;
   }
 }
