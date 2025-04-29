@@ -60,6 +60,18 @@ const industryQuestions = {
     "What achievement are you most proud of in your career so far?",
     "How do you stay current with industry trends and developments?",
   ],
+  other: [
+    "Tell me about your relevant experience for this position.",
+    "What attracted you to this industry?",
+    "How do you stay current with this industry's trends and developments?",
+    "What skills do you believe are most important for success in this industry?",
+    "What challenges do you see facing this industry in the next 5 years?",
+    "Describe a project you worked on that relates to this industry.",
+    "How does your previous experience translate to this industry?",
+    "What do you think sets successful professionals apart in this field?",
+    "How do you approach learning new skills required in this industry?",
+    "What industry publications or resources do you follow to stay informed?",
+  ],
   technical: [
     "What programming languages are you proficient in?",
     "Describe the most complex technical problem you've solved.",
@@ -278,7 +290,10 @@ Tips for this question:
 };
 
 export default function InterviewPracticeRedesigned() {
-  const [industry, setIndustry] = useState<keyof typeof industryQuestions>("general");
+  const [industry, setIndustry] = useState<keyof typeof industryQuestions | "other">("general");
+  const [customIndustry, setCustomIndustry] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [positionTitle, setPositionTitle] = useState("");
   const [jobField, setJobField] = useState("");
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -385,11 +400,16 @@ export default function InterviewPracticeRedesigned() {
 
   const analyzeMutation = useMutation({
     mutationFn: async (answer: string) => {
-      const res = await apiRequest("POST", "/api/interview/analyze", {
+      // Prepare context information for more relevant feedback
+      const contextInfo = {
         answer,
         question: currentQuestion,
-        industry,
-      });
+        industry: industry === "other" && customIndustry ? customIndustry : industry,
+        companyName: companyName || undefined,
+        positionTitle: positionTitle || undefined,
+      };
+      
+      const res = await apiRequest("POST", "/api/interview/analyze", contextInfo);
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.error || "Failed to analyze response");
@@ -442,22 +462,50 @@ export default function InterviewPracticeRedesigned() {
       return;
     }
     
-    // Use the enhanced OpenAI implementation directly
-    generateQuestionsMutation.mutate(jobField);
+    // Update the jobField if company and position are provided
+    let enhancedJobField = jobField;
     
-  }, [jobField, generateQuestionsMutation, toast]);
+    if (companyName.trim() && positionTitle.trim()) {
+      enhancedJobField = `${positionTitle} at ${companyName}`;
+    } else if (positionTitle.trim()) {
+      enhancedJobField = positionTitle;
+    } else if (companyName.trim()) {
+      enhancedJobField = `position at ${companyName}`;
+    }
+    
+    // Use custom industry if "other" is selected
+    if (industry === "other" && customIndustry.trim()) {
+      enhancedJobField = `${enhancedJobField} (${customIndustry} industry)`;
+    }
+    
+    // Use the enhanced OpenAI implementation directly
+    generateQuestionsMutation.mutate(enhancedJobField);
+    
+  }, [jobField, companyName, positionTitle, industry, customIndustry, generateQuestionsMutation, toast]);
   
   // Option to try Career One Stop API if credentials are available
   const handleCareerOneStopQuestions = useCallback(() => {
     if (!jobField.trim()) return;
+    
+    // Enhance with position and company info if available
+    let enhancedJobField = jobField;
+    
+    if (positionTitle.trim()) {
+      enhancedJobField = positionTitle;
+    }
+    
+    // Use custom industry if "other" is selected
+    if (industry === "other" && customIndustry.trim()) {
+      enhancedJobField = `${enhancedJobField} (${customIndustry})`;
+    }
     
     toast({
       title: "Attempting Career One Stop API",
       description: "This requires Department of Labor API credentials.",
     });
     
-    generateCareerOneStopQuestionsMutation.mutate(jobField);
-  }, [jobField, generateCareerOneStopQuestionsMutation]);
+    generateCareerOneStopQuestionsMutation.mutate(enhancedJobField);
+  }, [jobField, positionTitle, industry, customIndustry, generateCareerOneStopQuestionsMutation]);
 
   // Initialize speech recognition
   useEffect(() => {
@@ -504,7 +552,7 @@ export default function InterviewPracticeRedesigned() {
     // Create a mix of general and industry-specific questions
     const questionPool = [
       ...industryQuestions.general.slice(0, 3),
-      ...industryQuestions[industry].slice(0, 5)
+      ...((industry === "other") ? industryQuestions.other.slice(0, 5) : industryQuestions[industry as Exclude<keyof typeof industryQuestions, "other">].slice(0, 5))
     ];
     
     // Add custom questions if available
@@ -985,8 +1033,53 @@ Result: ${starGuide.result}
                     <SelectItem value="healthcare">Healthcare</SelectItem>
                     <SelectItem value="education">Education</SelectItem>
                     <SelectItem value="sales">Sales</SelectItem>
+                    <SelectItem value="other">Other (Custom)</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              
+              {/* Custom industry input field that appears when "Other" is selected */}
+              {industry === "other" && (
+                <div className="flex flex-col space-y-2 mt-3">
+                  <Label htmlFor="customIndustry" className="text-sm font-medium text-blue-900">
+                    Specify Industry
+                  </Label>
+                  <Input
+                    id="customIndustry"
+                    placeholder="e.g. Biotechnology, Finance, Retail..."
+                    value={customIndustry}
+                    onChange={(e) => setCustomIndustry(e.target.value)}
+                    className="border-blue-200 focus:border-blue-400"
+                  />
+                </div>
+              )}
+              
+              {/* Company Name Field */}
+              <div className="flex flex-col space-y-2 mt-3">
+                <Label htmlFor="companyName" className="text-sm font-medium text-blue-900">
+                  Company Name (Optional)
+                </Label>
+                <Input
+                  id="companyName"
+                  placeholder="e.g. Microsoft, Amazon, Local Hospital..."
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  className="border-blue-200 focus:border-blue-400"
+                />
+              </div>
+              
+              {/* Position Title Field */}
+              <div className="flex flex-col space-y-2 mt-3">
+                <Label htmlFor="positionTitle" className="text-sm font-medium text-blue-900">
+                  Position Title (Optional)
+                </Label>
+                <Input
+                  id="positionTitle"
+                  placeholder="e.g. Senior Developer, Project Manager..."
+                  value={positionTitle}
+                  onChange={(e) => setPositionTitle(e.target.value)}
+                  className="border-blue-200 focus:border-blue-400"
+                />
               </div>
               
               <Button 
@@ -1283,12 +1376,13 @@ Result: ${starGuide.result}
                 <SelectItem value="healthcare">Healthcare</SelectItem>
                 <SelectItem value="education">Education</SelectItem>
                 <SelectItem value="sales">Sales</SelectItem>
+                <SelectItem value="other">Other (Custom)</SelectItem>
               </SelectContent>
             </Select>
           </div>
           
           <div className="grid gap-2">
-            {industryQuestions[industry].map((question, index) => (
+            {(industry === "other" ? industryQuestions.other : industryQuestions[industry as Exclude<keyof typeof industryQuestions, "other">]).map((question: string, index: number) => (
               <Button
                 key={`general-${index}`}
                 variant="outline"
