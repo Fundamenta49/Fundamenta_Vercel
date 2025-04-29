@@ -36,6 +36,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Slider } from "@/components/ui/slider";
 
+// Add CSS to fix any dropdown menu issues
+import './account-settings-fixes.css';
+
 export function AccountSettings() {
   const [open, setOpen] = useState(false);
   const [showPrivacyConsent, setShowPrivacyConsent] = useState(false);
@@ -237,10 +240,16 @@ export function AccountSettings() {
       )}
       
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className={cn(
-          "sm:max-w-[475px] min-h-[600px] max-h-[85vh]",
-          isJungleTheme && "jungle-theme-dialog bg-[#1E4A3D] border-2 border-[#E6B933] text-white"
-        )}>
+        <DialogContent 
+          className={cn(
+            "sm:max-w-[475px] min-h-[600px] max-h-[85vh] account-settings-dialog",
+            isJungleTheme && "jungle-theme-dialog bg-[#1E4A3D] border-2 border-[#E6B933] text-white"
+          )}
+          onClick={(e) => {
+            // Prevent clicks from propagating to potential dropdowns underneath
+            e.stopPropagation();
+          }}
+        >
           <DialogHeader>
             <DialogTitle className={isJungleTheme ? "text-[#E6B933]" : ""}>
               {isJungleTheme ? "Expedition Settings" : "Account Settings"}
@@ -288,7 +297,7 @@ export function AccountSettings() {
               </TabsTrigger>
             </TabsList>
             
-            <div className="h-[450px] mt-4 overflow-y-auto pr-1">
+            <div className="h-[450px] mt-4 overflow-y-auto pr-1" style={{ minHeight: '450px' }}>
               <TabsContent value="profile" className="space-y-4">
                 <div className="flex items-center gap-4 mb-4">
                   <Avatar className="h-14 w-14">
@@ -540,11 +549,11 @@ export function AccountSettings() {
             </div>
           </Tabs>
           
-          <DialogFooter className="mt-4 border-t pt-4">
+          <DialogFooter className="account-settings-dialog-footer">
             <Button 
               onClick={() => setOpen(false)}
               className={cn(
-                "w-full sm:w-auto",
+                "account-settings-close-button",
                 isJungleTheme && "bg-[#E6B933] text-[#1E4A3D] hover:bg-[#DCAA14]"
               )}
             >

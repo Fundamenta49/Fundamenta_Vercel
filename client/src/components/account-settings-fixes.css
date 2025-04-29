@@ -1,0 +1,38 @@
+/* Settings Dialog Fixes */
+
+/* Ensure consistent container heights across all tabs */
+.account-settings-dialog [role="tabpanel"] {
+  min-height: 450px;
+}
+
+/* Fix dialog to be on top of any potential dropdown menus */
+.account-settings-dialog {
+  z-index: 50 !important;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Hide any unwanted dropdowns when account settings dialog is open */
+[role="dialog"][aria-modal="true"] ~ [role="menu"],
+[role="dialog"][aria-modal="true"] ~ [role="listbox"] {
+  display: none !important;
+}
+
+/* Add spacing to inputs for better layout */
+.account-settings-dialog .input {
+  margin-bottom: 8px;
+}
+
+/* Ensure dialog footer has consistent styling */
+.account-settings-dialog-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+/* Fix the close button to be full width on mobile */
+@media (max-width: 640px) {
+  .account-settings-close-button {
+    width: 100%;
+  }
+}
