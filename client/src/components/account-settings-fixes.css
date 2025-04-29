@@ -24,6 +24,35 @@
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;
+  background-color: white !important;
+}
+
+/* Styling for the close button in the dialog header */
+.account-settings-dialog [data-radix-dialog-close] {
+  position: absolute !important;
+  right: 1.25rem !important;
+  top: 1.25rem !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: #f5f5f5 !important;
+  border: 1px solid #e5e7eb !important;
+  color: #666 !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  z-index: 10 !important;
+  font-weight: bold !important;
+}
+
+.account-settings-dialog [data-radix-dialog-close]:hover {
+  background-color: #e5e7eb !important;
+  transform: none !important;
 }
 
 /* Hide any unwanted dropdowns when account settings dialog is open */
@@ -83,10 +112,14 @@
   width: 100%;
   padding: 0.5rem 0.25rem;
   overflow-y: auto;
-  max-height: 350px !important;
+  max-height: 300px !important;
   height: auto !important; 
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  background-color: white !important;
+  position: relative !important;
+  z-index: 5 !important;
 }
 
 /* Fix spacing in profile section */
@@ -113,6 +146,8 @@
 .account-settings-dialog [data-radix-dialog-header] {
   margin-bottom: 1.25rem;
   text-align: center;
+  position: relative;
+  padding-right: 30px; /* Make space for the close button */
 }
 
 /* Style description text */
@@ -120,6 +155,17 @@
   margin-top: 0.5rem;
   font-size: 0.9rem;
   opacity: 0.85;
+}
+
+/* Hide the text in the close button and replace with X */
+.account-settings-dialog [data-radix-dialog-close] span {
+  display: none;
+}
+
+.account-settings-dialog [data-radix-dialog-close]::before {
+  content: "×";
+  font-size: 22px;
+  line-height: 1;
 }
 
 /* Ensure dialog footer has consistent styling */
