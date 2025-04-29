@@ -243,15 +243,86 @@ export function AccountSettings() {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent 
             className={cn(
-              "min-h-[600px] max-h-[90vh] account-settings-dialog",
+              "min-h-[550px] max-h-[80vh] account-settings-dialog",
               isJungleTheme && "jungle-theme-dialog bg-[#1E4A3D] border-2 border-[#E6B933] text-white"
             )}
+            style={{
+              position: "fixed",
+              maxWidth: "400px",
+              width: "90%",
+              transform: "translate(-50%, -50%)",
+              left: "50%",
+              top: "50%",
+              margin: "0",
+              zIndex: "50",
+              padding: "1.25rem",
+              borderRadius: "1rem",
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
+              border: "1px solid rgba(229, 231, 235, 0.8)",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+              backgroundColor: "white"
+            }}
             onClick={(e) => {
               // Prevent clicks from propagating to potential dropdowns underneath
               e.stopPropagation();
             }}
           >
-            <DialogHeader>
+            {/* Custom close button styling */}
+            <style jsx global>{`
+              [data-radix-dialog-close] {
+                position: absolute !important;
+                right: 1.25rem !important;
+                top: 1.25rem !important;
+                width: 30px !important;
+                height: 30px !important;
+                border-radius: 50% !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                background-color: #f5f5f5 !important;
+                border: 1px solid #e5e7eb !important;
+                color: #666 !important;
+                padding: 0 !important;
+                font-size: 14px !important;
+                line-height: 1 !important;
+                cursor: pointer !important;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+                z-index: 10 !important;
+                font-weight: bold !important;
+              }
+              
+              [data-radix-dialog-close] span {
+                display: none !important;
+              }
+              
+              [data-radix-dialog-close]::before {
+                content: "×" !important;
+                font-size: 22px !important;
+                line-height: 1 !important;
+              }
+              
+              [data-radix-dialog-close]:hover {
+                background-color: #e5e7eb !important;
+              }
+              
+              .settings-content-area {
+                width: 100% !important;
+                padding: 0.5rem 0.25rem !important;
+                overflow-y: auto !important;
+                max-height: 300px !important;
+                height: auto !important;
+                overscroll-behavior: contain !important;
+                -webkit-overflow-scrolling: touch !important;
+                scroll-behavior: smooth !important;
+                background-color: white !important;
+                position: relative !important;
+                z-index: 5 !important;
+              }
+            `}</style>
+            
+            <DialogHeader style={{ paddingRight: "30px", position: "relative" }}>
               <DialogTitle className={isJungleTheme ? "text-[#E6B933]" : ""}>
                 {isJungleTheme ? "Expedition Settings" : "Account Settings"}
               </DialogTitle>
