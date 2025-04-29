@@ -243,7 +243,7 @@ export function AccountSettings() {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent 
             className={cn(
-              "sm:max-w-[475px] min-h-[600px] max-h-[90vh] absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] account-settings-dialog",
+              "sm:max-w-[475px] min-h-[600px] max-h-[90vh] account-settings-dialog",
               isJungleTheme && "jungle-theme-dialog bg-[#1E4A3D] border-2 border-[#E6B933] text-white"
             )}
             onClick={(e) => {
