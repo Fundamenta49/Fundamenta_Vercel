@@ -274,9 +274,9 @@ export function AccountSettings() {
             {/* Custom close button styling */}
             <style dangerouslySetInnerHTML={{ __html: `
               [data-radix-dialog-close] {
-                position: absolute !important;
-                right: 1.25rem !important;
-                top: 1.25rem !important;
+                position: fixed !important;
+                right: 20px !important;
+                top: 20px !important;
                 width: 30px !important;
                 height: 30px !important;
                 border-radius: 50% !important;
@@ -291,7 +291,7 @@ export function AccountSettings() {
                 line-height: 1 !important;
                 cursor: pointer !important;
                 box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-                z-index: 10 !important;
+                z-index: 50 !important;
                 font-weight: bold !important;
               }
               
@@ -310,7 +310,12 @@ export function AccountSettings() {
               }
             ` }} />
             
-            <DialogHeader style={{ paddingRight: "30px", position: "relative" }}>
+            <DialogHeader style={{ 
+              position: "relative", 
+              marginTop: "15px",
+              marginBottom: "15px",
+              paddingRight: "40px" 
+            }}>
               <DialogTitle className={isJungleTheme ? "text-[#E6B933]" : ""}>
                 {isJungleTheme ? "Expedition Settings" : "Account Settings"}
               </DialogTitle>
