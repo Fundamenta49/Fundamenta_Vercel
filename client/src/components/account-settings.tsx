@@ -280,7 +280,7 @@ export function AccountSettings() {
               </TabsTrigger>
             </TabsList>
             
-            <div className="h-[400px] mt-4 overflow-y-auto pr-1">
+            <div className="h-[450px] mt-4 overflow-y-auto pr-1">
               <TabsContent value="profile" className="space-y-4">
                 <div className="flex items-center gap-4 mb-4">
                   <Avatar className="h-14 w-14">
@@ -292,7 +292,7 @@ export function AccountSettings() {
                       {getInitials(userProfile.displayName)}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
+                  <div className="flex flex-col">
                     <h3 className={cn(
                       "text-lg font-medium",
                       isJungleTheme && "text-[#E6B933]"
@@ -303,7 +303,7 @@ export function AccountSettings() {
                       "text-sm text-muted-foreground",
                       isJungleTheme && "text-[#94C973]"
                     )}>
-                      {userProfile.email || "No email provided"}
+                      {userProfile.email ? userProfile.email : "No email provided"}
                     </p>
                   </div>
                 </div>
