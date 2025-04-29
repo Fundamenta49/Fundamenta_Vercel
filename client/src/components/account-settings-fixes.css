@@ -6,71 +6,17 @@
   padding-bottom: 1rem;
 }
 
-/* Direct, more aggressive centering approach */
-[role="dialog"][data-state="open"] {
-  position: fixed !important;
-  inset: 0 !important;
-  display: grid !important;
-  place-items: center !important;
-  z-index: 999 !important;
-  background-color: rgba(0, 0, 0, 0.5) !important;
-}
-
-/* Redefine shadcn dialog positioning */
-[data-radix-popper-content-wrapper] {
-  position: fixed !important;
-  inset: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  pointer-events: none;
-}
-
-[data-radix-popper-content-wrapper] > * {
-  pointer-events: auto;
-  max-width: 95vw !important;
-  margin: auto !important;
-}
-
-/* Target the actual dialog content */
+/* Basic centering approach for the dialog */
 .account-settings-dialog {
-  position: relative !important;
+  position: fixed !important;
   max-width: 475px !important;
   width: 95% !important;
   max-height: 90vh !important;
-  margin: auto !important;
-  transform: none !important;
-  left: 0 !important;
-  top: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-}
-
-/* Fix dialog overlay/backdrop */
-[role="dialog"][data-state="open"] > .fixed {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 999 !important;
-}
-
-/* Fix the dialog container */
-[role="dialog"][data-state="open"] > div:not(.fixed) {
-  position: relative !important;
-  max-width: 475px !important;
-  width: 95% !important;
-  z-index: 1000 !important;
-}
-
-/* Center the dialog contents */
-.account-settings-dialog > div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  transform: translate(-50%, -50%) !important;
+  left: 50% !important;
+  top: 50% !important;
+  margin: 0 !important;
+  z-index: 50 !important;
 }
 
 /* Hide any unwanted dropdowns when account settings dialog is open */
@@ -90,14 +36,6 @@
 .account-settings-dialog label {
   margin-bottom: 4px;
   display: block;
-  width: 100%;
-}
-
-/* Make tab content consistent height */
-.account-settings-dialog [data-state="active"] {
-  display: block !important;
-  min-height: 450px;
-  position: relative;
   width: 100%;
 }
 
@@ -144,24 +82,18 @@
 /* Small screen optimizations */
 @media (max-width: 768px) {
   .account-settings-dialog {
-    position: relative;
-    width: 100%;
-    max-width: 100%;
+    position: fixed !important;
+    max-width: 95% !important;
+    width: 95% !important;
+    transform: translate(-50%, -50%) !important;
+    left: 50% !important;
+    top: 50% !important;
+    margin: 0 !important;
     border-radius: 0.5rem;
-    margin: 0 auto;
-    padding: 0.75rem;
-  }
-  
-  /* Center the dialog on screen */
-  div[role="dialog"] {
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
   
   /* Adjust content height on smaller screens */
   .settings-content-area {
-    height: auto !important;
     max-height: 60vh;
     padding: 0 0.25rem;
   }
@@ -179,26 +111,6 @@
 
 /* Mobile optimizations */
 @media (max-width: 640px) {
-  .account-settings-dialog {
-    width: 100% !important;
-    max-width: 95% !important;
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-    position: relative !important;
-    margin: auto !important;
-    transform: none !important;
-    left: auto !important;
-    top: auto !important;
-  }
-  
-  /* Override any positioning styles from shadcn */
-  [role="dialog"] > .fixed,
-  [role="dialog"][data-state="open"] {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  
   /* Make inputs larger and more touch-friendly */
   .account-settings-dialog input,
   .account-settings-dialog .input {
@@ -231,26 +143,6 @@
   .account-settings-dialog .space-y-3 > div,
   .account-settings-dialog .space-y-4 > div {
     margin-bottom: 1rem;
-  }
-  
-  /* Center and size avatar for mobile */
-  .account-settings-dialog .avatar-container {
-    flex-direction: column;
-    text-align: center;
-    gap: 0.5rem !important;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .account-settings-dialog .avatar-container > div.flex {
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
-  
-  .account-settings-dialog .avatar-container h3,
-  .account-settings-dialog .avatar-container p {
-    text-align: center;
   }
   
   /* Make content scrollable but not too tall on mobile */
