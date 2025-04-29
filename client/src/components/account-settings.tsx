@@ -37,7 +37,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Slider } from "@/components/ui/slider";
 
 // Add CSS to fix any dropdown menu issues
-import './account-settings-fixes.css';
+import '@/components/account-settings-fixes.css';
 
 export function AccountSettings() {
   const [open, setOpen] = useState(false);
@@ -299,7 +299,7 @@ export function AccountSettings() {
             
             <div className="h-[450px] mt-4 overflow-y-auto pr-1" style={{ minHeight: '450px' }}>
               <TabsContent value="profile" className="space-y-4">
-                <div className="flex items-center gap-4 mb-4">
+                <div className="avatar-container">
                   <Avatar className="h-14 w-14">
                     <AvatarImage src="" alt={userProfile.displayName} />
                     <AvatarFallback className={cn(
@@ -309,7 +309,7 @@ export function AccountSettings() {
                       {getInitials(userProfile.displayName)}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col space-y-1">
                     <h3 className={cn(
                       "text-lg font-medium",
                       isJungleTheme && "text-[#E6B933]"

@@ -3,6 +3,7 @@
 /* Ensure consistent container heights across all tabs */
 .account-settings-dialog [role="tabpanel"] {
   min-height: 450px;
+  padding-bottom: 1rem;
 }
 
 /* Fix dialog to be on top of any potential dropdown menus */
@@ -19,20 +20,48 @@
 }
 
 /* Add spacing to inputs for better layout */
+.account-settings-dialog input,
 .account-settings-dialog .input {
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+/* Fix spacing between label and input */
+.account-settings-dialog label {
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Make tab content consistent height */
+.account-settings-dialog [data-state="active"] {
+  display: block !important;
+  min-height: 450px;
+  position: relative;
+}
+
+/* Fix spacing in profile section */
+.account-settings-dialog .avatar-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 /* Ensure dialog footer has consistent styling */
 .account-settings-dialog-footer {
   border-top: 1px solid var(--border);
   padding-top: 1rem;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* Fix the close button to be full width on mobile */
 @media (max-width: 640px) {
   .account-settings-close-button {
     width: 100%;
+  }
+  
+  .account-settings-dialog-footer {
+    justify-content: center;
   }
 }
