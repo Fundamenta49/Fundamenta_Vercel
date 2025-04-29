@@ -242,7 +242,7 @@ export function AccountSettings() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent 
           className={cn(
-            "sm:max-w-[475px] min-h-[600px] max-h-[85vh] account-settings-dialog",
+            "sm:max-w-[475px] min-h-[600px] max-h-[90vh] account-settings-dialog",
             isJungleTheme && "jungle-theme-dialog bg-[#1E4A3D] border-2 border-[#E6B933] text-white"
           )}
           onClick={(e) => {
@@ -268,7 +268,7 @@ export function AccountSettings() {
             className="mt-2"
           >
             <TabsList className={cn(
-              "grid w-full grid-cols-3 mb-4", 
+              "grid w-full grid-cols-3 mb-4 settings-tabs-list", 
               isJungleTheme && "bg-[#162E26] border border-[#94C973]"
             )}>
               <TabsTrigger 
@@ -297,7 +297,7 @@ export function AccountSettings() {
               </TabsTrigger>
             </TabsList>
             
-            <div className="h-[450px] mt-4 overflow-y-auto pr-1" style={{ minHeight: '450px' }}>
+            <div className="h-[450px] mt-4 overflow-y-auto pr-1 settings-content-area" style={{ minHeight: '450px' }}>
               <TabsContent value="profile" className="space-y-4">
                 <div className="avatar-container">
                   <Avatar className="h-14 w-14">
