@@ -230,7 +230,7 @@ export function AccountSettings() {
       
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className={cn(
-          "sm:max-w-[475px]",
+          "sm:max-w-[475px] min-h-[550px]",
           isJungleTheme && "jungle-theme-dialog bg-[#1E4A3D] border-2 border-[#E6B933] text-white"
         )}>
           <DialogHeader>
@@ -280,7 +280,7 @@ export function AccountSettings() {
               </TabsTrigger>
             </TabsList>
             
-            <div className="min-h-[400px] mt-4">
+            <div className="h-[400px] mt-4 overflow-y-auto pr-1">
               <TabsContent value="profile" className="space-y-4">
                 <div className="flex items-center gap-4 mb-4">
                   <Avatar className="h-14 w-14">
@@ -405,9 +405,9 @@ export function AccountSettings() {
                   "border",
                   isJungleTheme && "bg-[#162E26] border-[#94C973]"
                 )}>
-                  <CardContent className="pt-6 space-y-4">
+                  <CardContent className="pt-6 pb-4 space-y-4">
                     <div className="flex justify-between items-center">
-                      <div className="space-y-0.5">
+                      <div className="space-y-1.5">
                         <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
                           Enable Notifications
                         </Label>
@@ -430,7 +430,7 @@ export function AccountSettings() {
                         <Separator className={isJungleTheme ? "bg-[#94C973]/30" : ""} />
                         
                         <div className="flex justify-between items-center opacity-50 cursor-not-allowed">
-                          <div className="space-y-0.5">
+                          <div className="space-y-1.5">
                             <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
                               Learning Reminders
                             </Label>
@@ -445,7 +445,7 @@ export function AccountSettings() {
                         </div>
                         
                         <div className="flex justify-between items-center opacity-50 cursor-not-allowed">
-                          <div className="space-y-0.5">
+                          <div className="space-y-1.5">
                             <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
                               Achievement Alerts
                             </Label>
@@ -476,7 +476,7 @@ export function AccountSettings() {
                   "border",
                   isJungleTheme && "bg-[#162E26] border-[#94C973]"
                 )}>
-                  <CardContent className="pt-6 space-y-6">
+                  <CardContent className="pt-6 pb-4 space-y-6">
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
@@ -503,7 +503,7 @@ export function AccountSettings() {
                     </div>
                     
                     <div className="flex justify-between items-center opacity-50 cursor-not-allowed">
-                      <div className="space-y-0.5">
+                      <div className="space-y-1.5">
                         <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
                           Text Size
                         </Label>
