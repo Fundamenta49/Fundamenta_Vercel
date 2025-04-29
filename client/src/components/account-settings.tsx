@@ -243,7 +243,7 @@ export function AccountSettings() {
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent 
             className={cn(
-              "min-h-[550px] max-h-[80vh] account-settings-dialog",
+              "account-settings-dialog",
               isJungleTheme && "jungle-theme-dialog bg-[#1E4A3D] border-2 border-[#E6B933] text-white"
             )}
             style={{
@@ -262,7 +262,9 @@ export function AccountSettings() {
               overflow: "hidden",
               display: "flex",
               flexDirection: "column",
-              backgroundColor: "white"
+              backgroundColor: "white",
+              height: "auto",
+              maxHeight: "max-content"
             }}
             onClick={(e) => {
               // Prevent clicks from propagating to potential dropdowns underneath
@@ -270,7 +272,7 @@ export function AccountSettings() {
             }}
           >
             {/* Custom close button styling */}
-            <style jsx global>{`
+            <style dangerouslySetInnerHTML={{ __html: `
               [data-radix-dialog-close] {
                 position: absolute !important;
                 right: 1.25rem !important;
@@ -306,21 +308,7 @@ export function AccountSettings() {
               [data-radix-dialog-close]:hover {
                 background-color: #e5e7eb !important;
               }
-              
-              .settings-content-area {
-                width: 100% !important;
-                padding: 0.5rem 0.25rem !important;
-                overflow-y: auto !important;
-                max-height: 300px !important;
-                height: auto !important;
-                overscroll-behavior: contain !important;
-                -webkit-overflow-scrolling: touch !important;
-                scroll-behavior: smooth !important;
-                background-color: white !important;
-                position: relative !important;
-                z-index: 5 !important;
-              }
-            `}</style>
+            ` }} />
             
             <DialogHeader style={{ paddingRight: "30px", position: "relative" }}>
               <DialogTitle className={isJungleTheme ? "text-[#E6B933]" : ""}>
@@ -369,7 +357,11 @@ export function AccountSettings() {
                 </TabsTrigger>
               </TabsList>
               
-              <div className="mt-3 overflow-y-auto pr-1 settings-content-area">
+              <div className="mt-3 pr-1" style={{ 
+                overflow: "visible", 
+                height: "auto", 
+                maxHeight: "none" 
+              }}>
                 <TabsContent value="profile" className="space-y-4">
                   <div className="avatar-container">
                     <Avatar className="h-14 w-14">
@@ -621,17 +613,7 @@ export function AccountSettings() {
               </div>
             </Tabs>
             
-            <DialogFooter className="account-settings-dialog-footer">
-              <Button 
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "account-settings-close-button",
-                  isJungleTheme && "bg-[#E6B933] text-[#1E4A3D] hover:bg-[#DCAA14]"
-                )}
-              >
-                {isJungleTheme ? "Return to Jungle" : "Close"}
-              </Button>
-            </DialogFooter>
+            {/* Footer removed as per request */}
           </DialogContent>
         </Dialog>
       </div>
