@@ -82,6 +82,14 @@ export function AccountSettings() {
     
     if (open) {
       fetchUserProfile();
+      
+      // Clear any dropdown or popover elements that might be open
+      const dropdowns = document.querySelectorAll('[role="menu"], [role="listbox"], [role="dialog"]:not([aria-modal="true"])');
+      dropdowns.forEach(dropdown => {
+        if (dropdown.parentElement) {
+          dropdown.parentElement.removeChild(dropdown);
+        }
+      });
     }
   }, [open]);
   
@@ -230,7 +238,7 @@ export function AccountSettings() {
       
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className={cn(
-          "sm:max-w-[475px] min-h-[550px]",
+          "sm:max-w-[475px] min-h-[600px] max-h-[85vh]",
           isJungleTheme && "jungle-theme-dialog bg-[#1E4A3D] border-2 border-[#E6B933] text-white"
         )}>
           <DialogHeader>
@@ -251,7 +259,7 @@ export function AccountSettings() {
             className="mt-2"
           >
             <TabsList className={cn(
-              "grid w-full grid-cols-3", 
+              "grid w-full grid-cols-3 mb-4", 
               isJungleTheme && "bg-[#162E26] border border-[#94C973]"
             )}>
               <TabsTrigger 
@@ -532,10 +540,11 @@ export function AccountSettings() {
             </div>
           </Tabs>
           
-          <DialogFooter>
+          <DialogFooter className="mt-4 border-t pt-4">
             <Button 
               onClick={() => setOpen(false)}
               className={cn(
+                "w-full sm:w-auto",
                 isJungleTheme && "bg-[#E6B933] text-[#1E4A3D] hover:bg-[#DCAA14]"
               )}
             >

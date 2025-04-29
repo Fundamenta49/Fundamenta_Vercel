@@ -1,0 +1,34 @@
+/* Account Settings CSS */
+
+/* Prevent any dropdowns or popovers from showing over the dialog */
+.dialog-overlay {
+  z-index: 9999 !important;
+}
+
+/* Hide any unwanted dropdowns when account settings dialog is open */
+[role="dialog"][aria-modal="true"] ~ [role="menu"],
+[role="dialog"][aria-modal="true"] ~ [role="listbox"] {
+  display: none !important;
+}
+
+/* Ensure consistent tab height */
+[role="tabpanel"] {
+  min-height: 450px;
+  padding-bottom: 20px;
+}
+
+/* Make sure the dialog is above any other components */
+[role="dialog"][aria-label="Account Settings"] {
+  position: relative;
+  z-index: 9999;
+}
+
+/* Add some spacing to the inputs */
+.input {
+  margin-bottom: 8px;
+}
+
+/* Prevent any overlap of elements */
+.dialog-content {
+  isolation: isolate;
+}
