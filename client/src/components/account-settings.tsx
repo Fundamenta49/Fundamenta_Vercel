@@ -239,329 +239,331 @@ export function AccountSettings() {
         </Button>
       )}
       
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent 
-          className={cn(
-            "sm:max-w-[475px] min-h-[600px] max-h-[90vh] account-settings-dialog",
-            isJungleTheme && "jungle-theme-dialog bg-[#1E4A3D] border-2 border-[#E6B933] text-white"
-          )}
-          onClick={(e) => {
-            // Prevent clicks from propagating to potential dropdowns underneath
-            e.stopPropagation();
-          }}
-        >
-          <DialogHeader>
-            <DialogTitle className={isJungleTheme ? "text-[#E6B933]" : ""}>
-              {isJungleTheme ? "Expedition Settings" : "Account Settings"}
-            </DialogTitle>
-            <DialogDescription className={isJungleTheme ? "text-[#94C973]" : ""}>
-              {isJungleTheme 
-                ? "Manage your explorer preferences and jungle permissions" 
-                : "Manage your account preferences and privacy settings"}
-            </DialogDescription>
-          </DialogHeader>
-          
-          <Tabs 
-            defaultValue="profile" 
-            value={selectedTab} 
-            onValueChange={setSelectedTab}
-            className="mt-2"
+      <div className="account-settings-root-dialog">
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent 
+            className={cn(
+              "sm:max-w-[475px] min-h-[600px] max-h-[90vh] absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] account-settings-dialog",
+              isJungleTheme && "jungle-theme-dialog bg-[#1E4A3D] border-2 border-[#E6B933] text-white"
+            )}
+            onClick={(e) => {
+              // Prevent clicks from propagating to potential dropdowns underneath
+              e.stopPropagation();
+            }}
           >
-            <TabsList className={cn(
-              "grid w-full grid-cols-3 mb-4 settings-tabs-list", 
-              isJungleTheme && "bg-[#162E26] border border-[#94C973]"
-            )}>
-              <TabsTrigger 
-                value="profile" 
-                className={cn(
-                  isJungleTheme && "data-[state=active]:bg-[#1A3831] data-[state=active]:text-[#E6B933]"
-                )}
-              >
-                Profile
-              </TabsTrigger>
-              <TabsTrigger 
-                value="notifications" 
-                className={cn(
-                  isJungleTheme && "data-[state=active]:bg-[#1A3831] data-[state=active]:text-[#E6B933]"
-                )}
-              >
-                Notifications
-              </TabsTrigger>
-              <TabsTrigger 
-                value="display" 
-                className={cn(
-                  isJungleTheme && "data-[state=active]:bg-[#1A3831] data-[state=active]:text-[#E6B933]"
-                )}
-              >
-                Display
-              </TabsTrigger>
-            </TabsList>
+            <DialogHeader>
+              <DialogTitle className={isJungleTheme ? "text-[#E6B933]" : ""}>
+                {isJungleTheme ? "Expedition Settings" : "Account Settings"}
+              </DialogTitle>
+              <DialogDescription className={isJungleTheme ? "text-[#94C973]" : ""}>
+                {isJungleTheme 
+                  ? "Manage your explorer preferences and jungle permissions" 
+                  : "Manage your account preferences and privacy settings"}
+              </DialogDescription>
+            </DialogHeader>
             
-            <div className="h-[450px] mt-4 overflow-y-auto pr-1 settings-content-area" style={{ minHeight: '450px' }}>
-              <TabsContent value="profile" className="space-y-4">
-                <div className="avatar-container">
-                  <Avatar className="h-14 w-14">
-                    <AvatarImage src="" alt={userProfile.displayName} />
-                    <AvatarFallback className={cn(
-                      "text-lg",
-                      isJungleTheme ? "bg-[#94C973] text-[#1E4A3D]" : "bg-primary text-primary-foreground"
-                    )}>
-                      {getInitials(userProfile.displayName)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col space-y-1">
-                    <h3 className={cn(
-                      "text-lg font-medium",
-                      isJungleTheme && "text-[#E6B933]"
-                    )}>
-                      {userProfile.displayName || "User"}
-                    </h3>
-                    <p className={cn(
-                      "text-sm text-muted-foreground",
-                      isJungleTheme && "text-[#94C973]"
-                    )}>
-                      {userProfile.email ? userProfile.email : "No email provided"}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <div className="space-y-1">
-                    <Label 
-                      htmlFor="displayName"
-                      className={isJungleTheme ? "text-[#E6B933]" : ""}
-                    >
-                      Display Name
-                    </Label>
-                    <Input 
-                      id="displayName" 
-                      value={userProfile.displayName} 
-                      onChange={(e) => setUserProfile({...userProfile, displayName: e.target.value})}
-                      className={cn(
-                        isJungleTheme && "bg-[#162E26] border-[#94C973] text-white"
-                      )}
-                    />
-                  </div>
-                  
-                  <div className="space-y-1">
-                    <Label 
-                      htmlFor="bio"
-                      className={isJungleTheme ? "text-[#E6B933]" : ""}
-                    >
-                      Bio
-                    </Label>
-                    <Input 
-                      id="bio" 
-                      value={userProfile.bio} 
-                      onChange={(e) => setUserProfile({...userProfile, bio: e.target.value})}
-                      className={cn(
-                        isJungleTheme && "bg-[#162E26] border-[#94C973] text-white"
-                      )}
-                    />
-                    <p className={cn(
-                      "text-xs text-muted-foreground",
-                      isJungleTheme && "text-[#94C973]"
-                    )}>
-                      A brief description about yourself
-                    </p>
-                  </div>
-                  
-                  <Button 
-                    onClick={handleProfileUpdate}
-                    className={cn(
-                      "mt-2",
-                      isJungleTheme && "bg-[#94C973] text-[#1E4A3D] hover:bg-[#7DAC5D]"
-                    )}
-                  >
-                    <User className="mr-2 h-4 w-4" />
-                    Update Profile
-                  </Button>
-                </div>
-                
-                <Separator className={isJungleTheme ? "bg-[#94C973]/30" : ""} />
-                
-                <div className="space-y-2">
-                  <h3 className={cn(
-                    "text-sm font-medium",
-                    isJungleTheme && "text-[#E6B933]"
-                  )}>
-                    {isJungleTheme ? "Jungle Permissions" : "Privacy"}
-                  </h3>
-                  <Button 
-                    variant={isJungleTheme ? "default" : "outline"} 
-                    className={cn(
-                      "w-full justify-start text-left",
-                      isJungleTheme && "bg-[#162E26] border-[#94C973] hover:bg-[#1A3831] text-[#94C973]"
-                    )}
-                    onClick={handleWithdrawConsent}
-                  >
-                    <ShieldCheck className="mr-2 h-4 w-4" />
-                    {isJungleTheme ? "Manage Jungle Access" : "Manage Privacy Consent"}
-                  </Button>
-                </div>
-                
-                <div className="space-y-2">
-                  <Button 
-                    variant={isJungleTheme ? "default" : "outline"} 
-                    className={cn(
-                      "w-full justify-start text-left",
-                      isJungleTheme 
-                        ? "bg-[#6D1A1D] border-[#FF6B70] hover:bg-[#7F1F22] text-[#FF6B70]" 
-                        : "text-red-600 hover:text-red-700 hover:bg-red-50"
-                    )}
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    {isJungleTheme ? "Leave Expedition" : "Logout"}
-                  </Button>
-                </div>
-              </TabsContent>
+            <Tabs 
+              defaultValue="profile" 
+              value={selectedTab} 
+              onValueChange={setSelectedTab}
+              className="mt-2"
+            >
+              <TabsList className={cn(
+                "grid w-full grid-cols-3 mb-4 settings-tabs-list", 
+                isJungleTheme && "bg-[#162E26] border border-[#94C973]"
+              )}>
+                <TabsTrigger 
+                  value="profile" 
+                  className={cn(
+                    isJungleTheme && "data-[state=active]:bg-[#1A3831] data-[state=active]:text-[#E6B933]"
+                  )}
+                >
+                  Profile
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="notifications" 
+                  className={cn(
+                    isJungleTheme && "data-[state=active]:bg-[#1A3831] data-[state=active]:text-[#E6B933]"
+                  )}
+                >
+                  Notifications
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="display" 
+                  className={cn(
+                    isJungleTheme && "data-[state=active]:bg-[#1A3831] data-[state=active]:text-[#E6B933]"
+                  )}
+                >
+                  Display
+                </TabsTrigger>
+              </TabsList>
               
-              <TabsContent value="notifications" className="space-y-4">
-                <Card className={cn(
-                  "border",
-                  isJungleTheme && "bg-[#162E26] border-[#94C973]"
-                )}>
-                  <CardContent className="pt-6 pb-4 space-y-4">
-                    <div className="flex justify-between items-center">
-                      <div className="space-y-1.5">
-                        <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
-                          Enable Notifications
-                        </Label>
-                        <p className={cn(
-                          "text-xs text-muted-foreground",
-                          isJungleTheme && "text-[#94C973]"
-                        )}>
-                          Receive important updates and reminders
-                        </p>
-                      </div>
-                      <Switch 
-                        checked={notificationsEnabled} 
-                        onCheckedChange={handleToggleNotifications}
-                        className={isJungleTheme ? "data-[state=checked]:bg-[#94C973]" : ""}
+              <div className="h-[450px] mt-4 overflow-y-auto pr-1 settings-content-area" style={{ minHeight: '450px' }}>
+                <TabsContent value="profile" className="space-y-4">
+                  <div className="avatar-container">
+                    <Avatar className="h-14 w-14">
+                      <AvatarImage src="" alt={userProfile.displayName} />
+                      <AvatarFallback className={cn(
+                        "text-lg",
+                        isJungleTheme ? "bg-[#94C973] text-[#1E4A3D]" : "bg-primary text-primary-foreground"
+                      )}>
+                        {getInitials(userProfile.displayName)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col space-y-1">
+                      <h3 className={cn(
+                        "text-lg font-medium",
+                        isJungleTheme && "text-[#E6B933]"
+                      )}>
+                        {userProfile.displayName || "User"}
+                      </h3>
+                      <p className={cn(
+                        "text-sm text-muted-foreground",
+                        isJungleTheme && "text-[#94C973]"
+                      )}>
+                        {userProfile.email ? userProfile.email : "No email provided"}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <Label 
+                        htmlFor="displayName"
+                        className={isJungleTheme ? "text-[#E6B933]" : ""}
+                      >
+                        Display Name
+                      </Label>
+                      <Input 
+                        id="displayName" 
+                        value={userProfile.displayName} 
+                        onChange={(e) => setUserProfile({...userProfile, displayName: e.target.value})}
+                        className={cn(
+                          isJungleTheme && "bg-[#162E26] border-[#94C973] text-white"
+                        )}
                       />
                     </div>
                     
-                    {notificationsEnabled && (
-                      <>
-                        <Separator className={isJungleTheme ? "bg-[#94C973]/30" : ""} />
-                        
-                        <div className="flex justify-between items-center opacity-50 cursor-not-allowed">
-                          <div className="space-y-1.5">
-                            <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
-                              Learning Reminders
-                            </Label>
-                            <p className={cn(
-                              "text-xs text-muted-foreground",
-                              isJungleTheme && "text-[#94C973]"
-                            )}>
-                              Remind me about scheduled learning sessions
-                            </p>
-                          </div>
-                          <Switch disabled className={isJungleTheme ? "data-[state=checked]:bg-[#94C973]" : ""} />
-                        </div>
-                        
-                        <div className="flex justify-between items-center opacity-50 cursor-not-allowed">
-                          <div className="space-y-1.5">
-                            <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
-                              Achievement Alerts
-                            </Label>
-                            <p className={cn(
-                              "text-xs text-muted-foreground",
-                              isJungleTheme && "text-[#94C973]"
-                            )}>
-                              Notify me when I earn achievements
-                            </p>
-                          </div>
-                          <Switch disabled className={isJungleTheme ? "data-[state=checked]:bg-[#94C973]" : ""} />
-                        </div>
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
-                
-                <p className={cn(
-                  "text-xs text-center text-muted-foreground",
-                  isJungleTheme && "text-[#94C973]"
-                )}>
-                  Additional notification settings will be available soon
-                </p>
-              </TabsContent>
-              
-              <TabsContent value="display" className="space-y-4">
-                <Card className={cn(
-                  "border",
-                  isJungleTheme && "bg-[#162E26] border-[#94C973]"
-                )}>
-                  <CardContent className="pt-6 pb-4 space-y-6">
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-center">
-                        <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
-                          Interface Contrast
-                        </Label>
-                        <span className={cn(
-                          "text-sm",
-                          isJungleTheme && "text-[#94C973]"
-                        )}>{interfaceContrast}%</span>
-                      </div>
-                      <Slider 
-                        defaultValue={[interfaceContrast]} 
-                        max={100} 
-                        step={5}
-                        onValueChange={handleContrastChange}
-                        className={isJungleTheme ? "data-[state=checked]:bg-[#94C973]" : ""}
+                    <div className="space-y-1">
+                      <Label 
+                        htmlFor="bio"
+                        className={isJungleTheme ? "text-[#E6B933]" : ""}
+                      >
+                        Bio
+                      </Label>
+                      <Input 
+                        id="bio" 
+                        value={userProfile.bio} 
+                        onChange={(e) => setUserProfile({...userProfile, bio: e.target.value})}
+                        className={cn(
+                          isJungleTheme && "bg-[#162E26] border-[#94C973] text-white"
+                        )}
                       />
                       <p className={cn(
                         "text-xs text-muted-foreground",
                         isJungleTheme && "text-[#94C973]"
                       )}>
-                        Adjust the contrast of the interface for better readability
+                        A brief description about yourself
                       </p>
                     </div>
                     
-                    <div className="flex justify-between items-center opacity-50 cursor-not-allowed">
-                      <div className="space-y-1.5">
-                        <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
-                          Text Size
-                        </Label>
+                    <Button 
+                      onClick={handleProfileUpdate}
+                      className={cn(
+                        "mt-2",
+                        isJungleTheme && "bg-[#94C973] text-[#1E4A3D] hover:bg-[#7DAC5D]"
+                      )}
+                    >
+                      <User className="mr-2 h-4 w-4" />
+                      Update Profile
+                    </Button>
+                  </div>
+                  
+                  <Separator className={isJungleTheme ? "bg-[#94C973]/30" : ""} />
+                  
+                  <div className="space-y-2">
+                    <h3 className={cn(
+                      "text-sm font-medium",
+                      isJungleTheme && "text-[#E6B933]"
+                    )}>
+                      {isJungleTheme ? "Jungle Permissions" : "Privacy"}
+                    </h3>
+                    <Button 
+                      variant={isJungleTheme ? "default" : "outline"} 
+                      className={cn(
+                        "w-full justify-start text-left",
+                        isJungleTheme && "bg-[#162E26] border-[#94C973] hover:bg-[#1A3831] text-[#94C973]"
+                      )}
+                      onClick={handleWithdrawConsent}
+                    >
+                      <ShieldCheck className="mr-2 h-4 w-4" />
+                      {isJungleTheme ? "Manage Jungle Access" : "Manage Privacy Consent"}
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Button 
+                      variant={isJungleTheme ? "default" : "outline"} 
+                      className={cn(
+                        "w-full justify-start text-left",
+                        isJungleTheme 
+                          ? "bg-[#6D1A1D] border-[#FF6B70] hover:bg-[#7F1F22] text-[#FF6B70]" 
+                          : "text-red-600 hover:text-red-700 hover:bg-red-50"
+                      )}
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      {isJungleTheme ? "Leave Expedition" : "Logout"}
+                    </Button>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="notifications" className="space-y-4">
+                  <Card className={cn(
+                    "border",
+                    isJungleTheme && "bg-[#162E26] border-[#94C973]"
+                  )}>
+                    <CardContent className="pt-6 pb-4 space-y-4">
+                      <div className="flex justify-between items-center">
+                        <div className="space-y-1.5">
+                          <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
+                            Enable Notifications
+                          </Label>
+                          <p className={cn(
+                            "text-xs text-muted-foreground",
+                            isJungleTheme && "text-[#94C973]"
+                          )}>
+                            Receive important updates and reminders
+                          </p>
+                        </div>
+                        <Switch 
+                          checked={notificationsEnabled} 
+                          onCheckedChange={handleToggleNotifications}
+                          className={isJungleTheme ? "data-[state=checked]:bg-[#94C973]" : ""}
+                        />
+                      </div>
+                      
+                      {notificationsEnabled && (
+                        <>
+                          <Separator className={isJungleTheme ? "bg-[#94C973]/30" : ""} />
+                          
+                          <div className="flex justify-between items-center opacity-50 cursor-not-allowed">
+                            <div className="space-y-1.5">
+                              <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
+                                Learning Reminders
+                              </Label>
+                              <p className={cn(
+                                "text-xs text-muted-foreground",
+                                isJungleTheme && "text-[#94C973]"
+                              )}>
+                                Remind me about scheduled learning sessions
+                              </p>
+                            </div>
+                            <Switch disabled className={isJungleTheme ? "data-[state=checked]:bg-[#94C973]" : ""} />
+                          </div>
+                          
+                          <div className="flex justify-between items-center opacity-50 cursor-not-allowed">
+                            <div className="space-y-1.5">
+                              <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
+                                Achievement Alerts
+                              </Label>
+                              <p className={cn(
+                                "text-xs text-muted-foreground",
+                                isJungleTheme && "text-[#94C973]"
+                              )}>
+                                Notify me when I earn achievements
+                              </p>
+                            </div>
+                            <Switch disabled className={isJungleTheme ? "data-[state=checked]:bg-[#94C973]" : ""} />
+                          </div>
+                        </>
+                      )}
+                    </CardContent>
+                  </Card>
+                  
+                  <p className={cn(
+                    "text-xs text-center text-muted-foreground",
+                    isJungleTheme && "text-[#94C973]"
+                  )}>
+                    Additional notification settings will be available soon
+                  </p>
+                </TabsContent>
+                
+                <TabsContent value="display" className="space-y-4">
+                  <Card className={cn(
+                    "border",
+                    isJungleTheme && "bg-[#162E26] border-[#94C973]"
+                  )}>
+                    <CardContent className="pt-6 pb-4 space-y-6">
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
+                            Interface Contrast
+                          </Label>
+                          <span className={cn(
+                            "text-sm",
+                            isJungleTheme && "text-[#94C973]"
+                          )}>{interfaceContrast}%</span>
+                        </div>
+                        <Slider 
+                          defaultValue={[interfaceContrast]} 
+                          max={100} 
+                          step={5}
+                          onValueChange={handleContrastChange}
+                          className={isJungleTheme ? "data-[state=checked]:bg-[#94C973]" : ""}
+                        />
                         <p className={cn(
                           "text-xs text-muted-foreground",
                           isJungleTheme && "text-[#94C973]"
                         )}>
-                          Adjust text size for better readability
+                          Adjust the contrast of the interface for better readability
                         </p>
                       </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" disabled>A-</Button>
-                        <Button variant="outline" size="sm" disabled>A+</Button>
+                      
+                      <div className="flex justify-between items-center opacity-50 cursor-not-allowed">
+                        <div className="space-y-1.5">
+                          <Label className={isJungleTheme ? "text-[#E6B933]" : ""}>
+                            Text Size
+                          </Label>
+                          <p className={cn(
+                            "text-xs text-muted-foreground",
+                            isJungleTheme && "text-[#94C973]"
+                          )}>
+                            Adjust text size for better readability
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" disabled>A-</Button>
+                          <Button variant="outline" size="sm" disabled>A+</Button>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <p className={cn(
-                  "text-xs text-center text-muted-foreground",
-                  isJungleTheme && "text-[#94C973]"
-                )}>
-                  More display settings will be available in future updates
-                </p>
-              </TabsContent>
-            </div>
-          </Tabs>
-          
-          <DialogFooter className="account-settings-dialog-footer">
-            <Button 
-              onClick={() => setOpen(false)}
-              className={cn(
-                "account-settings-close-button",
-                isJungleTheme && "bg-[#E6B933] text-[#1E4A3D] hover:bg-[#DCAA14]"
-              )}
-            >
-              {isJungleTheme ? "Return to Jungle" : "Close"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+                    </CardContent>
+                  </Card>
+                  
+                  <p className={cn(
+                    "text-xs text-center text-muted-foreground",
+                    isJungleTheme && "text-[#94C973]"
+                  )}>
+                    More display settings will be available in future updates
+                  </p>
+                </TabsContent>
+              </div>
+            </Tabs>
+            
+            <DialogFooter className="account-settings-dialog-footer">
+              <Button 
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "account-settings-close-button",
+                  isJungleTheme && "bg-[#E6B933] text-[#1E4A3D] hover:bg-[#DCAA14]"
+                )}
+              >
+                {isJungleTheme ? "Return to Jungle" : "Close"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
 
       {showPrivacyConsent && (
         <PrivacyConsentModal 
