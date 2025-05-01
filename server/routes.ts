@@ -40,6 +40,7 @@ import workoutRoutes from './routes/workout';
 import pathwaysRoutes from './routes/pathways';
 import authRoutes from './auth/auth-routes';
 import registerMentorshipRoutes from './routes/mentorship-routes';
+import { spoonacularRouter } from './routes/spoonacular';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { getOccupationInterviewQuestions } from './career-one-stop-service';
 import { userGuideService } from './services/user-guide-service';
@@ -1223,6 +1224,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register the AI health routes
   app.use('/api/ai/health', aiHealthRoutes);
+  
+  // Register Spoonacular API routes
+  app.use('/api/spoonacular', spoonacularRouter);
   
   // Legacy health check endpoint - now uses the new resilient AI service
   app.get("/api/ai/health-check", (req, res) => {
