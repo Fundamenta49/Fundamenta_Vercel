@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,13 +35,14 @@ export default function MyPathPage() {
             <School className="h-4 w-4" />
             Educator Resources
           </Button>
-          <Button 
-            className="hidden md:flex items-center gap-2"
-            onClick={() => window.location.href = "/mypath/student"}
-          >
-            <GraduationCap className="h-4 w-4" />
-            View Student Portal
-          </Button>
+          <Link href="/mypath/student">
+            <Button 
+              className="hidden md:flex items-center gap-2"
+            >
+              <GraduationCap className="h-4 w-4" />
+              View Student Portal
+            </Button>
+          </Link>
         </div>
       </div>
       
@@ -108,7 +110,16 @@ export default function MyPathPage() {
         </div>
         
         {/* Mobile Navigation */}
-        <div className="md:hidden col-span-1">
+        <div className="md:hidden col-span-1 space-y-4">
+          <div className="flex justify-end mb-2">
+            <Link href="/mypath/student">
+              <Button size="sm" variant="outline" className="flex items-center gap-1">
+                <GraduationCap className="h-3 w-3" />
+                <span>Student View</span>
+              </Button>
+            </Link>
+          </div>
+          
           <Tabs defaultValue="connections" onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid grid-cols-4 w-full">
               <TabsTrigger value="connections" className="text-xs py-1 px-0">
