@@ -39,6 +39,7 @@ import poseImagesRoutes from './routes/pose-images';
 import workoutRoutes from './routes/workout';
 import pathwaysRoutes from './routes/pathways';
 import studentRoutes from './routes/student';
+import analyticsRoutes from './routes/analytics';
 import authRoutes from './auth/auth-routes';
 import registerMentorshipRoutes from './routes/mentorship-routes';
 import { spoonacularRouter } from './routes/spoonacular';
@@ -1160,6 +1161,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register student routes for MyPath student interface
   app.use('/api/student', studentRoutes);
+  
+  // Analytics routes for learning dashboard and progress tracking
+  app.use('/api/analytics', analyticsRoutes);
   
   // AI routes for fallback management and route validation
   app.use('/api/ai', aiRoutes);
