@@ -93,24 +93,24 @@ export function AssignmentDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
         <h3 className="text-lg font-medium">Pathway Assignments</h3>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
           <Button 
             variant="outline" 
             size="sm" 
-            className="flex items-center gap-2" 
+            className="flex items-center gap-1 text-xs sm:text-sm" 
             onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/assignments"] })}
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             Refresh
           </Button>
           <Button 
             size="sm" 
-            className="flex items-center gap-2"
+            className="flex items-center gap-1 text-xs sm:text-sm"
             onClick={() => setShowAssignDialog(true)}
           >
-            <PlusCircle className="h-4 w-4" />
+            <PlusCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             New Assignment
           </Button>
         </div>
@@ -131,9 +131,18 @@ export function AssignmentDashboard() {
       
       <Tabs defaultValue="active">
         <TabsList className="w-full mb-6 grid grid-cols-3">
-          <TabsTrigger value="active">Active Assignments</TabsTrigger>
-          <TabsTrigger value="completed">Completed</TabsTrigger>
-          <TabsTrigger value="all">All Assignments</TabsTrigger>
+          <TabsTrigger value="active" className="px-2 md:px-4 py-1.5 text-xs sm:text-sm whitespace-normal h-auto">
+            <span className="md:hidden">Active</span>
+            <span className="hidden md:inline">Active Assignments</span>
+          </TabsTrigger>
+          <TabsTrigger value="completed" className="px-2 md:px-4 py-1.5 text-xs sm:text-sm whitespace-normal h-auto">
+            <span className="md:hidden">Completed</span>
+            <span className="hidden md:inline">Completed</span>
+          </TabsTrigger>
+          <TabsTrigger value="all" className="px-2 md:px-4 py-1.5 text-xs sm:text-sm whitespace-normal h-auto">
+            <span className="md:hidden">All</span>
+            <span className="hidden md:inline">All Assignments</span>
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="active">
