@@ -1,0 +1,69 @@
+{
+  "free": [
+    "Fundi AI Assistant",
+    "2 Learning Paths",
+    "Basic Financial Tools",
+    "Basic Fitness Tracker",
+    "5 Journal Entries",
+    "3 Goals",
+    "Community Forum",
+    "Basic Learning Progress Stats"
+  ],
+  "tier1": [
+    "Everything in Free",
+    "5 Learning Paths",
+    "Workout Recommendations",
+    "30 Journal Entries",
+    "Weekly Goal Progress",
+    "3 Document Uploads",
+    "Ad-Free",
+    "Basic Analytics Dashboard"
+  ],
+  "tier2": [
+    "Everything in Tier1",
+    "Unlimited Learning Paths",
+    "Personalized Learning",
+    "Advanced Financial Tools",
+    "Custom Fitness Plans",
+    "10 Document Uploads",
+    "Priority Support",
+    "Skill Reports",
+    "Data Export",
+    "Fitness App Integration",
+    "Advanced Analytics Dashboard"
+  ],
+  "tier3": [
+    "Everything in Tier2",
+    "Career Paths",
+    "Investment Guidance",
+    "Meal Planning",
+    "AI Coaching Sessions",
+    "Resume Review",
+    "Unlimited Document Analysis",
+    "Premium Content",
+    "Early Feature Access",
+    "Quarterly 1:1 Consults",
+    "Premium Analytics Dashboard"
+  ],
+  "familyBasic": [
+    "1 Parent + 1 Child Accounts",
+    "5 Learning Paths per Member",
+    "Basic Analytics Dashboard",
+    "Family Activity Tracking"
+  ],
+  "familyPlus": [
+    "1 Parent + 3 Child Accounts",
+    "Unlimited Learning Paths",
+    "Advanced Analytics Dashboard",
+    "Family Activity Tracking",
+    "Priority Support"
+  ],
+  "familyPremium": [
+    "2 Parents + 5 Child Accounts",
+    "Unlimited Learning Paths",
+    "Premium Analytics Dashboard",
+    "Family Learning Reports",
+    "Family Activity Tracking",
+    "Quarterly 1:1 Consults"
+  ]
+}
