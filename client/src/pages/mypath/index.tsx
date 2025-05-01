@@ -35,6 +35,12 @@ export default function MyPathPage() {
             <School className="h-4 w-4" />
             Educator Resources
           </Button>
+          <Link href="/mypath/analytics">
+            <Button variant="outline" className="hidden md:flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Analytics Dashboard
+            </Button>
+          </Link>
           <Link href="/mypath/student">
             <Button 
               className="hidden md:flex items-center gap-2"

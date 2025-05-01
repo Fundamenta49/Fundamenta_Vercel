@@ -13,6 +13,7 @@ import { JungleThemeProvider } from "./jungle-path/contexts/JungleThemeContext";
 import { JungleFundiProvider } from "./jungle-path/contexts/JungleFundiContext";
 import MyPathPage from "@/pages/mypath";
 import StudentMyPath from "@/pages/mypath/student";
+import AnalyticsDashboard from "@/pages/mypath/analytics";
 
 // Import cooking pages
 import CookingPage from "@/pages/cooking";
@@ -401,6 +402,11 @@ function Router() {
             <Route path="/mypath/student">
               <ProtectedRoute>
                 <StudentMyPath />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/mypath/analytics">
+              <ProtectedRoute>
+                <AnalyticsDashboard />
               </ProtectedRoute>
             </Route>
             <Route component={NotFound} />

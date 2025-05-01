@@ -218,6 +218,12 @@ const StudentMyPath: React.FC = () => {
             <BookOpen className="h-3.5 w-3.5 md:h-4 md:w-4" />
             <span className="md:inline">Resources</span>
           </Button>
+          <Link href="/mypath/analytics">
+            <Button variant="outline" className="flex items-center gap-2 text-sm md:text-base">
+              <BarChart2 className="h-3.5 w-3.5 md:h-4 md:w-4" />
+              <span className="md:inline">Analytics</span>
+            </Button>
+          </Link>
         </div>
       </div>
 
