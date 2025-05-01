@@ -29,7 +29,7 @@ export const initialTour: Tour = {
     {
       targetSelector: '.fundi-button',
       title: 'Meet Fundi',
-      content: 'This is Fundi, your personal AI assistant. Click here anytime you need help or have questions about the app.',
+      content: 'This is Fundi, your personal AI assistant. You can find Fundi in the bottom-right corner of your screen. Click here anytime you need help or have questions about the app.',
       placement: 'left',
     },
     {

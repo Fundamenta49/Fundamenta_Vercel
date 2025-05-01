@@ -74,7 +74,13 @@ export function OnboardingTooltip({
       return;
     }
     
-    const element = document.querySelector(step.targetSelector) as HTMLElement;
+    // Special handling for Fundi target
+    const isFundiTarget = step.targetSelector === '.fundi-button';
+    
+    // For Fundi, we want to get the main Fundi element from the bottom right
+    const element = isFundiTarget 
+      ? document.querySelector('.fundi-button, [data-fundi="true"], .robot-container') as HTMLElement
+      : document.querySelector(step.targetSelector) as HTMLElement;
     
     if (!element) {
       console.warn(`Target element not found: ${step.targetSelector}`);
@@ -83,11 +89,16 @@ export function OnboardingTooltip({
     
     setTargetElement(element);
     
-    // Highlight target by adding a class
-    element.classList.add('onboarding-target');
+    // Highlight target by adding a class, but don't highlight Fundi
+    // as it may cause visual glitches
+    if (!isFundiTarget) {
+      element.classList.add('onboarding-target');
+    }
     
-    // Scroll to the element with a slight offset to ensure it's visible
-    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Only scroll to the element if it's not Fundi, as Fundi is fixed position
+    if (!isFundiTarget) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
     
     // Calculate position
     const updatePosition = () => {
@@ -99,6 +110,9 @@ export function OnboardingTooltip({
       const placement = step.placement || 'bottom';
       let top = 0;
       let left = 0;
+      
+      // Check if we're targeting the Fundi button
+      const isFundiTarget = step.targetSelector === '.fundi-button';
       
       switch (placement) {
         case 'top':
@@ -115,7 +129,14 @@ export function OnboardingTooltip({
           break;
         case 'left':
           top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
-          left = rect.left - tooltipRect.width - 10;
+          
+          // For Fundi specifically, we need to position the tooltip further left
+          // to avoid overlapping with Fundi
+          if (isFundiTarget) {
+            left = rect.left - tooltipRect.width - 40; // Additional offset
+          } else {
+            left = rect.left - tooltipRect.width - 10;
+          }
           break;
         case 'center':
           top = window.innerHeight / 2 - tooltipRect.height / 2;
@@ -153,6 +174,9 @@ export function OnboardingTooltip({
   
   if (!isOpen) return null;
   
+  // Special handling for mobile devices
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  
   return (
     <AnimatePresence>
       {isOpen && (
@@ -170,6 +194,10 @@ export function OnboardingTooltip({
             style={{
               top: tooltipPosition.top,
               left: tooltipPosition.left,
+              // For Fundi-specific tour steps on mobile, ensure extra margin to prevent overlap
+              ...(isMobile && step.targetSelector === '.fundi-button' && {
+                marginBottom: '160px'
+              })
             }}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
