@@ -12,6 +12,7 @@ import { ActivityProfileProvider } from "@/contexts/activity-profile-context";
 import { JungleThemeProvider } from "./jungle-path/contexts/JungleThemeContext";
 import { JungleFundiProvider } from "./jungle-path/contexts/JungleFundiContext";
 import MyPathPage from "@/pages/mypath";
+import StudentMyPath from "@/pages/mypath/student";
 
 // Import cooking pages
 import CookingPage from "@/pages/cooking";
@@ -395,6 +396,11 @@ function Router() {
             <Route path="/mypath">
               <ProtectedRoute>
                 <MyPathPage />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/mypath/student">
+              <ProtectedRoute>
+                <StudentMyPath />
               </ProtectedRoute>
             </Route>
             <Route component={NotFound} />

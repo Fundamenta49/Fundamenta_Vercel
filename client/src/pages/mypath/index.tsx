@@ -34,7 +34,10 @@ export default function MyPathPage() {
             <School className="h-4 w-4" />
             Educator Resources
           </Button>
-          <Button className="hidden md:flex items-center gap-2">
+          <Button 
+            className="hidden md:flex items-center gap-2"
+            onClick={() => window.location.href = "/mypath/student"}
+          >
             <GraduationCap className="h-4 w-4" />
             View Student Portal
           </Button>
