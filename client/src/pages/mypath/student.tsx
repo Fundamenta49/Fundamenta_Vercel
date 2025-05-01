@@ -203,14 +203,20 @@ const StudentMyPath: React.FC = () => {
           <h1 className="text-3xl font-bold">My Learning Path</h1>
           <p className="text-gray-500 mt-2">Track your learning journey and progress</p>
         </div>
-        <div className="flex gap-4 mt-4 md:mt-0">
-          <Button variant="outline" className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            Calendar View
+        <div className="flex flex-wrap gap-2 md:gap-4 mt-4 md:mt-0">
+          <Link href="/mypath">
+            <Button variant="default" className="flex items-center gap-2 text-sm md:text-base">
+              <FileText className="h-3.5 w-3.5 md:h-4 md:w-4" />
+              <span className="md:inline">Educator View</span>
+            </Button>
+          </Link>
+          <Button variant="outline" className="flex items-center gap-2 text-sm md:text-base">
+            <Calendar className="h-3.5 w-3.5 md:h-4 md:w-4" />
+            <span className="md:inline">Calendar</span>
           </Button>
-          <Button variant="outline" className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
-            Resources
+          <Button variant="outline" className="flex items-center gap-2 text-sm md:text-base">
+            <BookOpen className="h-3.5 w-3.5 md:h-4 md:w-4" />
+            <span className="md:inline">Resources</span>
           </Button>
         </div>
       </div>
