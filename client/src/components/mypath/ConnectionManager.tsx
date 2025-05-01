@@ -129,9 +129,18 @@ export function ConnectionManager() {
   return (
     <Tabs defaultValue="active">
       <TabsList className="w-full mb-6 grid grid-cols-3">
-        <TabsTrigger value="active">Active Connections</TabsTrigger>
-        <TabsTrigger value="pending">Pending Requests</TabsTrigger>
-        <TabsTrigger value="new">Create Connection</TabsTrigger>
+        <TabsTrigger value="active" className="px-2 md:px-4 py-1.5 text-xs sm:text-sm whitespace-normal h-auto">
+          <span className="md:hidden">Active</span>
+          <span className="hidden md:inline">Active Connections</span>
+        </TabsTrigger>
+        <TabsTrigger value="pending" className="px-2 md:px-4 py-1.5 text-xs sm:text-sm whitespace-normal h-auto">
+          <span className="md:hidden">Pending</span>
+          <span className="hidden md:inline">Pending Requests</span>
+        </TabsTrigger>
+        <TabsTrigger value="new" className="px-2 md:px-4 py-1.5 text-xs sm:text-sm whitespace-normal h-auto">
+          <span className="md:hidden">Create</span>
+          <span className="hidden md:inline">Create Connection</span>
+        </TabsTrigger>
       </TabsList>
       
       <TabsContent value="active">
