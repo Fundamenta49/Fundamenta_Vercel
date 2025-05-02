@@ -88,12 +88,16 @@ export default function Home() {
   return (
     <div className="px-3 py-1 sm:px-4 sm:py-6">
       <div className="text-center mb-4 relative max-w-3xl mx-auto">
-        <h1 className="text-xl md:text-3xl font-bold tracking-tight mb-0 sm:mb-2 text-[#1C3D5A] inline-flex items-center justify-center flex-wrap">
-          Welcome to Fundamenta
-        </h1>
-        <p className="text-xs md:text-base text-muted-foreground mb-1 sm:mb-2">
-          Your AI-powered assistant for life skills and wellness
-        </p>
+        <div className="flex flex-col items-center justify-center mb-2">
+          <img 
+            src="/images/logos/fundamenta_logo_upscaled.png" 
+            alt="Fundamenta Logo" 
+            className="h-24 md:h-32 w-auto mb-2"
+          />
+          <p className="text-xs md:text-base text-muted-foreground mb-1 sm:mb-2">
+            Your AI-powered assistant for life skills and wellness
+          </p>
+        </div>
         
         {/* Tour Button inline with title on mobile */}
         <div className="flex justify-center">

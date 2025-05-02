@@ -63,13 +63,18 @@ export default function Login() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100 text-center p-6">
-      <div className="mb-10">
+      <div className="mb-10 flex flex-col items-center">
+        <img 
+          src="/images/logos/fundamenta_logo_upscaled.png" 
+          alt="Fundamenta Logo" 
+          className="h-32 md:h-40 w-auto mb-4"
+        />
         <h2 className="text-2xl md:text-3xl font-medium text-gray-700 mb-2">
           Life doesn't come with a manual—until now.
         </h2>
-        <h1 className="text-4xl md:text-5xl font-bold text-indigo-800">
-          It's Fun. It's Fundamental... It's Fundamenta!
-        </h1>
+        <p className="text-xl md:text-2xl font-medium text-indigo-800">
+          For then, for now... for the Future.
+        </p>
       </div>
 
       <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md">
