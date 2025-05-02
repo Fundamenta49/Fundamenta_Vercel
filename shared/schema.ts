@@ -107,10 +107,12 @@ export const messages = pgTable("messages", {
 export const userInfo = pgTable("user_info", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
+  sessionId: text("session_id").unique(),
   age: integer("age"),
   gender: text("gender"),
   occupation: text("occupation"),
   interests: text("interests"),
+  lastSeen: timestamp("last_seen").defaultNow(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

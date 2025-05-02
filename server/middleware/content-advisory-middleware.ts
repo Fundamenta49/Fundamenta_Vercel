@@ -1,107 +1,119 @@
+/**
+ * Content Advisory Middleware
+ * 
+ * This middleware analyzes content to determine if it requires advisory notices
+ * and attaches appropriate disclaimers based on content categories.
+ */
+
 import { Request, Response, NextFunction } from 'express';
-import { AuthenticatedRequest } from '../auth/auth-middleware';
-import { getContentAdvisory } from '../utils/content-advisory';
+import { 
+  createContentAdvisory, 
+  needsContentAdvisory, 
+  type ContentAdvisory 
+} from '../utils/content-advisory';
 
 /**
- * Middleware to check content for advisories and attach them to the response
- * This middleware should be used on routes that return user-facing content
+ * Middleware to analyze content and attach appropriate advisories
+ * 
+ * @param opts Options for the middleware
+ * @returns Express middleware function
  */
-export function checkContentAdvisory(req: Request, res: Response, next: NextFunction) {
-  // Store the original json method to intercept it
-  const originalJson = res.json;
+export function contentAdvisoryMiddleware(opts: {
+  // Content threshold length before advisories are considered (default 50 chars)
+  contentThreshold?: number;
+  // Whether to ignore content advisories for authorized users (default false)
+  skipForAuthorizedUsers?: boolean;
+}) {
+  const contentThreshold = opts.contentThreshold || 50;
+  const skipForAuthorizedUsers = opts.skipForAuthorizedUsers || false;
   
-  // Override the json method to analyze content before sending
-  res.json = function(body: any) {
-    try {
-      // Only check if there's a response body with content
-      if (body && (typeof body === 'object')) {
-        // Extract content to analyze if it exists in common response formats
-        let contentToAnalyze: string | null = null;
+  return (req: Request, res: Response, next: NextFunction) => {
+    // Original send method
+    const originalSend = res.send;
+    
+    // Override send to analyze content
+    res.send = function(body): Response {
+      // Skip for non-string/non-JSON responses or short content
+      if (!body || 
+          (typeof body !== 'string' && typeof body !== 'object') || 
+          (typeof body === 'string' && body.length < contentThreshold)) {
+        return originalSend.apply(res, [body]);
+      }
+      
+      // Skip for authorized users if configured
+      if (skipForAuthorizedUsers && req.user) {
+        return originalSend.apply(res, [body]);
+      }
+      
+      try {
+        let content: string;
+        let modifiedBody: any = body;
         
-        if (body.content && typeof body.content === 'string') {
-          contentToAnalyze = body.content;
-        } else if (body.message && typeof body.message === 'string') {
-          contentToAnalyze = body.message;
-        } else if (body.text && typeof body.text === 'string') {
-          contentToAnalyze = body.text;
-        } else if (body.data && typeof body.data === 'string') {
-          contentToAnalyze = body.data;
-        }
-        
-        // If we have content to analyze and a user to check against
-        if (contentToAnalyze) {
-          // Determine if user is a minor
-          const isMinor = !!(req as AuthenticatedRequest).user?.isMinor;
+        // Extract content from string or object
+        if (typeof body === 'string') {
+          content = body;
           
-          // Get advisory if needed
-          const advisory = getContentAdvisory(contentToAnalyze, isMinor);
+          // Check if advisory is needed
+          if (needsContentAdvisory(content)) {
+            const advisory = createContentAdvisory(content);
+            
+            // For API routes, try to parse JSON and include advisory
+            if (req.path.startsWith('/api/')) {
+              try {
+                const jsonBody = JSON.parse(content);
+                jsonBody._contentAdvisory = advisory;
+                modifiedBody = JSON.stringify(jsonBody);
+              } catch (e) {
+                // Not JSON, leave as is
+                modifiedBody = content;
+              }
+            }
+          }
+        } else {
+          // For JSON responses, stringify to analyze and include advisory if needed
+          content = JSON.stringify(body);
           
-          // If there's an advisory, attach it to the response
-          if (advisory) {
-            body.advisory = advisory;
+          if (needsContentAdvisory(content)) {
+            const advisory = createContentAdvisory(content);
+            modifiedBody._contentAdvisory = advisory;
           }
         }
+        
+        // Call the original send with modified body
+        return originalSend.apply(res, [modifiedBody]);
+      } catch (error) {
+        console.error('Error in content advisory middleware:', error);
+        // Fall back to original content if there's an error
+        return originalSend.apply(res, [body]);
       }
-    } catch (error) {
-      console.error('Error in content advisory middleware:', error);
-      // Continue with the original response even if advisory check fails
-    }
+    };
     
-    // Call the original json method with the potentially modified body
-    return originalJson.call(this, body);
+    next();
   };
-  
-  next();
 }
 
 /**
- * Middleware to check content in request body for advisories
- * Returns a 403 response if the content is restricted for the user
+ * Helper function to extract content advisory from response
+ * 
+ * @param body Response body
+ * @returns Content advisory if found, undefined otherwise
  */
-export function validateContentAdvisory(req: Request, res: Response, next: NextFunction) {
-  try {
-    // Only check if there's a request body
-    if (!req.body) {
-      return next();
-    }
-    
-    // Extract content to analyze
-    let contentToAnalyze: string | null = null;
-    
-    if (typeof req.body === 'string') {
-      contentToAnalyze = req.body;
-    } else if (req.body.content && typeof req.body.content === 'string') {
-      contentToAnalyze = req.body.content;
-    } else if (req.body.message && typeof req.body.message === 'string') {
-      contentToAnalyze = req.body.message;
-    } else if (req.body.text && typeof req.body.text === 'string') {
-      contentToAnalyze = req.body.text;
-    } else if (req.body.query && typeof req.body.query === 'string') {
-      contentToAnalyze = req.body.query;
-    }
-    
-    // If we have content to analyze and a user to check against
-    if (contentToAnalyze) {
-      // Determine if user is a minor
-      const isMinor = !!(req as AuthenticatedRequest).user?.isMinor;
-      
-      // Get advisory if needed
-      const advisory = getContentAdvisory(contentToAnalyze, isMinor);
-      
-      // If there's a "restricted" advisory for a minor, block the request
-      if (advisory && advisory.level === 'restrict' && isMinor) {
-        return res.status(403).json({
-          error: 'Content restricted',
-          advisory,
-          message: 'This content is not suitable for minors'
-        });
-      }
-    }
-    
-    next();
-  } catch (error) {
-    console.error('Error in content validation middleware:', error);
-    // Continue anyway so the application doesn't break
-    next();
+export function extractContentAdvisory(body: any): ContentAdvisory | undefined {
+  if (!body) return undefined;
+  
+  if (typeof body === 'object' && body._contentAdvisory) {
+    return body._contentAdvisory;
   }
+  
+  if (typeof body === 'string') {
+    try {
+      const jsonBody = JSON.parse(body);
+      return jsonBody._contentAdvisory;
+    } catch (e) {
+      // Not JSON
+      return undefined;
+    }
+  }
+  
+  return undefined;
 }

@@ -1,22 +1,28 @@
-import { db } from "../../db";
-import { addAgeVerificationFields } from "./add-age-verification-fields";
+/**
+ * Database Migrations
+ * 
+ * This file orchestrates all database migrations to ensure schema consistency.
+ * Individual migrations are imported and run in sequence.
+ */
 
-// A central function to run all migrations
-export async function runMigrations() {
-  console.log("Running database migrations...");
-  
+import { addAgeVerificationFields } from './add-age-verification-fields';
+
+/**
+ * Run all migrations in sequence
+ * 
+ * @returns Promise that resolves when all migrations are complete
+ */
+export async function runAllMigrations(): Promise<boolean> {
   try {
-    // Run the age verification fields migration
+    console.log('Starting database migrations...');
+    
+    // Run migrations in sequence
     await addAgeVerificationFields();
     
-    console.log("Database migrations completed successfully");
+    console.log('All migrations completed successfully');
+    return true;
   } catch (error) {
-    console.error("Database migrations failed:", error);
-    throw error;
+    console.error('Error running migrations:', error);
+    return false;
   }
 }
-
-// Export individual migrations for specific use cases
-export {
-  addAgeVerificationFields
-};

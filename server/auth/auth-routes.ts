@@ -13,7 +13,10 @@ import {
 } from './cookie-utils';
 import { AuthenticatedRequest, authenticateJWT } from './auth-middleware';
 import { z } from 'zod';
-import { createAgeVerificationData, meetsMinimumAge } from '../utils/age-verification';
+import { 
+  isOldEnoughForCoppa, 
+  processAgeFields 
+} from '../utils/age-verification';
 
 // Create a router for auth endpoints
 const router = Router();
@@ -71,7 +74,7 @@ router.post('/register', async (req: Request, res: Response) => {
     if (birthYear) {
       try {
         // Check if user meets minimum age requirements (COPPA compliance)
-        if (!meetsMinimumAge(birthYear) && !hasParentalConsent) {
+        if (!isOldEnoughForCoppa(birthYear) && !hasParentalConsent) {
           return res.status(403).json({ 
             error: 'Age restriction', 
             message: 'Users under 13 years old require parental consent'
@@ -86,7 +89,7 @@ router.post('/register', async (req: Request, res: Response) => {
     }
     
     // Process age verification data
-    const ageData = birthYear ? createAgeVerificationData(birthYear, !!hasParentalConsent) : {};
+    const ageData = birthYear ? processAgeFields(birthYear, hasParentalConsent) : {};
 
     // Hash the password
     const hashedPassword = await hashPassword(password);

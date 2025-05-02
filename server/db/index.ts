@@ -1,50 +1,72 @@
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import * as schema from '../../shared/schema';
-import ws from 'ws'; // WebSocket library for Node.js
-import { runMigrations as runCustomMigrations } from './migrations';
+/**
+ * Database initialization and migrations
+ */
+import { db } from "../db";
+import { sql } from "drizzle-orm";
+import { runAllMigrations } from "./migrations/index";
 
-// Configure Neon to use WebSocket in Node.js environment
-// This must be set before creating any Pool instances
-neonConfig.webSocketConstructor = ws;
-
-// Database connection string from environment variables
-const connectionString = process.env.DATABASE_URL;
-
-// Create a Neon connection pool
-const pool = new Pool({ 
-  connectionString: connectionString as string
-});
-
-// Create drizzle instance for queries
-export const db = drizzle(pool, { schema });
-
-// For Neon Serverless, we're using a push-based approach rather than migrations
-export async function pushSchema() {
+/**
+ * Run all database migrations
+ */
+export async function runMigrations(): Promise<boolean> {
   try {
-    console.log('Pushing schema to database...');
-    // We're not running traditional migrations, but if needed,
-    // we could use drizzle-kit to push schema changes
-    console.log('Schema push not implemented - tables should be created by drizzle-kit commands');
-  } catch (error) {
-    console.error('Error pushing schema:', error);
-    throw error;
-  }
-}
-
-// Run all migrations - now including custom migrations for age verification
-export async function runMigrations() {
-  try {
-    // First run the standard schema push
-    await pushSchema();
+    console.log("Running all database migrations...");
+    const success = await runAllMigrations();
     
-    // Then run our custom migrations for age verification
-    await runCustomMigrations();
+    if (success) {
+      console.log("All migrations completed successfully");
+    } else {
+      console.warn("Some migrations may have failed");
+    }
+    
+    return success;
   } catch (error) {
-    console.error('Error during migrations:', error);
-    throw error;
+    console.error("Error running migrations:", error);
+    return false;
   }
 }
 
-// Export the schema for use in other files
-export { schema, pool };
+/**
+ * Ensure necessary database tables exist
+ * This function ensures that critical tables like users have been created
+ * and include all required fields, including age verification fields
+ */
+export async function ensureTables(): Promise<boolean> {
+  try {
+    console.log("Checking for required database tables...");
+    
+    // Check if users table exists
+    const userTableCheck = await db.execute(sql`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_name = 'users'
+      ) AS table_exists;
+    `);
+    
+    const userTableExists = userTableCheck.rows?.[0]?.table_exists === true;
+    
+    if (!userTableExists) {
+      console.log("Users table does not exist yet");
+      return false;
+    }
+    
+    console.log("Required tables exist");
+    return true;
+  } catch (error) {
+    console.error("Error checking database tables:", error);
+    return false;
+  }
+}
+
+/**
+ * Verify database connection
+ */
+export async function verifyDatabaseConnection(): Promise<boolean> {
+  try {
+    const result = await db.execute(sql`SELECT 1 as connected`);
+    return result.rows?.[0]?.connected === 1;
+  } catch (error) {
+    console.error("Database connection error:", error);
+    return false;
+  }
+}

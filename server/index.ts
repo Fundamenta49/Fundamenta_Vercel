@@ -24,6 +24,13 @@ log(`Express initialized (${Date.now() - startTime}ms)`);
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
+// Content advisory middleware - applied to all responses
+import { contentAdvisoryMiddleware } from './middleware/content-advisory-middleware';
+app.use(contentAdvisoryMiddleware({ 
+  contentThreshold: 100, // Only analyze content longer than 100 characters
+  skipForAuthorizedUsers: false // Apply content advisories for all users
+}));
+
 // Configure session store with PostgreSQL
 const PgSession = connectPgSimple(session);
 app.use(

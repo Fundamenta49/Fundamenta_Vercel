@@ -1,5 +1,5 @@
 import { eq, and, desc, asc, or, like, sql } from 'drizzle-orm';
-import { db } from './index';
+import { db } from '../db';
 import * as schema from '../../shared/schema';
 import { 
   type InsertUser,

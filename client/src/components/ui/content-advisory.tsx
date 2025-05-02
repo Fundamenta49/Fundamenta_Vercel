@@ -1,153 +1,138 @@
+/**
+ * Content Advisory Component
+ * 
+ * This component displays appropriate disclaimers and warnings for content
+ * based on its category and severity.
+ */
+
 import React from 'react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle, AlertTriangle, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { InfoIcon, AlertTriangleIcon, ShieldAlertIcon } from "lucide-react";
-import { cn } from '@/lib/utils';
+import { Link } from "wouter";
+import { Separator } from "@/components/ui/separator";
 
-// Must match server-side enums
-export enum ContentCategory {
-  MENTAL_HEALTH = 'mental_health',
-  SUBSTANCE_USE = 'substance_use',
-  VIOLENCE = 'violence',
-  FINANCIAL_RISK = 'financial_risk',
-  MEDICAL = 'medical',
-  GENERAL = 'general'
-}
+export type ContentAdvisorySeverity = 'low' | 'medium' | 'high';
+export type ContentCategory = 
+  | 'Mental Health' 
+  | 'Financial Advice' 
+  | 'Medical Information' 
+  | 'Nutrition Guidance'
+  | 'Exercise Instructions'
+  | 'General Information';
 
-export enum AdvisoryLevel {
-  NONE = 'none',
-  INFORMATIVE = 'info',
-  CAUTIONARY = 'caution',
-  RESTRICTED = 'restrict'
-}
-
-export interface AdvisoryMessage {
-  title: string;
-  description: string;
+export interface ContentAdvisoryProps {
   category: ContentCategory;
-  level: AdvisoryLevel;
-}
-
-interface ContentAdvisoryProps {
-  advisory: AdvisoryMessage;
-  onAcknowledge?: () => void;
-  onCancel?: () => void;
+  severity: ContentAdvisorySeverity;
+  disclaimer: string;
+  readMore?: string;
+  children?: React.ReactNode;
   className?: string;
 }
 
-export const ContentAdvisory: React.FC<ContentAdvisoryProps> = ({
-  advisory,
-  onAcknowledge,
-  onCancel,
-  className
-}) => {
-  // Determine icon and style based on advisory level
-  const getAdvisoryStyle = () => {
-    switch (advisory.level) {
-      case AdvisoryLevel.INFORMATIVE:
+export function ContentAdvisory({
+  category,
+  severity,
+  disclaimer,
+  readMore,
+  children,
+  className = '',
+}: ContentAdvisoryProps) {
+  // Based on severity, choose appropriate styling and icon
+  const getSeverityStyles = (): { variant: string; icon: React.ReactNode } => {
+    switch (severity) {
+      case 'high':
         return {
-          icon: <InfoIcon className="h-5 w-5" />,
-          className: 'bg-blue-50 text-blue-800 border-blue-300'
+          variant: 'destructive',
+          icon: <AlertCircle className="h-4 w-4" />,
         };
-      case AdvisoryLevel.CAUTIONARY:
+      case 'medium':
         return {
-          icon: <AlertTriangleIcon className="h-5 w-5" />,
-          className: 'bg-amber-50 text-amber-800 border-amber-300'
+          variant: 'warning',
+          icon: <AlertTriangle className="h-4 w-4" />,
         };
-      case AdvisoryLevel.RESTRICTED:
-        return {
-          icon: <ShieldAlertIcon className="h-5 w-5" />,
-          className: 'bg-red-50 text-red-800 border-red-300'
-        };
+      case 'low':
       default:
         return {
-          icon: <InfoIcon className="h-5 w-5" />,
-          className: 'bg-gray-50 text-gray-800 border-gray-300'
+          variant: 'info',
+          icon: <Info className="h-4 w-4" />,
         };
     }
   };
 
-  const { icon, className: styleClassName } = getAdvisoryStyle();
-
+  const { variant, icon } = getSeverityStyles();
+  
   return (
-    <Alert className={cn('mb-4', styleClassName, className)}>
-      <div className="flex items-start">
-        <div className="flex-shrink-0 mt-0.5">
+    <div className={`content-advisory ${className}`}>
+      <Alert variant={variant as any} className="mb-4">
+        <div className="flex items-start">
           {icon}
+          <div className="ml-2">
+            <AlertTitle className="text-sm font-medium">{category} Advisory</AlertTitle>
+            <AlertDescription className="text-sm mt-1">
+              {disclaimer}
+            </AlertDescription>
+            
+            {readMore && (
+              <div className="mt-2">
+                <Link href={readMore}>
+                  <Button variant="link" className="p-0 h-auto text-sm">
+                    Read more about {category.toLowerCase()}
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="ml-3 flex-1">
-          <AlertTitle className="text-base font-medium">{advisory.title}</AlertTitle>
-          <AlertDescription className="mt-1 text-sm">{advisory.description}</AlertDescription>
-          
-          {(onAcknowledge || onCancel) && (
-            <div className="mt-3 flex space-x-2">
-              {onAcknowledge && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={onAcknowledge}
-                  className={advisory.level === AdvisoryLevel.RESTRICTED ? 'border-red-300 text-red-800 hover:bg-red-100' : ''}
-                >
-                  I understand, continue
-                </Button>
-              )}
-              
-              {onCancel && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={onCancel}
-                >
-                  Go back
-                </Button>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </Alert>
+      </Alert>
+      
+      {children && (
+        <>
+          <Separator className="my-4" />
+          <div className="content-with-advisory">
+            {children}
+          </div>
+        </>
+      )}
+    </div>
   );
-};
-
-interface ContentAdvisoryWrapperProps {
-  children: React.ReactNode;
-  advisory: AdvisoryMessage | null;
-  onAcknowledge?: () => void;
-  onCancel?: () => void;
-  className?: string;
 }
 
-export const ContentAdvisoryWrapper: React.FC<ContentAdvisoryWrapperProps> = ({
-  children,
+export interface ContentWithAdvisoryProps {
+  advisory?: {
+    category: ContentCategory;
+    severity: ContentAdvisorySeverity;
+    disclaimer: string;
+    readMore?: string;
+  } | null;
+  children: React.ReactNode;
+  className?: string;
+  skipAdvisory?: boolean;
+}
+
+/**
+ * Wrapper component that only shows an advisory if needed
+ */
+export function ContentWithAdvisory({
   advisory,
-  onAcknowledge,
-  onCancel,
-  className
-}) => {
-  const [acknowledged, setAcknowledged] = React.useState(false);
-  
-  // If there's no advisory or it's already acknowledged, just render the children
-  if (!advisory || acknowledged) {
+  children,
+  className = '',
+  skipAdvisory = false,
+}: ContentWithAdvisoryProps) {
+  // If no advisory or skipping advisory, just render children
+  if (!advisory || skipAdvisory) {
     return <>{children}</>;
   }
   
-  const handleAcknowledge = () => {
-    setAcknowledged(true);
-    if (onAcknowledge) {
-      onAcknowledge();
-    }
-  };
-  
   return (
-    <div className={className}>
-      <ContentAdvisory 
-        advisory={advisory}
-        onAcknowledge={handleAcknowledge}
-        onCancel={onCancel}
-      />
-      <div className={advisory.level === AdvisoryLevel.RESTRICTED && !acknowledged ? 'hidden' : ''}>
-        {children}
-      </div>
-    </div>
+    <ContentAdvisory
+      category={advisory.category}
+      severity={advisory.severity}
+      disclaimer={advisory.disclaimer}
+      readMore={advisory.readMore}
+      className={className}
+    >
+      {children}
+    </ContentAdvisory>
   );
-};
+}
