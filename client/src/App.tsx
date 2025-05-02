@@ -286,7 +286,14 @@ function Router() {
             <Route path="/admin/personality-test" component={PersonalityTestPage} />
             <Route path="/design-showcase" component={DesignShowcasePage} />
             <Route path="/ui/skeletons" component={SkeletonDemoPage} />
-            <Route path="/ui/disclaimers" component={DisclaimerDemo} />
+            {/* Developer/Admin-only route - not for end users */}
+            <Route path="/ui/disclaimers">
+              <ProtectedRoute adminOnly={true}>
+                <DisclaimerDemo />
+              </ProtectedRoute>
+            </Route>
+            
+            {/* User-facing disclaimer hub */}
             <Route path="/disclaimers">
               <ProtectedRoute>
                 <DisclaimerHub />

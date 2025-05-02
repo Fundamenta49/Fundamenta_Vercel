@@ -95,7 +95,7 @@ export default function Navigation() {
     if (href === '/arcade' && location.includes('/arcade')) return true;
     if (href === '/calendar' && location.includes('/calendar')) return true;
     if (href === '/mypath' && location.includes('/mypath')) return true;
-    if (href === '/disclaimers' && (location.includes('/disclaimers') || location.includes('/ui/disclaimers'))) return true;
+    if (href === '/disclaimers' && location === '/disclaimers') return true;
     
     return false;
   };
@@ -207,7 +207,7 @@ export default function Navigation() {
         iconColor: "text-teal-700",
         borderColor: "border-teal-300"
       };
-    } else if (location.includes('/ui/disclaimers') || location.includes('/disclaimers')) {
+    } else if (location === '/disclaimers') {
       // Slate for Disclaimer Hub
       return {
         activeItemBg: "bg-slate-100",
