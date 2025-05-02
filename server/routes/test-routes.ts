@@ -1,10 +1,14 @@
 /**
  * Test routes for verifying feature functionality
+ * 
+ * These routes are used to test and verify the functionality of our legal safeguards:
+ * 1. Content Advisory System - Detects potentially sensitive content and adds appropriate disclaimers
+ * 2. Age Verification System - Ensures COPPA compliance and proper parental consent for minors
  */
 
 import express, { Router } from 'express';
-import { createContentAdvisory, needsContentAdvisory } from '../utils/content-advisory';
-import { verifyAge, calculateAge, MIN_AGE_WITHOUT_CONSENT } from '../utils/age-verification';
+import { createContentAdvisory, needsContentAdvisory, ContentCategoryEnum } from '../utils/content-advisory';
+import { verifyAge, calculateAge, MIN_AGE_WITHOUT_CONSENT, AgeVerificationResult } from '../utils/age-verification';
 
 const router: Router = express.Router();
 
@@ -73,6 +77,41 @@ router.post('/age-verification', (req, res) => {
       message: error instanceof Error ? error.message : 'Unknown error'
     });
   }
+});
+
+/**
+ * Test endpoint for legal compliance summary
+ * Returns information about the current implementation of legal safeguards
+ */
+router.get('/legal-compliance', (req, res) => {
+  const coppaMinimumAge = MIN_AGE_WITHOUT_CONSENT;
+  
+  // Return summary of implemented safeguards
+  return res.json({
+    safeguards: {
+      ageVerification: {
+        minimumAge: coppaMinimumAge,
+        requiresParentalConsent: `Users under ${coppaMinimumAge} require parental consent`,
+        minorConsent: "Users under 18 but over COPPA minimum require parental consent",
+        implemented: true
+      },
+      contentAdvisory: {
+        categories: Object.values(ContentCategoryEnum),
+        autoDetection: true,
+        disclaimers: {
+          available: true,
+          severityLevels: ["low", "medium", "high"]
+        },
+        implemented: true
+      },
+      privacyConsent: {
+        cookieBased: true,
+        withdrawable: true,
+        implemented: true
+      }
+    },
+    lastUpdated: new Date().toISOString()
+  });
 });
 
 export default router;

@@ -14,6 +14,16 @@ export type ContentCategory =
   | 'Exercise Instructions'
   | 'General Information';
 
+// Enum for content categories (runtime access)
+export enum ContentCategoryEnum {
+  MENTAL_HEALTH = 'Mental Health',
+  FINANCIAL_ADVICE = 'Financial Advice',
+  MEDICAL_INFORMATION = 'Medical Information',
+  NUTRITION_GUIDANCE = 'Nutrition Guidance',
+  EXERCISE_INSTRUCTIONS = 'Exercise Instructions',
+  GENERAL_INFORMATION = 'General Information'
+}
+
 // Severity levels for content advisories
 export type ContentAdvisorySeverity = 'low' | 'medium' | 'high';
 

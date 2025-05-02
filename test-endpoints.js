@@ -113,7 +113,8 @@ async function testAgeVerification() {
     console.log('  Is minor:', adultResponse.data.isMinor);
     
   } catch (error) {
-    if (error.response && error.response.status === 400 && error.response.data.includes('already exists')) {
+    if (error.response && error.response.status === 409 && error.response.data.error.includes('already exists')) {
+      console.log('Valid Adult Registration Test:');
       console.log('✓ User already exists (expected during testing)');
     } else {
       console.error('Error during adult registration:', error.message);
@@ -134,7 +135,8 @@ async function testAgeVerification() {
     console.log('  Has parental consent:', minorResponse.data.hasParentalConsent);
     
   } catch (error) {
-    if (error.response && error.response.status === 400 && error.response.data.includes('already exists')) {
+    if (error.response && error.response.status === 409 && error.response.data.error.includes('already exists')) {
+      console.log('\nValid Minor Registration Test (with parental consent):');
       console.log('✓ User already exists (expected during testing)');
     } else {
       console.error('Error during minor registration:', error.message);
@@ -152,9 +154,13 @@ async function testAgeVerification() {
     console.log('✗ Registration successful but should have failed');
     
   } catch (error) {
-    if (error.response && error.response.status === 400) {
+    if (error.response && (error.response.status === 400 || error.response.status === 403) && 
+        (error.response.data.error === 'Age restriction' || 
+         error.response.data.code === 'MINOR_WITHOUT_CONSENT')) {
+      console.log('\nInvalid Minor Registration Test (without parental consent):');
       console.log('✓ Registration failed as expected');
-      console.log('  Error message:', error.response.data);
+      console.log('  Error message:', error.response.data.message);
+      console.log('  Error code:', error.response.data.code);
     } else {
       console.error('Unexpected error during invalid minor registration:', error.message);
       if (error.response) {
