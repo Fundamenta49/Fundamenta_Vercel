@@ -72,6 +72,14 @@ import ProtectedRoute from "@/components/protected-route";
 import { SkeletonDemoPage } from "@/components/SkeletonDemoPage";
 import DisclaimerDemo from "@/pages/disclaimer-demo";
 import DisclaimerHub from "@/pages/disclaimer-hub";
+import FindingProfessionals from "@/pages/resources/finding-professionals";
+import ProfessionalQuestions from "@/pages/resources/professional-questions";
+import FindingHealthcareProviders from "@/pages/resources/finding-healthcare-providers";
+import EvaluatingMedicalInformation from "@/pages/resources/evaluating-medical-information";
+import FindingFinancialAdvisors from "@/pages/resources/finding-financial-advisors";
+import FinancialCredentials from "@/pages/resources/financial-credentials";
+import FindingTherapist from "@/pages/resources/finding-therapist";
+import MentalHealthProviders from "@/pages/resources/mental-health-providers";
 
 // Component to handle redirects from /wellness/* to /wellness?section=*
 function WellnessRedirect() {
@@ -286,50 +294,42 @@ function Router() {
             </Route>
             <Route path="/resources/finding-professionals">
               <ProtectedRoute>
-                {/* @ts-ignore */}
-                {() => import("./pages/resources/finding-professionals").then(module => <module.default />)}
+                <FindingProfessionals />
               </ProtectedRoute>
             </Route>
             <Route path="/resources/professional-questions">
               <ProtectedRoute>
-                {/* @ts-ignore */}
-                {() => import("./pages/resources/professional-questions").then(module => <module.default />)}
+                <ProfessionalQuestions />
               </ProtectedRoute>
             </Route>
             <Route path="/resources/finding-healthcare-providers">
               <ProtectedRoute>
-                {/* @ts-ignore */}
-                {() => import("./pages/resources/finding-healthcare-providers").then(module => <module.default />)}
+                <FindingHealthcareProviders />
               </ProtectedRoute>
             </Route>
             <Route path="/resources/evaluating-medical-information">
               <ProtectedRoute>
-                {/* @ts-ignore */}
-                {() => import("./pages/resources/evaluating-medical-information").then(module => <module.default />)}
+                <EvaluatingMedicalInformation />
               </ProtectedRoute>
             </Route>
             <Route path="/resources/finding-financial-advisors">
               <ProtectedRoute>
-                {/* @ts-ignore */}
-                {() => import("./pages/resources/finding-financial-advisors").then(module => <module.default />)}
+                <FindingFinancialAdvisors />
               </ProtectedRoute>
             </Route>
             <Route path="/resources/financial-credentials">
               <ProtectedRoute>
-                {/* @ts-ignore */}
-                {() => import("./pages/resources/financial-credentials").then(module => <module.default />)}
+                <FinancialCredentials />
               </ProtectedRoute>
             </Route>
             <Route path="/resources/finding-therapist">
               <ProtectedRoute>
-                {/* @ts-ignore */}
-                {() => import("./pages/resources/finding-therapist").then(module => <module.default />)}
+                <FindingTherapist />
               </ProtectedRoute>
             </Route>
             <Route path="/resources/mental-health-providers">
               <ProtectedRoute>
-                {/* @ts-ignore */}
-                {() => import("./pages/resources/mental-health-providers").then(module => <module.default />)}
+                <MentalHealthProviders />
               </ProtectedRoute>
             </Route>
             <Route path="/learning">

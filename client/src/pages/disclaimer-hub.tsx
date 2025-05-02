@@ -56,11 +56,7 @@ export default function DisclaimerHub() {
                   This approach balances legal protection with a positive user experience. By contextualizing disclaimers at appropriate moments, we maintain transparency without overwhelming users with repetitive warnings.
                 </p>
                 
-                <div className="mt-6">
-                  <Link href="/ui/disclaimers" className="text-primary hover:underline">
-                    View Interactive Disclaimer Components Demo
-                  </Link>
-                </div>
+
               </div>
             </CardContent>
           </Card>
