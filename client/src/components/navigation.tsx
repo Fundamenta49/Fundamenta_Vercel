@@ -262,7 +262,7 @@ export default function Navigation() {
             )}
           >
             <img 
-              src="/images/logos/fundamenta_logo_upscaled.png" 
+              src="/images/logos/fundamenta_logo_on_f5f5f5.png" 
               alt="Fundamenta Logo" 
               className="h-16 w-auto"
             />
@@ -375,13 +375,13 @@ export default function Navigation() {
         >
           {!isMinimized ? (
             <img 
-              src="/images/logos/fundamenta_logo_upscaled.png" 
+              src="/images/logos/fundamenta_logo_on_f5f5f5.png" 
               alt="Fundamenta Logo" 
               className="h-14 w-auto"
             />
           ) : (
             <img 
-              src="/images/logos/fundamenta_logo_upscaled.png" 
+              src="/images/logos/fundamenta_logo_on_f5f5f5.png" 
               alt="Fundamenta Logo" 
               className="h-10 w-auto"
             />

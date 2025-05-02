@@ -90,7 +90,7 @@ export default function Home() {
       <div className="text-center mb-4 relative max-w-3xl mx-auto">
         <div className="flex flex-col items-center justify-center mb-2">
           <img 
-            src="/images/logos/fundamenta_logo_upscaled.png" 
+            src="/images/logos/fundamenta_logo_on_f5f5f5.png" 
             alt="Fundamenta Logo" 
             className="h-24 md:h-32 w-auto mb-2"
           />
