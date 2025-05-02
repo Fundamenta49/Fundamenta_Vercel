@@ -31,7 +31,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
-import { AccountSettings } from "@/components/account-settings";
 import { Separator } from "@/components/ui/separator";
 import NotificationPanel from "@/components/notification-panel";
 
@@ -349,12 +348,9 @@ export default function Navigation() {
 
             </div>
             
-            {/* Notification Panel & Help Buttons */}
-            <div className="mt-4 mx-2 flex flex-col gap-2">
-              <div className="flex justify-center my-2">
-                <NotificationPanel />
-              </div>
-              <AccountSettings />
+            {/* Notification Panel */}
+            <div className="mt-4 mx-2 flex justify-center">
+              <NotificationPanel />
             </div>
           </div>
         </SheetContent>
@@ -550,21 +546,15 @@ export default function Navigation() {
 
         </div>
         
-        {/* Notification Panel & Tour Settings */}
+        {/* Notification Panel */}
         <div className={cn(
           "mt-auto pt-6", 
           isMinimized 
-            ? "absolute bottom-4 left-0 right-0 flex flex-col items-center gap-2" 
-            : "mt-auto pt-6 flex flex-col gap-2"
+            ? "absolute bottom-4 left-0 right-0 flex flex-col items-center" 
+            : "mt-auto pt-6 flex flex-col"
         )}>
-          {/* Notification Panel */}
           <div className={cn(!isMinimized && "px-3", "flex justify-center")}>
             <NotificationPanel />
-          </div>
-          
-          {/* Account Settings */}
-          <div>
-            <AccountSettings />
           </div>
         </div>
       </div>
