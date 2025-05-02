@@ -70,7 +70,6 @@ import AdminPage from "@/pages/admin";
 import PersonalityTestPage from "@/pages/admin/personality-test";
 import ProtectedRoute from "@/components/protected-route";
 import { SkeletonDemoPage } from "@/components/SkeletonDemoPage";
-import DisclaimerDemo from "@/pages/disclaimer-demo";
 import DisclaimerHub from "@/pages/disclaimer-hub";
 import FindingProfessionals from "@/pages/resources/finding-professionals";
 import ProfessionalQuestions from "@/pages/resources/professional-questions";
@@ -286,13 +285,6 @@ function Router() {
             <Route path="/admin/personality-test" component={PersonalityTestPage} />
             <Route path="/design-showcase" component={DesignShowcasePage} />
             <Route path="/ui/skeletons" component={SkeletonDemoPage} />
-            {/* Developer/Admin-only route - not for end users */}
-            <Route path="/ui/disclaimers">
-              <ProtectedRoute adminOnly={true}>
-                <DisclaimerDemo />
-              </ProtectedRoute>
-            </Route>
-            
             {/* User-facing disclaimer hub */}
             <Route path="/disclaimers">
               <ProtectedRoute>
