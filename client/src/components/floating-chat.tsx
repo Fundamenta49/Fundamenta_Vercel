@@ -44,7 +44,7 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
     });
   }, []);
   
-  // Listen for forced open events - simplified for fixed position
+  // Listen for forced open events and AI assistant questions
   useEffect(() => {
     const handleForcedOpen = (event: Event) => {
       // We maintain the event listener for compatibility but position is now fixed
@@ -61,14 +61,30 @@ export default function FloatingChat({ category = 'general' }: FloatingChatProps
       // Prevent auto-opening after Fundi is restored from minimized state
     };
     
+    // Event handler for assistant questions from other components (like post-tour guide)
+    const handleAssistantQuestion = (event: Event) => {
+      // Open the chat interface
+      setIsExpanded(true);
+      
+      // Position the chat
+      setChatPosition({ 
+        bottom: 80, 
+        right: 10 
+      });
+      
+      // The actual question handling is managed by the ChatInterface component
+    };
+    
     // Add the event listeners
     window.addEventListener('forceFundiOpen', handleForcedOpen);
     window.addEventListener('preventFundiChatOpen', handlePreventChatOpen);
+    document.addEventListener('ai:assistant-question', handleAssistantQuestion);
     
     // Clean up on unmount
     return () => {
       window.removeEventListener('forceFundiOpen', handleForcedOpen);
       window.removeEventListener('preventFundiChatOpen', handlePreventChatOpen);
+      document.removeEventListener('ai:assistant-question', handleAssistantQuestion);
     };
   }, []);
 

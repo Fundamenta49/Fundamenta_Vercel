@@ -39,6 +39,19 @@ export interface AIResponse {
   suggestedActions?: AppSuggestion[];
 }
 
+// Event types for the AI system
+export interface AIEvent {
+  type: 'assistant_question' | 'user_action' | 'system_event';
+  payload: {
+    question?: string;
+    category?: string;
+    source?: string;
+    action?: string;
+    context?: any;
+    [key: string]: any;
+  };
+}
+
 // State and actions for AI event management
 interface AIEventState {
   isProcessing: boolean;
@@ -59,6 +72,7 @@ interface AIEventState {
   executeNextAction: () => AIAction | null;
   clearActions: () => void;
   setCurrentMessage: (message: string) => void; // Add method to set current message
+  triggerAIEvent: (event: AIEvent) => void; // Add function to trigger AI events
 }
 
 // Create the store with Zustand
@@ -126,7 +140,31 @@ export const useAIEventStore = create<AIEventState>((set, get) => ({
     return nextAction;
   },
   
-  clearActions: () => set({ pendingActions: [] })
+  clearActions: () => set({ pendingActions: [] }),
+  
+  // Trigger an AI event that opens the chat interface with the specified question
+  triggerAIEvent: (event: AIEvent) => {
+    // Set processing state
+    set({ isProcessing: true });
+    
+    if (event.type === 'assistant_question' && event.payload.question) {
+      // Set the current message and category
+      set({ 
+        currentMessage: event.payload.question,
+        currentCategory: event.payload.category || 'general'
+      });
+      
+      // Dispatch a custom event to notify the chat interface
+      const customEvent = new CustomEvent('ai:assistant-question', { 
+        detail: { 
+          question: event.payload.question,
+          category: event.payload.category || 'general',
+          source: event.payload.source || 'application'
+        } 
+      });
+      document.dispatchEvent(customEvent);
+    }
+  }
 }));
 
 // Hook for managing AI contexts
