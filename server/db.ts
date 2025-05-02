@@ -30,8 +30,40 @@ export async function ensureTables() {
     console.log('Database tables verified.');
   } catch (error) {
     console.error('Error checking database tables:', error);
-    // Here you would typically use a migration tool instead of manual table creation
-    // But for simplicity, we'll just log the error
-    console.error('Please run the migrations using drizzle-kit to create the tables');
+    
+    try {
+      console.log('Attempting to push schema changes to the database...');
+      
+      // Manually create required tables if they don't exist
+      // This is a simplified version of what drizzle-kit push would do
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS users (
+          id SERIAL PRIMARY KEY,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL UNIQUE,
+          password TEXT NOT NULL,
+          role TEXT DEFAULT 'user',
+          email_verified BOOLEAN DEFAULT false,
+          privacy_consent BOOLEAN DEFAULT false,
+          birth_year INTEGER,
+          age_verified BOOLEAN DEFAULT false,
+          is_minor BOOLEAN DEFAULT false,
+          has_parental_consent BOOLEAN DEFAULT false,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+        );
+        
+        CREATE TABLE IF NOT EXISTS sessions (
+          sid VARCHAR PRIMARY KEY,
+          sess JSON NOT NULL,
+          expire TIMESTAMP NOT NULL
+        );
+      `);
+      
+      console.log('Schema changes applied successfully.');
+    } catch (pushError) {
+      console.error('Error applying schema changes:', pushError);
+      console.error('Please run the migrations using drizzle-kit to create the tables');
+    }
   }
 }
