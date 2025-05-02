@@ -13,6 +13,7 @@ import {
 } from './cookie-utils';
 import { AuthenticatedRequest, authenticateJWT } from './auth-middleware';
 import { z } from 'zod';
+import { createAgeVerificationData, meetsMinimumAge } from '../utils/age-verification';
 
 // Create a router for auth endpoints
 const router = Router();
@@ -21,7 +22,9 @@ const router = Router();
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters")
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  birthYear: z.number().int().min(1900).max(new Date().getFullYear()).optional(),
+  hasParentalConsent: z.boolean().optional()
 });
 
 const loginSchema = z.object({
@@ -48,7 +51,7 @@ router.post('/register', async (req: Request, res: Response) => {
       });
     }
 
-    const { name, email, password } = validationResult.data;
+    const { name, email, password, birthYear, hasParentalConsent } = validationResult.data;
     
     // Convert email to lowercase for case-insensitive comparison
     const emailLower = email.toLowerCase();
@@ -63,6 +66,27 @@ router.post('/register', async (req: Request, res: Response) => {
     if (existingUser.length > 0) {
       return res.status(409).json({ error: 'User with this email already exists' });
     }
+    
+    // Age verification check
+    if (birthYear) {
+      try {
+        // Check if user meets minimum age requirements (COPPA compliance)
+        if (!meetsMinimumAge(birthYear) && !hasParentalConsent) {
+          return res.status(403).json({ 
+            error: 'Age restriction', 
+            message: 'Users under 13 years old require parental consent'
+          });
+        }
+      } catch (error) {
+        return res.status(400).json({ 
+          error: 'Age verification failed',
+          message: error instanceof Error ? error.message : 'Invalid age data'
+        });
+      }
+    }
+    
+    // Process age verification data
+    const ageData = birthYear ? createAgeVerificationData(birthYear, !!hasParentalConsent) : {};
 
     // Hash the password
     const hashedPassword = await hashPassword(password);
@@ -72,6 +96,7 @@ router.post('/register', async (req: Request, res: Response) => {
       name,
       email: email.toLowerCase(),
       password: hashedPassword,
+      ...ageData
     }).returning();
 
     // Generate tokens
@@ -125,6 +150,10 @@ router.post('/login', async (req: Request, res: Response) => {
       role: users.role,
       emailVerified: users.emailVerified,
       privacyConsent: users.privacyConsent,
+      birthYear: users.birthYear,
+      ageVerified: users.ageVerified,
+      isMinor: users.isMinor,
+      hasParentalConsent: users.hasParentalConsent
     }).from(users)
       .where(eq(users.email, emailLower));
 

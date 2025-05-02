@@ -14,6 +14,10 @@ interface JwtPayload {
   role?: string;
   emailVerified?: boolean;
   privacyConsent?: boolean;
+  birthYear?: number;
+  ageVerified?: boolean;
+  isMinor?: boolean;
+  hasParentalConsent?: boolean;
 }
 
 // Type for tokens response
