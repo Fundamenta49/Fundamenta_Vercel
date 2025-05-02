@@ -41,6 +41,7 @@ const defaultNavItems = [
   { href: "/partner", label: "Partner With Us", icon: HandshakeIcon },
   { href: "/privacy", label: "Privacy Hub", icon: Shield },
   { href: "/invite", label: "Invite Friends", icon: Users },
+  { href: "/ui/disclaimers", label: "Disclaimer Hub", icon: Shield },
 ];
 
 const featureNavItems = [
@@ -107,9 +108,6 @@ export default function Navigation() {
   
   if (isHomePage) {
     displayedNavItems = [...defaultNavItems.filter(item => item.href !== "/")];
-  } else if (location.includes('/ui/disclaimers')) {
-    // If we're on the disclaimer demo page, show it in the navigation
-    displayedNavItems = [...featureNavItems, { href: "/ui/disclaimers", label: "Disclaimer Hub", icon: Shield }];
   } else {
     displayedNavItems = [...featureNavItems];
   }
