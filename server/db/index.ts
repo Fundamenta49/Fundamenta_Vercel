@@ -2,6 +2,7 @@ import { drizzle } from 'drizzle-orm/neon-serverless';
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import * as schema from '../../shared/schema';
 import ws from 'ws'; // WebSocket library for Node.js
+import { runMigrations as runCustomMigrations } from './migrations';
 
 // Configure Neon to use WebSocket in Node.js environment
 // This must be set before creating any Pool instances
@@ -31,8 +32,19 @@ export async function pushSchema() {
   }
 }
 
-// Alias for compatibility with existing code
-export const runMigrations = pushSchema;
+// Run all migrations - now including custom migrations for age verification
+export async function runMigrations() {
+  try {
+    // First run the standard schema push
+    await pushSchema();
+    
+    // Then run our custom migrations for age verification
+    await runCustomMigrations();
+  } catch (error) {
+    console.error('Error during migrations:', error);
+    throw error;
+  }
+}
 
 // Export the schema for use in other files
-export { schema };
+export { schema, pool };
