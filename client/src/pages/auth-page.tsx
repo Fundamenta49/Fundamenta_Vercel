@@ -6,14 +6,25 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CalendarIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>('login');
   const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const [registerData, setRegisterData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [registerData, setRegisterData] = useState({ 
+    name: '', 
+    email: '', 
+    password: '', 
+    confirmPassword: '', 
+    birthYear: '', 
+    agreeTerms: false,
+    ageVerification: false 
+  });
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [ageError, setAgeError] = useState<string | null>(null);
   const { login, signUp, loading, error, setError } = useAuth();
   const [, setLocation] = useLocation();
 
@@ -35,6 +46,19 @@ export default function AuthPage() {
     setRegisterData(prev => ({ ...prev, [name]: value }));
     if (error) setError(null);
     if (passwordError) setPasswordError(null);
+    if (ageError) setAgeError(null);
+  };
+  
+  const handleCheckboxChange = (name: string, checked: boolean) => {
+    setRegisterData(prev => ({ ...prev, [name]: checked }));
+    if (error) setError(null);
+    if (name === 'ageVerification' && ageError) setAgeError(null);
+  };
+  
+  const handleSelectChange = (name: string, value: string) => {
+    setRegisterData(prev => ({ ...prev, [name]: value }));
+    if (error) setError(null);
+    if (name === 'birthYear' && ageError) setAgeError(null);
   };
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -54,10 +78,10 @@ export default function AuthPage() {
 
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { name, email, password, confirmPassword } = registerData;
+    const { name, email, password, confirmPassword, birthYear, ageVerification, agreeTerms } = registerData;
     
     // Validation
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !email || !password || !confirmPassword || !birthYear) {
       setError('All fields are required');
       return;
     }
@@ -72,8 +96,40 @@ export default function AuthPage() {
       return;
     }
     
+    // Age verification
+    const currentYear = new Date().getFullYear();
+    const age = currentYear - parseInt(birthYear, 10);
+    
+    if (age < 13) {
+      setAgeError('You must be at least 13 years old to use this platform');
+      return;
+    }
+    
+    if (!ageVerification) {
+      setAgeError('You must confirm you are at least 13 years old');
+      return;
+    }
+    
+    if (!agreeTerms) {
+      setError('You must agree to the Terms of Service and Privacy Policy');
+      return;
+    }
+    
+    // All validation passed, sign up the user
+    // For Phase 1, we'll just include the age verification flags with the existing sign-up process
+    // In Phase 2, we'll modify the schema to store the age and consent information
     const success = await signUp(name, email, password);
     if (success) {
+      // We could store additional metadata about the user's age in localStorage
+      // until we implement the database schema for this in Phase 2
+      try {
+        localStorage.setItem('userAgeVerified', 'true');
+        localStorage.setItem('userBirthYear', birthYear);
+      } catch (err) {
+        // Silent catch - this is just for an extra layer of tracking
+        console.error("Could not save age verification to localStorage");
+      }
+      
       setLocation('/');
     }
   };
@@ -237,6 +293,62 @@ export default function AuthPage() {
                       {passwordError && (
                         <p className="text-xs text-destructive mt-1">{passwordError}</p>
                       )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="birth-year">Year of Birth</Label>
+                      <Select 
+                        value={registerData.birthYear} 
+                        onValueChange={(value) => handleSelectChange('birthYear', value)}
+                      >
+                        <SelectTrigger id="birth-year">
+                          <SelectValue placeholder="Select year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 100 }, (_, i) => {
+                            const year = new Date().getFullYear() - i;
+                            return (
+                              <SelectItem key={year} value={year.toString()}>
+                                {year}
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                      {ageError && (
+                        <p className="text-xs text-destructive mt-1">{ageError}</p>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center space-x-2 mt-4">
+                      <Checkbox 
+                        id="age-verification" 
+                        checked={registerData.ageVerification}
+                        onCheckedChange={(checked) => 
+                          handleCheckboxChange('ageVerification', checked as boolean)
+                        }
+                      />
+                      <Label
+                        htmlFor="age-verification"
+                        className="text-sm leading-tight"
+                      >
+                        I confirm that I am at least 13 years of age
+                      </Label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2 mt-2">
+                      <Checkbox 
+                        id="terms-agreement" 
+                        checked={registerData.agreeTerms}
+                        onCheckedChange={(checked) => 
+                          handleCheckboxChange('agreeTerms', checked as boolean)
+                        }
+                      />
+                      <Label
+                        htmlFor="terms-agreement"
+                        className="text-sm leading-tight"
+                      >
+                        I agree to the <a href="/terms-of-service" className="underline text-primary">Terms of Service</a> and <a href="/privacy-policy" className="underline text-primary">Privacy Policy</a>
+                      </Label>
                     </div>
                   </CardContent>
                   <CardFooter>
