@@ -18,7 +18,7 @@ export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 // Create a Drizzle ORM instance
 export const db = drizzle(pool, { schema });
 
-// Helper function to create tables
+// Helper function to create tables and run migrations
 export async function ensureTables() {
   try {
     console.log('Checking database tables...');
@@ -28,6 +28,17 @@ export async function ensureTables() {
     await db.select({ count: sql`count(*)` }).from(schema.users).execute();
     
     console.log('Database tables verified.');
+    
+    // Run any pending migrations
+    console.log('Running database migrations...');
+    try {
+      // Import dynamically to avoid circular dependencies
+      const { runAllMigrations } = await import('./db/index');
+      await runAllMigrations();
+    } catch (migrationError) {
+      console.error('Error running migrations:', migrationError);
+    }
+    
   } catch (error) {
     console.error('Error checking database tables:', error);
     
@@ -61,6 +72,16 @@ export async function ensureTables() {
       `);
       
       console.log('Schema changes applied successfully.');
+      
+      // Now run migrations to add any additional tables/columns
+      console.log('Running database migrations...');
+      try {
+        // Import dynamically to avoid circular dependencies
+        const { runAllMigrations } = await import('./db/index');
+        await runAllMigrations();
+      } catch (migrationError) {
+        console.error('Error running migrations:', migrationError);
+      }
     } catch (pushError) {
       console.error('Error applying schema changes:', pushError);
       console.error('Please run the migrations using drizzle-kit to create the tables');

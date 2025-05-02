@@ -4,7 +4,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import multer from "multer";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
-import { runMigrations } from "./db/index";
+import { runAllMigrations } from "./db/index";
 import { ensureTables } from "./db";
 import { initializeFundiCore } from "./fundi-core/fundi-integration";
 import { performDatabaseMaintenance, performAggressiveCleanup } from "./maintenance";
@@ -116,7 +116,7 @@ app.post("/api/maintenance/sessions", async (req, res) => {
     // Run database migrations
     log("Running database migrations...");
     try {
-      await runMigrations();
+      await runAllMigrations();
       log(`Database migrations completed (${Date.now() - startTime}ms)`);
       
       // Ensure user tables exist with age verification fields

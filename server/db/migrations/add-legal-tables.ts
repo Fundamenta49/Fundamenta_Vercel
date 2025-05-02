@@ -2,7 +2,7 @@
  * Database migration for adding legal compliance tables 
  * and updating the user table to support Terms of Service and data privacy
  */
-import { db, pool } from '../index';
+import { pool } from '../../db';
 
 export async function runLegalComplianceMigrations() {
   console.log('Starting legal compliance migrations...');
