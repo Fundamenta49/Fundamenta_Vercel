@@ -51,7 +51,10 @@ router.post('/register', async (req: Request, res: Response) => {
     const { name, email, password } = validationResult.data;
 
     // Check if user already exists
-    const existingUser = await db.select().from(users)
+    const existingUser = await db.select({
+      id: users.id,
+      email: users.email,
+    }).from(users)
       .where(eq(users.email, email.toLowerCase()));
 
     if (existingUser.length > 0) {
@@ -108,7 +111,15 @@ router.post('/login', async (req: Request, res: Response) => {
     const { email, password } = validationResult.data;
 
     // Find user by email
-    const [user] = await db.select().from(users)
+    const [user] = await db.select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      password: users.password,
+      role: users.role,
+      emailVerified: users.emailVerified,
+      privacyConsent: users.privacyConsent,
+    }).from(users)
       .where(eq(users.email, email.toLowerCase()));
 
     if (!user) {
@@ -185,7 +196,14 @@ router.post('/refresh', async (req: Request, res: Response) => {
     }
 
     // Get user from database
-    const [user] = await db.select().from(users).where(eq(users.id, payload.userId));
+    const [user] = await db.select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      role: users.role,
+      emailVerified: users.emailVerified,
+      privacyConsent: users.privacyConsent,
+    }).from(users).where(eq(users.id, payload.userId));
     if (!user) {
       clearAuthCookies(res);
       return res.status(401).json({ error: 'User not found' });
