@@ -103,9 +103,16 @@ export default function Navigation() {
   // On home page, show only default items (Why Fundamenta, Partner, Privacy, Invite)
   // On other pages, show feature items (Life Skills, Financial Literacy, etc.)
   // Always include the current page in navigation items and highlight it
-  const displayedNavItems = isHomePage
-    ? [...defaultNavItems.filter(item => item.href !== "/")] 
-    : [...featureNavItems];
+  let displayedNavItems = [];
+  
+  if (isHomePage) {
+    displayedNavItems = [...defaultNavItems.filter(item => item.href !== "/")];
+  } else if (location.includes('/ui/disclaimers')) {
+    // If we're on the disclaimer demo page, show it in the navigation
+    displayedNavItems = [...featureNavItems, { href: "/ui/disclaimers", label: "Disclaimer Hub", icon: Shield }];
+  } else {
+    displayedNavItems = [...featureNavItems];
+  }
 
   useEffect(() => {
     document.documentElement.style.setProperty(
