@@ -694,6 +694,22 @@ export default function PostTourGuide() {
         }
       });
       
+      // Also dispatch a DOM event as a backup method
+      const customEvent = new CustomEvent('ai:assistant-question', { 
+        detail: { 
+          question: question,
+          category: currentPath,
+          source: 'post_tour_guide'
+        } 
+      });
+      document.dispatchEvent(customEvent);
+      
+      // Create a custom event specifically for Fundi to open
+      const openFundiEvent = new CustomEvent('forceFundiOpen', { 
+        detail: { position: { x: 0, y: 0 } }
+      });
+      window.dispatchEvent(openFundiEvent);
+      
       // For now, we'll just close this component as the AI assistant will open
       setIsActive(false);
       
