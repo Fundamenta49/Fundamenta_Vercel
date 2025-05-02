@@ -284,6 +284,42 @@ function Router() {
                 <DisclaimerHub />
               </ProtectedRoute>
             </Route>
+            <Route path="/resources/finding-professionals">
+              <ProtectedRoute>
+                {/* @ts-ignore */}
+                {() => import("./pages/resources/finding-professionals").then(module => <module.default />)}
+              </ProtectedRoute>
+            </Route>
+            <Route path="/resources/professional-questions">
+              <ProtectedRoute>
+                {/* @ts-ignore */}
+                {() => import("./pages/resources/professional-questions").then(module => <module.default />)}
+              </ProtectedRoute>
+            </Route>
+            <Route path="/resources/finding-healthcare-providers">
+              <ProtectedRoute>
+                {/* @ts-ignore */}
+                {() => import("./pages/resources/finding-healthcare-providers").then(module => <module.default />)}
+              </ProtectedRoute>
+            </Route>
+            <Route path="/resources/evaluating-medical-information">
+              <ProtectedRoute>
+                {/* @ts-ignore */}
+                {() => import("./pages/resources/evaluating-medical-information").then(module => <module.default />)}
+              </ProtectedRoute>
+            </Route>
+            <Route path="/resources/finding-financial-advisors">
+              <ProtectedRoute>
+                {/* @ts-ignore */}
+                {() => import("./pages/resources/finding-financial-advisors").then(module => <module.default />)}
+              </ProtectedRoute>
+            </Route>
+            <Route path="/resources/financial-credentials">
+              <ProtectedRoute>
+                {/* @ts-ignore */}
+                {() => import("./pages/resources/financial-credentials").then(module => <module.default />)}
+              </ProtectedRoute>
+            </Route>
             <Route path="/learning">
               <ProtectedRoute>
                 <Learning />
