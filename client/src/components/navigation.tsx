@@ -257,17 +257,15 @@ export default function Navigation() {
           <button 
             onClick={() => handleNavigation("/")}
             className={cn(
-              "flex items-center gap-2 px-2 py-6 mb-6 w-full rounded-md transition-colors",
+              "flex justify-center items-center px-2 py-2 mb-6 w-full rounded-md transition-colors",
               hoverBg
             )}
           >
-            <div className={cn(
-              "h-8 w-8 rounded-md flex items-center justify-center",
-              location === "/" ? "bg-rose-500" : themeColors.activeItemText.replace('text', 'bg')
-            )}>
-              <Sparkles className="h-5 w-5 text-white" />
-            </div>
-            <span className={`text-xl font-bold ${logoText}`}>Fundamenta</span>
+            <img 
+              src="/images/logos/fundamenta_logo_upscaled.png" 
+              alt="Fundamenta Logo" 
+              className="h-16 w-auto"
+            />
           </button>
           
           <div className="flex flex-col gap-1">
@@ -369,19 +367,25 @@ export default function Navigation() {
         <button 
           onClick={() => handleNavigation("/")}
           className={cn(
-            "flex items-center gap-3 px-2 py-4 w-full text-left rounded-md transition-colors",
+            "flex items-center gap-3 px-2 py-1 w-full text-left rounded-md transition-colors",
             logoText,
             hoverBg,
             "cursor-pointer"
           )}
         >
-          <div className={cn(
-            "h-8 w-8 rounded-md flex items-center justify-center",
-            location === "/" ? "bg-rose-500" : themeColors.activeItemText.replace('text', 'bg')
-          )}>
-            <Sparkles className="h-5 w-5 text-white" />
-          </div>
-          {!isMinimized && <span className="text-lg font-bold">Fundamenta</span>}
+          {!isMinimized ? (
+            <img 
+              src="/images/logos/fundamenta_logo_upscaled.png" 
+              alt="Fundamenta Logo" 
+              className="h-14 w-auto"
+            />
+          ) : (
+            <img 
+              src="/images/logos/fundamenta_logo_upscaled.png" 
+              alt="Fundamenta Logo" 
+              className="h-10 w-auto"
+            />
+          )}
         </button>
 
         <Button
