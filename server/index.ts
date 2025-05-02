@@ -5,6 +5,7 @@ import multer from "multer";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import { runMigrations } from "./db/index";
+import { ensureTables } from "./db";
 import { initializeFundiCore } from "./fundi-core/fundi-integration";
 import { performDatabaseMaintenance, performAggressiveCleanup } from "./maintenance";
 
@@ -110,6 +111,11 @@ app.post("/api/maintenance/sessions", async (req, res) => {
     try {
       await runMigrations();
       log(`Database migrations completed (${Date.now() - startTime}ms)`);
+      
+      // Ensure user tables exist with age verification fields
+      log("Checking database tables for age verification...");
+      await ensureTables();
+      log(`Database tables verified (${Date.now() - startTime}ms)`);
     } catch (error) {
       log(`Database migration error: ${error instanceof Error ? error.message : String(error)}`);
       // Continue with server startup even if migrations fail

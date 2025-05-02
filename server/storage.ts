@@ -124,15 +124,41 @@ export class MemStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentUserId++;
     const now = new Date();
+    
+    // Extract user data for consistent handling
+    const { birthYear: rawBirthYear, ...userData } = insertUser;
+    
+    // Process age-related fields with proper typing
+    const birthYear = rawBirthYear !== undefined ? rawBirthYear : null;
+    let isMinor = false;
+    let ageVerified = insertUser.ageVerified || false;
+    
+    if (birthYear !== null) {
+      const currentYear = new Date().getFullYear();
+      const age = currentYear - birthYear;
+      isMinor = age < 18;
+      
+      // Set ageVerified if they've gone through verification
+      if (!ageVerified && age >= 13) {
+        ageVerified = true;
+      }
+    }
+    
+    // Create a properly typed user object
     const user: User = {
-      ...insertUser,
+      ...userData,
       id,
-      role: insertUser.role || 'user',
-      emailVerified: insertUser.emailVerified || false,
-      privacyConsent: insertUser.privacyConsent || false,
+      birthYear,
+      ageVerified,
+      isMinor,
+      hasParentalConsent: insertUser.hasParentalConsent || false,
+      role: userData.role || 'user',
+      emailVerified: userData.emailVerified || false,
+      privacyConsent: userData.privacyConsent || false,
       createdAt: now,
       updatedAt: now,
     };
+    
     this.users.set(id, user);
     return user;
   }
@@ -512,12 +538,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    // Calculate if user is a minor based on birthYear
+    // Extract user data
+    const { birthYear: rawBirthYear, ...userData } = insertUser;
+    
+    // Process age-related fields with proper typing
+    const birthYear = rawBirthYear !== undefined ? rawBirthYear : null;
     let isMinor = false;
     let ageVerified = insertUser.ageVerified || false;
-    let birthYear = insertUser.birthYear || null;
     
-    if (birthYear) {
+    if (birthYear !== null) {
       const currentYear = new Date().getFullYear();
       const age = currentYear - birthYear;
       isMinor = age < 18;
@@ -528,54 +557,73 @@ export class DatabaseStorage implements IStorage {
       }
     }
     
-    // Set isMinor flag in the database
-    const userWithMinorStatus = {
-      ...insertUser,
+    // Create a properly typed user object for database insertion
+    const userInsertData = {
+      ...userData,
       birthYear,
       ageVerified,
       isMinor,
-      hasParentalConsent: insertUser.hasParentalConsent || false
+      hasParentalConsent: insertUser.hasParentalConsent || false,
+      role: userData.role || 'user',
+      privacyConsent: userData.privacyConsent || false,
+      emailVerified: userData.emailVerified || false
     };
     
-    const [user] = await db
-      .insert(users)
-      .values(userWithMinorStatus)
-      .returning();
-      
-    return user;
+    try {
+      const [user] = await db
+        .insert(users)
+        .values(userInsertData)
+        .returning();
+        
+      return user;
+    } catch (error) {
+      console.error('Error creating user in database:', error);
+      throw new Error('Failed to create user');
+    }
   }
 
   async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
-    // Create a safe copy of updates for database operations
-    const safeUpdates: Record<string, any> = {
-      ...updates
-    };
+    // Extract birthYear for special handling
+    const { birthYear: rawBirthYear, ...otherUpdates } = updates;
     
-    // Check if updating birthYear, recalculate isMinor flag
-    if (updates.birthYear) {
-      const currentYear = new Date().getFullYear();
-      const age = currentYear - updates.birthYear;
-      safeUpdates.isMinor = age < 18;
+    // Create properly typed update object
+    const updateData: Record<string, any> = { ...otherUpdates };
+    
+    // Process birthYear and calculate age-related fields if present
+    if (rawBirthYear !== undefined) {
+      const birthYear = rawBirthYear !== null ? rawBirthYear : null;
+      updateData.birthYear = birthYear;
       
-      // Update ageVerified if becoming an adult
-      if (age >= 18) {
-        safeUpdates.ageVerified = true;
-        safeUpdates.isMinor = false;
-      } else if (age >= 13) {
-        safeUpdates.ageVerified = true;
+      if (birthYear !== null) {
+        const currentYear = new Date().getFullYear();
+        const age = currentYear - birthYear;
+        updateData.isMinor = age < 18;
+        
+        // Update ageVerified if becoming an adult
+        if (age >= 18) {
+          updateData.ageVerified = true;
+          updateData.isMinor = false;
+        } else if (age >= 13) {
+          updateData.ageVerified = true;
+        }
       }
     }
     
-    const [user] = await db
-      .update(users)
-      .set({
-        ...safeUpdates,
-        updatedAt: new Date()
-      })
-      .where(eq(users.id, id))
-      .returning();
-      
-    return user || undefined;
+    try {
+      const [user] = await db
+        .update(users)
+        .set({
+          ...updateData,
+          updatedAt: new Date()
+        })
+        .where(eq(users.id, id))
+        .returning();
+        
+      return user || undefined;
+    } catch (error) {
+      console.error('Error updating user in database:', error);
+      return undefined;
+    }
   }
 
   // Other methods from MemStorage - add database implementations as needed
