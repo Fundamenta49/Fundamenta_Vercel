@@ -9,6 +9,8 @@
 import { ResilientAIService, AIServiceState } from '../services/resilient-ai-service';
 import { OpenAIProvider, HuggingFaceProvider, Message, AIResponse } from './ai-fallback-strategy';
 import { getFundiPersonalityElements } from './fundi-personality-integration';
+import { enhanceSystemPromptWithDisclaimers, detectCrisis, determineCrisisType } from './disclaimer-injection';
+import { formatCrisisResponse } from './safety-responses';
 
 // Create singleton instance of the resilient service
 const openAIProvider = new OpenAIProvider();
@@ -53,22 +55,50 @@ export async function generateFundiResponse(
   conversationId: number,
   previousMessages: Message[] = []
 ): Promise<AIResponse> {
+  // Check for potential crisis situations first
+  if (detectCrisis(message)) {
+    const crisisType = determineCrisisType(message);
+    const crisisResponse = formatCrisisResponse(crisisType);
+    
+    console.log(`🚨 Crisis detected in conversation ${conversationId}, type: ${crisisType}`);
+    
+    return {
+      response: crisisResponse,
+      sentiment: "empathetic",
+      suggestions: [
+        { text: "Would you like information about professional help?", path: "/resources/mental-health" },
+        { text: "Would you like to talk about something else?", path: null }
+      ],
+      followUpQuestions: [
+        "Are you in a safe location right now?",
+        "Is there someone nearby who can provide support?"
+      ],
+      isEmergencyResponse: true
+    };
+  }
+  
   // Get personality elements for the system prompt
   const personalityElements = getFundiPersonalityElements();
   
   // Create the system prompt
-  const systemPrompt = `
+  const baseSystemPrompt = `
     You are Fundi, a helpful AI assistant built into the Fundamenta application.
     
     ${personalityElements.tone ? `Tone: ${personalityElements.tone}` : ''}
     ${personalityElements.styleTraits ? `Style: ${personalityElements.styleTraits.join(', ')}` : ''}
     
-    When responding, provide a conversational and helpful response. Be friendly and engaging.
+    IMPORTANT GUIDELINES:
+    - You provide educational information, not professional advice
+    - Always make it clear when discussing health, finance, or legal topics that you're providing general information
+    - Use phrases like "many people find" instead of "you should"
+    - Encourage consultation with appropriate professionals for personalized advice
+    - Present options to consider rather than specific recommendations
+    - Remind users naturally (not as disclaimers) about the educational nature of your responses
     
     Your response should be in the following JSON format:
     {
       "response": "Your conversational response to the user",
-      "sentiment": "friendly|helpful|enthusiastic|neutral|apologetic",
+      "sentiment": "friendly|helpful|enthusiastic|neutral|apologetic|empathetic",
       "suggestions": [
         {
           "text": "A follow-up question or suggestion phrased as a question",
@@ -82,12 +112,27 @@ export async function generateFundiResponse(
     }
   `;
   
+  // Create a system message with the base prompt
+  const systemMessage: Message = {
+    role: 'system',
+    content: baseSystemPrompt
+  };
+  
+  // Prepare messages with the system prompt at the beginning 
+  const messagesWithSystem = [
+    systemMessage,
+    ...previousMessages.filter(msg => msg.role !== 'system')
+  ];
+  
+  // Enhance the system prompt with topic-specific disclaimers
+  const enhancedMessages = enhanceSystemPromptWithDisclaimers(messagesWithSystem, message);
+  
   try {
     // Use the resilient service to generate a response
     return await resilientAIService.generateResponse(
       message,
-      systemPrompt,
-      previousMessages
+      enhancedMessages[0].content, // Pass the enhanced system prompt
+      enhancedMessages.slice(1)    // Pass the rest of the messages
     );
   } catch (error) {
     console.error('Error in resilient Fundi response generation:', error);

@@ -36,7 +36,8 @@ export const AIResponseSchema = z.object({
     })
   ).optional(),
   followUpQuestions: z.array(z.string()).optional(),
-  personality: z.string().optional()
+  personality: z.string().optional(),
+  isEmergencyResponse: z.boolean().optional()
 });
 
 export type AIResponse = z.infer<typeof AIResponseSchema>;

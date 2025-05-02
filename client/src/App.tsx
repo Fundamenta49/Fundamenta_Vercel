@@ -70,6 +70,7 @@ import AdminPage from "@/pages/admin";
 import PersonalityTestPage from "@/pages/admin/personality-test";
 import ProtectedRoute from "@/components/protected-route";
 import { SkeletonDemoPage } from "@/components/SkeletonDemoPage";
+import DisclaimerDemo from "@/pages/disclaimer-demo";
 
 // Component to handle redirects from /wellness/* to /wellness?section=*
 function WellnessRedirect() {
@@ -276,6 +277,7 @@ function Router() {
             <Route path="/admin/personality-test" component={PersonalityTestPage} />
             <Route path="/design-showcase" component={DesignShowcasePage} />
             <Route path="/ui/skeletons" component={SkeletonDemoPage} />
+            <Route path="/ui/disclaimers" component={DisclaimerDemo} />
             <Route path="/learning">
               <ProtectedRoute>
                 <Learning />
