@@ -65,7 +65,7 @@ export default function Login() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100 text-center p-6">
       <div className="mb-10 flex flex-col items-center">
         <img 
-          src="/images/logos/fundamenta_logo_white_bg.png" 
+          src="/images/logos/fundamenta_logo_upscaled.png" 
           alt="Fundamenta Logo" 
           className="h-32 md:h-40 w-auto mb-4"
         />
