@@ -128,8 +128,8 @@ export class MemStorage implements IStorage {
     // Extract user data for consistent handling
     const { birthYear: rawBirthYear, ...userData } = insertUser;
     
-    // Process age-related fields with proper typing
-    const birthYear = rawBirthYear !== undefined ? rawBirthYear : null;
+    // Process age-related fields with proper typing - explicitly specify the type
+    const birthYear: number | null = rawBirthYear !== undefined ? rawBirthYear : null;
     let isMinor = false;
     let ageVerified = insertUser.ageVerified || false;
     
@@ -144,17 +144,19 @@ export class MemStorage implements IStorage {
       }
     }
     
-    // Create a properly typed user object
+    // Create a properly typed user object - ensure all fields match schema types
     const user: User = {
-      ...userData,
       id,
-      birthYear,
+      name: userData.name,
+      email: userData.email,
+      password: userData.password,
+      role: userData.role || 'user',
+      emailVerified: userData.emailVerified !== undefined ? userData.emailVerified : false,
+      privacyConsent: userData.privacyConsent !== undefined ? userData.privacyConsent : false,
+      birthYear, // Explicitly typed as number | null above
       ageVerified,
       isMinor,
-      hasParentalConsent: insertUser.hasParentalConsent || false,
-      role: userData.role || 'user',
-      emailVerified: userData.emailVerified || false,
-      privacyConsent: userData.privacyConsent || false,
+      hasParentalConsent: insertUser.hasParentalConsent !== undefined ? insertUser.hasParentalConsent : false,
       createdAt: now,
       updatedAt: now,
     };
@@ -167,12 +169,40 @@ export class MemStorage implements IStorage {
     const user = this.users.get(id);
     if (!user) return undefined;
     
+    // Extract birthYear for special handling
+    const { birthYear: rawBirthYear, ...otherUpdates } = updates;
+    
+    // Handle birthYear specially to ensure it's properly typed
+    let birthYearUpdate: number | null | undefined = undefined;
+    if (rawBirthYear !== undefined) {
+      birthYearUpdate = rawBirthYear !== null ? rawBirthYear : null;
+    }
+    
+    // Create properly typed update data
     const updatedUser: User = {
       ...user,
-      ...updates,
+      ...otherUpdates,
+      // Only update birthYear if it was included in updates
+      ...(birthYearUpdate !== undefined ? { birthYear: birthYearUpdate } : {}),
       id, // Ensure ID doesn't change
       updatedAt: new Date(),
     };
+    
+    // Update isMinor and ageVerified if birthYear was changed
+    if (birthYearUpdate !== undefined) {
+      if (birthYearUpdate !== null) {
+        const currentYear = new Date().getFullYear();
+        const age = currentYear - birthYearUpdate;
+        updatedUser.isMinor = age < 18;
+        
+        // Update ageVerified for minors (13+) and adults
+        if (age >= 18) {
+          updatedUser.ageVerified = true;
+        } else if (age >= 13) {
+          updatedUser.ageVerified = true;
+        }
+      }
+    }
     
     this.users.set(id, updatedUser);
     return updatedUser;
@@ -541,8 +571,8 @@ export class DatabaseStorage implements IStorage {
     // Extract user data
     const { birthYear: rawBirthYear, ...userData } = insertUser;
     
-    // Process age-related fields with proper typing
-    const birthYear = rawBirthYear !== undefined ? rawBirthYear : null;
+    // Process age-related fields with explicitly correct typing
+    const birthYear: number | null = rawBirthYear !== undefined ? rawBirthYear : null;
     let isMinor = false;
     let ageVerified = insertUser.ageVerified || false;
     
@@ -560,7 +590,7 @@ export class DatabaseStorage implements IStorage {
     // Create a properly typed user object for database insertion
     const userInsertData = {
       ...userData,
-      birthYear,
+      birthYear, // Explicitly typed as number | null above
       ageVerified,
       isMinor,
       hasParentalConsent: insertUser.hasParentalConsent || false,
@@ -591,7 +621,7 @@ export class DatabaseStorage implements IStorage {
     
     // Process birthYear and calculate age-related fields if present
     if (rawBirthYear !== undefined) {
-      const birthYear = rawBirthYear !== null ? rawBirthYear : null;
+      const birthYear: number | null = rawBirthYear !== null ? rawBirthYear : null;
       updateData.birthYear = birthYear;
       
       if (birthYear !== null) {
