@@ -1,6 +1,7 @@
 import Navigation from "@/components/navigation";
 import FloatingChat from "@/components/floating-chat";
 import { AIFallbackNotice } from "@/components/ai-fallback-notice";
+import UserProfileHeader from "@/components/user-profile-header";
 import { useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -35,6 +36,9 @@ export default function Layout({ children }: LayoutProps) {
       <div data-tour="main-nav">
         <Navigation />
       </div>
+      
+      {/* User profile header in top right corner */}
+      <UserProfileHeader />
       
       <main className={cn(
         "transition-all duration-300 bg-background min-h-screen",
