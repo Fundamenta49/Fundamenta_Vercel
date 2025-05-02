@@ -20,12 +20,20 @@ type AuthTokens = {
   expiresIn: number;
 };
 
+// User metadata type for registration
+type UserMetadata = {
+  birthYear?: number;
+  ageVerified?: boolean;
+  isMinor?: boolean;
+  hasParentalConsent?: boolean;
+};
+
 // Define auth context state
 type AuthContextType = {
   isAuthenticated: boolean;
   user: AuthUser | null;
   login: (email: string, password: string) => Promise<boolean>;
-  signUp: (name: string, email: string, password: string) => Promise<boolean>;
+  signUp: (name: string, email: string, password: string, metadata?: UserMetadata) => Promise<boolean>;
   logout: () => Promise<void>;
   refreshToken: () => Promise<boolean>;
   loading: boolean;
@@ -226,7 +234,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
   
   // Sign-up function
-  const signUp = async (name: string, email: string, password: string): Promise<boolean> => {
+  const signUp = async (name: string, email: string, password: string, metadata?: UserMetadata): Promise<boolean> => {
     setLoading(true);
     setError(null);
     
@@ -236,7 +244,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ 
+          name, 
+          email, 
+          password,
+          // Include age verification metadata from Phase 2
+          ...metadata
+        }),
         credentials: 'include',
       });
       

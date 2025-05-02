@@ -116,12 +116,26 @@ export default function AuthPage() {
     }
     
     // All validation passed, sign up the user
-    // For Phase 1, we'll just include the age verification flags with the existing sign-up process
-    // In Phase 2, we'll modify the schema to store the age and consent information
-    const success = await signUp(name, email, password);
+    // Phase 2: We now store age verification data in the database
+    const birthYearInt = parseInt(birthYear, 10);
+    // Use birthYearNum instead to avoid redeclaration
+    const birthYearNum = birthYearInt;
+    const userAge = new Date().getFullYear() - birthYearNum;
+    const userIsMinor = userAge < 18;
+    
+    // We will pass this metadata to the signup process
+    const userMetadata = {
+      birthYear: birthYearNum,
+      ageVerified: true,
+      isMinor: userIsMinor,
+      // For minors between 13-18, we will set hasParentalConsent to false
+      // until we implement the parental consent system in Phase 3
+      hasParentalConsent: !userIsMinor
+    };
+    
+    const success = await signUp(name, email, password, userMetadata);
     if (success) {
-      // We could store additional metadata about the user's age in localStorage
-      // until we implement the database schema for this in Phase 2
+      // We still keep localStorage for backward compatibility
       try {
         localStorage.setItem('userAgeVerified', 'true');
         localStorage.setItem('userBirthYear', birthYear);

@@ -514,21 +514,27 @@ export class DatabaseStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     // Calculate if user is a minor based on birthYear
     let isMinor = false;
-    if (insertUser.birthYear) {
+    let ageVerified = insertUser.ageVerified || false;
+    let birthYear = insertUser.birthYear || null;
+    
+    if (birthYear) {
       const currentYear = new Date().getFullYear();
-      const age = currentYear - insertUser.birthYear;
+      const age = currentYear - birthYear;
       isMinor = age < 18;
       
       // Set ageVerified if they've gone through verification
-      if (!insertUser.ageVerified && age >= 13) {
-        insertUser.ageVerified = true;
+      if (!ageVerified && age >= 13) {
+        ageVerified = true;
       }
     }
     
     // Set isMinor flag in the database
     const userWithMinorStatus = {
       ...insertUser,
-      isMinor: isMinor
+      birthYear,
+      ageVerified,
+      isMinor,
+      hasParentalConsent: insertUser.hasParentalConsent || false
     };
     
     const [user] = await db
@@ -540,25 +546,30 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
+    // Create a safe copy of updates for database operations
+    const safeUpdates: Record<string, any> = {
+      ...updates
+    };
+    
     // Check if updating birthYear, recalculate isMinor flag
     if (updates.birthYear) {
       const currentYear = new Date().getFullYear();
       const age = currentYear - updates.birthYear;
-      updates.isMinor = age < 18;
+      safeUpdates.isMinor = age < 18;
       
       // Update ageVerified if becoming an adult
       if (age >= 18) {
-        updates.ageVerified = true;
-        updates.isMinor = false;
+        safeUpdates.ageVerified = true;
+        safeUpdates.isMinor = false;
       } else if (age >= 13) {
-        updates.ageVerified = true;
+        safeUpdates.ageVerified = true;
       }
     }
     
     const [user] = await db
       .update(users)
       .set({
-        ...updates,
+        ...safeUpdates,
         updatedAt: new Date()
       })
       .where(eq(users.id, id))
