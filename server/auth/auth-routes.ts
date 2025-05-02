@@ -14,8 +14,9 @@ import {
 import { AuthenticatedRequest, authenticateJWT } from './auth-middleware';
 import { z } from 'zod';
 import { 
-  isOldEnoughForCoppa, 
-  processAgeFields 
+  verifyAge,
+  calculateAge,
+  MIN_AGE_WITHOUT_CONSENT
 } from '../utils/age-verification';
 
 // Create a router for auth endpoints
@@ -73,11 +74,15 @@ router.post('/register', async (req: Request, res: Response) => {
     // Age verification check
     if (birthYear) {
       try {
-        // Check if user meets minimum age requirements (COPPA compliance)
-        if (!isOldEnoughForCoppa(birthYear) && !hasParentalConsent) {
+        // Verify age using the enhanced age verification utility
+        const verificationResult = verifyAge(birthYear, !!hasParentalConsent);
+        
+        // If verification fails, return appropriate error
+        if (!verificationResult.isValid) {
           return res.status(403).json({ 
             error: 'Age restriction', 
-            message: 'Users under 13 years old require parental consent'
+            message: verificationResult.error?.message || 'Age verification failed',
+            code: verificationResult.error?.type
           });
         }
       } catch (error) {
@@ -89,7 +94,12 @@ router.post('/register', async (req: Request, res: Response) => {
     }
     
     // Process age verification data
-    const ageData = birthYear ? processAgeFields(birthYear, hasParentalConsent) : {};
+    const ageData = birthYear ? {
+      birthYear,
+      ageVerified: true,
+      isMinor: calculateAge(birthYear) < 18,
+      hasParentalConsent: !!hasParentalConsent
+    } : {};
 
     // Hash the password
     const hashedPassword = await hashPassword(password);

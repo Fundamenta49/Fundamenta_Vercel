@@ -1,134 +1,169 @@
 /**
  * Age Verification Utilities
  * 
- * This module provides utility functions for verifying and checking age-related
- * fields for users, ensuring COPPA compliance (13+ years) and tracking 
- * minor status (under 18).
+ * This module provides functions for verifying user age and determining
+ * appropriate restrictions or requirements based on age.
  */
 
-// Minimum age for COPPA compliance
-export const MINIMUM_AGE = 13;
+// Minimum age for account creation without parental consent (COPPA)
+export const MIN_AGE_WITHOUT_CONSENT = 13;
 
-// Age threshold for minor status
-export const ADULT_AGE = 18;
+// Age cutoff for considering a user a minor
+export const MINOR_AGE_CUTOFF = 18;
+
+// Types of age verification errors
+export enum AgeVerificationErrorType {
+  UNDER_MINIMUM_AGE = 'UNDER_MINIMUM_AGE',
+  MINOR_WITHOUT_CONSENT = 'MINOR_WITHOUT_CONSENT',
+  INVALID_BIRTH_YEAR = 'INVALID_BIRTH_YEAR',
+  FUTURE_BIRTH_YEAR = 'FUTURE_BIRTH_YEAR'
+}
+
+// Age verification error
+export interface AgeVerificationError {
+  type: AgeVerificationErrorType;
+  message: string;
+}
+
+// Age verification result
+export interface AgeVerificationResult {
+  isValid: boolean;
+  isMinor: boolean;
+  age: number;
+  error?: AgeVerificationError;
+  requiresParentalConsent: boolean;
+}
 
 /**
- * Calculates age from birth year
+ * Calculates current age based on birth year
  * 
- * @param birthYear The user's birth year
- * @returns The calculated age or null if birthYear is invalid
+ * @param birthYear The year of birth
+ * @returns Current age
  */
-export function calculateAge(birthYear: number | null | undefined): number | null {
-  if (birthYear === null || birthYear === undefined) {
-    return null;
-  }
-  
-  // Handle invalid birth years
-  if (birthYear <= 1900 || birthYear > new Date().getFullYear()) {
-    return null;
-  }
-  
+export function calculateAge(birthYear: number): number {
   const currentYear = new Date().getFullYear();
   return currentYear - birthYear;
 }
 
 /**
- * Checks if a user meets the minimum age requirement for COPPA compliance
+ * Verifies user's age based on birth year and parental consent
  * 
- * @param birthYear The user's birth year
- * @returns True if the user is at least MINIMUM_AGE, false otherwise
+ * @param birthYear User's birth year
+ * @param hasParentalConsent Boolean indicating if user has parental consent
+ * @returns Age verification result
  */
-export function isOldEnoughForCoppa(birthYear: number | null | undefined): boolean {
+export function verifyAge(birthYear: number, hasParentalConsent: boolean = false): AgeVerificationResult {
+  // Validate birth year
+  const currentYear = new Date().getFullYear();
+  
+  if (!birthYear || isNaN(birthYear) || birthYear < 1900) {
+    return {
+      isValid: false,
+      isMinor: false,
+      age: 0,
+      error: {
+        type: AgeVerificationErrorType.INVALID_BIRTH_YEAR,
+        message: 'Please provide a valid birth year.'
+      },
+      requiresParentalConsent: false
+    };
+  }
+  
+  if (birthYear > currentYear) {
+    return {
+      isValid: false,
+      isMinor: false,
+      age: 0,
+      error: {
+        type: AgeVerificationErrorType.FUTURE_BIRTH_YEAR,
+        message: 'Birth year cannot be in the future.'
+      },
+      requiresParentalConsent: false
+    };
+  }
+  
+  // Calculate age
   const age = calculateAge(birthYear);
   
-  if (age === null) {
-    return false;
+  // Check if user meets minimum age requirement (COPPA compliance)
+  if (age < MIN_AGE_WITHOUT_CONSENT) {
+    return {
+      isValid: false,
+      isMinor: true,
+      age,
+      error: {
+        type: AgeVerificationErrorType.UNDER_MINIMUM_AGE,
+        message: `Users must be at least ${MIN_AGE_WITHOUT_CONSENT} years old to create an account.`
+      },
+      requiresParentalConsent: true
+    };
   }
   
-  return age >= MINIMUM_AGE;
-}
-
-/**
- * Checks if a user is a minor (under 18)
- * 
- * @param birthYear The user's birth year
- * @returns True if the user is under 18, false otherwise or if age can't be determined
- */
-export function isMinor(birthYear: number | null | undefined): boolean {
-  const age = calculateAge(birthYear);
+  // Check if user is a minor and requires parental consent
+  const isMinor = age < MINOR_AGE_CUTOFF;
+  const requiresParentalConsent = isMinor;
   
-  if (age === null) {
-    return false; // Default to false if we can't determine
+  // If user is a minor and doesn't have parental consent
+  if (isMinor && requiresParentalConsent && !hasParentalConsent) {
+    return {
+      isValid: false,
+      isMinor,
+      age,
+      error: {
+        type: AgeVerificationErrorType.MINOR_WITHOUT_CONSENT,
+        message: 'Parental consent is required for users under 18 years old.'
+      },
+      requiresParentalConsent
+    };
   }
   
-  return age < ADULT_AGE;
-}
-
-/**
- * Determines if a user can access the platform based on age and consent
- * 
- * @param birthYear The user's birth year
- * @param hasParentalConsent Whether the user has parental consent (for minors)
- * @returns True if the user can access the platform, false otherwise
- */
-export function canAccessPlatform(
-  birthYear: number | null | undefined, 
-  hasParentalConsent: boolean | null | undefined
-): boolean {
-  const age = calculateAge(birthYear);
-  
-  // If age can't be determined, block access
-  if (age === null) {
-    return false;
-  }
-  
-  // Always allow adults
-  if (age >= ADULT_AGE) {
-    return true;
-  }
-  
-  // For 13-17, require parental consent
-  if (age >= MINIMUM_AGE && age < ADULT_AGE) {
-    return hasParentalConsent === true;
-  }
-  
-  // Block anyone under minimum age
-  return false;
-}
-
-/**
- * Checks if a user's age has been verified (has valid birthYear)
- * 
- * @param birthYear The user's birth year
- * @returns True if the user's age has been verified, false otherwise
- */
-export function isAgeVerified(birthYear: number | null | undefined): boolean {
-  return calculateAge(birthYear) !== null;
-}
-
-/**
- * Processes all age-related fields based on birth year
- * 
- * @param birthYear The user's birth year
- * @param hasParentalConsent Whether the user has parental consent
- * @returns Object with calculated age-related fields
- */
-export function processAgeFields(
-  birthYear: number | null | undefined,
-  hasParentalConsent: boolean | null | undefined = false
-): {
-  birthYear: number | null;
-  ageVerified: boolean;
-  isMinor: boolean;
-  hasParentalConsent: boolean;
-} {
-  const calculatedAge = calculateAge(birthYear);
-  const verifiedBirthYear = calculatedAge !== null ? birthYear as number : null;
-  
+  // User meets age requirements
   return {
-    birthYear: verifiedBirthYear,
-    ageVerified: calculatedAge !== null,
-    isMinor: calculatedAge !== null ? calculatedAge < ADULT_AGE : false,
-    hasParentalConsent: hasParentalConsent === true
+    isValid: true,
+    isMinor,
+    age,
+    requiresParentalConsent
   };
+}
+
+/**
+ * Validates birth year format
+ * 
+ * @param birthYear Birth year to validate
+ * @returns Boolean indicating if format is valid
+ */
+export function isValidBirthYearFormat(birthYear: number | string): boolean {
+  const birthYearNum = Number(birthYear);
+  
+  // Check if it's a number and has 4 digits
+  if (isNaN(birthYearNum) || birthYearNum.toString().length !== 4) {
+    return false;
+  }
+  
+  const currentYear = new Date().getFullYear();
+  
+  // Check if birth year is in a reasonable range
+  return birthYearNum >= 1900 && birthYearNum <= currentYear;
+}
+
+/**
+ * Gets appropriate content restriction level based on user's age
+ * 
+ * @param age User's age
+ * @returns Content restriction level (none, mild, moderate, strict)
+ */
+export function getContentRestrictionLevel(age: number): 'none' | 'mild' | 'moderate' | 'strict' {
+  if (age >= 18) {
+    return 'none';
+  }
+  
+  if (age >= 16) {
+    return 'mild';
+  }
+  
+  if (age >= 13) {
+    return 'moderate';
+  }
+  
+  return 'strict';
 }

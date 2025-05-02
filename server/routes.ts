@@ -43,6 +43,7 @@ import analyticsRoutes from './routes/analytics';
 import authRoutes from './auth/auth-routes';
 import registerMentorshipRoutes from './routes/mentorship-routes';
 import { spoonacularRouter } from './routes/spoonacular';
+import testRoutes from './routes/test-routes';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { getOccupationInterviewQuestions } from './career-one-stop-service';
 import { userGuideService } from './services/user-guide-service';
@@ -146,6 +147,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Mount mentorship routes (for parent/teacher portal)
   app.use('/api/mentorship', registerMentorshipRoutes);
+  
+  // Mount test routes for feature testing
+  app.use('/api/test', testRoutes);
   app.post("/api/chat", async (req, res) => {
     try {
       // Enhanced debug logging to understand the incoming request better

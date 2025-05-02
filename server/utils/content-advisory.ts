@@ -1,10 +1,11 @@
 /**
  * Content Advisory Utilities
  * 
- * This module provides utilities for detecting and handling sensitive content
- * with appropriate warnings and disclaimers.
+ * This module provides functions for detecting content that requires
+ * advisory notices and generating appropriate disclaimers.
  */
 
+// Types of content that may require advisories
 export type ContentCategory = 
   | 'Mental Health' 
   | 'Financial Advice' 
@@ -13,181 +14,236 @@ export type ContentCategory =
   | 'Exercise Instructions'
   | 'General Information';
 
+// Severity levels for content advisories
+export type ContentAdvisorySeverity = 'low' | 'medium' | 'high';
+
+// Content advisory information
 export interface ContentAdvisory {
   category: ContentCategory;
-  severity: 'low' | 'medium' | 'high';
+  severity: ContentAdvisorySeverity;
   disclaimer: string;
-  readMore?: string; // Optional URL or resource for further information
+  readMore?: string;
+}
+
+// Keyword patterns for content categories
+const contentPatterns = {
+  mentalHealth: [
+    /\b(?:depress(?:ed|ion)|anxiety|suicid(?:e|al)|mental health|panic attack|bipolar|trauma|ptsd|schizo|eating disorder)\b/i,
+    /\b(?:therapy|therapist|counseling|psycholog(?:y|ist)|psychiatr(?:y|ist)|mental illness)\b/i,
+    /\b(?:stress|burnout|self-harm|addiction|substance abuse|crisis|disorder)\b/i
+  ],
+  financialAdvice: [
+    /\b(?:invest(?:ing|ment)|stock market|mortgage|loan|debt|credit|retirement|tax|insurance)\b/i,
+    /\b(?:financial|money|saving|budget|bankruptcy|foreclosure|wealth|income|expense)\b/i,
+    /\b(?:portfolio|equity|assets|liabilities|interest rate|APR|ROI|capital|fund)\b/i
+  ],
+  medicalInformation: [
+    /\b(?:diagnos(?:is|e)|symptom|treatment|medication|disease|illness|condition|surgery|pain)\b/i,
+    /\b(?:doctor|hospital|clinic|medical|health|patient|prescription|drug|medicine)\b/i,
+    /\b(?:cancer|diabetes|heart|cholesterol|blood pressure|stroke|allergies|infection|chronic)\b/i
+  ],
+  nutritionGuidance: [
+    /\b(?:diet|nutrition|calorie|supplement|vitamin|protein|fat|carb|weight loss)\b/i,
+    /\b(?:food|eating|meal|nutrient|metabolism|digestion|keto|paleo|vegan|vegetarian)\b/i,
+    /\b(?:fasting|cleanse|detox|macros|micronutrient|deficiency|obesity|underweight)\b/i
+  ],
+  exerciseInstructions: [
+    /\b(?:workout|exercise|training|fitness|strength|cardio|stretching|yoga|pilates)\b/i,
+    /\b(?:lifting|weights|reps|sets|form|posture|stance|technique|intensity|exertion)\b/i,
+    /\b(?:injury|strain|sprain|muscle|joint|pain|recovery|rehabilitation|mobility)\b/i
+  ]
+};
+
+/**
+ * Analyzes text to determine if it contains content requiring advisory
+ * 
+ * @param text Content to analyze
+ * @returns Boolean indicating if content needs advisory
+ */
+export function needsContentAdvisory(text: string): boolean {
+  // Check for mental health content
+  if (contentPatterns.mentalHealth.some(pattern => pattern.test(text))) {
+    return true;
+  }
+  
+  // Check for financial advice content
+  if (contentPatterns.financialAdvice.some(pattern => pattern.test(text))) {
+    return true;
+  }
+  
+  // Check for medical information content
+  if (contentPatterns.medicalInformation.some(pattern => pattern.test(text))) {
+    return true;
+  }
+  
+  // Check for nutrition guidance content
+  if (contentPatterns.nutritionGuidance.some(pattern => pattern.test(text))) {
+    return true;
+  }
+  
+  // Check for exercise instructions content
+  if (contentPatterns.exerciseInstructions.some(pattern => pattern.test(text))) {
+    return true;
+  }
+  
+  return false;
 }
 
 /**
- * Categorizes content based on keywords and patterns
+ * Determines the most likely category for content
  * 
- * @param content The content to analyze
- * @returns The detected content category
+ * @param text Content to categorize
+ * @returns Content category
  */
-export function categorizeContent(content: string): ContentCategory {
-  const lowerContent = content.toLowerCase();
+function categorizeContent(text: string): ContentCategory {
+  const matchCounts = {
+    mentalHealth: contentPatterns.mentalHealth.filter(pattern => pattern.test(text)).length,
+    financialAdvice: contentPatterns.financialAdvice.filter(pattern => pattern.test(text)).length,
+    medicalInformation: contentPatterns.medicalInformation.filter(pattern => pattern.test(text)).length,
+    nutritionGuidance: contentPatterns.nutritionGuidance.filter(pattern => pattern.test(text)).length,
+    exerciseInstructions: contentPatterns.exerciseInstructions.filter(pattern => pattern.test(text)).length
+  };
   
-  // Mental Health patterns
-  if (
-    lowerContent.includes('mental health') || 
-    lowerContent.includes('depression') || 
-    lowerContent.includes('anxiety') || 
-    lowerContent.includes('therapy') ||
-    lowerContent.includes('stress') ||
-    lowerContent.includes('emotional')
-  ) {
-    return 'Mental Health';
+  // Find category with highest match count
+  const maxCategory = Object.entries(matchCounts).reduce(
+    (max, [category, count]) => count > max.count ? { category, count } : max,
+    { category: 'General Information', count: 0 }
+  );
+  
+  // Map internal category name to public-facing category
+  switch (maxCategory.category) {
+    case 'mentalHealth': return 'Mental Health';
+    case 'financialAdvice': return 'Financial Advice';
+    case 'medicalInformation': return 'Medical Information';
+    case 'nutritionGuidance': return 'Nutrition Guidance';
+    case 'exerciseInstructions': return 'Exercise Instructions';
+    default: return 'General Information';
   }
-  
-  // Financial Advice patterns
-  if (
-    lowerContent.includes('investment') || 
-    lowerContent.includes('finance') || 
-    lowerContent.includes('money') || 
-    lowerContent.includes('budget') ||
-    lowerContent.includes('save') ||
-    lowerContent.includes('loan') ||
-    lowerContent.includes('mortgage')
-  ) {
-    return 'Financial Advice';
-  }
-  
-  // Medical Information patterns
-  if (
-    lowerContent.includes('medical') || 
-    lowerContent.includes('health') || 
-    lowerContent.includes('doctor') || 
-    lowerContent.includes('symptom') ||
-    lowerContent.includes('treatment') ||
-    lowerContent.includes('diagnosis') ||
-    lowerContent.includes('medication')
-  ) {
-    return 'Medical Information';
-  }
-  
-  // Nutrition Guidance patterns
-  if (
-    lowerContent.includes('nutrition') || 
-    lowerContent.includes('diet') || 
-    lowerContent.includes('food') || 
-    lowerContent.includes('calorie') ||
-    lowerContent.includes('meal plan') ||
-    lowerContent.includes('weight loss') ||
-    lowerContent.includes('vitamin')
-  ) {
-    return 'Nutrition Guidance';
-  }
-  
-  // Exercise Instructions patterns
-  if (
-    lowerContent.includes('exercise') || 
-    lowerContent.includes('workout') || 
-    lowerContent.includes('fitness') || 
-    lowerContent.includes('training') ||
-    lowerContent.includes('routine') ||
-    lowerContent.includes('stretch') ||
-    lowerContent.includes('cardio')
-  ) {
-    return 'Exercise Instructions';
-  }
-  
-  // Default category
-  return 'General Information';
 }
 
 /**
- * Determines the severity level of advisory needed
+ * Determines severity level for content based on its category and patterns
  * 
- * @param content The content to analyze
- * @param category The content category
- * @returns The severity level
+ * @param text Content to evaluate
+ * @param category Content category
+ * @returns Severity level
  */
-export function determineSeverity(
-  content: string, 
-  category: ContentCategory
-): 'low' | 'medium' | 'high' {
-  const lowerContent = content.toLowerCase();
-  
+function determineSeverity(text: string, category: ContentCategory): ContentAdvisorySeverity {
   // High severity patterns by category
-  const highSeverityPatterns: Record<ContentCategory, string[]> = {
-    'Mental Health': ['suicide', 'self-harm', 'trauma', 'abuse', 'crisis', 'emergency'],
-    'Financial Advice': ['guaranteed', 'risk-free', 'quick money', 'investment opportunity', 'limited time', 'urgent'],
-    'Medical Information': ['cancer', 'heart attack', 'stroke', 'emergency', 'serious', 'life-threatening'],
-    'Nutrition Guidance': ['extreme', 'rapid weight loss', 'miracle', 'cure', 'guaranteed', 'detox'],
-    'Exercise Instructions': ['extreme', 'intense', 'advanced', 'no pain no gain', 'push through pain'],
-    'General Information': []
+  const highSeverityPatterns: Record<ContentCategory, RegExp[]> = {
+    'Mental Health': [
+      /\b(?:suicid(?:e|al)|self-harm|crisis|trauma|abuse|assault)\b/i,
+    ],
+    'Financial Advice': [
+      /\b(?:bankruptcy|foreclosure|debt|crisis|scam|fraud)\b/i,
+    ],
+    'Medical Information': [
+      /\b(?:emergency|severe|chronic|terminal|fatal|life-threatening)\b/i,
+    ],
+    'Nutrition Guidance': [
+      /\b(?:disorder|anorexia|bulimia|starvation|malnutrition|extreme)\b/i,
+    ],
+    'Exercise Instructions': [
+      /\b(?:injury|dangerous|extreme|excessive|pain|risk)\b/i,
+    ],
+    'General Information': [
+      /\b(?:warning|caution|danger|risk|harmful)\b/i,
+    ]
   };
   
   // Medium severity patterns by category
-  const mediumSeverityPatterns: Record<ContentCategory, string[]> = {
-    'Mental Health': ['depression', 'anxiety', 'panic', 'disorder', 'therapy'],
-    'Financial Advice': ['investment', 'stock', 'retirement', 'tax', 'loan', 'debt'],
-    'Medical Information': ['symptom', 'condition', 'diagnosis', 'treatment', 'medication'],
-    'Nutrition Guidance': ['diet', 'weight loss', 'calorie', 'restriction', 'supplement'],
-    'Exercise Instructions': ['workout', 'routine', 'training', 'program', 'fitness'],
-    'General Information': []
+  const mediumSeverityPatterns: Record<ContentCategory, RegExp[]> = {
+    'Mental Health': [
+      /\b(?:depress(?:ed|ion)|anxiety|panic|bipolar|disorder)\b/i,
+    ],
+    'Financial Advice': [
+      /\b(?:invest(?:ing|ment)|loan|credit|mortgage|tax)\b/i,
+    ],
+    'Medical Information': [
+      /\b(?:condition|disease|symptom|treatment|medication)\b/i,
+    ],
+    'Nutrition Guidance': [
+      /\b(?:diet|weight loss|supplement|restriction|fasting|cleanse)\b/i,
+    ],
+    'Exercise Instructions': [
+      /\b(?:high intensity|challenging|advanced|strenuous)\b/i,
+    ],
+    'General Information': [
+      /\b(?:advisory|notice|attention|important)\b/i,
+    ]
   };
   
-  // Check for high severity patterns
-  if (highSeverityPatterns[category].some(pattern => lowerContent.includes(pattern))) {
+  // Check for high severity patterns in content
+  if (highSeverityPatterns[category]?.some((pattern: RegExp) => pattern.test(text))) {
     return 'high';
   }
   
-  // Check for medium severity patterns
-  if (mediumSeverityPatterns[category].some(pattern => lowerContent.includes(pattern))) {
+  // Check for medium severity patterns in content
+  if (mediumSeverityPatterns[category]?.some((pattern: RegExp) => pattern.test(text))) {
     return 'medium';
   }
   
-  // Default severity
+  // Default to low severity
   return 'low';
 }
 
 /**
- * Generates an appropriate disclaimer for the content
+ * Creates appropriate disclaimer text based on category and severity
  * 
- * @param category The content category
- * @param severity The severity level
- * @returns The disclaimer text
+ * @param category Content category
+ * @param severity Content severity
+ * @returns Disclaimer text
  */
-export function generateDisclaimer(
-  category: ContentCategory,
-  severity: 'low' | 'medium' | 'high'
-): string {
-  // Base disclaimers by category
-  const baseDisclaimers: Record<ContentCategory, string> = {
-    'Mental Health': 'This content includes mental health information which is educational in nature and not a substitute for professional advice, diagnosis, or treatment.',
-    'Financial Advice': 'This financial information is for educational purposes only and should not be considered personalized financial advice.',
-    'Medical Information': 'This content contains general medical information and is not a substitute for professional medical advice, diagnosis, or treatment.',
-    'Nutrition Guidance': 'This nutritional information is general in nature and not tailored to individual health needs or conditions.',
-    'Exercise Instructions': 'Exercise at your own risk. Consult with a healthcare provider before beginning any new exercise program.',
-    'General Information': 'This information is provided for educational purposes only.'
+function createDisclaimerText(category: ContentCategory, severity: ContentAdvisorySeverity): string {
+  const disclaimers = {
+    'Mental Health': {
+      high: "This content discusses sensitive mental health topics that may be distressing. If you're experiencing a crisis, please contact a mental health professional or crisis helpline immediately.",
+      medium: "This content contains information about mental health. It's intended for educational purposes only and should not replace professional advice or treatment.",
+      low: "This content mentions mental health topics. For personalized advice, please consult with a qualified mental health professional."
+    },
+    'Financial Advice': {
+      high: "This content discusses significant financial matters that could impact your economic wellbeing. All financial decisions should be made after consulting with a qualified financial advisor.",
+      medium: "This content contains financial information intended for educational purposes only. Individual financial situations vary, and you should consult a professional before making decisions.",
+      low: "This content mentions financial topics. Remember that all financial advice should be considered in the context of your personal financial situation."
+    },
+    'Medical Information': {
+      high: "This content discusses medical conditions or treatments that require professional attention. If you're experiencing symptoms, please consult a healthcare provider immediately.",
+      medium: "This content contains medical information intended for educational purposes only. It should not be used for self-diagnosis or as a substitute for professional medical advice.",
+      low: "This content mentions health-related topics. For personalized medical advice, please consult with a qualified healthcare provider."
+    },
+    'Nutrition Guidance': {
+      high: "This content discusses nutrition approaches that may not be suitable for everyone. Consult with a healthcare provider before making significant changes to your diet, especially if you have health conditions.",
+      medium: "This content contains nutritional information intended for educational purposes. Dietary needs vary by individual, and you should consult a professional before making significant changes.",
+      low: "This content mentions nutrition topics. Remember that nutritional needs vary by individual and life stage."
+    },
+    'Exercise Instructions': {
+      high: "This content includes exercise instructions that may pose risk of injury if performed incorrectly or by individuals with certain health conditions. Consult a healthcare provider before beginning any exercise program.",
+      medium: "This content contains exercise information intended for educational purposes. Not all exercises are suitable for everyone, and you should ensure proper form to avoid injury.",
+      low: "This content mentions exercise topics. Remember to start gradually and listen to your body's signals when exercising."
+    },
+    'General Information': {
+      high: "This content contains information that may require professional guidance to interpret or apply correctly.",
+      medium: "This content is provided for educational purposes only and may not apply to all situations.",
+      low: "This content is provided for general informational purposes."
+    }
   };
   
-  // Additional disclaimer text by severity
-  const severityAdditions: Record<'low' | 'medium' | 'high', string> = {
-    'low': '',
-    'medium': ' Always consult with appropriate professionals for advice specific to your situation.',
-    'high': ' Please consult with appropriate professionals immediately for advice specific to your situation. If you are experiencing an emergency, contact emergency services.'
-  };
-  
-  return baseDisclaimers[category] + severityAdditions[severity];
+  return disclaimers[category][severity] || "This content is provided for informational purposes only.";
 }
 
 /**
- * Generates a "read more" resource link for additional information
+ * Get appropriate resource link based on content category
  * 
- * @param category The content category
- * @returns URL or resource for further information
+ * @param category Content category
+ * @returns Resource link path
  */
-export function generateReadMoreLink(category: ContentCategory): string | undefined {
+function getResourceLink(category: ContentCategory): string | undefined {
   const resourceLinks: Record<ContentCategory, string | undefined> = {
     'Mental Health': '/resources/mental-health',
-    'Financial Advice': '/resources/financial',
-    'Medical Information': '/resources/medical',
+    'Financial Advice': '/resources/financial-guidance',
+    'Medical Information': '/resources/health-resources',
     'Nutrition Guidance': '/resources/nutrition',
-    'Exercise Instructions': '/resources/fitness',
+    'Exercise Instructions': '/resources/exercise-safety',
     'General Information': undefined
   };
   
@@ -195,16 +251,23 @@ export function generateReadMoreLink(category: ContentCategory): string | undefi
 }
 
 /**
- * Creates a complete content advisory based on the content
+ * Creates a content advisory based on text analysis
  * 
- * @param content The content to analyze
- * @returns The complete content advisory
+ * @param text Content to analyze
+ * @returns Content advisory information
  */
-export function createContentAdvisory(content: string): ContentAdvisory {
-  const category = categorizeContent(content);
-  const severity = determineSeverity(content, category);
-  const disclaimer = generateDisclaimer(category, severity);
-  const readMore = generateReadMoreLink(category);
+export function createContentAdvisory(text: string): ContentAdvisory {
+  // Determine content category
+  const category = categorizeContent(text);
+  
+  // Determine severity level
+  const severity = determineSeverity(text, category);
+  
+  // Create appropriate disclaimer
+  const disclaimer = createDisclaimerText(category, severity);
+  
+  // Get resource link if available
+  const readMore = getResourceLink(category);
   
   return {
     category,
@@ -212,22 +275,4 @@ export function createContentAdvisory(content: string): ContentAdvisory {
     disclaimer,
     readMore
   };
-}
-
-/**
- * Checks if content requires an advisory
- * 
- * @param content The content to analyze
- * @returns True if an advisory is needed, false otherwise
- */
-export function needsContentAdvisory(content: string): boolean {
-  const category = categorizeContent(content);
-  const severity = determineSeverity(content, category);
-  
-  // General information with low severity doesn't need an advisory
-  if (category === 'General Information' && severity === 'low') {
-    return false;
-  }
-  
-  return true;
 }
