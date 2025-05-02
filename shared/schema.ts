@@ -79,6 +79,15 @@ export const users = pgTable("users", {
   ageVerified: boolean("age_verified").default(false),
   isMinor: boolean("is_minor").default(false), // Will be true for users under 18
   hasParentalConsent: boolean("has_parental_consent").default(false),
+  // Terms of Service acceptance
+  tosAccepted: boolean("tos_accepted").default(false),
+  tosVersion: integer("tos_version"),
+  tosAcceptedAt: timestamp("tos_accepted_at"),
+  // GDPR Data tracking
+  dataExportRequested: boolean("data_export_requested").default(false),
+  dataExportRequestedAt: timestamp("data_export_requested_at"),
+  accountDeletionRequested: boolean("account_deletion_requested").default(false),
+  accountDeletionRequestedAt: timestamp("account_deletion_requested_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -208,6 +217,41 @@ export const sessions = pgTable("sessions", {
   expire: timestamp("expire").notNull()
 });
 
+// Terms of Service Versions Table
+export const termsOfServiceVersions = pgTable("terms_of_service_versions", {
+  id: serial("id").primaryKey(),
+  version: integer("version").notNull().unique(),
+  content: text("content").notNull(),
+  effectiveDate: timestamp("effective_date").notNull().defaultNow(),
+  isCurrent: boolean("is_current").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+// Data Export Requests Table
+export const dataExportRequests = pgTable("data_export_requests", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  status: text("status").notNull().default("pending"), // "pending", "processing", "completed", "failed"
+  format: text("format").notNull().default("json"), // "json", "csv", etc.
+  requestedAt: timestamp("requested_at").notNull().defaultNow(),
+  completedAt: timestamp("completed_at"),
+  downloadUrl: text("download_url"),
+  expiresAt: timestamp("expires_at"),
+  metaData: jsonb("meta_data").default({})
+});
+
+// Account Deletion Requests Table
+export const accountDeletionRequests = pgTable("account_deletion_requests", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  status: text("status").notNull().default("pending"), // "pending", "processing", "completed"
+  reason: text("reason"),
+  requestedAt: timestamp("requested_at").notNull().defaultNow(),
+  scheduledFor: timestamp("scheduled_for"), // When the account will be deleted (grace period)
+  completedAt: timestamp("completed_at"),
+  metaData: jsonb("meta_data").default({})
+});
+
 // Define Zod Schemas for validation
 export const insertUserSchema = createInsertSchema(users)
   .omit({ id: true, createdAt: true, updatedAt: true });
@@ -243,6 +287,16 @@ export const insertProgressNoteSchema = createInsertSchema(progressNotes)
   .omit({ id: true, createdAt: true, updatedAt: true });
 
 export const insertSessionSchema = createInsertSchema(sessions);
+
+// Legal compliance schemas
+export const insertTermsOfServiceVersionSchema = createInsertSchema(termsOfServiceVersions)
+  .omit({ id: true, createdAt: true });
+
+export const insertDataExportRequestSchema = createInsertSchema(dataExportRequests)
+  .omit({ id: true, requestedAt: true, completedAt: true, downloadUrl: true, expiresAt: true });
+
+export const insertAccountDeletionRequestSchema = createInsertSchema(accountDeletionRequests)
+  .omit({ id: true, requestedAt: true, completedAt: true });
 
 // Define TypeScript types
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -294,3 +348,13 @@ export type InsertSession = z.infer<typeof insertSessionSchema>;
 export type Session = typeof sessions.$inferSelect;
 export type InsertSessionType = InsertSession; // Backward compatibility
 export type SelectSessionType = Session; // Backward compatibility
+
+// Legal compliance types
+export type InsertTermsOfServiceVersion = z.infer<typeof insertTermsOfServiceVersionSchema>;
+export type TermsOfServiceVersion = typeof termsOfServiceVersions.$inferSelect;
+
+export type InsertDataExportRequest = z.infer<typeof insertDataExportRequestSchema>;
+export type DataExportRequest = typeof dataExportRequests.$inferSelect;
+
+export type InsertAccountDeletionRequest = z.infer<typeof insertAccountDeletionRequestSchema>;
+export type AccountDeletionRequest = typeof accountDeletionRequests.$inferSelect;
