@@ -5,10 +5,14 @@ import {
   CustomPathway, InsertCustomPathway,
   CustomPathwayModule, InsertCustomPathwayModule,
   AssignedPathway, InsertAssignedPathway,
-  ProgressNote, InsertProgressNote
+  ProgressNote, InsertProgressNote,
+  users
 } from "@shared/schema";
+import { db, pool } from "./db";
+import { eq, sql } from "drizzle-orm";
 import { ChatMessage } from "@shared/types";
 import session from "express-session";
+import connectPg from "connect-pg-simple";
 
 export interface IStorage {
   // User management
@@ -479,4 +483,246 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database storage implementation
+const PostgresSessionStore = connectPg(session);
+
+export class DatabaseStorage implements IStorage {
+  sessionStore: session.Store;
+  
+  constructor() {
+    this.sessionStore = new PostgresSessionStore({ 
+      pool, 
+      createTableIfMissing: true 
+    });
+  }
+
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.name, username));
+    return user || undefined;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    // Calculate if user is a minor based on birthYear
+    let isMinor = false;
+    if (insertUser.birthYear) {
+      const currentYear = new Date().getFullYear();
+      const age = currentYear - insertUser.birthYear;
+      isMinor = age < 18;
+      
+      // Set ageVerified if they've gone through verification
+      if (!insertUser.ageVerified && age >= 13) {
+        insertUser.ageVerified = true;
+      }
+    }
+    
+    // Set isMinor flag in the database
+    const userWithMinorStatus = {
+      ...insertUser,
+      isMinor: isMinor
+    };
+    
+    const [user] = await db
+      .insert(users)
+      .values(userWithMinorStatus)
+      .returning();
+      
+    return user;
+  }
+
+  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
+    // Check if updating birthYear, recalculate isMinor flag
+    if (updates.birthYear) {
+      const currentYear = new Date().getFullYear();
+      const age = currentYear - updates.birthYear;
+      updates.isMinor = age < 18;
+      
+      // Update ageVerified if becoming an adult
+      if (age >= 18) {
+        updates.ageVerified = true;
+        updates.isMinor = false;
+      } else if (age >= 13) {
+        updates.ageVerified = true;
+      }
+    }
+    
+    const [user] = await db
+      .update(users)
+      .set({
+        ...updates,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, id))
+      .returning();
+      
+    return user || undefined;
+  }
+
+  // Other methods from MemStorage - add database implementations as needed
+
+  async getConversations(userId: number): Promise<Conversation[]> {
+    // Implementation needed
+    return [];
+  }
+
+  async createConversation(conversation: InsertConversation): Promise<Conversation> {
+    // Implementation needed
+    throw new Error("Method not implemented");
+  }
+
+  async addMessage(conversationId: number, message: ChatMessage): Promise<void> {
+    // Implementation needed
+  }
+
+  // Parent/Teacher Portal - Connections
+  async createUserConnection(connection: InsertUserConnection): Promise<UserConnection> {
+    // Implementation needed
+    throw new Error("Method not implemented");
+  }
+
+  async getUserConnectionByCode(code: string): Promise<UserConnection | undefined> {
+    // Implementation needed
+    return undefined;
+  }
+
+  async getUserConnections(userId: number, role: 'mentor' | 'student'): Promise<UserConnection[]> {
+    // Implementation needed
+    return [];
+  }
+
+  async updateUserConnection(id: number, updates: Partial<InsertUserConnection>): Promise<UserConnection | undefined> {
+    // Implementation needed
+    return undefined;
+  }
+
+  async deleteUserConnection(id: number): Promise<boolean> {
+    // Implementation needed
+    return false;
+  }
+
+  // Alias methods for compatibility
+  async createConnection(connection: InsertUserConnection): Promise<UserConnection> {
+    return this.createUserConnection(connection);
+  }
+
+  async getConnectionByCode(code: string): Promise<UserConnection | undefined> {
+    return this.getUserConnectionByCode(code);
+  }
+
+  async getConnectionsByMentorId(mentorId: number): Promise<UserConnection[]> {
+    return this.getUserConnections(mentorId, 'mentor');
+  }
+
+  async getConnectionsByStudentId(studentId: number): Promise<UserConnection[]> {
+    return this.getUserConnections(studentId, 'student');
+  }
+
+  async getPendingConnectionsByStudentId(studentId: number): Promise<UserConnection[]> {
+    // Implementation needed
+    return [];
+  }
+
+  async getConnection(id: number): Promise<UserConnection | undefined> {
+    // Implementation needed
+    return undefined;
+  }
+
+  async updateConnection(id: number, updates: Partial<InsertUserConnection>): Promise<UserConnection | undefined> {
+    return this.updateUserConnection(id, updates);
+  }
+
+  async deleteConnection(id: number): Promise<boolean> {
+    return this.deleteUserConnection(id);
+  }
+
+  // Parent/Teacher Portal - Custom Pathways
+  async createCustomPathway(pathway: InsertCustomPathway): Promise<CustomPathway> {
+    // Implementation needed
+    throw new Error("Method not implemented");
+  }
+
+  async getCustomPathway(id: number): Promise<CustomPathway | undefined> {
+    // Implementation needed
+    return undefined;
+  }
+
+  async getCustomPathwaysByCreator(creatorId: number): Promise<CustomPathway[]> {
+    // Implementation needed
+    return [];
+  }
+
+  async updateCustomPathway(id: number, updates: Partial<InsertCustomPathway>): Promise<CustomPathway | undefined> {
+    // Implementation needed
+    return undefined;
+  }
+
+  async deleteCustomPathway(id: number): Promise<boolean> {
+    // Implementation needed
+    return false;
+  }
+
+  // Parent/Teacher Portal - Custom Pathway Modules
+  async createCustomPathwayModule(module: InsertCustomPathwayModule): Promise<CustomPathwayModule> {
+    // Implementation needed
+    throw new Error("Method not implemented");
+  }
+
+  async getCustomPathwayModules(pathwayId: number): Promise<CustomPathwayModule[]> {
+    // Implementation needed
+    return [];
+  }
+
+  async updateCustomPathwayModule(id: number, updates: Partial<InsertCustomPathwayModule>): Promise<CustomPathwayModule | undefined> {
+    // Implementation needed
+    return undefined;
+  }
+
+  async deleteCustomPathwayModule(id: number): Promise<boolean> {
+    // Implementation needed
+    return false;
+  }
+
+  // Parent/Teacher Portal - Assigned Pathways
+  async assignPathway(assignment: InsertAssignedPathway): Promise<AssignedPathway> {
+    // Implementation needed
+    throw new Error("Method not implemented");
+  }
+
+  async getAssignedPathways(studentId: number): Promise<AssignedPathway[]> {
+    // Implementation needed
+    return [];
+  }
+
+  async getAssignedPathwaysByAssigner(assignerId: number): Promise<AssignedPathway[]> {
+    // Implementation needed
+    return [];
+  }
+
+  async updateAssignedPathwayStatus(id: number, status: string, progress?: number): Promise<AssignedPathway | undefined> {
+    // Implementation needed
+    return undefined;
+  }
+
+  // Parent/Teacher Portal - Progress Notes
+  async addProgressNote(note: InsertProgressNote): Promise<ProgressNote> {
+    // Implementation needed
+    throw new Error("Method not implemented");
+  }
+
+  async getProgressNotes(studentId: number, pathwayId?: number): Promise<ProgressNote[]> {
+    // Implementation needed
+    return [];
+  }
+}
+
+// Use DatabaseStorage instead of MemStorage
+export const storage = new DatabaseStorage();

@@ -74,6 +74,11 @@ export const users = pgTable("users", {
   role: text("role").default("user"),
   emailVerified: boolean("email_verified").default(false),
   privacyConsent: boolean("privacy_consent").default(false),
+  // Age verification fields
+  birthYear: integer("birth_year"),
+  ageVerified: boolean("age_verified").default(false),
+  isMinor: boolean("is_minor").default(false), // Will be true for users under 18
+  hasParentalConsent: boolean("has_parental_consent").default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
