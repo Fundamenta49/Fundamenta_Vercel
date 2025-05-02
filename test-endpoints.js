@@ -177,9 +177,13 @@ async function testAgeVerification() {
     console.log('✗ Registration successful but should have failed');
     
   } catch (error) {
-    if (error.response && error.response.status === 400) {
+    if (error.response && (error.response.status === 400 || error.response.status === 403) && 
+        (error.response.data.error === 'Age restriction' || 
+         error.response.data.code === 'UNDER_MINIMUM_AGE')) {
+      console.log('\nInvalid Age Registration Test (too young):');
       console.log('✓ Registration failed as expected');
-      console.log('  Error message:', error.response.data);
+      console.log('  Error message:', error.response.data.message);
+      console.log('  Error code:', error.response.data.code);
     } else {
       console.error('Unexpected error during invalid age registration:', error.message);
       if (error.response) {
