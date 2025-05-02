@@ -7,7 +7,7 @@ import express, { Router, Request, Response } from 'express';
 import { authenticateJWT, AuthenticatedRequest } from '../auth/auth-middleware';
 import { db } from '../db';
 import { termsOfServiceVersions, dataExportRequests, accountDeletionRequests, users } from '@shared/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, and } from 'drizzle-orm';
 import { z } from 'zod';
 
 const router: Router = express.Router();
@@ -70,6 +70,10 @@ router.get('/terms-of-service', async (req: Request, res: Response) => {
  * POST /api/legal/terms-of-service/accept
  */
 router.post('/terms-of-service/accept', authenticateJWT, async (req: AuthenticatedRequest, res: Response) => {
+  // Ensure user is authenticated
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized', message: 'Authentication required' });
+  }
   try {
     const validation = tosAcceptanceSchema.safeParse(req.body);
     
@@ -104,7 +108,7 @@ router.post('/terms-of-service/accept', authenticateJWT, async (req: Authenticat
         tosVersion: version,
         tosAcceptedAt: new Date()
       })
-      .where(eq(users.id, req.user.id));
+      .where(eq(users.id, req.user!.id));
     
     return res.json({
       success: true,
@@ -189,8 +193,10 @@ router.post('/data-export', authenticateJWT, async (req: AuthenticatedRequest, r
     const [existingRequest] = await db
       .select()
       .from(dataExportRequests)
-      .where(eq(dataExportRequests.userId, req.user.id))
-      .where(eq(dataExportRequests.status, 'pending'))
+      .where(and(
+        eq(dataExportRequests.userId, req.user!.id),
+        eq(dataExportRequests.status, 'pending')
+      ))
       .limit(1);
     
     if (existingRequest) {
@@ -304,8 +310,10 @@ router.post('/account-deletion', authenticateJWT, async (req: AuthenticatedReque
     const [existingRequest] = await db
       .select()
       .from(accountDeletionRequests)
-      .where(eq(accountDeletionRequests.userId, req.user.id))
-      .where(eq(accountDeletionRequests.status, 'pending'))
+      .where(and(
+        eq(accountDeletionRequests.userId, req.user!.id),
+        eq(accountDeletionRequests.status, 'pending')
+      ))
       .limit(1);
     
     if (existingRequest) {
@@ -408,8 +416,10 @@ router.post('/account-deletion/cancel', authenticateJWT, async (req: Authenticat
     const [deletionRequest] = await db
       .select()
       .from(accountDeletionRequests)
-      .where(eq(accountDeletionRequests.userId, req.user.id))
-      .where(eq(accountDeletionRequests.status, 'pending'))
+      .where(and(
+        eq(accountDeletionRequests.userId, req.user!.id),
+        eq(accountDeletionRequests.status, 'pending')
+      ))
       .limit(1);
     
     if (!deletionRequest) {
