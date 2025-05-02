@@ -41,7 +41,7 @@ const defaultNavItems = [
   { href: "/partner", label: "Partner With Us", icon: HandshakeIcon },
   { href: "/privacy", label: "Privacy Hub", icon: Shield },
   { href: "/invite", label: "Invite Friends", icon: Users },
-  { href: "/ui/disclaimers", label: "Disclaimer Hub", icon: Shield },
+  { href: "/disclaimers", label: "Disclaimer Hub", icon: Shield },
 ];
 
 const featureNavItems = [
@@ -52,7 +52,7 @@ const featureNavItems = [
   { href: "/active", label: "Active You", icon: Activity },
   { href: "/emergency", label: "Emergency Guidance", icon: AlertCircle },
   { href: "/calendar", label: "Smart Calendar", icon: Calendar },
-  { href: "/ui/disclaimers", label: "Disclaimer Hub", icon: Shield },
+  { href: "/disclaimers", label: "Disclaimer Hub", icon: Shield },
 ];
 
 export default function Navigation() {
@@ -96,7 +96,7 @@ export default function Navigation() {
     if (href === '/arcade' && location.includes('/arcade')) return true;
     if (href === '/calendar' && location.includes('/calendar')) return true;
     if (href === '/mypath' && location.includes('/mypath')) return true;
-    if (href === '/ui/disclaimers' && location.includes('/ui/disclaimers')) return true;
+    if (href === '/disclaimers' && (location.includes('/disclaimers') || location.includes('/ui/disclaimers'))) return true;
     
     return false;
   };
