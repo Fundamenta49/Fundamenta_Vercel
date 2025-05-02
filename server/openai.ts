@@ -1,4 +1,6 @@
 import OpenAI from "openai";
+import { processUserInput, getFilteredContentResponse } from "./utils/content-filter";
+import { logModerationEvent, detectInappropriatePatterns } from "./services/content-moderation-service";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 
@@ -24,8 +26,48 @@ export async function generateResponse(
   jsonResponse: boolean = false
 ): Promise<string> {
   try {
+    // Apply content filtering to user input
+    const contentFilterResult = processUserInput(prompt);
+    
+    // If input is filtered, log and return appropriate response without calling OpenAI
+    if (contentFilterResult.isFiltered) {
+      if (contentFilterResult.filteredContent) {
+        console.log("Content filtered - inappropriate content detected");
+        
+        // Log the moderation event
+        logModerationEvent(prompt, contentFilterResult, 'blocked');
+        
+        // Check for patterns of inappropriate use
+        const patternResult = detectInappropriatePatterns();
+        if (patternResult.isPatternDetected) {
+          console.warn(`ALERT - Detected pattern of inappropriate usage: ${patternResult.patternDetails}`);
+          // In a production environment, this could trigger additional restrictions or admin alerts
+        }
+        
+        return contentFilterResult.filteredContent;
+      } else {
+        // Log lower severity events that are allowed but warned
+        logModerationEvent(prompt, contentFilterResult, 'warned');
+      }
+    } else {
+      // Log normal requests for monitoring
+      logModerationEvent(prompt, contentFilterResult, 'allowed');
+    }
+    
+    // Add a strong reminder about inappropriate content to system prompt
+    const enhancedSystemPrompt = `${systemPrompt}
+    
+    IMPORTANT: This is an educational platform that may be used by minors. All responses must be:
+    1. Age-appropriate and family-friendly
+    2. Free of vulgar language, profanity, or explicit content
+    3. Never providing dangerous or harmful information
+    4. Refusing to engage with inappropriate topics
+    5. Maintaining a friendly, positive, and educational tone even if users test boundaries
+    
+    If a question seems inappropriate, steer the conversation to an educational topic.`;
+    
     const messages = [
-      { role: "system", content: systemPrompt },
+      { role: "system", content: enhancedSystemPrompt },
       ...previousMessages,
       { role: "user", content: prompt }
     ] as Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
@@ -194,7 +236,7 @@ export async function generateImage(
       quality: "standard",
     });
 
-    return response.data[0].url || "";
+    return response.data?.[0]?.url || "";
   } catch (error) {
     console.error("OpenAI generateImage error:", error);
     if (error instanceof Error) {
