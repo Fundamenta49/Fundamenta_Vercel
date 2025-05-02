@@ -49,13 +49,16 @@ router.post('/register', async (req: Request, res: Response) => {
     }
 
     const { name, email, password } = validationResult.data;
+    
+    // Convert email to lowercase for case-insensitive comparison
+    const emailLower = email.toLowerCase();
 
     // Check if user already exists
     const existingUser = await db.select({
       id: users.id,
       email: users.email,
     }).from(users)
-      .where(eq(users.email, email.toLowerCase()));
+      .where(eq(users.email, emailLower));
 
     if (existingUser.length > 0) {
       return res.status(409).json({ error: 'User with this email already exists' });
@@ -109,8 +112,11 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     const { email, password } = validationResult.data;
+    
+    // Convert email to lowercase for case-insensitive comparison
+    const emailLower = email.toLowerCase();
 
-    // Find user by email
+    // Find user by email (case-insensitive)
     const [user] = await db.select({
       id: users.id,
       name: users.name,
@@ -120,7 +126,7 @@ router.post('/login', async (req: Request, res: Response) => {
       emailVerified: users.emailVerified,
       privacyConsent: users.privacyConsent,
     }).from(users)
-      .where(eq(users.email, email.toLowerCase()));
+      .where(eq(users.email, emailLower));
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
