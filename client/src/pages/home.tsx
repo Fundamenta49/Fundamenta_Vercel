@@ -96,13 +96,8 @@ export default function Home() {
         </p>
         
         {/* Tour Button inline with title on mobile */}
-        <div className="flex justify-center gap-2">
+        <div className="flex justify-center">
           <TourButton />
-          <Link href="/ui/disclaimers">
-            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
-              View Disclaimer Demo
-            </button>
-          </Link>
         </div>
         
         {/* Tour Guide - will be rendered when tour is active */}
