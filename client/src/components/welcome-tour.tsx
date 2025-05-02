@@ -157,14 +157,24 @@ export default function WelcomeTour() {
   }, [currentStep, setLocation]);
 
   const handleComplete = () => {
+    // Mark tour as completed
     localStorage.setItem("hasSeenTour", "true");
+    
+    // Store completion timestamp for post-tour guide
+    localStorage.setItem("tourCompletedTimestamp", Date.now().toString());
+    
     setIsActive(false);
     setCurrentStep(0);
     setLocation("/");
   };
 
   const handleSkip = () => {
+    // Mark tour as completed
     localStorage.setItem("hasSeenTour", "true");
+    
+    // Store completion timestamp for post-tour guide
+    localStorage.setItem("tourCompletedTimestamp", Date.now().toString());
+    
     setIsActive(false);
     setLocation("/");
   };
