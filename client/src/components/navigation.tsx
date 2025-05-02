@@ -51,6 +51,7 @@ const featureNavItems = [
   { href: "/active", label: "Active You", icon: Activity },
   { href: "/emergency", label: "Emergency Guidance", icon: AlertCircle },
   { href: "/calendar", label: "Smart Calendar", icon: Calendar },
+  { href: "/ui/disclaimers", label: "Disclaimer Hub", icon: Shield },
 ];
 
 export default function Navigation() {
@@ -94,6 +95,7 @@ export default function Navigation() {
     if (href === '/arcade' && location.includes('/arcade')) return true;
     if (href === '/calendar' && location.includes('/calendar')) return true;
     if (href === '/mypath' && location.includes('/mypath')) return true;
+    if (href === '/ui/disclaimers' && location.includes('/ui/disclaimers')) return true;
     
     return false;
   };
@@ -200,6 +202,15 @@ export default function Navigation() {
         hoverBg: "hover:bg-teal-50",
         iconColor: "text-teal-700",
         borderColor: "border-teal-300"
+      };
+    } else if (location.includes('/ui/disclaimers')) {
+      // Slate for Disclaimer Hub
+      return {
+        activeItemBg: "bg-slate-100",
+        activeItemText: "text-slate-700",
+        hoverBg: "hover:bg-slate-50",
+        iconColor: "text-slate-700",
+        borderColor: "border-slate-300"
       };
     }
     
