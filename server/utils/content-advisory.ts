@@ -93,7 +93,7 @@ const standardAdvisories: Record<ContentCategory, Partial<Record<AdvisoryLevel, 
     },
     [AdvisoryLevel.CAUTIONARY]: {
       title: 'Mental Health Advisory',
-      description: 'This content contains sensitive mental health topics. If you're experiencing a mental health crisis, please contact a qualified professional or crisis helpline.',
+      description: "This content contains sensitive mental health topics. If you are experiencing a mental health crisis, please contact a qualified professional or crisis helpline.",
       category: ContentCategory.MENTAL_HEALTH,
       level: AdvisoryLevel.CAUTIONARY
     },

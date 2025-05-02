@@ -1,77 +1,68 @@
-import { db, pool } from "../../db";
+import { db } from "../../db";
 import { sql } from "drizzle-orm";
 
 /**
- * This migration adds age verification fields to the users table
- * Required for COPPA compliance and child safety
+ * Migration to add age verification fields to the users table
+ * 
+ * This migration adds the following fields:
+ * - birth_year: Integer to store the birth year of users
+ * - age_verified: Boolean to indicate if age has been verified
+ * - is_minor: Boolean to indicate if user is under 18
+ * - has_parental_consent: Boolean to indicate if a minor has parental consent
  */
 export async function addAgeVerificationFields() {
-  console.log("Starting migration: Adding age verification fields to users table");
-  
   try {
-    // Check if columns already exist to avoid errors
-    const columns = await db.execute(sql`
-      SELECT column_name 
-      FROM information_schema.columns 
-      WHERE table_name = 'users' AND (
-        column_name = 'birth_year' OR 
-        column_name = 'age_verified' OR
-        column_name = 'is_minor' OR
-        column_name = 'has_parental_consent'
-      )
+    console.log("Adding age verification fields to users table...");
+    
+    // Check if fields already exist
+    const checkResult = await db.execute(sql`
+      SELECT column_name
+      FROM information_schema.columns
+      WHERE table_name = 'users'
+      AND column_name IN ('birth_year', 'age_verified', 'is_minor', 'has_parental_consent');
     `);
     
-    const existingColumns = columns.rows.map(row => row.column_name);
-    console.log("Existing age verification columns:", existingColumns);
+    const existingColumns = checkResult.rows.map(row => row.column_name);
     
-    // Begin transaction
-    await db.execute(sql`BEGIN`);
-    
-    // Add birth_year column if it doesn't exist
+    // Add fields that don't already exist
     if (!existingColumns.includes('birth_year')) {
-      console.log("Adding birth_year column");
-      await db.execute(sql`
-        ALTER TABLE users 
-        ADD COLUMN birth_year INTEGER
-      `);
+      await db.execute(sql`ALTER TABLE users ADD COLUMN birth_year INTEGER;`);
+      console.log("- Added birth_year column");
     }
     
-    // Add age_verified column if it doesn't exist
     if (!existingColumns.includes('age_verified')) {
-      console.log("Adding age_verified column");
-      await db.execute(sql`
-        ALTER TABLE users 
-        ADD COLUMN age_verified BOOLEAN DEFAULT false
-      `);
+      await db.execute(sql`ALTER TABLE users ADD COLUMN age_verified BOOLEAN DEFAULT false;`);
+      console.log("- Added age_verified column");
     }
     
-    // Add is_minor column if it doesn't exist
     if (!existingColumns.includes('is_minor')) {
-      console.log("Adding is_minor column");
-      await db.execute(sql`
-        ALTER TABLE users 
-        ADD COLUMN is_minor BOOLEAN DEFAULT false
-      `);
+      await db.execute(sql`ALTER TABLE users ADD COLUMN is_minor BOOLEAN DEFAULT false;`);
+      console.log("- Added is_minor column");
     }
     
-    // Add has_parental_consent column if it doesn't exist
     if (!existingColumns.includes('has_parental_consent')) {
-      console.log("Adding has_parental_consent column");
-      await db.execute(sql`
-        ALTER TABLE users 
-        ADD COLUMN has_parental_consent BOOLEAN DEFAULT false
-      `);
+      await db.execute(sql`ALTER TABLE users ADD COLUMN has_parental_consent BOOLEAN DEFAULT false;`);
+      console.log("- Added has_parental_consent column");
     }
     
-    // Commit transaction
-    await db.execute(sql`COMMIT`);
-    console.log("Migration completed: Successfully added age verification fields");
+    console.log("Age verification fields migration completed successfully");
+    
+    // Update existing users' age-related fields based on birth year if available
+    await db.execute(sql`
+      UPDATE users
+      SET is_minor = EXTRACT(YEAR FROM CURRENT_DATE) - birth_year < 18,
+          age_verified = CASE
+            WHEN birth_year IS NOT NULL THEN true
+            ELSE age_verified
+          END
+      WHERE birth_year IS NOT NULL;
+    `);
+    
+    console.log("Updated age-related fields for existing users");
     
     return true;
   } catch (error) {
-    // Rollback transaction in case of error
-    await db.execute(sql`ROLLBACK`);
-    console.error("Migration failed:", error);
-    throw error;
+    console.error("Error adding age verification fields:", error);
+    return false;
   }
 }

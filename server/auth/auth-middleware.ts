@@ -63,6 +63,10 @@ export function authenticateJWT(req: Request, res: Response, next: NextFunction)
       role: payload.role || 'user',
       emailVerified: payload.emailVerified || false,
       privacyConsent: payload.privacyConsent || false,
+      birthYear: payload.birthYear,
+      ageVerified: payload.ageVerified || false,
+      isMinor: payload.isMinor || false,
+      hasParentalConsent: payload.hasParentalConsent || false,
     };
     
     next();
