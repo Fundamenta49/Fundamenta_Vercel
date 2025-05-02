@@ -208,7 +208,7 @@ export default function Navigation() {
         iconColor: "text-teal-700",
         borderColor: "border-teal-300"
       };
-    } else if (location.includes('/ui/disclaimers')) {
+    } else if (location.includes('/ui/disclaimers') || location.includes('/disclaimers')) {
       // Slate for Disclaimer Hub
       return {
         activeItemBg: "bg-slate-100",
