@@ -320,6 +320,18 @@ function Router() {
                 {() => import("./pages/resources/financial-credentials").then(module => <module.default />)}
               </ProtectedRoute>
             </Route>
+            <Route path="/resources/finding-therapist">
+              <ProtectedRoute>
+                {/* @ts-ignore */}
+                {() => import("./pages/resources/finding-therapist").then(module => <module.default />)}
+              </ProtectedRoute>
+            </Route>
+            <Route path="/resources/mental-health-providers">
+              <ProtectedRoute>
+                {/* @ts-ignore */}
+                {() => import("./pages/resources/mental-health-providers").then(module => <module.default />)}
+              </ProtectedRoute>
+            </Route>
             <Route path="/learning">
               <ProtectedRoute>
                 <Learning />
