@@ -391,26 +391,26 @@ export default function TimeManagementCourse() {
                   <p className="mb-3 text-gray-700">
                     This method uses focused work periods followed by short breaks to maintain high productivity:
                   </p>
-                  <ol className="space-y-3 list-none pl-0">
+                  <ol className="space-y-4 list-none pl-0">
                     <li className="flex items-start gap-3">
                       <div className="bg-orange-100 text-orange-700 rounded-full h-7 w-7 flex items-center justify-center flex-shrink-0 mt-0.5">1</div>
-                      <div>Choose a task to work on</div>
+                      <div className="bg-orange-50 p-3 rounded-md border border-orange-100 flex-1">Choose a task to work on</div>
                     </li>
                     <li className="flex items-start gap-3">
                       <div className="bg-orange-100 text-orange-700 rounded-full h-7 w-7 flex items-center justify-center flex-shrink-0 mt-0.5">2</div>
-                      <div>Set a timer for 25 minutes (one "Pomodoro")</div>
+                      <div className="bg-orange-50 p-3 rounded-md border border-orange-100 flex-1">Set a timer for 25 minutes (one "Pomodoro")</div>
                     </li>
                     <li className="flex items-start gap-3">
                       <div className="bg-orange-100 text-orange-700 rounded-full h-7 w-7 flex items-center justify-center flex-shrink-0 mt-0.5">3</div>
-                      <div>Work with complete focus until the timer rings</div>
+                      <div className="bg-orange-50 p-3 rounded-md border border-orange-100 flex-1">Work with complete focus until the timer rings</div>
                     </li>
                     <li className="flex items-start gap-3">
                       <div className="bg-orange-100 text-orange-700 rounded-full h-7 w-7 flex items-center justify-center flex-shrink-0 mt-0.5">4</div>
-                      <div>Take a short 5-minute break</div>
+                      <div className="bg-orange-50 p-3 rounded-md border border-orange-100 flex-1">Take a short 5-minute break</div>
                     </li>
                     <li className="flex items-start gap-3">
                       <div className="bg-orange-100 text-orange-700 rounded-full h-7 w-7 flex items-center justify-center flex-shrink-0 mt-0.5">5</div>
-                      <div>After 4 Pomodoros, take a longer 15-30 minute break</div>
+                      <div className="bg-orange-50 p-3 rounded-md border border-orange-100 flex-1">After 4 Pomodoros, take a longer 15-30 minute break</div>
                     </li>
                   </ol>
                 </div>
@@ -463,46 +463,46 @@ export default function TimeManagementCourse() {
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
                   <h4 className="font-medium text-blue-800 mb-3">How to Implement:</h4>
                   <ul className="space-y-3">
-                    <li className="flex items-start gap-2">
+                    <li className="flex items-start gap-3">
                       <div className="bg-blue-100 text-blue-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm">1</div>
-                      <span>Divide your day into blocks (e.g., 30-90 minute segments)</span>
+                      <div className="bg-blue-50 p-3 rounded-md border border-blue-100 flex-1">Divide your day into blocks (e.g., 30-90 minute segments)</div>
                     </li>
-                    <li className="flex items-start gap-2">
+                    <li className="flex items-start gap-3">
                       <div className="bg-blue-100 text-blue-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm">2</div>
-                      <span>Assign specific tasks or categories of work to each block</span>
+                      <div className="bg-blue-50 p-3 rounded-md border border-blue-100 flex-1">Assign specific tasks or categories of work to each block</div>
                     </li>
-                    <li className="flex items-start gap-2">
+                    <li className="flex items-start gap-3">
                       <div className="bg-blue-100 text-blue-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm">3</div>
-                      <span>Include blocks for breaks, email, meetings, and deep work</span>
+                      <div className="bg-blue-50 p-3 rounded-md border border-blue-100 flex-1">Include blocks for breaks, email, meetings, and deep work</div>
                     </li>
-                    <li className="flex items-start gap-2">
+                    <li className="flex items-start gap-3">
                       <div className="bg-blue-100 text-blue-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm">4</div>
-                      <span>Batch similar tasks together when possible</span>
+                      <div className="bg-blue-50 p-3 rounded-md border border-blue-100 flex-1">Batch similar tasks together when possible</div>
                     </li>
                   </ul>
                 </div>
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
                   <h4 className="font-medium text-blue-800 mb-3">Benefits:</h4>
-                  <ul className="space-y-2">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5" />
-                      <span>Creates a clear visual schedule</span>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Creates a clear visual schedule</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5" />
-                      <span>Reduces decision fatigue throughout the day</span>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Reduces decision fatigue throughout the day</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5" />
-                      <span>Helps prevent multitasking and context switching</span>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Helps prevent multitasking and context switching</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5" />
-                      <span>Improves time estimation skills</span>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Improves time estimation skills</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5" />
-                      <span>Creates realistic boundaries for work</span>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Creates realistic boundaries for work</span>
                     </li>
                   </ul>
                 </div>
@@ -537,22 +537,22 @@ export default function TimeManagementCourse() {
                 </div>
                 <div className="md:w-64 flex-shrink-0 bg-green-50 rounded-lg p-4">
                   <h4 className="font-medium text-green-800 mb-2">Examples:</h4>
-                  <ul className="space-y-2">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
-                      <span className="text-sm">Responding to a simple email</span>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2 bg-green-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-green-800">Responding to a simple email</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
-                      <span className="text-sm">Filing a document</span>
+                    <li className="flex items-start gap-2 bg-green-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-green-800">Filing a document</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
-                      <span className="text-sm">Making a quick phone call</span>
+                    <li className="flex items-start gap-2 bg-green-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-green-800">Making a quick phone call</span>
                     </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
-                      <span className="text-sm">Putting away items on your desk</span>
+                    <li className="flex items-start gap-2 bg-green-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-green-800">Putting away items on your desk</span>
                     </li>
                   </ul>
                 </div>
@@ -603,22 +603,22 @@ export default function TimeManagementCourse() {
                   <div className="text-center text-xs text-purple-600 mt-1">Not necessary</div>
                 </div>
               </div>
-              <ol className="space-y-2 list-none">
-                <li className="flex items-center gap-2">
-                  <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 text-sm">1</div>
-                  <span>Before starting your day (or the night before), list everything you need to do</span>
+              <ol className="space-y-3 list-none">
+                <li className="flex items-start gap-3">
+                  <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm">1</div>
+                  <div className="bg-purple-50 p-3 rounded-md border border-purple-100 flex-1">Before starting your day (or the night before), list everything you need to do</div>
                 </li>
-                <li className="flex items-center gap-2">
-                  <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 text-sm">2</div>
-                  <span>Assign each task a letter from A to E based on importance and urgency</span>
+                <li className="flex items-start gap-3">
+                  <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm">2</div>
+                  <div className="bg-purple-50 p-3 rounded-md border border-purple-100 flex-1">Assign each task a letter from A to E based on importance and urgency</div>
                 </li>
-                <li className="flex items-center gap-2">
-                  <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 text-sm">3</div>
-                  <span>Number all A tasks by priority (A1, A2, A3...), then do the same for B and C tasks</span>
+                <li className="flex items-start gap-3">
+                  <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm">3</div>
+                  <div className="bg-purple-50 p-3 rounded-md border border-purple-100 flex-1">Number all A tasks by priority (A1, A2, A3...), then do the same for B and C tasks</div>
                 </li>
-                <li className="flex items-center gap-2">
-                  <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 text-sm">4</div>
-                  <span>Start with A1 and work your way down the list in order</span>
+                <li className="flex items-start gap-3">
+                  <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm">4</div>
+                  <div className="bg-purple-50 p-3 rounded-md border border-purple-100 flex-1">Start with A1 and work your way down the list in order</div>
                 </li>
               </ol>
             </div>
@@ -653,35 +653,35 @@ export default function TimeManagementCourse() {
                   <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-yellow-50 p-4 rounded-lg">
                       <h4 className="font-medium text-yellow-800">Why it works:</h4>
-                      <ul className="mt-2 space-y-2">
-                        <li className="flex items-start gap-2">
-                          <CheckCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                          <span className="text-sm">Tackles highest-value tasks first</span>
+                      <ul className="mt-2 space-y-3">
+                        <li className="flex items-start gap-2 bg-yellow-100/50 p-2 rounded-md">
+                          <CheckCircle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                          <span className="text-yellow-800">Tackles highest-value tasks first</span>
                         </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                          <span className="text-sm">Uses peak energy hours productively</span>
+                        <li className="flex items-start gap-2 bg-yellow-100/50 p-2 rounded-md">
+                          <CheckCircle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                          <span className="text-yellow-800">Uses peak energy hours productively</span>
                         </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                          <span className="text-sm">Creates momentum for the rest of the day</span>
+                        <li className="flex items-start gap-2 bg-yellow-100/50 p-2 rounded-md">
+                          <CheckCircle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                          <span className="text-yellow-800">Creates momentum for the rest of the day</span>
                         </li>
                       </ul>
                     </div>
                     <div className="bg-yellow-50 p-4 rounded-lg">
                       <h4 className="font-medium text-yellow-800">Rules to follow:</h4>
-                      <ul className="mt-2 space-y-2">
-                        <li className="flex items-start gap-2">
-                          <div className="bg-yellow-200 text-yellow-800 rounded-full h-5 w-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs">1</div>
-                          <span className="text-sm">Identify your most important task</span>
+                      <ul className="mt-2 space-y-3">
+                        <li className="flex items-start gap-3">
+                          <div className="bg-yellow-200 text-yellow-800 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs">1</div>
+                          <div className="bg-yellow-50 p-3 rounded-md border border-yellow-100 flex-1">Identify your most important task</div>
                         </li>
-                        <li className="flex items-start gap-2">
-                          <div className="bg-yellow-200 text-yellow-800 rounded-full h-5 w-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs">2</div>
-                          <span className="text-sm">Do it first thing, no exceptions</span>
+                        <li className="flex items-start gap-3">
+                          <div className="bg-yellow-200 text-yellow-800 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs">2</div>
+                          <div className="bg-yellow-50 p-3 rounded-md border border-yellow-100 flex-1">Do it first thing, no exceptions</div>
                         </li>
-                        <li className="flex items-start gap-2">
-                          <div className="bg-yellow-200 text-yellow-800 rounded-full h-5 w-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs">3</div>
-                          <span className="text-sm">Prepare your "frog" the night before</span>
+                        <li className="flex items-start gap-3">
+                          <div className="bg-yellow-200 text-yellow-800 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs">3</div>
+                          <div className="bg-yellow-50 p-3 rounded-md border border-yellow-100 flex-1">Prepare your "frog" the night before</div>
                         </li>
                       </ul>
                     </div>
