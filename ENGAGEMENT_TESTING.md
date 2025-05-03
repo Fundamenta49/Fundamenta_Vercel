@@ -4,7 +4,7 @@ This document explains how to test the Engagement Engine implementation to ensur
 
 ## Available Test Tools
 
-We've created three separate tools for testing:
+We've created four separate tools for testing:
 
 1. **API Endpoint Tester** (`test-engagement-api.js`)
    - Tests the HTTP endpoints through the API
@@ -17,7 +17,13 @@ We've created three separate tools for testing:
    - Great for verifying database connectivity and function behavior
    - Can test both read and write operations
 
-3. **Schema Verification Tool** (`verify-engagement-schema.js`)
+3. **Direct DB Functions Tester** (`test-db-functions.js`)
+   - Alternative approach that doesn't require TypeScript imports
+   - Tests database functionality directly with SQL
+   - More reliable if you encounter issues with TypeScript ESM imports
+   - Provides the same functionality testing as the storage tester
+
+4. **Schema Verification Tool** (`verify-engagement-schema.js`)
    - Verifies the schema definitions match the actual database structure
    - Checks if all required functions are implemented
    - Help catch inconsistencies between code and database
@@ -32,9 +38,56 @@ npm install axios chalk dotenv
 
 ## Testing Process
 
-### 1. Verify Schema
+### 1. Create Database Tables
 
-First, verify that the schema definitions match the database structure:
+If this is the first time running the tests, you need to create the database tables:
+
+```bash
+npm run db:push
+```
+
+If the migration is interactive and asks questions, you can create the tables manually with SQL:
+
+```sql
+CREATE TABLE IF NOT EXISTS user_engagement (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  current_streak INTEGER NOT NULL DEFAULT 0,
+  longest_streak INTEGER NOT NULL DEFAULT 0,
+  last_check_in TIMESTAMP,
+  streak_updated_at TIMESTAMP,
+  total_points INTEGER NOT NULL DEFAULT 0,
+  level INTEGER NOT NULL DEFAULT 1,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS user_achievements (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  achievement_id TEXT NOT NULL,
+  type TEXT NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  icon_url TEXT,
+  points INTEGER NOT NULL DEFAULT 0,
+  unlocked_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS user_activities (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  type TEXT NOT NULL,
+  data JSONB DEFAULT '{}',
+  points_earned INTEGER NOT NULL DEFAULT 0,
+  timestamp TIMESTAMP NOT NULL DEFAULT NOW()
+);
+```
+
+### 2. Verify Schema
+
+Next, verify that the schema definitions match the database structure:
 
 ```bash
 node verify-engagement-schema.js
@@ -45,29 +98,29 @@ This will:
 - Compare code schema definitions with database tables
 - Verify all required storage functions are implemented
 
-### 2. Test Storage Functions Directly
+### 3. Test Database Functions Directly
 
-Next, test the storage layer functions:
+Use the direct database functions test:
 
 ```bash
-node test-engagement-storage.js
+node test-db-functions.js
 ```
 
 For more comprehensive testing including functions that modify data:
 
 ```bash
-node test-engagement-storage.js --advanced
+node test-db-functions.js --advanced
 ```
 
 To test with a specific user ID:
 
 ```bash
-node test-engagement-storage.js --user=123
+node test-db-functions.js --user=123
 ```
 
-### 3. Test API Endpoints
+### 4. Test API Endpoints (Optional)
 
-Finally, test the API endpoints:
+If you want to test the API endpoints:
 
 ```bash
 node test-engagement-api.js
@@ -95,6 +148,7 @@ If tests fail, check the following:
 2. **Authentication**: For API tests, verify your session cookie is valid and up-to-date
 3. **Database Schema**: If schema verification fails, you may need to run migrations
 4. **User ID**: Make sure you're using a valid user ID that exists in the database
+5. **Import Errors**: If you get ES module import errors, try using the `test-db-functions.js` script instead
 
 ## Next Steps
 

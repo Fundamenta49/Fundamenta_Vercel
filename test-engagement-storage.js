@@ -12,7 +12,7 @@ import 'dotenv/config'; // Load environment variables
 
 // These imports would need to be adjusted based on your project structure
 // For ESM modules
-import { storage } from './server/storage.js';
+import { storage } from './server/storage.ts';
 import pkg from 'pg';
 const { Pool } = pkg;
 import chalk from 'chalk'; // For colored output
