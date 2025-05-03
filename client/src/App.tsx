@@ -72,6 +72,8 @@ import PersonalityTestPage from "@/pages/admin/personality-test";
 import ProtectedRoute from "@/components/protected-route";
 import { SkeletonDemoPage } from "@/components/SkeletonDemoPage";
 import DisclaimerHub from "@/pages/disclaimer-hub";
+import ComponentTest from "@/pages/component-test";
+import { FeatureFlagsProvider } from "@/contexts/feature-flags-context";
 import FindingProfessionals from "@/pages/resources/finding-professionals";
 import ProfessionalQuestions from "@/pages/resources/professional-questions";
 import FindingHealthcareProviders from "@/pages/resources/finding-healthcare-providers";
@@ -286,6 +288,7 @@ function Router() {
             <Route path="/admin/personality-test" component={PersonalityTestPage} />
             <Route path="/design-showcase" component={DesignShowcasePage} />
             <Route path="/ui/skeletons" component={SkeletonDemoPage} />
+            <Route path="/ui/components" component={ComponentTest} />
             {/* User-facing disclaimer hub */}
             <Route path="/disclaimers">
               <ProtectedRoute>
@@ -484,7 +487,9 @@ function App() {
           <JungleThemeProvider defaultEnabled={false}>
             <JungleFundiProvider>
               <TourProvider>
-                <Router />
+                <FeatureFlagsProvider>
+                  <Router />
+                </FeatureFlagsProvider>
               </TourProvider>
             </JungleFundiProvider>
           </JungleThemeProvider>
