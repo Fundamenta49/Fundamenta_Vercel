@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { ArrowLeft, BookOpenIcon, Clock, CalendarClock, ClipboardList, LineChart, Hourglass, CheckCircle, Lightbulb } from 'lucide-react';
+import { ArrowLeft, BookOpenIcon, Clock, CalendarClock, ClipboardList, LineChart, Hourglass, CheckCircle, Lightbulb, Target, CalendarRange } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import SimpleResourceLinks from '@/components/simple-resource-links';
@@ -727,85 +727,235 @@ export default function TimeManagementCourse() {
             planning systems that help you achieve them.
           </p>
           
-          <h3 className="text-lg font-semibold mt-6">SMART Goal Setting</h3>
-          <p>
-            Effective goals should be:
-          </p>
-          <div className="space-y-4 mt-4">
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Specific</h4>
-              <p className="text-sm">Clearly defined and precise</p>
-              <p className="text-sm italic mt-2">Not: "Get better at math" | Instead: "Improve my calculus grade from B- to B+"</p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-purple-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-purple-50 to-purple-100 px-6 py-4 border-b border-purple-100">
+              <Target className="h-8 w-8 text-purple-500" strokeWidth={1.5} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-purple-800">SMART Goal Setting</h3>
+                  <StandardBadge size="sm" sectionTheme="career" className="ml-2" blurEffect={true}>Precision</StandardBadge>
+                </div>
+                <p className="text-purple-700 text-sm">A framework for creating effective, actionable goals</p>
+              </div>
             </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Measurable</h4>
-              <p className="text-sm">Include specific criteria to track progress</p>
-              <p className="text-sm italic mt-2">Not: "Save more money" | Instead: "Save $500 per month"</p>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Achievable</h4>
-              <p className="text-sm">Challenging but realistic given your resources and constraints</p>
-              <p className="text-sm italic mt-2">Not: "Run a marathon next week" (if you're a beginner) | Instead: "Run a 5K in 8 weeks"</p>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Relevant</h4>
-              <p className="text-sm">Aligned with your broader objectives and values</p>
-              <p className="text-sm italic mt-2">Not: "Learn to juggle" (if it doesn't support your priorities) | Instead: "Learn public speaking to advance my career"</p>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Time-bound</h4>
-              <p className="text-sm">Has a specific deadline or timeframe</p>
-              <p className="text-sm italic mt-2">Not: "Someday I'll write a book" | Instead: "Complete first draft by December 31st"</p>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                SMART goals are designed to provide clarity, focus, and motivation while being trackable:
+              </p>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-300">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="bg-purple-200 text-purple-800 h-7 w-7 rounded-full flex items-center justify-center font-bold">S</div>
+                      <h4 className="font-medium text-purple-800">Specific</h4>
+                    </div>
+                    <p className="text-purple-900">Clearly defined and precise</p>
+                    <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+                      <div className="bg-red-50 p-2 rounded border border-red-100">
+                        <span className="font-medium text-red-700">❌ Too vague:</span>
+                        <p className="text-red-800">"Get better at math"</p>
+                      </div>
+                      <div className="bg-green-50 p-2 rounded border border-green-100">
+                        <span className="font-medium text-green-700">✅ Specific:</span>
+                        <p className="text-green-800">"Improve calculus grade from B- to B+"</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-300">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="bg-purple-200 text-purple-800 h-7 w-7 rounded-full flex items-center justify-center font-bold">M</div>
+                      <h4 className="font-medium text-purple-800">Measurable</h4>
+                    </div>
+                    <p className="text-purple-900">Include specific criteria to track progress</p>
+                    <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+                      <div className="bg-red-50 p-2 rounded border border-red-100">
+                        <span className="font-medium text-red-700">❌ Not measurable:</span>
+                        <p className="text-red-800">"Save more money"</p>
+                      </div>
+                      <div className="bg-green-50 p-2 rounded border border-green-100">
+                        <span className="font-medium text-green-700">✅ Measurable:</span>
+                        <p className="text-green-800">"Save $500 per month"</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-300">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="bg-purple-200 text-purple-800 h-7 w-7 rounded-full flex items-center justify-center font-bold">A</div>
+                      <h4 className="font-medium text-purple-800">Achievable</h4>
+                    </div>
+                    <p className="text-purple-900">Challenging but realistic given your resources</p>
+                    <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+                      <div className="bg-red-50 p-2 rounded border border-red-100">
+                        <span className="font-medium text-red-700">❌ Unrealistic:</span>
+                        <p className="text-red-800">"Run a marathon next week" (as a beginner)</p>
+                      </div>
+                      <div className="bg-green-50 p-2 rounded border border-green-100">
+                        <span className="font-medium text-green-700">✅ Achievable:</span>
+                        <p className="text-green-800">"Run a 5K in 8 weeks"</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-300">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="bg-purple-200 text-purple-800 h-7 w-7 rounded-full flex items-center justify-center font-bold">R</div>
+                      <h4 className="font-medium text-purple-800">Relevant</h4>
+                    </div>
+                    <p className="text-purple-900">Aligned with your broader objectives and values</p>
+                    <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+                      <div className="bg-red-50 p-2 rounded border border-red-100">
+                        <span className="font-medium text-red-700">❌ Not aligned:</span>
+                        <p className="text-red-800">"Learn to juggle" (if not supporting priorities)</p>
+                      </div>
+                      <div className="bg-green-50 p-2 rounded border border-green-100">
+                        <span className="font-medium text-green-700">✅ Relevant:</span>
+                        <p className="text-green-800">"Learn public speaking to advance my career"</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-300">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="bg-purple-200 text-purple-800 h-7 w-7 rounded-full flex items-center justify-center font-bold">T</div>
+                      <h4 className="font-medium text-purple-800">Time-bound</h4>
+                    </div>
+                    <p className="text-purple-900">Has a specific deadline or timeframe</p>
+                    <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+                      <div className="bg-red-50 p-2 rounded border border-red-100">
+                        <span className="font-medium text-red-700">❌ No deadline:</span>
+                        <p className="text-red-800">"Someday I'll write a book"</p>
+                      </div>
+                      <div className="bg-green-50 p-2 rounded border border-green-100">
+                        <span className="font-medium text-green-700">✅ Time-bound:</span>
+                        <p className="text-green-800">"Complete first draft by December 31st"</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           
-          <h3 className="text-lg font-semibold mt-6">Planning Horizons</h3>
-          <p>
-            Effective planning happens at multiple time scales:
-          </p>
-          <div className="space-y-4 mt-4">
-            <div className="bg-gray-50 p-4 rounded-md">
-              <h4 className="font-medium">Annual Planning</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Set 3-5 major goals for the year</li>
-                <li>Identify key projects and milestones</li>
-                <li>Align with your longer-term vision</li>
-                <li>Review and revise quarterly</li>
-              </ul>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-blue-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b border-blue-100">
+              <CalendarRange className="h-8 w-8 text-blue-500" strokeWidth={1.5} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-blue-800">Planning Horizons</h3>
+                  <StandardBadge size="sm" sectionTheme="financial" className="ml-2" blurEffect={true}>Structure</StandardBadge>
+                </div>
+                <p className="text-blue-700 text-sm">Effective planning at multiple time scales</p>
+              </div>
             </div>
-            
-            <div className="bg-gray-50 p-4 rounded-md">
-              <h4 className="font-medium">Monthly Planning</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Break annual goals into monthly objectives</li>
-                <li>Schedule key appointments and deadlines</li>
-                <li>Allocate resources and time commitments</li>
-                <li>Review progress on larger projects</li>
-              </ul>
-            </div>
-            
-            <div className="bg-gray-50 p-4 rounded-md">
-              <h4 className="font-medium">Weekly Planning</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Review upcoming week every Sunday or Monday</li>
-                <li>Identify 3-5 key priorities for the week</li>
-                <li>Schedule blocks of time for important tasks</li>
-                <li>Prepare for upcoming meetings and events</li>
-              </ul>
-            </div>
-            
-            <div className="bg-gray-50 p-4 rounded-md">
-              <h4 className="font-medium">Daily Planning</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Identify 1-3 "must do" tasks for the day</li>
-                <li>Review and update your schedule</li>
-                <li>Apply prioritization techniques</li>
-                <li>Build in buffer time for unexpected issues</li>
-              </ul>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Planning works best when you coordinate across different time horizons, creating alignment from your daily tasks to your annual goals:
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-blue-50 p-5 rounded-lg border border-blue-100">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="bg-blue-200 text-blue-800 rounded-full h-10 w-10 flex items-center justify-center font-bold">Y</div>
+                    <h4 className="font-semibold text-blue-800">Annual Planning</h4>
+                  </div>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Set 3-5 major goals for the year</span>
+                    </li>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Identify key projects and milestones</span>
+                    </li>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Align with your longer-term vision</span>
+                    </li>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Review and revise quarterly</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div className="bg-blue-50 p-5 rounded-lg border border-blue-100">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="bg-blue-200 text-blue-800 rounded-full h-10 w-10 flex items-center justify-center font-bold">M</div>
+                    <h4 className="font-semibold text-blue-800">Monthly Planning</h4>
+                  </div>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Break annual goals into monthly objectives</span>
+                    </li>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Schedule key appointments and deadlines</span>
+                    </li>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Allocate resources and time commitments</span>
+                    </li>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Review progress on larger projects</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div className="bg-blue-50 p-5 rounded-lg border border-blue-100">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="bg-blue-200 text-blue-800 rounded-full h-10 w-10 flex items-center justify-center font-bold">W</div>
+                    <h4 className="font-semibold text-blue-800">Weekly Planning</h4>
+                  </div>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Review upcoming week every Sunday or Monday</span>
+                    </li>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Identify 3-5 key priorities for the week</span>
+                    </li>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Schedule blocks of time for important tasks</span>
+                    </li>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Prepare for upcoming meetings and events</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div className="bg-blue-50 p-5 rounded-lg border border-blue-100">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="bg-blue-200 text-blue-800 rounded-full h-10 w-10 flex items-center justify-center font-bold">D</div>
+                    <h4 className="font-semibold text-blue-800">Daily Planning</h4>
+                  </div>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Identify 1-3 "must do" tasks for the day</span>
+                    </li>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Review and update your schedule</span>
+                    </li>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Apply prioritization techniques</span>
+                    </li>
+                    <li className="flex items-start gap-2 bg-blue-100/50 p-2 rounded-md">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-blue-800">Build in buffer time for unexpected issues</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
           
