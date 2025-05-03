@@ -20,7 +20,7 @@ export const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: 
   }
   
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret-key') as { userId: number };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fundamenta-super-secure-jwt-secret') as { userId: number };
     
     // At this point we've verified the token, but not fetched the user
     // This just marks the request as authenticated with a userId
