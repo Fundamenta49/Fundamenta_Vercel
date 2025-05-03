@@ -7,6 +7,9 @@ const router = express.Router();
 const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 const BASE_URL = 'https://api.spoonacular.com';
 
+// Import the Spoonacular monitor
+import spoonacularMonitor from '../services/api-monitors/spoonacular-monitor';
+
 // Check if Spoonacular API key is configured
 router.get('/spoonacular-status', async (req, res) => {
   if (!SPOONACULAR_API_KEY) {
@@ -17,49 +20,43 @@ router.get('/spoonacular-status', async (req, res) => {
   }
   
   try {
-    // Simple API call to test the key
-    const response = await axios.get(`${BASE_URL}/food/ingredients/search`, {
-      params: {
-        apiKey: SPOONACULAR_API_KEY,
-        query: 'apple',
-        number: 1
-      }
-    });
+    // Use the monitor's force check to test API status
+    const isHealthy = await spoonacularMonitor.forceCheck();
     
-    // Check if response indicates rate limiting (comes back as 200 status with failure message)
-    if (response.data?.status === 'failure' && response.data?.code === 402) {
-      console.log('API rate limit reached:', response.data.message);
+    // Get detailed status from the monitor
+    const monitorStatus = spoonacularMonitor.getStatus();
+    
+    if (monitorStatus.isRateLimited) {
+      console.log('API rate limit active:', monitorStatus);
       return res.json({
         status: 'rate_limited',
         message: 'Spoonacular API daily points limit reached',
-        details: response.data.message
+        details: `Rate limit will reset around ${monitorStatus.rateLimitResetTime?.toLocaleString() || 'unknown time'}`,
+        rateLimitResetTime: monitorStatus.rateLimitResetTime?.toISOString()
       });
     }
     
-    return res.json({ status: 'ok', message: 'Spoonacular API key is properly configured' });
-  } catch (error) {
-    console.error('Spoonacular API key validation error:', error);
-    
-    // Check for rate limit error in response
-    if (axios.isAxiosError(error) && 
-        (error.response?.status === 402 || 
-         (error.response?.data?.status === 'failure' && error.response?.data?.code === 402))) {
-      return res.json({
-        status: 'rate_limited',
-        message: 'Spoonacular API daily points limit reached',
-        details: error.response?.data?.message || 'Rate limit exceeded'
-      });
-    } else if (axios.isAxiosError(error) && error.response) {
+    if (isHealthy) {
       return res.json({ 
-        status: 'error',
-        message: `Spoonacular API error: ${error.response.data.message || 'Invalid API key'}` 
+        status: 'ok', 
+        message: 'Spoonacular API key is properly configured',
+        lastChecked: monitorStatus.lastChecked?.toISOString()
       });
     } else {
       return res.json({ 
         status: 'error', 
-        message: 'Failed to validate Spoonacular API key' 
+        message: 'Spoonacular API is currently unavailable',
+        lastChecked: monitorStatus.lastChecked?.toISOString()
       });
     }
+  } catch (error) {
+    console.error('Spoonacular API key validation error:', error);
+    
+    return res.json({ 
+      status: 'error', 
+      message: 'Failed to validate Spoonacular API key',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 });
 
@@ -116,6 +113,16 @@ router.get('/recipes/:id/information', async (req, res) => {
       return res.status(500).json({ error: 'Spoonacular API key is not configured' });
     }
     
+    // Check if API is rate limited before making the request
+    if (spoonacularMonitor.isApiRateLimited()) {
+      const status = spoonacularMonitor.getStatus();
+      return res.status(429).json({
+        error: 'Spoonacular API is rate limited',
+        message: 'Daily request quota exceeded. Please try again later.',
+        rateLimitResetTime: status.rateLimitResetTime?.toISOString()
+      });
+    }
+    
     const response = await axios.get(`${BASE_URL}/recipes/${id}/information`, {
       params: {
         apiKey: SPOONACULAR_API_KEY,
@@ -126,7 +133,26 @@ router.get('/recipes/:id/information', async (req, res) => {
     res.json(response.data);
   } catch (error) {
     console.error('Spoonacular API error:', error);
-    if (axios.isAxiosError(error) && error.response) {
+    
+    // Check if this is a rate limit error
+    if (axios.isAxiosError(error) && 
+        (error.response?.status === 402 || 
+         (error.response?.data?.status === 'failure' && error.response?.data?.code === 402))) {
+      
+      // Extract retry-after if available
+      const retryAfter = error.response?.headers['retry-after'] 
+        ? parseInt(error.response.headers['retry-after'], 10)
+        : undefined;
+      
+      // Register the rate limit with the monitor
+      spoonacularMonitor.handleRateLimitError(retryAfter);
+      
+      return res.status(429).json({ 
+        error: 'Spoonacular API rate limit exceeded',
+        message: 'Daily request quota exceeded. Please try again later.',
+        rateLimitResetTime: spoonacularMonitor.getStatus().rateLimitResetTime?.toISOString()
+      });
+    } else if (axios.isAxiosError(error) && error.response) {
       res.status(error.response.status).json({ 
         error: `Spoonacular API error: ${error.response.data.message || 'Unknown error'}` 
       });
