@@ -109,6 +109,7 @@ export function StandardDialog({
         className={cn(
           'p-0 rounded-2xl overflow-hidden shadow-lg border-0 max-h-[90vh] flex flex-col',
           maxWidthMap[maxWidth],
+          'w-[95vw]', // Ensure consistent width
           className
         )}
         onInteractOutside={closable ? undefined : (e) => e.preventDefault()}

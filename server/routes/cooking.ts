@@ -210,93 +210,118 @@ router.get('/meal-plan', async (req, res) => {
     const { timeFrame = 'day', targetCalories = 2000, diet, exclude, maxReadyTime } = req.query;
     
     if (!SPOONACULAR_API_KEY) {
-      return res.status(500).json({ error: 'Spoonacular API key is not configured' });
+      return res.status(500).json({ 
+        error: 'Spoonacular API key is not configured',
+        message: 'No meal plan could be generated. The Spoonacular API might be unavailable or misconfigured.'
+      });
     }
 
     // If requesting weekly meal plan, use the built-in endpoint
     if (timeFrame === 'week') {
-      // First get the standard response from Spoonacular
-      const response = await axios.get(`${BASE_URL}/mealplanner/generate`, {
-        params: {
-          apiKey: SPOONACULAR_API_KEY,
-          timeFrame,
-          targetCalories,
-          diet,
-          exclude
-        }
-      });
-      
-      // Now let's enhance the meal plan with improved categorization if OpenAI is available
-      if (process.env.OPENAI_API_KEY) {
-        // For each day in the week, get the recipes and recategorize them
-        try {
-          console.log('Enhancing meal plan with OpenAI categorization');
-          
-          // Check if the response structure is as expected
-          if (!response.data.week || !response.data.week.days || !Array.isArray(response.data.week.days)) {
-            console.error('Unexpected API response structure:', response.data);
-            return res.json(response.data);
+      try {
+        // First get the standard response from Spoonacular
+        const response = await axios.get(`${BASE_URL}/mealplanner/generate`, {
+          params: {
+            apiKey: SPOONACULAR_API_KEY,
+            timeFrame,
+            targetCalories,
+            diet,
+            exclude
           }
-          
-          // For each day, collect the recipes for categorization
-          const enhancedWeek = { days: [] };
-          
-          for (const day of response.data.week.days) {
-            // Verify day has valid meals array
-            if (!day.meals || !Array.isArray(day.meals) || day.meals.length === 0) {
-              console.error('Day has invalid meals data:', day);
-              continue;
+        });
+        
+        // Log the response structure for debugging
+        console.log('Spoonacular meal plan response structure:', JSON.stringify(response.data));
+        
+        // Check if response is valid
+        if (!response.data || !response.data.week) {
+          console.error('Unexpected API response structure:', response.data);
+          return res.status(500).json({ 
+            error: 'Invalid data from Spoonacular API',
+            message: 'No meal plan could be generated. The Spoonacular API might be unavailable or misconfigured.'
+          });
+        }
+        
+        // Now let's enhance the meal plan with improved categorization if OpenAI is available
+        if (process.env.OPENAI_API_KEY) {
+          // For each day in the week, get the recipes and recategorize them
+          try {
+            console.log('Enhancing meal plan with OpenAI categorization');
+            
+            // Check if the response structure is as expected
+            if (!response.data.week || !response.data.week.monday) {
+              console.error('Unexpected API response structure:', response.data);
+              return res.json(response.data);
             }
             
-            // Collect all recipes from this day for processing
-            const recipes = day.meals.map((meal: any) => ({
-              id: meal.id,
-              title: meal.title,
-              readyInMinutes: meal.readyInMinutes || 0,
-              servings: meal.servings || 1,
-              imageType: meal.imageType || 'jpg'
-            }));
+            // The API response format has changed - it now returns days as objects instead of an array
+            const weekDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            const enhancedWeek = { days: [] };
             
-            // Get OpenAI to categorize these recipes
-            const categorizedRecipes = await MealCategorizationService.categorizeRecipes(recipes);
-            const organizedMeals = MealCategorizationService.organizeMealsByType(categorizedRecipes);
+            for (const dayName of weekDays) {
+              const day = response.data.week[dayName];
+              if (!day || !day.meals || !Array.isArray(day.meals) || day.meals.length === 0) {
+                console.error(`Day ${dayName} has invalid meals data:`, day);
+                continue;
+              }
+              
+              // Collect all recipes from this day for processing
+              const recipes = day.meals.map((meal: any) => ({
+                id: meal.id,
+                title: meal.title,
+                readyInMinutes: meal.readyInMinutes || 0,
+                servings: meal.servings || 1,
+                imageType: meal.imageType || 'jpg'
+              }));
+              
+              // Get OpenAI to categorize these recipes
+              const categorizedRecipes = await MealCategorizationService.categorizeRecipes(recipes);
+              const organizedMeals = MealCategorizationService.organizeMealsByType(categorizedRecipes);
+              
+              // Reorganize the meals based on their types
+              // Try to select a breakfast, lunch, and dinner if available
+              const enhancedMeals = [
+                // Breakfast (use the first breakfast or fallback to original)
+                organizedMeals.breakfast.length > 0 ? 
+                  { ...organizedMeals.breakfast[0], mealType: 'breakfast' } : 
+                  day.meals[0] ? { ...day.meals[0], mealType: 'breakfast' } : null,
+                  
+                // Lunch (use the first lunch or fallback to original)
+                organizedMeals.lunch.length > 0 ? 
+                  { ...organizedMeals.lunch[0], mealType: 'lunch' } : 
+                  day.meals.length > 1 ? { ...day.meals[1], mealType: 'lunch' } : null,
+                  
+                // Dinner (use the first dinner or fallback to original)
+                organizedMeals.dinner.length > 0 ? 
+                  { ...organizedMeals.dinner[0], mealType: 'dinner' } : 
+                  day.meals.length > 2 ? { ...day.meals[2], mealType: 'dinner' } : null
+              ].filter(Boolean);
+              
+              // Add the categorization info to the enhanced day
+              enhancedWeek.days.push({
+                dayName,
+                meals: enhancedMeals,
+                nutrients: day.nutrients,
+                aiEnhanced: true
+              });
+            }
             
-            // Reorganize the meals based on their types
-            // Try to select a breakfast, lunch, and dinner if available
-            const enhancedMeals = [
-              // Breakfast (use the first breakfast or fallback to original)
-              organizedMeals.breakfast.length > 0 ? 
-                { ...organizedMeals.breakfast[0], mealType: 'breakfast' } : 
-                day.meals[0] ? { ...day.meals[0], mealType: 'breakfast' } : null,
-                
-              // Lunch (use the first lunch or fallback to original)
-              organizedMeals.lunch.length > 0 ? 
-                { ...organizedMeals.lunch[0], mealType: 'lunch' } : 
-                day.meals.length > 1 ? { ...day.meals[1], mealType: 'lunch' } : null,
-                
-              // Dinner (use the first dinner or fallback to original)
-              organizedMeals.dinner.length > 0 ? 
-                { ...organizedMeals.dinner[0], mealType: 'dinner' } : 
-                day.meals.length > 2 ? { ...day.meals[2], mealType: 'dinner' } : null
-            ].filter(Boolean);
-            
-            // Add the categorization info to the enhanced day
-            enhancedWeek.days.push({
-              ...day,
-              meals: enhancedMeals,
-              aiEnhanced: true
-            });
+            return res.json({ week: enhancedWeek });
+          } catch (aiError) {
+            console.error('Error enhancing meal plan with AI:', aiError);
+            // If AI enhancement fails, just return the original data
+            return res.json(response.data);
           }
-          
-          return res.json({ week: enhancedWeek });
-        } catch (aiError) {
-          console.error('Error enhancing meal plan with AI:', aiError);
-          // If AI enhancement fails, just return the original data
+        } else {
+          // No OpenAI API key, just return the original data
           return res.json(response.data);
         }
-      } else {
-        // No OpenAI API key, just return the original data
-        return res.json(response.data);
+      } catch (spoonacularError) {
+        console.error('Error fetching meal plan from Spoonacular:', spoonacularError);
+        return res.status(500).json({ 
+          error: 'Spoonacular API error',
+          message: 'No meal plan could be generated. The Spoonacular API might be unavailable or misconfigured.'
+        });
       }
     }
     

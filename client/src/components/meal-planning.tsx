@@ -280,8 +280,28 @@ export default function MealPlanning() {
         params: selectedPlanConfig.apiParams
       });
 
+      console.log("Meal plan API response:", response.data);
+      
       if (response.data?.week) {
-        const weekData = response.data.week as SpoonacularMealPlanWeek["days"];
+        let weekData;
+        
+        // Check if we have an array of days or an object with day keys
+        if (Array.isArray(response.data.week.days)) {
+          weekData = response.data.week.days;
+        } else if (response.data.week.monday) {
+          // Handle Spoonacular's new response format where days are properties
+          weekData = [
+            response.data.week.monday,
+            response.data.week.tuesday,
+            response.data.week.wednesday,
+            response.data.week.thursday,
+            response.data.week.friday,
+            response.data.week.saturday,
+            response.data.week.sunday
+          ];
+        } else {
+          throw new Error("Unexpected meal plan data format");
+        }
         
         // Transform the API response into our app's data structure
         const formattedPlan: DayPlan[] = weekData.map((day, index) => {
