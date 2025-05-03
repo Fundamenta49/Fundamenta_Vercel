@@ -781,761 +781,108 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
   // Tab content components
   const tabContent = {
     financial: (
-      <div className="pt-4 space-y-6">
-        <div className="bg-white rounded-xl shadow-md overflow-hidden border border-blue-100 hover:shadow-lg transition-shadow">
-          <div className="flex items-center gap-3 bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b border-blue-100">
-            <Wallet className="h-8 w-8 text-blue-500" strokeWidth={1.5} />
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-xl font-bold text-blue-800">Financial Literacy Basics</h3>
-                <StandardBadge size="sm" sectionTheme="financial" className="ml-2" blurEffect={true}>Core Skills</StandardBadge>
-              </div>
-              <p className="text-blue-700 text-sm">Essential money management skills for everyday life</p>
-            </div>
-          </div>
-          <div className="p-6">
-            <div className="bg-blue-50/50 rounded-lg p-4 mb-5 border border-blue-100">
-              <div className="flex items-start gap-2">
-                <User className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                <div>
-                  <h4 className="font-medium text-blue-800">Personalized for You</h4>
-                  <p className="text-blue-700 text-sm mt-1">
-                    Based on your goals to build an emergency fund, we've highlighted saving strategies below.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div className="bg-gradient-to-b from-blue-50 to-white rounded-lg border border-blue-100 overflow-hidden shadow-sm">
-                <div className="bg-blue-100 px-4 py-2 border-b border-blue-200">
-                  <h4 className="font-semibold text-blue-800">Recommended Focus Areas</h4>
-                </div>
-                <div className="p-4">
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-2">
-                      <div className="bg-blue-100 text-blue-700 h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                      </div>
-                      <div>
-                        <span className="font-medium text-blue-900">Creating and maintaining a budget</span>
-                        <p className="text-sm text-blue-700 mt-0.5">Track income and expenses to gain control of your finances</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <div className="bg-blue-100 text-blue-700 h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                      </div>
-                      <div>
-                        <span className="font-medium text-blue-900">Saving strategies for emergencies</span>
-                        <p className="text-sm text-blue-700 mt-0.5">Build a safety net for unexpected expenses</p>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div className="bg-gradient-to-b from-blue-50 to-white rounded-lg border border-blue-100 overflow-hidden shadow-sm">
-                <div className="bg-blue-100 px-4 py-2 border-b border-blue-200">
-                  <h4 className="font-semibold text-blue-800">Additional Skills</h4>
-                </div>
-                <div className="p-4">
-                  <ul className="space-y-2">
-                    <li className="flex items-start gap-2">
-                      <div className="text-blue-400 flex-shrink-0 mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <path d="M12 8v4l3 3"></path>
-                        </svg>
-                      </div>
-                      <span className="text-blue-800">Understanding credit scores and debt management</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <div className="text-blue-400 flex-shrink-0 mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <path d="M12 8v4l3 3"></path>
-                        </svg>
-                      </div>
-                      <span className="text-blue-800">Basic investment concepts</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <div className="text-blue-400 flex-shrink-0 mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <path d="M12 8v4l3 3"></path>
-                        </svg>
-                      </div>
-                      <span className="text-blue-800">Tax planning fundamentals</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-gradient-to-r from-blue-50 to-white rounded-lg p-4 border border-blue-100">
-              <div className="flex items-start gap-3">
-                <div className="bg-white p-2 rounded-full shadow-sm">
-                  <Lightbulb className="h-6 w-6 text-blue-500" />
-                </div>
-                <div>
-                  <h4 className="font-semibold text-blue-800 flex items-center">
-                    Smart Tip: The 50/30/20 Budget Rule
-                  </h4>
-                  <p className="text-blue-800 mt-2">
-                    Allocate 50% of income to needs, 30% to wants, and 20% to savings and debt repayment.
-                    Based on your profile, starting with 10% savings could be more achievable.
-                  </p>
-                  <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-                    <div className="bg-blue-100/60 rounded-lg p-2 border border-blue-200">
-                      <div className="text-2xl font-bold text-blue-800">50%</div>
-                      <div className="text-xs text-blue-700">Needs</div>
-                    </div>
-                    <div className="bg-blue-100/60 rounded-lg p-2 border border-blue-200">
-                      <div className="text-2xl font-bold text-blue-800">30%</div>
-                      <div className="text-xs text-blue-700">Wants</div>
-                    </div>
-                    <div className="bg-blue-100/60 rounded-lg p-2 border border-blue-200">
-                      <div className="text-2xl font-bold text-blue-800">20%</div>
-                      <div className="text-xs text-blue-700">Savings</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="pt-4 prose prose-slate max-w-none">
+        <h3>Financial Literacy Basics</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          <span className="font-semibold">Personalized for you:</span> Based on your goals to build an emergency fund,
+          we've highlighted saving strategies below.
+        </p>
+        <ul className="space-y-2">
+          <li className="font-semibold">Creating and maintaining a budget</li>
+          <li>Understanding credit scores and debt management</li>
+          <li className="font-semibold">Saving strategies for emergencies and goals</li>
+          <li>Basic investment concepts</li>
+          <li>Tax planning fundamentals</li>
+        </ul>
+        
+        <div className="mt-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
+          <h4 className="text-blue-700 flex items-center text-sm">
+            <Lightbulb className="h-4 w-4 mr-1" />
+            Smart Tip
+          </h4>
+          <p className="text-sm mt-1">
+            Try the 50/30/20 rule: 50% of income to needs, 30% to wants, and 20% to savings and debt repayment.
+            Based on your profile, starting with 10% savings could be more achievable.
+          </p>
         </div>
       </div>
     ),
     cooking: (
-      <div className="pt-4 space-y-6">
-        <div className="bg-white rounded-xl shadow-md overflow-hidden border border-green-100 hover:shadow-lg transition-shadow">
-          <div className="flex items-center gap-3 bg-gradient-to-r from-green-50 to-green-100 px-6 py-4 border-b border-green-100">
-            <ChefHat className="h-8 w-8 text-green-500" strokeWidth={1.5} />
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-xl font-bold text-green-800">Essential Cooking Skills</h3>
-                <StandardBadge size="sm" sectionTheme="wellness" className="ml-2" blurEffect={true}>For Beginners</StandardBadge>
-              </div>
-              <p className="text-green-700 text-sm">Learn to prepare delicious, healthy meals with confidence</p>
-            </div>
-          </div>
-          <div className="p-6">
-            <div className="bg-green-50/50 rounded-lg p-4 mb-5 border border-green-100">
-              <div className="flex items-start gap-2">
-                <User className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                <div>
-                  <h4 className="font-medium text-green-800">Personalized for You</h4>
-                  <p className="text-green-700 text-sm mt-1">
-                    Given your interest in learning basic meals, we've curated visual recipes 
-                    that match your visual learning style.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-              <div className="col-span-1 md:col-span-2">
-                <div className="bg-green-50 rounded-lg overflow-hidden border border-green-200">
-                  <div className="bg-green-100 px-4 py-3">
-                    <h4 className="font-semibold text-green-800">Recommended Learning Path</h4>
-                  </div>
-                  <div className="p-4">
-                    <div className="flex flex-wrap gap-3">
-                      <div className="flex-1 min-w-[200px] flex items-center p-3 bg-white rounded-md border border-green-100 shadow-sm">
-                        <div className="bg-green-100 w-9 h-9 rounded-full flex items-center justify-center mr-3 text-green-600 font-bold">1</div>
-                        <div>
-                          <div className="font-medium text-green-900">Kitchen Safety</div>
-                          <p className="text-xs text-green-700">The foundation of cooking confidently</p>
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-[200px] flex items-center p-3 bg-white rounded-md border border-green-100 shadow-sm">
-                        <div className="bg-green-100 w-9 h-9 rounded-full flex items-center justify-center mr-3 text-green-600 font-bold">2</div>
-                        <div>
-                          <div className="font-medium text-green-900">Knife Skills</div>
-                          <p className="text-xs text-green-700">Safe and efficient cutting techniques</p>
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-[200px] flex items-center p-3 bg-white rounded-md border border-green-100 shadow-sm">
-                        <div className="bg-green-100 w-9 h-9 rounded-full flex items-center justify-center mr-3 text-green-600 font-bold">3</div>
-                        <div>
-                          <div className="font-medium text-green-900">Cooking Methods</div>
-                          <p className="text-xs text-green-700">Master fundamental techniques</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-sm border border-green-100 overflow-hidden">
-                <div className="bg-gradient-to-r from-green-50 to-white px-4 py-3 border-b border-green-100">
-                  <h4 className="font-semibold text-green-800">Key Focus Areas</h4>
-                </div>
-                <div className="p-4">
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-2">
-                      <div className="bg-green-100 text-green-700 h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                      </div>
-                      <div>
-                        <span className="font-medium text-green-900">Understanding cooking methods</span>
-                        <p className="text-sm text-green-700 mt-0.5">Learn to roast, sauté, boil, and more</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <div className="bg-green-100 text-green-700 h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                      </div>
-                      <div>
-                        <span className="font-medium text-green-900">Meal planning and grocery shopping</span>
-                        <p className="text-sm text-green-700 mt-0.5">Save time and reduce food waste</p>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-sm border border-green-100 overflow-hidden">
-                <div className="bg-gradient-to-r from-green-50 to-white px-4 py-3 border-b border-green-100">
-                  <h4 className="font-semibold text-green-800">Supporting Skills</h4>
-                </div>
-                <div className="p-4">
-                  <ul className="space-y-2">
-                    <li className="flex items-start gap-2">
-                      <div className="text-green-400 flex-shrink-0 mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <path d="M12 8v4l3 3"></path>
-                        </svg>
-                      </div>
-                      <span className="text-green-800">Reading and following recipes</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <div className="text-green-400 flex-shrink-0 mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <path d="M12 8v4l3 3"></path>
-                        </svg>
-                      </div>
-                      <span className="text-green-800">Food storage and leftovers management</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-gradient-to-r from-green-100/50 to-green-50/80 rounded-lg border border-green-200 overflow-hidden shadow-sm">
-              <div className="flex items-center gap-2 px-4 py-3 bg-green-100 border-b border-green-200">
-                <div className="bg-white p-1.5 rounded-full">
-                  <Lightbulb className="h-5 w-5 text-green-600" />
-                </div>
-                <h4 className="font-semibold text-green-800">Weekend Challenge</h4>
-              </div>
-              <div className="p-4">
-                <div className="flex gap-4">
-                  <div className="bg-white rounded-md p-3 flex-1 border border-green-100 shadow-sm">
-                    <h5 className="text-base font-medium text-green-800 mb-2">One-Pot Pasta</h5>
-                    <p className="text-sm text-green-700">
-                      Try making a simple one-pot pasta dish this weekend. We'll send you a visual recipe
-                      card with step-by-step instructions matched to your skill level.
-                    </p>
-                    <div className="mt-3 flex justify-end">
-                      <Button variant="outline" size="sm" className="text-green-600 border-green-200 hover:bg-green-50">
-                        Get Recipe
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="pt-4 prose prose-slate max-w-none">
+        <h3>Essential Cooking Skills</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          <span className="font-semibold">Personalized for you:</span> Given your interest in learning basic meals,
+          we've curated visual recipes that match your learning style.
+        </p>
+        <ul className="space-y-2">
+          <li>Basic knife techniques and kitchen safety</li>
+          <li className="font-semibold">Understanding cooking methods (roasting, sautéing, boiling)</li>
+          <li className="font-semibold">Meal planning and grocery shopping</li>
+          <li>Reading and following recipes</li>
+          <li>Food storage and leftovers management</li>
+        </ul>
+        
+        <div className="mt-4 bg-green-50 p-3 rounded-lg border border-green-100">
+          <h4 className="text-green-700 flex items-center text-sm">
+            <Lightbulb className="h-4 w-4 mr-1" />
+            Weekend Challenge
+          </h4>
+          <p className="text-sm mt-1">
+            Try making a simple one-pot pasta dish this weekend. We'll send you a visual recipe
+            card with step-by-step instructions matched to your skill level.
+          </p>
         </div>
       </div>
     ),
     home: (
-      <div className="pt-4 space-y-6">
-        <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow">
-          <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
-            <Home className="h-8 w-8 text-orange-500" strokeWidth={1.5} />
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-xl font-bold text-orange-800">Home Maintenance Skills</h3>
-                <StandardBadge size="sm" sectionTheme="emergency" className="ml-2" blurEffect={true}>Essential</StandardBadge>
-              </div>
-              <p className="text-orange-700 text-sm">Learn to maintain and repair your living space</p>
-            </div>
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="bg-gradient-to-b from-orange-50 to-white rounded-lg overflow-hidden border border-orange-100 shadow-sm">
-                <div className="bg-orange-100 px-4 py-3 border-b border-orange-200">
-                  <h4 className="font-semibold text-orange-800">Plumbing Skills</h4>
-                </div>
-                <div className="p-5">
-                  <div className="flex mb-4">
-                    <div className="p-2 bg-orange-50 rounded-md">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-orange-500">
-                        <path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path>
-                        <path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path>
-                        <path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path>
-                        <path d="M12 10v4"></path><path d="M10 14h4"></path>
-                      </svg>
-                    </div>
-                    <div className="ml-4">
-                      <h5 className="font-medium text-orange-900">Fixing Common Leaks</h5>
-                      <p className="text-sm text-orange-700 mt-1">Learn to repair dripping faucets and leaking pipes</p>
-                    </div>
-                  </div>
-                  <ul className="space-y-2 text-orange-800">
-                    <li className="flex items-center">
-                      <div className="bg-orange-100 h-5 w-5 rounded-full flex items-center justify-center text-orange-600 text-xs font-bold mr-2">1</div>
-                      <span>Basic plumbing tools and their uses</span>
-                    </li>
-                    <li className="flex items-center">
-                      <div className="bg-orange-100 h-5 w-5 rounded-full flex items-center justify-center text-orange-600 text-xs font-bold mr-2">2</div>
-                      <span>Identifying common leak points</span>
-                    </li>
-                    <li className="flex items-center">
-                      <div className="bg-orange-100 h-5 w-5 rounded-full flex items-center justify-center text-orange-600 text-xs font-bold mr-2">3</div>
-                      <span>Step-by-step repair processes</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div className="bg-gradient-to-b from-orange-50 to-white rounded-lg overflow-hidden border border-orange-100 shadow-sm">
-                <div className="bg-orange-100 px-4 py-3 border-b border-orange-200">
-                  <h4 className="font-semibold text-orange-800">Electrical Safety</h4>
-                </div>
-                <div className="p-5">
-                  <div className="flex mb-4">
-                    <div className="p-2 bg-orange-50 rounded-md">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-orange-500">
-                        <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
-                        <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
-                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-                        <path d="M12 20h.01"></path>
-                      </svg>
-                    </div>
-                    <div className="ml-4">
-                      <h5 className="font-medium text-orange-900">Working with Fixtures</h5>
-                      <p className="text-sm text-orange-700 mt-1">Safe techniques for electrical maintenance</p>
-                    </div>
-                  </div>
-                  <ul className="space-y-2 text-orange-800">
-                    <li className="flex items-center">
-                      <div className="bg-orange-100 h-5 w-5 rounded-full flex items-center justify-center text-orange-600 text-xs font-bold mr-2">1</div>
-                      <span>Circuit breaker basics and safety</span>
-                    </li>
-                    <li className="flex items-center">
-                      <div className="bg-orange-100 h-5 w-5 rounded-full flex items-center justify-center text-orange-600 text-xs font-bold mr-2">2</div>
-                      <span>Changing light fixtures and switches</span>
-                    </li>
-                    <li className="flex items-center">
-                      <div className="bg-orange-100 h-5 w-5 rounded-full flex items-center justify-center text-orange-600 text-xs font-bold mr-2">3</div>
-                      <span>When to call a professional</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-lg border border-orange-100 shadow-sm overflow-hidden">
-              <div className="bg-gradient-to-r from-orange-50 to-white px-4 py-3 border-b border-orange-100">
-                <h4 className="font-semibold text-orange-800">Additional Home Skills</h4>
-              </div>
-              <div className="p-4">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="bg-orange-50/50 p-3 rounded-lg border border-orange-100 hover:bg-orange-50 transition-colors">
-                    <div className="flex items-center mb-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-orange-500 mr-2">
-                        <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
-                      </svg>
-                      <h5 className="font-medium text-orange-800">Wall Repairs</h5>
-                    </div>
-                    <p className="text-sm text-orange-700">Patching holes, prepping, and painting techniques</p>
-                  </div>
-                  
-                  <div className="bg-orange-50/50 p-3 rounded-lg border border-orange-100 hover:bg-orange-50 transition-colors">
-                    <div className="flex items-center mb-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-orange-500 mr-2">
-                        <rect width="20" height="20" x="2" y="2" rx="5"></rect>
-                        <path d="M16 16h.01"></path>
-                        <path d="M8 16h.01"></path>
-                        <path d="M16 8h.01"></path>
-                        <path d="M8 8h.01"></path>
-                      </svg>
-                      <h5 className="font-medium text-orange-800">Organization</h5>
-                    </div>
-                    <p className="text-sm text-orange-700">Effective cleaning routines and storage solutions</p>
-                  </div>
-                  
-                  <div className="bg-orange-50/50 p-3 rounded-lg border border-orange-100 hover:bg-orange-50 transition-colors">
-                    <div className="flex items-center mb-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-orange-500 mr-2">
-                        <path d="M12 2v8"></path>
-                        <path d="m4.93 10.93 1.41 1.41"></path>
-                        <path d="M2 18h2"></path>
-                        <path d="M20 18h2"></path>
-                        <path d="m19.07 10.93-1.41 1.41"></path>
-                        <path d="M22 22H2"></path>
-                        <path d="M16 7.5a4 4 0 0 0-8 0"></path>
-                        <path d="M16 12.5a4 4 0 0 0-8 0"></path>
-                      </svg>
-                      <h5 className="font-medium text-orange-800">Seasonal Tasks</h5>
-                    </div>
-                    <p className="text-sm text-orange-700">Year-round maintenance to protect your home</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-6 flex justify-center">
-              <Button variant="outline" className="text-orange-600 border-orange-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                </svg>
-                Get DIY Home Maintenance Guide
-              </Button>
-            </div>
-          </div>
-        </div>
+      <div className="pt-4 prose prose-slate max-w-none">
+        <h3>Home Maintenance Skills</h3>
+        <ul className="space-y-2">
+          <li>Basic plumbing and fixing leaks</li>
+          <li>Electrical safety and changing fixtures</li>
+          <li>Wall repairs and painting techniques</li>
+          <li>Cleaning routines and organization</li>
+          <li>Seasonal home maintenance</li>
+        </ul>
       </div>
     ),
     time: (
-      <div className="pt-4 space-y-6">
-        <div className="bg-white rounded-xl shadow-md overflow-hidden border border-purple-100 hover:shadow-lg transition-shadow">
-          <div className="flex items-center gap-3 bg-gradient-to-r from-purple-50 to-purple-100 px-6 py-4 border-b border-purple-100">
-            <Clock className="h-8 w-8 text-purple-500" strokeWidth={1.5} />
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-xl font-bold text-purple-800">Time Management Strategies</h3>
-                <StandardBadge size="sm" sectionTheme="learning" className="ml-2" blurEffect={true}>Productivity</StandardBadge>
-              </div>
-              <p className="text-purple-700 text-sm">Systems and methods to make the most of your time</p>
-            </div>
-          </div>
-          <div className="p-6">
-            <div className="bg-purple-50/50 rounded-lg p-4 mb-5 border border-purple-100">
-              <div className="flex items-start gap-2">
-                <User className="h-5 w-5 text-purple-500 mt-0.5 flex-shrink-0" />
-                <div>
-                  <h4 className="font-medium text-purple-800">Personalized for You</h4>
-                  <p className="text-purple-700 text-sm mt-1">
-                    Based on your weakness with procrastination, we've highlighted relevant
-                    strategies below to help you overcome this challenge.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-gradient-to-b from-purple-50 to-white rounded-lg overflow-hidden border border-purple-100 shadow-sm">
-                  <div className="bg-purple-100 py-3 px-4 border-b border-purple-200">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold text-purple-800">Recommended Focus</h4>
-                      <StandardBadge size="sm" sectionTheme="career" pill={true}>High Priority</StandardBadge>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <ul className="space-y-3">
-                      <li className="flex items-start gap-2">
-                        <div className="bg-purple-100 text-purple-700 h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                          </svg>
-                        </div>
-                        <div>
-                          <span className="font-medium text-purple-900">Creating effective to-do lists</span>
-                          <p className="text-sm text-purple-700 mt-0.5">Prioritize tasks to focus on what matters most</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <div className="bg-purple-100 text-purple-700 h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                          </svg>
-                        </div>
-                        <div>
-                          <span className="font-medium text-purple-900">Avoiding procrastination</span>
-                          <p className="text-sm text-purple-700 mt-0.5">Techniques to overcome delay and start tasks promptly</p>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                
-                <div className="bg-white rounded-lg shadow-sm border border-purple-100 overflow-hidden">
-                  <div className="bg-gradient-to-r from-purple-50 to-white px-4 py-3 border-b border-purple-100">
-                    <h4 className="font-semibold text-purple-800">Additional Skills</h4>
-                  </div>
-                  <div className="p-4">
-                    <ul className="space-y-2">
-                      <li className="flex items-start gap-2">
-                        <div className="text-purple-400 flex-shrink-0 mt-0.5">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 8v4l3 3"></path>
-                          </svg>
-                        </div>
-                        <span className="text-purple-800">Setting priorities and goals</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <div className="text-purple-400 flex-shrink-0 mt-0.5">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 8v4l3 3"></path>
-                          </svg>
-                        </div>
-                        <span className="text-purple-800">Time blocking techniques</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <div className="text-purple-400 flex-shrink-0 mt-0.5">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 8v4l3 3"></path>
-                          </svg>
-                        </div>
-                        <span className="text-purple-800">Work-life balance strategies</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-gradient-to-b from-purple-50 to-purple-100/30 rounded-lg overflow-hidden border border-purple-200 shadow-sm">
-                <div className="bg-purple-100 px-4 py-3 border-b border-purple-200">
-                  <h4 className="font-semibold text-purple-800 flex items-center">
-                    <Lightbulb className="h-5 w-5 mr-2" />
-                    Try This Today
-                  </h4>
-                </div>
-                <div className="p-4">
-                  <div className="bg-white rounded-lg p-4 border border-purple-100 shadow-sm">
-                    <h5 className="font-medium text-purple-800 text-base">The Pomodoro Technique</h5>
-                    <div className="mt-3 flex items-center justify-center">
-                      <div className="relative">
-                        <div className="w-28 h-28 rounded-full border-4 border-purple-200 flex items-center justify-center bg-white">
-                          <div className="text-center">
-                            <div className="text-purple-900 font-bold text-2xl">25</div>
-                            <div className="text-purple-600 text-xs">minutes</div>
-                          </div>
-                        </div>
-                        <div className="absolute -top-1 -right-1 bg-purple-100 rounded-full p-2 border border-purple-200">
-                          <Clock className="h-4 w-4 text-purple-600" />
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-purple-800 text-sm mt-4">
-                      Work focused for 25 minutes, then take a 5-minute break.
-                      Research shows this can help overcome procrastination tendencies.
-                    </p>
-                    <div className="mt-3 flex justify-center">
-                      <Button variant="outline" size="sm" className="text-purple-600 border-purple-200 hover:bg-purple-50">
-                        Try Now
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-lg p-4 border border-purple-100 shadow-sm">
-              <h4 className="font-medium text-purple-800 mb-2 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
-                </svg>
-                Other Techniques to Explore
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
-                <div className="border border-purple-100 p-3 rounded-md bg-purple-50/50 hover:bg-purple-50 transition-colors">
-                  <h5 className="font-medium text-purple-800">Eisenhower Matrix</h5>
-                  <p className="text-xs text-purple-700 mt-1">Prioritize tasks based on importance and urgency</p>
-                </div>
-                <div className="border border-purple-100 p-3 rounded-md bg-purple-50/50 hover:bg-purple-50 transition-colors">
-                  <h5 className="font-medium text-purple-800">Time Blocking</h5>
-                  <p className="text-xs text-purple-700 mt-1">Schedule specific time periods for focused work</p>
-                </div>
-                <div className="border border-purple-100 p-3 rounded-md bg-purple-50/50 hover:bg-purple-50 transition-colors">
-                  <h5 className="font-medium text-purple-800">2-Minute Rule</h5>
-                  <p className="text-xs text-purple-700 mt-1">If a task takes less than 2 minutes, do it immediately</p>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="pt-4 prose prose-slate max-w-none">
+        <h3>Time Management Strategies</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          <span className="font-semibold">Personalized for you:</span> Based on your weakness with procrastination,
+          we've highlighted relevant strategies below.
+        </p>
+        <ul className="space-y-2">
+          <li>Setting priorities and goals</li>
+          <li className="font-semibold">Creating effective to-do lists</li>
+          <li className="font-semibold">Avoiding procrastination</li>
+          <li>Time blocking techniques</li>
+          <li>Work-life balance strategies</li>
+        </ul>
+        
+        <div className="mt-4 bg-purple-50 p-3 rounded-lg border border-purple-100">
+          <h4 className="text-purple-700 flex items-center text-sm">
+            <Lightbulb className="h-4 w-4 mr-1" />
+            Try This Today
+          </h4>
+          <p className="text-sm mt-1">
+            The Pomodoro Technique: Work for 25 minutes, then take a 5-minute break.
+            Research shows this can help overcome procrastination tendencies.
+          </p>
         </div>
       </div>
     ),
     communication: (
-      <div className="pt-4 space-y-6">
-        <div className="bg-white rounded-xl shadow-md overflow-hidden border border-sky-100 hover:shadow-lg transition-shadow">
-          <div className="flex items-center gap-3 bg-gradient-to-r from-sky-50 to-sky-100 px-6 py-4 border-b border-sky-100">
-            <MessageSquare className="h-8 w-8 text-sky-500" strokeWidth={1.5} />
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-xl font-bold text-sky-800">Communication Skills</h3>
-                <StandardBadge size="sm" sectionTheme="career" className="ml-2" blurEffect={true}>Professional</StandardBadge>
-              </div>
-              <p className="text-sky-700 text-sm">Essential interpersonal skills for work and life</p>
-            </div>
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="bg-gradient-to-b from-sky-50 to-white rounded-lg overflow-hidden border border-sky-100 shadow-sm">
-                <div className="bg-sky-100 px-4 py-3 border-b border-sky-200">
-                  <h4 className="font-semibold text-sky-800">Verbal Communication</h4>
-                </div>
-                <div className="p-5">
-                  <ul className="space-y-4">
-                    <li className="flex items-start gap-3">
-                      <div className="p-2 bg-sky-100 rounded-lg flex-shrink-0 mt-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
-                          <path d="M11 5a7 7 0 0 1 14 0"></path>
-                          <path d="M11 19a7 7 0 0 0 14 0"></path>
-                          <path d="M11 12h14"></path>
-                          <path d="M4 19h3a3 3 0 1 0 0-6H4a3 3 0 1 1 0-6h3"></path>
-                        </svg>
-                      </div>
-                      <div>
-                        <h5 className="font-medium text-sky-900">Clear and Concise Speaking</h5>
-                        <p className="text-sm text-sky-700 mt-1">
-                          Clearly articulate your thoughts and ideas using simple, direct language. 
-                          Avoid jargon and unnecessarily complex words.
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="p-2 bg-sky-100 rounded-lg flex-shrink-0 mt-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
-                          <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                          <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-                        </svg>
-                      </div>
-                      <div>
-                        <h5 className="font-medium text-sky-900">Active Listening</h5>
-                        <p className="text-sm text-sky-700 mt-1">
-                          Focus fully on the speaker, acknowledge what they're saying, 
-                          provide feedback, and withhold judgment and interruptions.
-                        </p>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              
-              <div className="bg-gradient-to-b from-sky-50 to-white rounded-lg overflow-hidden border border-sky-100 shadow-sm">
-                <div className="bg-sky-100 px-4 py-3 border-b border-sky-200">
-                  <h4 className="font-semibold text-sky-800">Written Communication</h4>
-                </div>
-                <div className="p-5">
-                  <ul className="space-y-4">
-                    <li className="flex items-start gap-3">
-                      <div className="p-2 bg-sky-100 rounded-lg flex-shrink-0 mt-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
-                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                          <path d="m22 6-10 7L2 6"></path>
-                        </svg>
-                      </div>
-                      <div>
-                        <h5 className="font-medium text-sky-900">Professional Email Writing</h5>
-                        <p className="text-sm text-sky-700 mt-1">
-                          Learn to structure emails with clear subject lines, greetings, 
-                          concise content, and appropriate sign-offs.
-                        </p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <div className="p-2 bg-sky-100 rounded-lg flex-shrink-0 mt-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
-                          <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z"></path>
-                        </svg>
-                      </div>
-                      <div>
-                        <h5 className="font-medium text-sky-900">Effective Documentation</h5>
-                        <p className="text-sm text-sky-700 mt-1">
-                          Develop skills to create clear, organized documents that 
-                          effectively communicate important information.
-                        </p>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <div className="bg-white rounded-lg p-4 border border-sky-100 shadow-sm">
-                <div className="flex items-center mb-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-500 mr-2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="m4.9 4.9 14.2 14.2"></path>
-                  </svg>
-                  <h4 className="font-medium text-sky-800">Nonverbal Communication</h4>
-                </div>
-                <p className="text-sm text-sky-700">
-                  Understand how body language, facial expressions, eye contact, and gestures
-                  affect how your message is received.
-                </p>
-              </div>
-              
-              <div className="bg-white rounded-lg p-4 border border-sky-100 shadow-sm">
-                <div className="flex items-center mb-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-500 mr-2">
-                    <path d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z"></path>
-                    <rect x="3" y="14" width="7" height="7" rx="1"></rect>
-                    <circle cx="17.5" cy="17.5" r="3.5"></circle>
-                  </svg>
-                  <h4 className="font-medium text-sky-800">Difficult Conversations</h4>
-                </div>
-                <p className="text-sm text-sky-700">
-                  Learn techniques for giving constructive feedback, handling 
-                  conflict, and navigating sensitive topics.
-                </p>
-              </div>
-              
-              <div className="bg-white rounded-lg p-4 border border-sky-100 shadow-sm">
-                <div className="flex items-center mb-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-500 mr-2">
-                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                    <path d="m7 10 5 5 5-5"></path>
-                  </svg>
-                  <h4 className="font-medium text-sky-800">Cross-Cultural Communication</h4>
-                </div>
-                <p className="text-sm text-sky-700">
-                  Develop awareness of cultural differences in communication styles
-                  and adapt accordingly in diverse situations.
-                </p>
-              </div>
-            </div>
-            
-            <div className="mt-6 bg-sky-50 p-5 rounded-lg border border-sky-100">
-              <h4 className="font-semibold text-sky-800 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-                  <path d="M9.3 6.2a4.55 4.55 0 0 0 5.4 0"></path>
-                  <path d="M7.9 10.7c.9.8 2.4 1.3 4.1 1.3s3.2-.5 4.1-1.3"></path>
-                  <path d="M13.9 15.5a1.5 1.5 0 0 0-3.8 0"></path>
-                  <path d="M12 4a9 9 0 1 1 0 18 9 9 0 0 1 0-18Z"></path>
-                </svg>
-                Communication Quick Tip
-              </h4>
-              <p className="text-sky-800 mt-2">
-                When communicating, follow the 60/40 rule: listen for 60% of the time and speak for 40%. 
-                This helps ensure you fully understand the other person's perspective before responding.
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="pt-4 prose prose-slate max-w-none">
+        <h3>Communication Skills</h3>
+        <ul className="space-y-2">
+          <li>Active listening techniques</li>
+          <li>Clear and concise speaking</li>
+          <li>Managing difficult conversations</li>
+          <li>Professional email writing</li>
+          <li>Non-verbal communication awareness</li>
+        </ul>
       </div>
     ),
     shopping: (
