@@ -282,14 +282,41 @@ router.post('/refresh', async (req: Request, res: Response) => {
  * Get current user information
  * GET /api/auth/me
  */
-router.get('/me', authenticateJWT, (req: AuthenticatedRequest, res: Response) => {
+router.get('/me', authenticateJWT, async (req: AuthenticatedRequest, res: Response) => {
   // authenticateJWT middleware adds the user to the request
-  if (!req.user) {
+  if (!req.user || !req.user.id) {
     return res.status(401).json({ error: 'Authentication required' });
   }
 
-  // Return user info (UserType doesn't include password)
-  res.json({ user: req.user });
+  try {
+    // Fetch complete user data from database
+    const [user] = await db.select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      role: users.role,
+      emailVerified: users.emailVerified,
+      privacyConsent: users.privacyConsent,
+      birthYear: users.birthYear,
+      ageVerified: users.ageVerified,
+      isMinor: users.isMinor,
+      hasParentalConsent: users.hasParentalConsent,
+      tosAccepted: users.tosAccepted,
+      tosVersion: users.tosVersion,
+      tosAcceptedAt: users.tosAcceptedAt
+    }).from(users)
+      .where(eq(users.id, req.user.id));
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Return user info
+    res.json({ user });
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 /**
