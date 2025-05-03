@@ -1378,15 +1378,164 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
       </div>
     ),
     communication: (
-      <div className="pt-4 prose prose-slate max-w-none">
-        <h3>Communication Skills</h3>
-        <ul className="space-y-2">
-          <li>Active listening techniques</li>
-          <li>Clear and concise speaking</li>
-          <li>Managing difficult conversations</li>
-          <li>Professional email writing</li>
-          <li>Non-verbal communication awareness</li>
-        </ul>
+      <div className="pt-4 space-y-6">
+        <div className="bg-white rounded-xl shadow-md overflow-hidden border border-sky-100 hover:shadow-lg transition-shadow">
+          <div className="flex items-center gap-3 bg-gradient-to-r from-sky-50 to-sky-100 px-6 py-4 border-b border-sky-100">
+            <MessageSquare className="h-8 w-8 text-sky-500" strokeWidth={1.5} />
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-xl font-bold text-sky-800">Communication Skills</h3>
+                <StandardBadge size="sm" sectionTheme="career" className="ml-2" blurEffect={true}>Professional</StandardBadge>
+              </div>
+              <p className="text-sky-700 text-sm">Essential interpersonal skills for work and life</p>
+            </div>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="bg-gradient-to-b from-sky-50 to-white rounded-lg overflow-hidden border border-sky-100 shadow-sm">
+                <div className="bg-sky-100 px-4 py-3 border-b border-sky-200">
+                  <h4 className="font-semibold text-sky-800">Verbal Communication</h4>
+                </div>
+                <div className="p-5">
+                  <ul className="space-y-4">
+                    <li className="flex items-start gap-3">
+                      <div className="p-2 bg-sky-100 rounded-lg flex-shrink-0 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
+                          <path d="M11 5a7 7 0 0 1 14 0"></path>
+                          <path d="M11 19a7 7 0 0 0 14 0"></path>
+                          <path d="M11 12h14"></path>
+                          <path d="M4 19h3a3 3 0 1 0 0-6H4a3 3 0 1 1 0-6h3"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <h5 className="font-medium text-sky-900">Clear and Concise Speaking</h5>
+                        <p className="text-sm text-sky-700 mt-1">
+                          Clearly articulate your thoughts and ideas using simple, direct language. 
+                          Avoid jargon and unnecessarily complex words.
+                        </p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="p-2 bg-sky-100 rounded-lg flex-shrink-0 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
+                          <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                          <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <h5 className="font-medium text-sky-900">Active Listening</h5>
+                        <p className="text-sm text-sky-700 mt-1">
+                          Focus fully on the speaker, acknowledge what they're saying, 
+                          provide feedback, and withhold judgment and interruptions.
+                        </p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-b from-sky-50 to-white rounded-lg overflow-hidden border border-sky-100 shadow-sm">
+                <div className="bg-sky-100 px-4 py-3 border-b border-sky-200">
+                  <h4 className="font-semibold text-sky-800">Written Communication</h4>
+                </div>
+                <div className="p-5">
+                  <ul className="space-y-4">
+                    <li className="flex items-start gap-3">
+                      <div className="p-2 bg-sky-100 rounded-lg flex-shrink-0 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
+                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                          <path d="m22 6-10 7L2 6"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <h5 className="font-medium text-sky-900">Professional Email Writing</h5>
+                        <p className="text-sm text-sky-700 mt-1">
+                          Learn to structure emails with clear subject lines, greetings, 
+                          concise content, and appropriate sign-offs.
+                        </p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="p-2 bg-sky-100 rounded-lg flex-shrink-0 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
+                          <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <h5 className="font-medium text-sky-900">Effective Documentation</h5>
+                        <p className="text-sm text-sky-700 mt-1">
+                          Develop skills to create clear, organized documents that 
+                          effectively communicate important information.
+                        </p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div className="bg-white rounded-lg p-4 border border-sky-100 shadow-sm">
+                <div className="flex items-center mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-500 mr-2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="m4.9 4.9 14.2 14.2"></path>
+                  </svg>
+                  <h4 className="font-medium text-sky-800">Nonverbal Communication</h4>
+                </div>
+                <p className="text-sm text-sky-700">
+                  Understand how body language, facial expressions, eye contact, and gestures
+                  affect how your message is received.
+                </p>
+              </div>
+              
+              <div className="bg-white rounded-lg p-4 border border-sky-100 shadow-sm">
+                <div className="flex items-center mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-500 mr-2">
+                    <path d="M8.3 10a.7.7 0 0 1-.626-1.079L11.4 3a.7.7 0 0 1 1.198-.043L16.3 8.9a.7.7 0 0 1-.572 1.1Z"></path>
+                    <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                    <circle cx="17.5" cy="17.5" r="3.5"></circle>
+                  </svg>
+                  <h4 className="font-medium text-sky-800">Difficult Conversations</h4>
+                </div>
+                <p className="text-sm text-sky-700">
+                  Learn techniques for giving constructive feedback, handling 
+                  conflict, and navigating sensitive topics.
+                </p>
+              </div>
+              
+              <div className="bg-white rounded-lg p-4 border border-sky-100 shadow-sm">
+                <div className="flex items-center mb-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-500 mr-2">
+                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                    <path d="m7 10 5 5 5-5"></path>
+                  </svg>
+                  <h4 className="font-medium text-sky-800">Cross-Cultural Communication</h4>
+                </div>
+                <p className="text-sm text-sky-700">
+                  Develop awareness of cultural differences in communication styles
+                  and adapt accordingly in diverse situations.
+                </p>
+              </div>
+            </div>
+            
+            <div className="mt-6 bg-sky-50 p-5 rounded-lg border border-sky-100">
+              <h4 className="font-semibold text-sky-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                  <path d="M9.3 6.2a4.55 4.55 0 0 0 5.4 0"></path>
+                  <path d="M7.9 10.7c.9.8 2.4 1.3 4.1 1.3s3.2-.5 4.1-1.3"></path>
+                  <path d="M13.9 15.5a1.5 1.5 0 0 0-3.8 0"></path>
+                  <path d="M12 4a9 9 0 1 1 0 18 9 9 0 0 1 0-18Z"></path>
+                </svg>
+                Communication Quick Tip
+              </h4>
+              <p className="text-sky-800 mt-2">
+                When communicating, follow the 60/40 rule: listen for 60% of the time and speak for 40%. 
+                This helps ensure you fully understand the other person's perspective before responding.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     ),
     shopping: (
