@@ -20,12 +20,16 @@ import {
   ShoppingBag
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+// Import original components
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+// Import standardized components
+import { StandardCard, MobileScroller, SearchBar, TabNav } from "@/components/ui-standard";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import ShoppingBuddy from "@/components/shopping-buddy";
+import { useFeatureFlags } from "@/contexts/feature-flags-context";
 
 // Define user profile interface for personalization
 interface UserProfile {
@@ -66,6 +70,9 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
   const [isLoading, setIsLoading] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const { toast } = useToast();
+  
+  // Access feature flags for conditional UI rendering
+  const featureFlags = useFeatureFlags();
   
   // References for tutorial/walkthrough
   const dashboardRef = useRef<HTMLDivElement>(null);
@@ -131,8 +138,8 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
   ];
 
   // Function to handle search
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!searchQuery.trim()) return;
 
     setIsLoading(true);
@@ -247,6 +254,92 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
     return Math.round(total / categories.length);
   };
 
+  // Conditional rendering helper for skill progress cards
+  const renderProgressCard = (skill: string, progress: number) => {
+    if (featureFlags.USE_STANDARD_CARDS) {
+      return (
+        <StandardCard 
+          key={skill} 
+          title={<span className="capitalize">{skill}</span>}
+          sectionTheme="financial"
+          showGradient={false}
+          elevation="sm"
+          contentClassName="p-3"
+        >
+          <Progress value={progress} className="h-1.5 mt-1" />
+          <p className="text-xs text-right mt-1">{progress}%</p>
+        </StandardCard>
+      );
+    }
+    
+    return (
+      <Card key={skill} className="bg-slate-50 border hover:shadow-md transition-shadow">
+        <CardHeader className="p-3 pb-1">
+          <CardTitle className="text-sm capitalize">{skill}</CardTitle>
+        </CardHeader>
+        <CardContent className="p-3 pt-0">
+          <Progress value={progress} className="h-1.5 mt-1" />
+          <p className="text-xs text-right mt-1">{progress}%</p>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  // Conditional rendering helper for goals card
+  const renderGoalsCard = () => {
+    const goalsContent = (
+      <ul className="space-y-2">
+        {userProfile.goals.map((goal, index) => (
+          <li key={index} className="flex items-start">
+            <ArrowRight className="h-4 w-4 mr-2 mt-0.5 text-blue-500" />
+            <span className="text-sm">{goal}</span>
+          </li>
+        ))}
+      </ul>
+    );
+    
+    const goalsFooter = (
+      <Button variant="ghost" size="sm" className="w-full text-blue-600">
+        Update Goals
+      </Button>
+    );
+    
+    if (featureFlags.USE_STANDARD_CARDS) {
+      return (
+        <StandardCard
+          title={
+            <div className="flex items-center">
+              <Star className="h-5 w-5 mr-2 text-yellow-500" />
+              <span className="text-lg font-semibold">Goals</span>
+            </div>
+          }
+          className="w-full md:w-96"
+          sectionTheme="financial"
+          footer={goalsFooter}
+        >
+          {goalsContent}
+        </StandardCard>
+      );
+    }
+    
+    return (
+      <Card className="w-full md:w-96 bg-blue-50">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg flex items-center">
+            <Star className="h-5 w-5 mr-2 text-yellow-500" />
+            Goals
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pb-3">
+          {goalsContent}
+        </CardContent>
+        <CardFooter>
+          {goalsFooter}
+        </CardFooter>
+      </Card>
+    );
+  };
+
   // Dashboard component
   const DashboardContent = () => (
     <div className="space-y-8 pt-2" ref={dashboardRef}>
@@ -266,44 +359,27 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
             <Progress value={calculateOverallProgress()} className="h-2" />
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
-            {Object.entries(userProfile.progress).map(([skill, progress]) => (
-              <Card key={skill} className="bg-slate-50 border hover:shadow-md transition-shadow">
-                <CardHeader className="p-3 pb-1">
-                  <CardTitle className="text-sm capitalize">{skill}</CardTitle>
-                </CardHeader>
-                <CardContent className="p-3 pt-0">
-                  <Progress value={progress} className="h-1.5 mt-1" />
-                  <p className="text-xs text-right mt-1">{progress}%</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {featureFlags.USE_STANDARD_MOBILE_SCROLL ? (
+            <MobileScroller 
+              columns={{ sm: 2, md: 3, lg: 3 }} 
+              gap="sm" 
+              mobileMinWidth={160} 
+              className="mb-4"
+            >
+              {Object.entries(userProfile.progress).map(([skill, progress]) => 
+                renderProgressCard(skill, progress)
+              )}
+            </MobileScroller>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+              {Object.entries(userProfile.progress).map(([skill, progress]) => 
+                renderProgressCard(skill, progress)
+              )}
+            </div>
+          )}
         </div>
         
-        <Card className="w-full md:w-96 bg-blue-50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center">
-              <Star className="h-5 w-5 mr-2 text-yellow-500" />
-              Goals
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pb-3">
-            <ul className="space-y-2">
-              {userProfile.goals.map((goal, index) => (
-                <li key={index} className="flex items-start">
-                  <ArrowRight className="h-4 w-4 mr-2 mt-0.5 text-blue-500" />
-                  <span className="text-sm">{goal}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-          <CardFooter>
-            <Button variant="ghost" size="sm" className="w-full text-blue-600">
-              Update Goals
-            </Button>
-          </CardFooter>
-        </Card>
+        {renderGoalsCard()}
       </div>
       
       {/* Smart prompts section */}
@@ -319,33 +395,47 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
         <ScrollArea className="h-[320px] pr-4">
           <div className="space-y-3">
             {smartPrompts.length > 0 ? (
-              smartPrompts.map(prompt => (
-                <Card key={prompt.id} className={cn(
-                  "border hover:shadow-md transition-all",
-                  prompt.isNew ? "bg-amber-50 border-amber-200" : "bg-white",
-                  prompt.type === "alert" && "bg-red-50 border-red-200"
-                )}>
-                  <CardHeader className="p-3 pb-2">
-                    <CardTitle className="text-base flex items-center">
-                      {prompt.type === "tip" && <Lightbulb className="h-4 w-4 mr-2 text-amber-500" />}
-                      {prompt.type === "reminder" && <BellRing className="h-4 w-4 mr-2 text-blue-500" />}
-                      {prompt.type === "challenge" && <Star className="h-4 w-4 mr-2 text-purple-500" />}
-                      {prompt.type === "alert" && <AlertCircle className="h-4 w-4 mr-2 text-red-500" />}
-                      {prompt.title}
-                      {prompt.isNew && (
-                        <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">
-                          New
-                        </span>
-                      )}
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      {new Date(prompt.createdAt).toLocaleString()}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-3 py-1">
-                    <p className="text-sm">{prompt.description}</p>
-                  </CardContent>
-                  <CardFooter className="p-3 pt-2 flex justify-between">
+              smartPrompts.map(prompt => {
+                // Get the appropriate icon based on prompt type
+                const promptIcon = () => {
+                  if (prompt.type === "tip") return <Lightbulb className="h-4 w-4 mr-2 text-amber-500" />;
+                  if (prompt.type === "reminder") return <BellRing className="h-4 w-4 mr-2 text-blue-500" />;
+                  if (prompt.type === "challenge") return <Star className="h-4 w-4 mr-2 text-purple-500" />;
+                  if (prompt.type === "alert") return <AlertCircle className="h-4 w-4 mr-2 text-red-500" />;
+                  return null;
+                };
+                
+                // Get section theme based on prompt category
+                const getSectionTheme = () => {
+                  if (prompt.category === "financial") return "financial";
+                  if (prompt.category === "cooking") return "wellness";
+                  if (prompt.category === "time") return "learning";
+                  return "wellness";
+                };
+                
+                // Create title with icon and new badge
+                const promptTitle = (
+                  <div className="flex items-center text-base">
+                    {promptIcon()}
+                    {prompt.title}
+                    {prompt.isNew && (
+                      <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">
+                        New
+                      </span>
+                    )}
+                  </div>
+                );
+                
+                // Create description with timestamp
+                const promptDescription = (
+                  <div className="text-xs">
+                    {new Date(prompt.createdAt).toLocaleString()}
+                  </div>
+                );
+                
+                // Create footer with action buttons
+                const promptFooter = (
+                  <div className="flex justify-between w-full">
                     <Button 
                       variant="ghost" 
                       size="sm"
@@ -360,9 +450,72 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
                     >
                       Take Action
                     </Button>
-                  </CardFooter>
-                </Card>
-              ))
+                  </div>
+                );
+                
+                if (featureFlags.USE_STANDARD_CARDS) {
+                  return (
+                    <StandardCard
+                      key={prompt.id}
+                      title={promptTitle}
+                      description={promptDescription}
+                      sectionTheme={getSectionTheme()}
+                      elevation="sm"
+                      showGradient={prompt.isNew}
+                      useBackdropBlur={prompt.isNew}
+                      className={cn(
+                        prompt.type === "alert" && "border-red-200"
+                      )}
+                      footer={promptFooter}
+                    >
+                      <p className="text-sm">{prompt.description}</p>
+                    </StandardCard>
+                  );
+                }
+                
+                // Fallback to original card component
+                return (
+                  <Card key={prompt.id} className={cn(
+                    "border hover:shadow-md transition-all",
+                    prompt.isNew ? "bg-amber-50 border-amber-200" : "bg-white",
+                    prompt.type === "alert" && "bg-red-50 border-red-200"
+                  )}>
+                    <CardHeader className="p-3 pb-2">
+                      <CardTitle className="text-base flex items-center">
+                        {promptIcon()}
+                        {prompt.title}
+                        {prompt.isNew && (
+                          <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">
+                            New
+                          </span>
+                        )}
+                      </CardTitle>
+                      <CardDescription className="text-xs">
+                        {new Date(prompt.createdAt).toLocaleString()}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-3 py-1">
+                      <p className="text-sm">{prompt.description}</p>
+                    </CardContent>
+                    <CardFooter className="p-3 pt-2 flex justify-between">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => dismissPrompt(prompt.id)}
+                      >
+                        Dismiss
+                      </Button>
+                      <Button 
+                        variant="default" 
+                        size="sm"
+                        onClick={() => actionPrompt(prompt)}
+                      >
+                        Take Action
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                );
+              })
             ) : (
               <div className="text-center p-6 border rounded-lg bg-slate-50">
                 <p className="text-muted-foreground">No smart prompts right now. Check back later!</p>
@@ -379,37 +532,139 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
           Recommended for You
         </h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card>
-            <CardHeader className="p-3 pb-1">
-              <CardTitle className="text-base">Budgeting for Beginners</CardTitle>
-              <CardDescription>Financial • 15 min read</CardDescription>
-            </CardHeader>
-            <CardContent className="p-3 py-2">
-              <p className="text-sm">Learn the basics of budgeting with the popular 50/30/20 rule.</p>
-            </CardContent>
-            <CardFooter className="p-3 pt-1">
-              <Button variant="outline" size="sm" className="w-full" onClick={() => setActiveTab("financial")}>
-                Start Learning
-              </Button>
-            </CardFooter>
-          </Card>
-          
-          <Card>
-            <CardHeader className="p-3 pb-1">
-              <CardTitle className="text-base">5 Simple Recipes for Beginners</CardTitle>
-              <CardDescription>Cooking • 20 min read</CardDescription>
-            </CardHeader>
-            <CardContent className="p-3 py-2">
-              <p className="text-sm">Master these five easy recipes to build your cooking confidence.</p>
-            </CardContent>
-            <CardFooter className="p-3 pt-1">
-              <Button variant="outline" size="sm" className="w-full" onClick={() => setActiveTab("cooking")}>
-                Start Learning
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
+        {featureFlags.USE_STANDARD_MOBILE_SCROLL ? (
+          <MobileScroller 
+            columns={{ sm: 1, md: 2, lg: 2 }} 
+            gap="md"
+            mobileMinWidth={260}
+          >
+            {featureFlags.USE_STANDARD_CARDS ? (
+              <>
+                <StandardCard
+                  title="Budgeting for Beginners"
+                  description="Financial • 15 min read"
+                  sectionTheme="financial"
+                  footer={
+                    <Button variant="outline" size="sm" className="w-full" onClick={() => setActiveTab("financial")}>
+                      Start Learning
+                    </Button>
+                  }
+                >
+                  <p className="text-sm">Learn the basics of budgeting with the popular 50/30/20 rule.</p>
+                </StandardCard>
+                
+                <StandardCard
+                  title="5 Simple Recipes for Beginners"
+                  description="Cooking • 20 min read"
+                  sectionTheme="wellness" 
+                  footer={
+                    <Button variant="outline" size="sm" className="w-full" onClick={() => setActiveTab("cooking")}>
+                      Start Learning
+                    </Button>
+                  }
+                >
+                  <p className="text-sm">Master these five easy recipes to build your cooking confidence.</p>
+                </StandardCard>
+              </>
+            ) : (
+              <>
+                <Card>
+                  <CardHeader className="p-3 pb-1">
+                    <CardTitle className="text-base">Budgeting for Beginners</CardTitle>
+                    <CardDescription>Financial • 15 min read</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-3 py-2">
+                    <p className="text-sm">Learn the basics of budgeting with the popular 50/30/20 rule.</p>
+                  </CardContent>
+                  <CardFooter className="p-3 pt-1">
+                    <Button variant="outline" size="sm" className="w-full" onClick={() => setActiveTab("financial")}>
+                      Start Learning
+                    </Button>
+                  </CardFooter>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="p-3 pb-1">
+                    <CardTitle className="text-base">5 Simple Recipes for Beginners</CardTitle>
+                    <CardDescription>Cooking • 20 min read</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-3 py-2">
+                    <p className="text-sm">Master these five easy recipes to build your cooking confidence.</p>
+                  </CardContent>
+                  <CardFooter className="p-3 pt-1">
+                    <Button variant="outline" size="sm" className="w-full" onClick={() => setActiveTab("cooking")}>
+                      Start Learning
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </>
+            )}
+          </MobileScroller>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {featureFlags.USE_STANDARD_CARDS ? (
+              <>
+                <StandardCard
+                  title="Budgeting for Beginners"
+                  description="Financial • 15 min read"
+                  sectionTheme="financial"
+                  footer={
+                    <Button variant="outline" size="sm" className="w-full" onClick={() => setActiveTab("financial")}>
+                      Start Learning
+                    </Button>
+                  }
+                >
+                  <p className="text-sm">Learn the basics of budgeting with the popular 50/30/20 rule.</p>
+                </StandardCard>
+                
+                <StandardCard
+                  title="5 Simple Recipes for Beginners"
+                  description="Cooking • 20 min read"
+                  sectionTheme="wellness" 
+                  footer={
+                    <Button variant="outline" size="sm" className="w-full" onClick={() => setActiveTab("cooking")}>
+                      Start Learning
+                    </Button>
+                  }
+                >
+                  <p className="text-sm">Master these five easy recipes to build your cooking confidence.</p>
+                </StandardCard>
+              </>
+            ) : (
+              <>
+                <Card>
+                  <CardHeader className="p-3 pb-1">
+                    <CardTitle className="text-base">Budgeting for Beginners</CardTitle>
+                    <CardDescription>Financial • 15 min read</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-3 py-2">
+                    <p className="text-sm">Learn the basics of budgeting with the popular 50/30/20 rule.</p>
+                  </CardContent>
+                  <CardFooter className="p-3 pt-1">
+                    <Button variant="outline" size="sm" className="w-full" onClick={() => setActiveTab("financial")}>
+                      Start Learning
+                    </Button>
+                  </CardFooter>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="p-3 pb-1">
+                    <CardTitle className="text-base">5 Simple Recipes for Beginners</CardTitle>
+                    <CardDescription>Cooking • 20 min read</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-3 py-2">
+                    <p className="text-sm">Master these five easy recipes to build your cooking confidence.</p>
+                  </CardContent>
+                  <CardFooter className="p-3 pt-1">
+                    <Button variant="outline" size="sm" className="w-full" onClick={() => setActiveTab("cooking")}>
+                      Start Learning
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -621,12 +876,110 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
     ),
   };
 
+  // Convert tabContent to TabNav format
+  const tabNavItems = tabs.map(tab => ({
+    value: tab.id,
+    label: (
+      <div className="flex items-center">
+        {React.createElement(tab.icon, { className: "h-4 w-4 mr-2" })}
+        <span>{tab.label}</span>
+      </div>
+    ),
+    content: tabContent[tab.id as keyof typeof tabContent]
+  }));
+
+  // Helper function to render search bar
+  const renderSearchBar = () => {
+    const handleSearchChange = (value: string) => {
+      setSearchQuery(value);
+    };
+    
+    if (featureFlags.USE_STANDARD_SEARCH) {
+      return (
+        <div className="mb-6">
+          <SearchBar
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="Search for life skills advice..."
+            sectionTheme={activeTab === "financial" ? "financial" : "wellness"}
+            rounded="pill"
+            className="mb-2"
+          />
+          <div className="flex justify-end">
+            <Button 
+              onClick={handleSearch}
+              size="sm"
+              disabled={isLoading || !searchQuery.trim()}
+            >
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Search className="h-4 w-4 mr-2" />}
+              Search
+            </Button>
+          </div>
+        </div>
+      );
+    }
+    
+    return (
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="relative">
+          <Input
+            type="search"
+            placeholder="Search for life skills advice..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pr-10"
+          />
+          <Button 
+            type="submit" 
+            size="icon" 
+            variant="ghost" 
+            className="absolute right-0 top-0 h-full"
+            disabled={isLoading}
+          >
+            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+          </Button>
+        </div>
+      </form>
+    );
+  };
+
   return (
     <div className="w-full">
-      {/* Tab Content */}
-      <div className="px-2">
-        {tabContent[activeTab as keyof typeof tabContent]}
-      </div>
+      {/* Search Bar for life skills assistance */}
+      {renderSearchBar()}
+      
+      {/* Show search results if any */}
+      {guidance && (
+        <StandardCard 
+          className="mb-6"
+          title="Guidance"
+          sectionTheme={activeTab === "financial" ? "financial" : "wellness"}
+          showGradient={true}
+        >
+          <div className="whitespace-pre-line">{guidance}</div>
+        </StandardCard>
+      )}
+      
+      {/* Tab Navigation */}
+      {featureFlags.USE_STANDARD_TABS ? (
+        <TabNav 
+          tabs={tabNavItems}
+          activeTab={activeTab}
+          onTabChange={(value) => setActiveTab(value as LifeSkillsTabId)}
+          variant="pill"
+          size="md"
+          sectionTheme={activeTab === "financial" ? "financial" : 
+                     activeTab === "cooking" ? "wellness" : 
+                     activeTab === "time" ? "learning" :
+                     activeTab === "home" ? "emergency" :
+                     "career"}
+          className="mb-4"
+        />
+      ) : (
+        <div className="px-2">
+          {tabContent[activeTab as keyof typeof tabContent]}
+        </div>
+      )}
     </div>
   );
 };
