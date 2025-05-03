@@ -869,7 +869,7 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
       )}
       
       <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
-        <CardTitle className="text-base font-semibold truncate group-hover:text-learning-color">
+        <CardTitle className="text-base font-medium truncate group-hover:text-learning-color">
           {tutorial.name}
         </CardTitle>
         <CardDescription className="line-clamp-2 text-sm text-gray-600">

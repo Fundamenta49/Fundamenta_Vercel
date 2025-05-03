@@ -40,7 +40,7 @@ export function VideoPlayerDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="w-full h-full p-0 border-0 shadow-sm rounded-2xl overflow-hidden"
+        className="w-full h-full p-0 border-0 shadow-sm rounded-xl overflow-hidden"
         style={{
           width: "95vw",
           height: "95vh",
