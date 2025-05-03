@@ -921,9 +921,9 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
 
 export const CookingTutorialsContent: React.FC<CookingTutorialsSectionProps> = ({ onPlayVideo }) => {
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 w-full">
       {/* Hero Introduction with Image */}
-      <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
+      <Card className="border-0 shadow-sm rounded-2xl overflow-hidden w-full mx-auto">
         {/* Top gradient accent line */}
         <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
         
@@ -1014,8 +1014,8 @@ export const CookingTutorialsContent: React.FC<CookingTutorialsSectionProps> = (
         </CardContent>
       </Card>
       
-      <section className="mb-10">
-        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden mb-6">
+      <section className="mb-10 w-full">
+        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden mb-6 w-full mx-auto">
           <div className="h-1.5 bg-gradient-to-r from-blue-400 to-blue-600"></div>
           <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
             <CardTitle className="flex items-center text-lg font-medium text-blue-700">
@@ -1030,8 +1030,8 @@ export const CookingTutorialsContent: React.FC<CookingTutorialsSectionProps> = (
         <TechniqueTutorials onPlayVideo={onPlayVideo} />
       </section>
       
-      <section className="mb-10">
-        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden mb-6">
+      <section className="mb-10 w-full">
+        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden mb-6 w-full mx-auto">
           <div className="h-1.5 bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
           <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
             <CardTitle className="flex items-center text-lg font-medium text-yellow-700">
@@ -1046,8 +1046,8 @@ export const CookingTutorialsContent: React.FC<CookingTutorialsSectionProps> = (
         <KitchenSafetyTutorials onPlayVideo={onPlayVideo} />
       </section>
       
-      <section className="mb-10">
-        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden mb-6">
+      <section className="mb-10 w-full">
+        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden mb-6 w-full mx-auto">
           <div className="h-1.5 bg-gradient-to-r from-green-400 to-green-600"></div>
           <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
             <CardTitle className="flex items-center text-lg font-medium text-green-700">
@@ -1062,8 +1062,8 @@ export const CookingTutorialsContent: React.FC<CookingTutorialsSectionProps> = (
         <BasicRecipesTutorials onPlayVideo={onPlayVideo} />
       </section>
       
-      <section>
-        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden mb-6">
+      <section className="w-full">
+        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden mb-6 w-full mx-auto">
           <div className="h-1.5 bg-gradient-to-r from-orange-400 to-orange-600"></div>
           <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
             <CardTitle className="flex items-center text-lg font-medium text-orange-700">
