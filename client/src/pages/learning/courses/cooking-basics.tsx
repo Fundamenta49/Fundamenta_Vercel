@@ -230,9 +230,12 @@ export default function CookingBasics() {
         </FullScreenDialogContent>
       </FullScreenDialog>
 
-      {/* Introduction Header - Mobile Optimized */}
-      <div className="px-4 sm:px-6">
-        <div className="rounded-lg overflow-hidden border border-gray-200 shadow-sm mb-8">
+      {/* Introduction Header - Mobile Optimized - Standardized with Yoga style */}
+      <div className="px-0 sm:px-6 w-full">
+        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden w-full mx-auto mb-8">
+          {/* Top gradient accent line */}
+          <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+          
           <div className="relative aspect-video sm:h-[300px] overflow-hidden">
             <img 
               src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1024&auto=format&fit=crop"
@@ -256,35 +259,39 @@ export default function CookingBasics() {
               </Button>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
       
-      {/* Grid-style cards layout - Mobile Optimized */}
-      <div className="px-4 sm:px-6">
-        <div className="mb-4">
-          <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-learning-color/10 text-learning-color/90 rounded-md border-l-4 border-learning-color">
+      {/* Grid-style cards layout - Mobile Optimized with Yoga-style standardization */}
+      <div className="px-0 sm:px-6 w-full">
+        <div className="mb-4 w-full">
+          <h2 className="text-lg font-bold mb-4 px-4 sm:px-2 py-1 bg-learning-color/10 text-learning-color/90 rounded-md border-l-4 border-learning-color">
             Cooking Resources
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5 mt-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 mt-4 px-4 sm:px-0">
             {SECTIONS.map((section) => (
-              <div key={section.id} className="flex flex-col h-full">
-                <button
+              <div key={section.id} className="flex flex-col h-full w-full">
+                <Card 
+                  className="border-0 shadow-sm rounded-2xl overflow-hidden h-full w-full cursor-pointer hover:shadow-md hover:translate-y-[-2px] transition-all duration-300"
                   onClick={() => handleCardClick(section.id)}
-                  className="relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-learning-color min-h-[130px] sm:min-h-[160px] w-full h-full"
-                  aria-label={`Open ${section.title}`}
                 >
-                  <div className="flex items-center justify-center h-12 sm:h-14 w-full mb-2">
-                    <section.icon className={`w-9 h-9 sm:w-10 sm:h-10 ${section.color}`} />
+                  {/* iOS-style subtle gradient accent at top */}
+                  <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+                  
+                  <div className="flex flex-col items-center justify-between p-4 h-full">
+                    <div className="flex items-center justify-center h-12 sm:h-14 w-full mb-2">
+                      <section.icon className={`w-9 h-9 sm:w-10 sm:h-10 ${section.color}`} />
+                    </div>
+                    
+                    <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">{section.title}</span>
+                    
+                    <p className="text-xs text-gray-500 mt-1 line-clamp-2 text-center hidden sm:block">
+                      {section.description.length > 60 
+                        ? `${section.description.substring(0, 60)}...` 
+                        : section.description}
+                    </p>
                   </div>
-                  
-                  <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">{section.title}</span>
-                  
-                  <p className="text-xs text-gray-500 mt-1 line-clamp-2 text-center hidden sm:block">
-                    {section.description.length > 60 
-                      ? `${section.description.substring(0, 60)}...` 
-                      : section.description}
-                  </p>
-                </button>
+                </Card>
               </div>
             ))}
           </div>
