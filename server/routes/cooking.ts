@@ -115,6 +115,29 @@ router.get('/recipes/search', async (req, res) => {
       return res.status(500).json({ error: 'Spoonacular API key is not configured' });
     }
     
+    // Check if API is rate limited before making the request
+    if (spoonacularMonitor.isApiRateLimited()) {
+      const status = spoonacularMonitor.getStatus();
+      return res.status(429).json({
+        error: 'Spoonacular API is rate limited',
+        message: 'Daily request quota exceeded. Please try again later.',
+        rateLimitResetTime: status.rateLimitResetTime?.toISOString()
+      });
+    }
+    
+    // Check API health before proceeding
+    const isHealthy = spoonacularMonitor.getStatus().isHealthy;
+    if (!isHealthy) {
+      console.log('Spoonacular API is unhealthy, forcing health check...');
+      const healthCheckResult = await spoonacularMonitor.forceCheck();
+      if (!healthCheckResult) {
+        return res.status(503).json({
+          error: 'Spoonacular API is currently unavailable',
+          message: 'The recipe service is experiencing issues. Please try again later.'
+        });
+      }
+    }
+    
     const response = await axios.get(`${BASE_URL}/recipes/complexSearch`, {
       params: {
         apiKey: SPOONACULAR_API_KEY,
@@ -155,6 +178,19 @@ router.get('/recipes/:id/information', async (req, res) => {
       });
     }
     
+    // Check API health before proceeding
+    const isHealthy = spoonacularMonitor.getStatus().isHealthy;
+    if (!isHealthy) {
+      console.log('Spoonacular API is unhealthy, forcing health check...');
+      const healthCheckResult = await spoonacularMonitor.forceCheck();
+      if (!healthCheckResult) {
+        return res.status(503).json({
+          error: 'Spoonacular API is currently unavailable',
+          message: 'The recipe service is experiencing issues. Please try again later.'
+        });
+      }
+    }
+    
     const response = await axios.get(`${BASE_URL}/recipes/${id}/information`, {
       params: {
         apiKey: SPOONACULAR_API_KEY,
@@ -187,6 +223,19 @@ router.get('/recipes/random', async (req, res) => {
       });
     }
     
+    // Check API health before proceeding
+    const isHealthy = spoonacularMonitor.getStatus().isHealthy;
+    if (!isHealthy) {
+      console.log('Spoonacular API is unhealthy, forcing health check...');
+      const healthCheckResult = await spoonacularMonitor.forceCheck();
+      if (!healthCheckResult) {
+        return res.status(503).json({
+          error: 'Spoonacular API is currently unavailable',
+          message: 'The recipe service is experiencing issues. Please try again later.'
+        });
+      }
+    }
+    
     const response = await axios.get(`${BASE_URL}/recipes/random`, {
       params: {
         apiKey: SPOONACULAR_API_KEY,
@@ -214,6 +263,29 @@ router.get('/recipes/by-ingredients', async (req, res) => {
       return res.status(500).json({ error: 'Spoonacular API key is not configured' });
     }
     
+    // Check if API is rate limited before making the request
+    if (spoonacularMonitor.isApiRateLimited()) {
+      const status = spoonacularMonitor.getStatus();
+      return res.status(429).json({
+        error: 'Spoonacular API is rate limited',
+        message: 'Daily request quota exceeded. Please try again later.',
+        rateLimitResetTime: status.rateLimitResetTime?.toISOString()
+      });
+    }
+    
+    // Check API health before proceeding
+    const isHealthy = spoonacularMonitor.getStatus().isHealthy;
+    if (!isHealthy) {
+      console.log('Spoonacular API is unhealthy, forcing health check...');
+      const healthCheckResult = await spoonacularMonitor.forceCheck();
+      if (!healthCheckResult) {
+        return res.status(503).json({
+          error: 'Spoonacular API is currently unavailable',
+          message: 'The recipe service is experiencing issues. Please try again later.'
+        });
+      }
+    }
+    
     const response = await axios.get(`${BASE_URL}/recipes/findByIngredients`, {
       params: {
         apiKey: SPOONACULAR_API_KEY,
@@ -226,14 +298,7 @@ router.get('/recipes/by-ingredients', async (req, res) => {
     
     res.json(response.data);
   } catch (error) {
-    console.error('Spoonacular API error:', error);
-    if (axios.isAxiosError(error) && error.response) {
-      res.status(error.response.status).json({ 
-        error: `Spoonacular API error: ${error.response.data.message || 'Unknown error'}` 
-      });
-    } else {
-      res.status(500).json({ error: 'Failed to find recipes by ingredients' });
-    }
+    return handleSpoonacularError(error, res, 'Failed to find recipes by ingredients');
   }
 });
 
@@ -375,11 +440,11 @@ router.get('/meal-plan', async (req, res) => {
           return res.json(response.data);
         }
       } catch (spoonacularError) {
-        console.error('Error fetching meal plan from Spoonacular:', spoonacularError);
-        return res.status(500).json({ 
-          error: 'Spoonacular API error',
-          message: 'No meal plan could be generated. The Spoonacular API might be unavailable or misconfigured.'
-        });
+        return handleSpoonacularError(
+          spoonacularError, 
+          res, 
+          'Failed to generate weekly meal plan from Spoonacular'
+        );
       }
     }
     
@@ -571,14 +636,7 @@ router.get('/meal-plan', async (req, res) => {
     
     return res.json(response);
   } catch (error) {
-    console.error('Spoonacular API error:', error);
-    if (axios.isAxiosError(error) && error.response) {
-      res.status(error.response.status).json({ 
-        error: `Spoonacular API error: ${error.response.data.message || 'Unknown error'}` 
-      });
-    } else {
-      res.status(500).json({ error: 'Failed to generate meal plan' });
-    }
+    return handleSpoonacularError(error, res, 'Failed to generate meal plan');
   }
 });
 
@@ -589,6 +647,29 @@ router.get('/videos/search', async (req, res) => {
     
     if (!SPOONACULAR_API_KEY) {
       return res.status(500).json({ error: 'Spoonacular API key is not configured' });
+    }
+    
+    // Check if API is rate limited before making the request
+    if (spoonacularMonitor.isApiRateLimited()) {
+      const status = spoonacularMonitor.getStatus();
+      return res.status(429).json({
+        error: 'Spoonacular API is rate limited',
+        message: 'Daily request quota exceeded. Please try again later.',
+        rateLimitResetTime: status.rateLimitResetTime?.toISOString()
+      });
+    }
+    
+    // Check API health before proceeding
+    const isHealthy = spoonacularMonitor.getStatus().isHealthy;
+    if (!isHealthy) {
+      console.log('Spoonacular API is unhealthy, forcing health check...');
+      const healthCheckResult = await spoonacularMonitor.forceCheck();
+      if (!healthCheckResult) {
+        return res.status(503).json({
+          error: 'Spoonacular API is currently unavailable',
+          message: 'The recipe service is experiencing issues. Please try again later.'
+        });
+      }
     }
     
     const response = await axios.get(`${BASE_URL}/food/videos/search`, {
@@ -606,14 +687,7 @@ router.get('/videos/search', async (req, res) => {
     
     res.json(response.data);
   } catch (error) {
-    console.error('Spoonacular API error:', error);
-    if (axios.isAxiosError(error) && error.response) {
-      res.status(error.response.status).json({ 
-        error: `Spoonacular API error: ${error.response.data.message || 'Unknown error'}` 
-      });
-    } else {
-      res.status(500).json({ error: 'Failed to fetch cooking videos from Spoonacular' });
-    }
+    return handleSpoonacularError(error, res, 'Failed to fetch cooking videos from Spoonacular');
   }
 });
 
@@ -624,6 +698,29 @@ router.get('/videos/random', async (req, res) => {
     
     if (!SPOONACULAR_API_KEY) {
       return res.status(500).json({ error: 'Spoonacular API key is not configured' });
+    }
+    
+    // Check if API is rate limited before making the request
+    if (spoonacularMonitor.isApiRateLimited()) {
+      const status = spoonacularMonitor.getStatus();
+      return res.status(429).json({
+        error: 'Spoonacular API is rate limited',
+        message: 'Daily request quota exceeded. Please try again later.',
+        rateLimitResetTime: status.rateLimitResetTime?.toISOString()
+      });
+    }
+    
+    // Check API health before proceeding
+    const isHealthy = spoonacularMonitor.getStatus().isHealthy;
+    if (!isHealthy) {
+      console.log('Spoonacular API is unhealthy, forcing health check...');
+      const healthCheckResult = await spoonacularMonitor.forceCheck();
+      if (!healthCheckResult) {
+        return res.status(503).json({
+          error: 'Spoonacular API is currently unavailable',
+          message: 'The recipe service is experiencing issues. Please try again later.'
+        });
+      }
     }
     
     const response = await axios.get(`${BASE_URL}/food/videos/random`, {
