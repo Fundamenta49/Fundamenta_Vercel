@@ -1,0 +1,84 @@
+/* UI Standardization Utilities */
+
+/* Hide scrollbars while maintaining functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Section-specific gradient text */
+.gradient-text-financial {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400;
+}
+
+.gradient-text-wellness {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-green-400;
+}
+
+.gradient-text-career {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-purple-400;
+}
+
+.gradient-text-emergency {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-400;
+}
+
+.gradient-text-learning {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-yellow-400;
+}
+
+/* iOS-style backdrop blur backgrounds */
+.ios-bg {
+  @apply bg-white/90 backdrop-blur-xl;
+}
+
+.ios-bg-subtle {
+  @apply bg-white/80 backdrop-blur-sm;
+}
+
+/* Standard card style shortcuts */
+.standard-card {
+  @apply bg-white rounded-2xl shadow-sm border-0 overflow-hidden;
+}
+
+/* Pill button/badge shortcuts */
+.pill-button {
+  @apply rounded-full text-xs font-medium px-4 h-8;
+}
+
+.pill-badge {
+  @apply rounded-full px-2.5 py-0.5 text-xs font-medium;
+}
+
+/* Mobile optimization helpers */
+.mobile-touch-scroll {
+  @apply touch-pan-x snap-x snap-mandatory overflow-x-auto hide-scrollbar;
+}
+
+.mobile-touch-item {
+  @apply snap-start snap-always flex-shrink-0;
+}
+
+/* Section-specific background subtle colors */
+.bg-financial-subtle {
+  @apply bg-blue-50;
+}
+
+.bg-wellness-subtle {
+  @apply bg-green-50;
+}
+
+.bg-career-subtle {
+  @apply bg-purple-50;
+}
+
+.bg-emergency-subtle {
+  @apply bg-red-50;
+}
+
+.bg-learning-subtle {
+  @apply bg-yellow-50;
+}
