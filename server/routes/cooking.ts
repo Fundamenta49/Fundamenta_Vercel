@@ -10,6 +10,45 @@ const BASE_URL = 'https://api.spoonacular.com';
 // Import the Spoonacular monitor
 import spoonacularMonitor from '../services/api-monitors/spoonacular-monitor';
 
+// Helper function to handle Spoonacular API errors consistently
+const handleSpoonacularError = (error: any, res: express.Response, errorMessage: string) => {
+  console.error('Spoonacular API error:', error);
+  
+  // Check if this is a rate limit error
+  if (axios.isAxiosError(error) && 
+      (error.response?.status === 402 || 
+       (error.response?.data?.status === 'failure' && error.response?.data?.code === 402))) {
+    
+    // Extract retry-after if available
+    const retryAfter = error.response?.headers['retry-after'] 
+      ? parseInt(error.response.headers['retry-after'], 10)
+      : undefined;
+    
+    // Register the rate limit with the monitor
+    spoonacularMonitor.handleRateLimitError(retryAfter);
+    
+    return res.status(429).json({ 
+      error: 'Spoonacular API rate limit exceeded',
+      message: 'Daily request quota exceeded. Please try again later.',
+      rateLimitResetTime: spoonacularMonitor.getStatus().rateLimitResetTime?.toISOString()
+    });
+  } else if (axios.isAxiosError(error) && error.response) {
+    return res.status(error.response.status).json({ 
+      error: `Spoonacular API error: ${error.response.data.message || 'Unknown error'}` 
+    });
+  } else {
+    // Force a health check in the background
+    spoonacularMonitor.forceCheck().catch(checkError => {
+      console.error('Background health check failed:', checkError);
+    });
+    
+    return res.status(500).json({ 
+      error: errorMessage,
+      message: 'An unexpected error occurred. Our monitoring system has been notified.'
+    });
+  }
+};
+
 // Check if Spoonacular API key is configured
 router.get('/spoonacular-status', async (req, res) => {
   if (!SPOONACULAR_API_KEY) {
@@ -93,14 +132,7 @@ router.get('/recipes/search', async (req, res) => {
     
     res.json(response.data);
   } catch (error) {
-    console.error('Spoonacular API error:', error);
-    if (axios.isAxiosError(error) && error.response) {
-      res.status(error.response.status).json({ 
-        error: `Spoonacular API error: ${error.response.data.message || 'Unknown error'}` 
-      });
-    } else {
-      res.status(500).json({ error: 'Failed to fetch recipes from Spoonacular' });
-    }
+    return handleSpoonacularError(error, res, 'Failed to fetch recipes from Spoonacular');
   }
 });
 
@@ -132,33 +164,7 @@ router.get('/recipes/:id/information', async (req, res) => {
     
     res.json(response.data);
   } catch (error) {
-    console.error('Spoonacular API error:', error);
-    
-    // Check if this is a rate limit error
-    if (axios.isAxiosError(error) && 
-        (error.response?.status === 402 || 
-         (error.response?.data?.status === 'failure' && error.response?.data?.code === 402))) {
-      
-      // Extract retry-after if available
-      const retryAfter = error.response?.headers['retry-after'] 
-        ? parseInt(error.response.headers['retry-after'], 10)
-        : undefined;
-      
-      // Register the rate limit with the monitor
-      spoonacularMonitor.handleRateLimitError(retryAfter);
-      
-      return res.status(429).json({ 
-        error: 'Spoonacular API rate limit exceeded',
-        message: 'Daily request quota exceeded. Please try again later.',
-        rateLimitResetTime: spoonacularMonitor.getStatus().rateLimitResetTime?.toISOString()
-      });
-    } else if (axios.isAxiosError(error) && error.response) {
-      res.status(error.response.status).json({ 
-        error: `Spoonacular API error: ${error.response.data.message || 'Unknown error'}` 
-      });
-    } else {
-      res.status(500).json({ error: 'Failed to fetch recipe information from Spoonacular' });
-    }
+    return handleSpoonacularError(error, res, 'Failed to fetch recipe information from Spoonacular');
   }
 });
 
@@ -171,6 +177,16 @@ router.get('/recipes/random', async (req, res) => {
       return res.status(500).json({ error: 'Spoonacular API key is not configured' });
     }
     
+    // Check if API is rate limited before making the request
+    if (spoonacularMonitor.isApiRateLimited()) {
+      const status = spoonacularMonitor.getStatus();
+      return res.status(429).json({
+        error: 'Spoonacular API is rate limited',
+        message: 'Daily request quota exceeded. Please try again later.',
+        rateLimitResetTime: status.rateLimitResetTime?.toISOString()
+      });
+    }
+    
     const response = await axios.get(`${BASE_URL}/recipes/random`, {
       params: {
         apiKey: SPOONACULAR_API_KEY,
@@ -181,14 +197,7 @@ router.get('/recipes/random', async (req, res) => {
     
     res.json(response.data);
   } catch (error) {
-    console.error('Spoonacular API error:', error);
-    if (axios.isAxiosError(error) && error.response) {
-      res.status(error.response.status).json({ 
-        error: `Spoonacular API error: ${error.response.data.message || 'Unknown error'}` 
-      });
-    } else {
-      res.status(500).json({ error: 'Failed to fetch random recipes from Spoonacular' });
-    }
+    return handleSpoonacularError(error, res, 'Failed to fetch random recipes from Spoonacular');
   }
 });
 
@@ -240,6 +249,29 @@ router.get('/meal-plan', async (req, res) => {
         error: 'Spoonacular API key is not configured',
         message: 'No meal plan could be generated. The Spoonacular API might be unavailable or misconfigured.'
       });
+    }
+    
+    // Check if API is rate limited before making any requests
+    if (spoonacularMonitor.isApiRateLimited()) {
+      const status = spoonacularMonitor.getStatus();
+      return res.status(429).json({
+        error: 'Spoonacular API is rate limited',
+        message: 'Daily request quota exceeded. Please try again later.',
+        rateLimitResetTime: status.rateLimitResetTime?.toISOString()
+      });
+    }
+    
+    // Check API health before proceeding
+    const isHealthy = spoonacularMonitor.getStatus().isHealthy;
+    if (!isHealthy) {
+      console.log('Spoonacular API is unhealthy, forcing health check...');
+      const healthCheckResult = await spoonacularMonitor.forceCheck();
+      if (!healthCheckResult) {
+        return res.status(503).json({
+          error: 'Spoonacular API is currently unavailable',
+          message: 'The recipe service is experiencing issues. Please try again later.'
+        });
+      }
     }
 
     // If requesting weekly meal plan, use the built-in endpoint

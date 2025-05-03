@@ -107,9 +107,15 @@ const messageSchema = z.object({
   }).optional()
 });
 
+// Import API health monitor
+import apiHealthMonitor from './services/api-health-monitor';
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup middleware for security
   app.use(cookieParser()); // For JWT cookies
+  
+  // Register API health monitoring routes
+  apiHealthMonitor.registerHealthRoutes(app);
 
   // Security middleware
   if (process.env.NODE_ENV === 'production') {

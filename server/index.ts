@@ -204,6 +204,20 @@ app.post("/api/maintenance/sessions", async (req, res) => {
       log("Server will continue with basic AI functionality");
       // Continue even if Fundi Core initialization fails
     }
+    
+    // Initialize API health monitoring
+    log("Starting API health monitoring...");
+    try {
+      // We only need to import it - the monitoring will be initialized in the modules 
+      // when they are imported
+      const spoonacularMonitor = await import('./services/api-monitors/spoonacular-monitor')
+        .then(module => module.default);
+      
+      log(`API health monitoring started (${Date.now() - startTime}ms)`);
+    } catch (monitorError) {
+      log(`API monitoring initialization warning: ${monitorError instanceof Error ? monitorError.message : String(monitorError)}`);
+      log("Server will continue without API health monitoring");
+    }
 
     log(`Server fully initialized (total startup time: ${Date.now() - startTime}ms)`);
     
