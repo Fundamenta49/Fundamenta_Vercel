@@ -676,21 +676,24 @@ export const BasicRecipesTutorials: React.FC<CookingTutorialsSectionProps> = ({ 
   const basicRecipes = cookingTutorials.filter(tutorial => tutorial.category === 'basic-recipe');
   
   return (
-    <div className="space-y-8">
-      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-6">
-        <div className="flex items-start gap-3">
-          <Info className="h-5 w-5 text-blue-600 mt-0.5" />
-          <div>
-            <h3 className="font-medium text-blue-800">Foundational Recipes</h3>
-            <p className="text-sm text-blue-700">
-              These simple recipes build core cooking skills that can be applied to countless dishes. 
-              Master these basics and you'll have the confidence to try more complex recipes.
-            </p>
-          </div>
-        </div>
-      </div>
+    <div className="space-y-6">
+      <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
+        {/* Top gradient accent line */}
+        <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+        
+        <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
+          <CardTitle className="flex items-center text-lg font-medium">
+            <Info className="h-5 w-5 text-blue-600 mr-2" />
+            Foundational Recipes
+          </CardTitle>
+          <CardDescription className="text-sm text-gray-600">
+            These simple recipes build core cooking skills that can be applied to countless dishes. 
+            Master these basics and you'll have the confidence to try more complex recipes.
+          </CardDescription>
+        </CardHeader>
+      </Card>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
         {basicRecipes.map(tutorial => (
           <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
         ))}
@@ -804,8 +807,19 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
     }
   };
 
+  const gradientClass = tutorial.category === 'technique'
+    ? 'bg-gradient-to-r from-blue-400 to-blue-600'
+    : tutorial.category === 'kitchen-safety'
+      ? 'bg-gradient-to-r from-yellow-400 to-yellow-600'
+      : tutorial.category === 'basic-recipe'
+        ? 'bg-gradient-to-r from-green-400 to-green-600'
+        : 'bg-gradient-to-r from-orange-400 to-orange-600';
+
   return (
-    <Card className={`overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow border-t-4 ${getBorderColorClass()} border group`}>
+    <Card className="border-0 shadow-sm rounded-2xl overflow-hidden flex flex-col h-full group hover:shadow-md transition-shadow">
+      {/* Top gradient accent line */}
+      <div className={`h-1.5 ${gradientClass}`}></div>
+      
       {showEmbedded ? (
         <div className="aspect-video overflow-hidden w-full">
           <EmbeddedYouTubePlayer
@@ -818,7 +832,7 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
         <div 
           className="relative aspect-video cursor-pointer overflow-hidden bg-gray-100 w-full"
           onClick={handlePlayVideo}
-          style={{ minHeight: '240px' }}
+          style={{ minHeight: '200px' }}
         >
           {tutorial.thumbnailUrl ? (
             <img 
@@ -835,13 +849,13 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
             <PlayCircle className="h-16 w-16 text-white" />
           </div>
           {tutorial.duration && (
-            <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded px-1.5 py-0.5 flex items-center">
+            <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs rounded-full px-2 py-0.5 flex items-center">
               <Clock className="h-3 w-3 mr-1" />
               {tutorial.duration} min
             </div>
           )}
           <Badge 
-            className={`absolute top-2 left-2 ${
+            className={`absolute top-2 left-2 rounded-full ${
               tutorial.difficulty === 'beginner' 
                 ? 'bg-green-100 text-green-800 hover:bg-green-100' 
                 : tutorial.difficulty === 'intermediate'
@@ -854,7 +868,7 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
         </div>
       )}
       
-      <CardHeader className="p-4 pb-2">
+      <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
         <CardTitle className="text-base font-semibold truncate group-hover:text-learning-color">
           {tutorial.name}
         </CardTitle>
@@ -863,9 +877,9 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
         </CardDescription>
       </CardHeader>
       
-      <CardContent className="p-4 pt-0 flex-grow">
-        {tutorial.steps && (
-          <div className="mt-3">
+      <CardContent className="p-4 sm:p-6 pt-4 flex-grow bg-gray-50">
+        {tutorial.steps && tutorial.steps.length > 0 && (
+          <div>
             <h4 className="text-sm font-medium flex items-center gap-1 text-learning-color mb-2">
               <BookOpen className="h-3.5 w-3.5" /> Key Steps
             </h4>
@@ -881,11 +895,11 @@ const TutorialCard: React.FC<TutorialCardProps> = ({ tutorial, onPlayVideo }) =>
       </CardContent>
       
       {!showEmbedded && (
-        <CardFooter className="p-4 pt-0 mt-auto">
+        <CardFooter className="p-4 sm:p-6 pt-0 mt-auto bg-gray-50">
           <Button 
             variant="outline" 
             size="sm" 
-            className={`w-full justify-center ${
+            className={`w-full justify-center rounded-full ${
               tutorial.category === 'technique' 
                 ? 'text-blue-600 hover:text-white hover:bg-blue-600 border-blue-300' 
                 : tutorial.category === 'kitchen-safety'
