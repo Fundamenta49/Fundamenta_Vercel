@@ -191,70 +191,348 @@ export default function TimeManagementCourse() {
             a healthy work-life balance.
           </p>
           
-          <h3 className="text-lg font-semibold mt-6">Why Time Management Matters</h3>
-          <p>
-            Good time management allows you to:
-          </p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>Accomplish more with less effort</li>
-            <li>Reduce stress and avoid burnout</li>
-            <li>Improve decision-making abilities</li>
-            <li>Create more time for things you enjoy</li>
-            <li>Follow through on commitments</li>
-            <li>Focus on high-value activities</li>
-          </ul>
-          
-          <h3 className="text-lg font-semibold mt-6">Common Time Management Challenges</h3>
-          <div className="space-y-4 mt-4">
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Procrastination</h4>
-              <p className="text-sm">Delaying important tasks despite knowing negative consequences</p>
-              <p className="text-sm mt-2 italic">Solution: Break tasks into smaller steps, use the "5-minute rule" to get started</p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <Hourglass className="h-8 w-8 text-orange-500" strokeWidth={1.5} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Why Time Management Matters</h3>
+                  <StandardBadge size="sm" sectionTheme="learning" className="ml-2" blurEffect={true}>Benefits</StandardBadge>
+                </div>
+                <p className="text-orange-700 text-sm">The far-reaching impact of managing your time effectively</p>
+              </div>
             </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Distractions</h4>
-              <p className="text-sm">External (notifications) and internal (wandering thoughts) interruptions</p>
-              <p className="text-sm mt-2 italic">Solution: Create a distraction-free environment, practice focused work sessions</p>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Poor Prioritization</h4>
-              <p className="text-sm">Working on low-value activities while neglecting important tasks</p>
-              <p className="text-sm mt-2 italic">Solution: Use prioritization frameworks like the Eisenhower Matrix</p>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Overscheduling</h4>
-              <p className="text-sm">Booking too many commitments without buffer time</p>
-              <p className="text-sm mt-2 italic">Solution: Build in transition time, learn to say no</p>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Perfectionism</h4>
-              <p className="text-sm">Spending too much time perfecting tasks that don't require it</p>
-              <p className="text-sm mt-2 italic">Solution: Determine appropriate quality levels for different tasks</p>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Effective time management is a cornerstone skill that influences every aspect of your life. Good time management allows you to:
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="h-5 w-5 text-orange-500 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-medium text-orange-800">Work Efficiency</h4>
+                      <p className="text-orange-700 text-sm mt-1">Accomplish more with less effort by focusing on high-priority tasks</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="h-5 w-5 text-orange-500 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-medium text-orange-800">Mental Wellbeing</h4>
+                      <p className="text-orange-700 text-sm mt-1">Reduce stress and avoid burnout by managing workload effectively</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="h-5 w-5 text-orange-500 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-medium text-orange-800">Better Decisions</h4>
+                      <p className="text-orange-700 text-sm mt-1">Improve decision-making abilities when not pressured by time constraints</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="h-5 w-5 text-orange-500 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-medium text-orange-800">Life Balance</h4>
+                      <p className="text-orange-700 text-sm mt-1">Create more time for things you enjoy by working efficiently</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="h-5 w-5 text-orange-500 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-medium text-orange-800">Reliability</h4>
+                      <p className="text-orange-700 text-sm mt-1">Follow through on commitments consistently and build trust</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="h-5 w-5 text-orange-500 mt-1 flex-shrink-0" />
+                    <div>
+                      <h4 className="font-medium text-orange-800">Strategic Focus</h4>
+                      <p className="text-orange-700 text-sm mt-1">Concentrate on high-value activities that drive meaningful results</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           
-          <h3 className="text-lg font-semibold mt-6">Time Management Mindset</h3>
-          <p>
-            Effective time management begins with your mindset. Developing these mental habits can transform your productivity:
-          </p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li><strong>Value your time:</strong> Recognize time as a finite, non-renewable resource</li>
-            <li><strong>Be intentional:</strong> Make conscious choices about how you spend your time</li>
-            <li><strong>Focus on outcomes:</strong> Measure productivity by results, not hours worked</li>
-            <li><strong>Embrace imperfection:</strong> Accept that "good enough" is sometimes appropriate</li>
-            <li><strong>Practice patience:</strong> Time management is a skill that improves with practice</li>
-          </ul>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-red-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-red-50 to-red-100 px-6 py-4 border-b border-red-100">
+              <Clock className="h-8 w-8 text-red-500" strokeWidth={1.5} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-red-800">Common Time Management Challenges</h3>
+                  <StandardBadge size="sm" sectionTheme="emergency" className="ml-2" blurEffect={true}>Solutions</StandardBadge>
+                </div>
+                <p className="text-red-700 text-sm">Recognize and overcome these common obstacles to effective time management</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gradient-to-br from-white to-red-50 p-5 rounded-lg border border-red-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-red-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-red-500">
+                        <rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect>
+                        <polyline points="17 2 12 7 7 2"></polyline>
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-red-800 text-lg">Procrastination</h4>
+                  </div>
+                  <p className="text-gray-700 mb-3">Delaying important tasks despite knowing the negative consequences</p>
+                  <div className="bg-white p-3 rounded-lg border border-red-100">
+                    <h5 className="font-medium text-red-700 flex items-center">
+                      <Lightbulb className="h-4 w-4 mr-2" /> Solution:
+                    </h5>
+                    <ul className="mt-2 space-y-2 pl-6 list-disc text-gray-700">
+                      <li>Break large tasks into smaller, more manageable steps</li>
+                      <li>Use the "5-minute rule" - commit to just 5 minutes of work</li>
+                      <li>Remove triggers that lead to procrastination</li>
+                      <li>Reward yourself for completing difficult tasks</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-white to-red-50 p-5 rounded-lg border border-red-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-red-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-red-500">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-red-800 text-lg">Distractions</h4>
+                  </div>
+                  <p className="text-gray-700 mb-3">External (notifications) and internal (wandering thoughts) interruptions</p>
+                  <div className="bg-white p-3 rounded-lg border border-red-100">
+                    <h5 className="font-medium text-red-700 flex items-center">
+                      <Lightbulb className="h-4 w-4 mr-2" /> Solution:
+                    </h5>
+                    <ul className="mt-2 space-y-2 pl-6 list-disc text-gray-700">
+                      <li>Create a distraction-free physical environment</li>
+                      <li>Use website blockers and app timers</li>
+                      <li>Practice focused work sessions (like Pomodoro)</li>
+                      <li>Schedule specific times to check emails and messages</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-white to-red-50 p-5 rounded-lg border border-red-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-red-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-red-500">
+                        <line x1="4" y1="21" x2="4" y2="14"></line>
+                        <line x1="4" y1="10" x2="4" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="3"></line>
+                        <line x1="20" y1="21" x2="20" y2="16"></line>
+                        <line x1="20" y1="12" x2="20" y2="3"></line>
+                        <line x1="1" y1="14" x2="7" y2="14"></line>
+                        <line x1="9" y1="8" x2="15" y2="8"></line>
+                        <line x1="17" y1="16" x2="23" y2="16"></line>
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-red-800 text-lg">Poor Prioritization</h4>
+                  </div>
+                  <p className="text-gray-700 mb-3">Working on low-value activities while neglecting important tasks</p>
+                  <div className="bg-white p-3 rounded-lg border border-red-100">
+                    <h5 className="font-medium text-red-700 flex items-center">
+                      <Lightbulb className="h-4 w-4 mr-2" /> Solution:
+                    </h5>
+                    <ul className="mt-2 space-y-2 pl-6 list-disc text-gray-700">
+                      <li>Use prioritization frameworks (Eisenhower Matrix)</li>
+                      <li>Identify your Most Important Tasks (MITs) daily</li>
+                      <li>Consider both urgency and importance</li>
+                      <li>Align daily tasks with longer-term goals</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-white to-red-50 p-5 rounded-lg border border-red-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-red-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-red-500">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-red-800 text-lg">Overscheduling</h4>
+                  </div>
+                  <p className="text-gray-700 mb-3">Booking too many commitments without buffer time between activities</p>
+                  <div className="bg-white p-3 rounded-lg border border-red-100">
+                    <h5 className="font-medium text-red-700 flex items-center">
+                      <Lightbulb className="h-4 w-4 mr-2" /> Solution:
+                    </h5>
+                    <ul className="mt-2 space-y-2 pl-6 list-disc text-gray-700">
+                      <li>Build in transition time between activities</li>
+                      <li>Practice saying "no" to low-priority requests</li>
+                      <li>Add buffer time for unexpected issues</li>
+                      <li>Use time blocking but keep some flexibility</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="col-span-1 md:col-span-2 bg-gradient-to-br from-white to-red-50 p-5 rounded-lg border border-red-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-red-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-red-500">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-red-800 text-lg">Perfectionism</h4>
+                  </div>
+                  <p className="text-gray-700 mb-3">Spending too much time perfecting tasks that don't require such high quality</p>
+                  <div className="bg-white p-3 rounded-lg border border-red-100">
+                    <h5 className="font-medium text-red-700 flex items-center">
+                      <Lightbulb className="h-4 w-4 mr-2" /> Solution:
+                    </h5>
+                    <div className="grid md:grid-cols-2 gap-4 mt-2">
+                      <ul className="space-y-2 pl-6 list-disc text-gray-700">
+                        <li>Determine appropriate quality levels for different types of tasks</li>
+                        <li>Establish clear completion criteria before starting</li>
+                        <li>Set time limits for tasks prone to perfectionism</li>
+                      </ul>
+                      <ul className="space-y-2 pl-6 list-disc text-gray-700">
+                        <li>Remember the 80/20 rule - 80% of value comes from 20% of effort</li>
+                        <li>Practice the "good enough" principle for appropriate tasks</li>
+                        <li>Focus on progress rather than perfection</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           
-          <div className="p-4 bg-orange-50 rounded-md mt-6">
-            <h4 className="font-medium text-orange-800">Key Insight</h4>
-            <p className="text-orange-800">
-              The goal of time management isn't to become a productivity machine—it's to create a balanced 
-              life where you have time for what truly matters to you while still meeting your responsibilities.
-            </p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-emerald-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-emerald-50 to-emerald-100 px-6 py-4 border-b border-emerald-100">
+              <Lightbulb className="h-8 w-8 text-emerald-500" strokeWidth={1.5} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-emerald-800">Time Management Mindset</h3>
+                  <StandardBadge size="sm" sectionTheme="wellness" className="ml-2" blurEffect={true}>Growth</StandardBadge>
+                </div>
+                <p className="text-emerald-700 text-sm">Developing mental habits that transform your productivity</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Effective time management begins with adopting the right mindset. These mental shifts can fundamentally change how you approach your daily activities:
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-6">
+                <div className="flex flex-col h-full bg-gradient-to-br from-emerald-50 to-white rounded-lg border border-emerald-100 overflow-hidden shadow-sm">
+                  <div className="bg-emerald-100/50 px-5 py-3 border-b border-emerald-100">
+                    <h4 className="font-medium text-emerald-800">Value Your Time</h4>
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <p className="text-gray-700 text-sm flex-1">
+                      Recognize time as your most precious and finite resource. Unlike money, time can never be earned back once spent.
+                    </p>
+                    <div className="mt-3 pt-3 border-t border-emerald-100">
+                      <p className="text-emerald-600 text-sm italic">
+                        "Time is the coin of your life. Only you can determine how it will be spent." — Carl Sandburg
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col h-full bg-gradient-to-br from-emerald-50 to-white rounded-lg border border-emerald-100 overflow-hidden shadow-sm">
+                  <div className="bg-emerald-100/50 px-5 py-3 border-b border-emerald-100">
+                    <h4 className="font-medium text-emerald-800">Be Intentional</h4>
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <p className="text-gray-700 text-sm flex-1">
+                      Make conscious choices about how you spend your time rather than letting habits, other people, or notifications dictate your day.
+                    </p>
+                    <div className="mt-3 pt-3 border-t border-emerald-100">
+                      <p className="text-emerald-600 text-sm italic">
+                        "How we spend our days is, of course, how we spend our lives." — Annie Dillard
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col h-full bg-gradient-to-br from-emerald-50 to-white rounded-lg border border-emerald-100 overflow-hidden shadow-sm">
+                  <div className="bg-emerald-100/50 px-5 py-3 border-b border-emerald-100">
+                    <h4 className="font-medium text-emerald-800">Focus on Outcomes</h4>
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <p className="text-gray-700 text-sm flex-1">
+                      Measure productivity by results achieved, not by hours worked. A focused hour often accomplishes more than a distracted day.
+                    </p>
+                    <div className="mt-3 pt-3 border-t border-emerald-100">
+                      <p className="text-emerald-600 text-sm italic">
+                        "It's not about having time, it's about making time." — Unknown
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col h-full bg-gradient-to-br from-emerald-50 to-white rounded-lg border border-emerald-100 overflow-hidden shadow-sm">
+                  <div className="bg-emerald-100/50 px-5 py-3 border-b border-emerald-100">
+                    <h4 className="font-medium text-emerald-800">Embrace Imperfection</h4>
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <p className="text-gray-700 text-sm flex-1">
+                      Accept that "good enough" is sometimes appropriate. Not every task deserves your maximum effort—save that for what truly matters.
+                    </p>
+                    <div className="mt-3 pt-3 border-t border-emerald-100">
+                      <p className="text-emerald-600 text-sm italic">
+                        "Perfect is the enemy of good." — Voltaire
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col h-full bg-gradient-to-br from-emerald-50 to-white rounded-lg border border-emerald-100 overflow-hidden shadow-sm">
+                  <div className="bg-emerald-100/50 px-5 py-3 border-b border-emerald-100">
+                    <h4 className="font-medium text-emerald-800">Practice Patience</h4>
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <p className="text-gray-700 text-sm flex-1">
+                      Time management is a skill that improves with practice. Be patient with yourself as you develop better habits and systems.
+                    </p>
+                    <div className="mt-3 pt-3 border-t border-emerald-100">
+                      <p className="text-emerald-600 text-sm italic">
+                        "Patience and perseverance have a magical effect before which difficulties disappear and obstacles vanish." — John Quincy Adams
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg p-5 border border-emerald-200 shadow-inner">
+                <h4 className="font-semibold text-emerald-800 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  Key Insight
+                </h4>
+                <p className="text-emerald-900 mt-2">
+                  The ultimate goal of time management isn't to become a productivity machine—it's to create a balanced life where you have time for what truly matters to you while still meeting your responsibilities. Time management is about freedom, not restriction.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )
