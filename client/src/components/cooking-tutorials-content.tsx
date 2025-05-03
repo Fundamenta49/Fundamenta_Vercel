@@ -923,7 +923,10 @@ export const CookingTutorialsContent: React.FC<CookingTutorialsSectionProps> = (
   return (
     <div className="space-y-10">
       {/* Hero Introduction with Image */}
-      <div className="rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+      <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
+        {/* Top gradient accent line */}
+        <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+        
         <div className="relative aspect-video md:h-[400px] overflow-hidden">
           <img 
             src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1024&auto=format&fit=crop"
@@ -952,14 +955,14 @@ export const CookingTutorialsContent: React.FC<CookingTutorialsSectionProps> = (
           </div>
         </div>
         
-        <div className="p-5 bg-white">
-          <div className="grid md:grid-cols-2 gap-8">
+        <CardContent className="p-4 sm:p-6 bg-white">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8">
             <div>
-              <h3 className="text-lg font-medium mb-2 text-learning-color flex items-center gap-2">
+              <h3 className="text-lg font-medium mb-3 text-learning-color flex items-center gap-2">
                 <DollarSign className="h-5 w-5" />
                 Why Learn to Cook?
               </h3>
-              <ul className="space-y-2 text-gray-600">
+              <ul className="space-y-3 text-gray-600">
                 <li className="flex gap-2 items-start">
                   <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5 flex-shrink-0">
                     <Check className="h-3 w-3" />
@@ -982,11 +985,11 @@ export const CookingTutorialsContent: React.FC<CookingTutorialsSectionProps> = (
             </div>
             
             <div>
-              <h3 className="text-lg font-medium mb-2 text-learning-color flex items-center gap-2">
+              <h3 className="text-lg font-medium mb-3 text-learning-color flex items-center gap-2">
                 <BookOpen className="h-5 w-5" />
                 What You'll Learn
               </h3>
-              <ul className="space-y-2 text-gray-600">
+              <ul className="space-y-3 text-gray-600">
                 <li className="flex gap-2 items-start">
                   <div className="bg-orange-100 text-orange-600 p-1 rounded-full mt-0.5 flex-shrink-0">
                     <Utensils className="h-3 w-3" />
@@ -1008,50 +1011,70 @@ export const CookingTutorialsContent: React.FC<CookingTutorialsSectionProps> = (
               </ul>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
       
       <section className="mb-10">
-        <div className="border-l-4 border-blue-400 pl-3 py-1">
-          <h2 className="text-xl font-semibold mb-1 flex items-center gap-2 text-blue-700">
-            <Utensils className="h-5 w-5" />
-            Essential Cooking Techniques
-          </h2>
-          <p className="text-sm text-blue-600 mb-4">Learn the fundamental skills that professional chefs use daily</p>
-        </div>
+        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden mb-6">
+          <div className="h-1.5 bg-gradient-to-r from-blue-400 to-blue-600"></div>
+          <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
+            <CardTitle className="flex items-center text-lg font-medium text-blue-700">
+              <Utensils className="h-5 w-5 mr-2" />
+              Essential Cooking Techniques
+            </CardTitle>
+            <CardDescription className="text-sm text-blue-600">
+              Learn the fundamental skills that professional chefs use daily
+            </CardDescription>
+          </CardHeader>
+        </Card>
         <TechniqueTutorials onPlayVideo={onPlayVideo} />
       </section>
       
       <section className="mb-10">
-        <div className="border-l-4 border-yellow-400 pl-3 py-1">
-          <h2 className="text-xl font-semibold mb-1 flex items-center gap-2 text-yellow-700">
-            <AlertTriangle className="h-5 w-5" />
-            Kitchen Safety & Skills
-          </h2>
-          <p className="text-sm text-yellow-600 mb-4">Prevent injuries and foodborne illness with proper techniques</p>
-        </div>
+        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden mb-6">
+          <div className="h-1.5 bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
+          <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
+            <CardTitle className="flex items-center text-lg font-medium text-yellow-700">
+              <AlertTriangle className="h-5 w-5 mr-2" />
+              Kitchen Safety & Skills
+            </CardTitle>
+            <CardDescription className="text-sm text-yellow-600">
+              Prevent injuries and foodborne illness with proper techniques
+            </CardDescription>
+          </CardHeader>
+        </Card>
         <KitchenSafetyTutorials onPlayVideo={onPlayVideo} />
       </section>
       
       <section className="mb-10">
-        <div className="border-l-4 border-green-400 pl-3 py-1">
-          <h2 className="text-xl font-semibold mb-1 flex items-center gap-2 text-green-700">
-            <BookOpen className="h-5 w-5" />
-            Basic Recipes Everyone Should Know
-          </h2>
-          <p className="text-sm text-green-600 mb-4">Master these simple recipes to build your cooking confidence</p>
-        </div>
+        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden mb-6">
+          <div className="h-1.5 bg-gradient-to-r from-green-400 to-green-600"></div>
+          <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
+            <CardTitle className="flex items-center text-lg font-medium text-green-700">
+              <BookOpen className="h-5 w-5 mr-2" />
+              Basic Recipes Everyone Should Know
+            </CardTitle>
+            <CardDescription className="text-sm text-green-600">
+              Master these simple recipes to build your cooking confidence
+            </CardDescription>
+          </CardHeader>
+        </Card>
         <BasicRecipesTutorials onPlayVideo={onPlayVideo} />
       </section>
       
       <section>
-        <div className="border-l-4 border-orange-400 pl-3 py-1">
-          <h2 className="text-xl font-semibold mb-1 flex items-center gap-2 text-orange-700">
-            <ChefHat className="h-5 w-5" />
-            Meals by Time of Day
-          </h2>
-          <p className="text-sm text-orange-600 mb-4">Simple breakfast, lunch, and dinner recipes for everyday cooking</p>
-        </div>
+        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden mb-6">
+          <div className="h-1.5 bg-gradient-to-r from-orange-400 to-orange-600"></div>
+          <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
+            <CardTitle className="flex items-center text-lg font-medium text-orange-700">
+              <ChefHat className="h-5 w-5 mr-2" />
+              Meals by Time of Day
+            </CardTitle>
+            <CardDescription className="text-sm text-orange-600">
+              Simple breakfast, lunch, and dinner recipes for everyday cooking
+            </CardDescription>
+          </CardHeader>
+        </Card>
         <MealTutorials onPlayVideo={onPlayVideo} />
       </section>
     </div>

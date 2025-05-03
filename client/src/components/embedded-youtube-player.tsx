@@ -7,6 +7,7 @@ interface EmbeddedYoutubePlayerProps {
   height?: string;
   className?: string;
   onError?: () => void;
+  autoplay?: boolean;
 }
 
 export function EmbeddedYouTubePlayer({ 
@@ -15,7 +16,8 @@ export function EmbeddedYouTubePlayer({
   width = "100%",
   height = "100%",
   className = "",
-  onError
+  onError,
+  autoplay = false
 }: EmbeddedYoutubePlayerProps) {
   const [isMobile, setIsMobile] = useState(false);
   
@@ -36,7 +38,7 @@ export function EmbeddedYouTubePlayer({
   }, []);
 
   // Add additional parameters for better mobile experience
-  const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&enablejsapi=1`;
+  const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&playsinline=1&enablejsapi=1${autoplay ? '&autoplay=1' : ''}`;
   
   return (
     <iframe
