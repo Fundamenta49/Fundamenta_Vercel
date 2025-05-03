@@ -45,6 +45,7 @@ import registerMentorshipRoutes from './routes/mentorship-routes';
 import { spoonacularRouter } from './routes/spoonacular';
 import testRoutes from './routes/test-routes';
 import legalRoutes from './routes/legal-routes';
+import engagementRoutes from './routes/engagement-routes';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { getOccupationInterviewQuestions } from './career-one-stop-service';
 import { userGuideService } from './services/user-guide-service';
@@ -154,6 +155,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Mount legal compliance routes
   app.use('/api/legal', legalRoutes);
+  
+  // Mount engagement engine routes
+  app.use('/api/engagement', engagementRoutes);
   app.post("/api/chat", async (req, res) => {
     try {
       // Enhanced debug logging to understand the incoming request better

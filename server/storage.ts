@@ -9,10 +9,10 @@ import {
   UserEngagement, InsertUserEngagement,
   UserAchievement, InsertUserAchievement,
   UserActivity, InsertUserActivity,
-  users
+  users, userEngagement, userAchievements, userActivities
 } from "@shared/schema";
+import { eq, desc, and, sql } from "drizzle-orm";
 import { db, pool } from "./db";
-import { eq, sql } from "drizzle-orm";
 import { ChatMessage } from "@shared/types";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
@@ -868,6 +868,40 @@ export class DatabaseStorage implements IStorage {
       return 0;
     }
   }
+  
+  // Add implementation for MemStorage for Engagement Engine - these are stubs that 
+  // will be replaced by the real DatabaseStorage implementation
+  async getUserEngagement(userId: number): Promise<UserEngagement | undefined> {
+    return undefined;
+  }
+  
+  async createUserEngagement(userId: number): Promise<UserEngagement> {
+    throw new Error('Not implemented in MemStorage');
+  }
+  
+  async updateUserEngagement(userId: number, updates: Partial<InsertUserEngagement>): Promise<UserEngagement> {
+    throw new Error('Not implemented in MemStorage');
+  }
+  
+  async checkInUser(userId: number): Promise<UserEngagement> {
+    throw new Error('Not implemented in MemStorage');
+  }
+  
+  async recordUserActivity(userId: number, type: string, data?: any, pointsEarned?: number): Promise<UserActivity> {
+    throw new Error('Not implemented in MemStorage');
+  }
+  
+  async getUserActivities(userId: number, limit?: number): Promise<UserActivity[]> {
+    return [];
+  }
+  
+  async getUserAchievements(userId: number): Promise<UserAchievement[]> {
+    return [];
+  }
+  
+  async addUserAchievement(achievement: InsertUserAchievement): Promise<UserAchievement> {
+    throw new Error('Not implemented in MemStorage');
+  }
 
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -973,6 +1007,319 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  // Engagement Engine Methods - Database implementations
+
+  async getUserEngagement(userId: number): Promise<UserEngagement | undefined> {
+    try {
+      const [engagement] = await db
+        .select()
+        .from(userEngagement)
+        .where(eq(userEngagement.userId, userId));
+      
+      return engagement;
+    } catch (error) {
+      console.error('Error getting user engagement:', error);
+      return undefined;
+    }
+  }
+  
+  async createUserEngagement(userId: number): Promise<UserEngagement> {
+    try {
+      const now = new Date();
+      const [engagement] = await db
+        .insert(userEngagement)
+        .values({
+          userId,
+          totalPoints: 0,
+          level: 1,
+          currentStreak: 0,
+          longestStreak: 0,
+          lastCheckIn: now,
+          streakUpdatedAt: now
+        })
+        .returning();
+      
+      return engagement;
+    } catch (error) {
+      console.error('Error creating user engagement:', error);
+      throw new Error('Failed to create user engagement record');
+    }
+  }
+  
+  async updateUserEngagement(userId: number, updates: Partial<InsertUserEngagement>): Promise<UserEngagement> {
+    try {
+      // Make sure we only include fields that exist in the schema
+      const validUpdates: any = {};
+      
+      // Copy only valid fields from updates to validUpdates
+      if ('currentStreak' in updates) validUpdates.currentStreak = updates.currentStreak;
+      if ('longestStreak' in updates) validUpdates.longestStreak = updates.longestStreak;
+      if ('lastCheckIn' in updates) validUpdates.lastCheckIn = updates.lastCheckIn;
+      if ('streakUpdatedAt' in updates) validUpdates.streakUpdatedAt = updates.streakUpdatedAt;
+      if ('totalPoints' in updates) validUpdates.totalPoints = updates.totalPoints;
+      if ('level' in updates) validUpdates.level = updates.level;
+      
+      // Add the updatedAt timestamp
+      validUpdates.updatedAt = new Date();
+      
+      const [engagement] = await db
+        .update(userEngagement)
+        .set(validUpdates)
+        .where(eq(userEngagement.userId, userId))
+        .returning();
+      
+      if (!engagement) {
+        throw new Error('User engagement record not found');
+      }
+      
+      return engagement;
+    } catch (error) {
+      console.error('Error updating user engagement:', error);
+      throw new Error('Failed to update user engagement');
+    }
+  }
+  
+  async checkInUser(userId: number): Promise<UserEngagement> {
+    try {
+      // Get current engagement record
+      let engagement = await this.getUserEngagement(userId);
+      const now = new Date();
+      
+      if (!engagement) {
+        // If no engagement record exists, create one
+        return this.createUserEngagement(userId);
+      }
+      
+      // Check if this is a consecutive day check-in
+      let isConsecutiveDay = false;
+      if (engagement.lastCheckIn) {
+        const lastCheckIn = new Date(engagement.lastCheckIn);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        const lastCheckInDay = new Date(lastCheckIn);
+        lastCheckInDay.setHours(0, 0, 0, 0);
+        
+        // Check if last check-in was yesterday (for streak continuation)
+        if (lastCheckInDay.getTime() === yesterday.getTime()) {
+          isConsecutiveDay = true;
+        }
+        
+        // Check if already checked in today (no streak update needed)
+        if (lastCheckInDay.getTime() === today.getTime()) {
+          return engagement;
+        }
+      }
+      
+      // Update streak if consecutive day
+      const currentStreak = isConsecutiveDay ? (engagement.currentStreak || 0) + 1 : 1;
+      const longestStreak = Math.max(currentStreak, engagement.longestStreak || 0);
+      
+      // Add points for check-in (10 base points, bonus for streak milestones)
+      let pointsEarned = 10;
+      if (currentStreak % 7 === 0) pointsEarned += 50;  // Weekly milestone bonus
+      if (currentStreak % 30 === 0) pointsEarned += 200; // Monthly milestone bonus
+      
+      // Update the engagement record
+      const updatedEngagement = await this.updateUserEngagement(userId, {
+        lastCheckIn: now,
+        streakUpdatedAt: now,
+        currentStreak,
+        longestStreak, 
+        totalPoints: (engagement.totalPoints || 0) + pointsEarned
+      });
+      
+      // Record the check-in activity
+      await this.recordUserActivity(userId, 'daily_check_in', {
+        streak: currentStreak,
+        isStreakContinued: isConsecutiveDay
+      }, pointsEarned);
+      
+      // Check for streak-based achievements
+      await this.checkStreakAchievements(userId, currentStreak);
+      
+      return updatedEngagement;
+    } catch (error) {
+      console.error('Error checking in user:', error);
+      throw new Error('Failed to check in user');
+    }
+  }
+  
+  async checkStreakAchievements(userId: number, currentStreak: number): Promise<void> {
+    try {
+      // Define streak achievements
+      const streakAchievements = [
+        { id: 'streak_3', name: '3-Day Streak', description: 'Logged in for 3 consecutive days', threshold: 3, points: 30 },
+        { id: 'streak_7', name: '7-Day Streak', description: 'Logged in for a full week', threshold: 7, points: 70 },
+        { id: 'streak_14', name: '2-Week Streak', description: 'Logged in for 2 consecutive weeks', threshold: 14, points: 140 },
+        { id: 'streak_30', name: 'Monthly Dedication', description: 'Logged in every day for a month', threshold: 30, points: 300 },
+        { id: 'streak_90', name: 'Quarterly Champion', description: 'Logged in every day for 3 months', threshold: 90, points: 900 },
+        { id: 'streak_180', name: 'Half-Year Hero', description: 'Logged in every day for 6 months', threshold: 180, points: 1800 },
+        { id: 'streak_365', name: 'Full-Year Legend', description: 'Logged in every day for a full year', threshold: 365, points: 3650 },
+      ];
+      
+      // Check which achievements apply to the current streak
+      for (const achievement of streakAchievements) {
+        if (currentStreak === achievement.threshold) {
+          // Check if user already has this achievement
+          const existing = await db
+            .select()
+            .from(userAchievements)
+            .where(and(
+              eq(userAchievements.userId, userId),
+              eq(userAchievements.achievementId, achievement.id)
+            ));
+          
+          // If not, award it
+          if (existing.length === 0) {
+            await this.addUserAchievement({
+              userId,
+              achievementId: achievement.id,
+              achievementName: achievement.name,
+              achievementDescription: achievement.description,
+              achievementType: 'streak',
+              points: achievement.points,
+              awardedAt: new Date()
+            });
+            
+            // Add the achievement points to the user's total
+            const engagement = await this.getUserEngagement(userId);
+            if (engagement) {
+              await this.updateUserEngagement(userId, {
+                points: (engagement.points || 0) + achievement.points
+              });
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error checking streak achievements:', error);
+      // Don't throw here - we don't want to break the check-in process
+    }
+  }
+  
+  async recordUserActivity(userId: number, type: string, data?: any, pointsEarned?: number): Promise<UserActivity> {
+    try {
+      const now = new Date();
+      const [activity] = await db
+        .insert(userActivities)
+        .values({
+          userId,
+          activityType: type,
+          data: data ? JSON.stringify(data) : null,
+          pointsEarned: pointsEarned || 0,
+          createdAt: now
+        })
+        .returning();
+      
+      // If points were earned, add them to the user's total
+      if (pointsEarned && pointsEarned > 0) {
+        const engagement = await this.getUserEngagement(userId);
+        if (engagement) {
+          await this.updateUserEngagement(userId, {
+            points: (engagement.points || 0) + pointsEarned
+          });
+          
+          // Check for level up based on points
+          await this.checkForLevelUp(userId, engagement.level, engagement.points + pointsEarned);
+        }
+      }
+      
+      return activity;
+    } catch (error) {
+      console.error('Error recording user activity:', error);
+      throw new Error('Failed to record user activity');
+    }
+  }
+  
+  async checkForLevelUp(userId: number, currentLevel: number, newPoints: number): Promise<void> {
+    try {
+      // Points threshold for each level - example formula: level^2 * 100
+      const getPointsForLevel = (level: number) => Math.pow(level, 2) * 100;
+      
+      // Check if points exceed next level threshold
+      const nextLevel = currentLevel + 1;
+      const pointsNeeded = getPointsForLevel(nextLevel);
+      
+      if (newPoints >= pointsNeeded) {
+        // Level up the user
+        await this.updateUserEngagement(userId, { level: nextLevel });
+        
+        // Record level up activity
+        await this.recordUserActivity(userId, 'level_up', {
+          fromLevel: currentLevel,
+          toLevel: nextLevel,
+          pointsAtLevelUp: newPoints
+        }, 0);
+        
+        // Award level up achievement
+        await this.addUserAchievement({
+          userId,
+          achievementId: `level_${nextLevel}`,
+          achievementName: `Reached Level ${nextLevel}`,
+          achievementDescription: `Accumulated ${newPoints} points to reach Level ${nextLevel}`,
+          achievementType: 'level',
+          points: 0, // No additional points for leveling up
+          awardedAt: new Date()
+        });
+      }
+    } catch (error) {
+      console.error('Error checking for level up:', error);
+      // Don't throw - this is a background check that shouldn't break the main flow
+    }
+  }
+  
+  async getUserActivities(userId: number, limit: number = 20): Promise<UserActivity[]> {
+    try {
+      const activities = await db
+        .select()
+        .from(userActivities)
+        .where(eq(userActivities.userId, userId))
+        .orderBy(desc(userActivities.createdAt))
+        .limit(limit);
+      
+      return activities;
+    } catch (error) {
+      console.error('Error getting user activities:', error);
+      return [];
+    }
+  }
+  
+  async getUserAchievements(userId: number): Promise<UserAchievement[]> {
+    try {
+      const achievements = await db
+        .select()
+        .from(userAchievements)
+        .where(eq(userAchievements.userId, userId))
+        .orderBy(desc(userAchievements.awardedAt));
+      
+      return achievements;
+    } catch (error) {
+      console.error('Error getting user achievements:', error);
+      return [];
+    }
+  }
+  
+  async addUserAchievement(achievement: InsertUserAchievement): Promise<UserAchievement> {
+    try {
+      const [newAchievement] = await db
+        .insert(userAchievements)
+        .values({
+          ...achievement,
+          points: achievement.points || 0
+        })
+        .returning();
+      
+      return newAchievement;
+    } catch (error) {
+      console.error('Error adding user achievement:', error);
+      throw new Error('Failed to add user achievement');
+    }
+  }
+  
   // Other methods from MemStorage - add database implementations as needed
 
   async getConversations(userId: number): Promise<Conversation[]> {
