@@ -1079,6 +1079,17 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
+  // Get user streak
+  async getStreak(userId: number): Promise<number> {
+    try {
+      const engagement = await this.getUserEngagement(userId);
+      return engagement?.currentStreak || 0;
+    } catch (error) {
+      console.error('Error getting user streak:', error);
+      return 0;
+    }
+  }
+
   async checkInUser(userId: number): Promise<UserEngagement> {
     try {
       // Get current engagement record
@@ -1189,7 +1200,7 @@ export class DatabaseStorage implements IStorage {
             const engagement = await this.getUserEngagement(userId);
             if (engagement) {
               await this.updateUserEngagement(userId, {
-                points: (engagement.points || 0) + achievement.points
+                totalPoints: (engagement.totalPoints || 0) + achievement.points
               });
             }
           }
@@ -1203,15 +1214,15 @@ export class DatabaseStorage implements IStorage {
   
   async recordUserActivity(userId: number, type: string, data?: any, pointsEarned?: number): Promise<UserActivity> {
     try {
-      const now = new Date();
+      const timestamp = new Date();
       const [activity] = await db
         .insert(userActivities)
         .values({
           userId,
-          activityType: type,
-          data: data ? JSON.stringify(data) : null,
+          type, 
+          data: data ? JSON.stringify(data) : {},
           pointsEarned: pointsEarned || 0,
-          createdAt: now
+          timestamp
         })
         .returning();
       
@@ -1220,11 +1231,11 @@ export class DatabaseStorage implements IStorage {
         const engagement = await this.getUserEngagement(userId);
         if (engagement) {
           await this.updateUserEngagement(userId, {
-            points: (engagement.points || 0) + pointsEarned
+            totalPoints: (engagement.totalPoints || 0) + pointsEarned
           });
           
           // Check for level up based on points
-          await this.checkForLevelUp(userId, engagement.level, engagement.points + pointsEarned);
+          await this.checkForLevelUp(userId, engagement.level, engagement.totalPoints + pointsEarned);
         }
       }
       
@@ -1278,7 +1289,7 @@ export class DatabaseStorage implements IStorage {
         .select()
         .from(userActivities)
         .where(eq(userActivities.userId, userId))
-        .orderBy(desc(userActivities.createdAt))
+        .orderBy(desc(userActivities.timestamp))
         .limit(limit);
       
       return activities;
@@ -1294,7 +1305,7 @@ export class DatabaseStorage implements IStorage {
         .select()
         .from(userAchievements)
         .where(eq(userAchievements.userId, userId))
-        .orderBy(desc(userAchievements.awardedAt));
+        .orderBy(desc(userAchievements.unlockedAt));
       
       return achievements;
     } catch (error) {
@@ -1303,14 +1314,30 @@ export class DatabaseStorage implements IStorage {
     }
   }
   
-  async addUserAchievement(achievement: InsertUserAchievement): Promise<UserAchievement> {
+  async addUserAchievement(achievementData: {
+    userId: number;
+    achievementId: string;
+    achievementName: string;
+    achievementDescription: string;
+    achievementType: string;
+    points?: number;
+    awardedAt?: Date;
+  }): Promise<UserAchievement> {
     try {
+      // Map the input data to match the schema
+      const achievementValues = {
+        userId: achievementData.userId,
+        achievementId: achievementData.achievementId,
+        name: achievementData.achievementName,
+        description: achievementData.achievementDescription,
+        type: achievementData.achievementType,
+        points: achievementData.points || 0,
+        unlockedAt: achievementData.awardedAt || new Date(),
+      };
+      
       const [newAchievement] = await db
         .insert(userAchievements)
-        .values({
-          ...achievement,
-          points: achievement.points || 0
-        })
+        .values(achievementValues)
         .returning();
       
       return newAchievement;
