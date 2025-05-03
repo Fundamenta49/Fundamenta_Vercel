@@ -3,6 +3,14 @@ import axios from 'axios';
 import OpenAI from 'openai';
 import { MealCategorizationService } from '../services/meal-categorization-service';
 
+// Define a type for the day structure in the meal plan
+interface EnhancedDay {
+  dayName: string;
+  meals: any[];
+  nutrients: any;
+  aiEnhanced: boolean;
+}
+
 const router = express.Router();
 const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 const BASE_URL = 'https://api.spoonacular.com';
@@ -379,7 +387,17 @@ router.get('/meal-plan', async (req, res) => {
             
             // The API response format has changed - it now returns days as objects instead of an array
             const weekDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-            const enhancedWeek = { days: [] };
+            
+            // Define a type for the day structure
+            interface EnhancedDay {
+              dayName: string;
+              meals: any[];
+              nutrients: any;
+              aiEnhanced: boolean;
+            }
+            
+            // Initialize the enhanced week with a typed array
+            const enhancedWeek: { days: EnhancedDay[] } = { days: [] };
             
             for (const dayName of weekDays) {
               const day = response.data.week[dayName];
@@ -733,14 +751,7 @@ router.get('/videos/random', async (req, res) => {
     
     res.json(response.data);
   } catch (error) {
-    console.error('Spoonacular API error:', error);
-    if (axios.isAxiosError(error) && error.response) {
-      res.status(error.response.status).json({ 
-        error: `Spoonacular API error: ${error.response.data.message || 'Unknown error'}` 
-      });
-    } else {
-      res.status(500).json({ error: 'Failed to fetch random cooking videos from Spoonacular' });
-    }
+    return handleSpoonacularError(error, res, 'Failed to fetch random cooking videos from Spoonacular');
   }
 });
 
@@ -752,6 +763,29 @@ router.get('/videos/category/:category', async (req, res) => {
     
     if (!SPOONACULAR_API_KEY) {
       return res.status(500).json({ error: 'Spoonacular API key is not configured' });
+    }
+    
+    // Check if API is rate limited before making the request
+    if (spoonacularMonitor.isApiRateLimited()) {
+      const status = spoonacularMonitor.getStatus();
+      return res.status(429).json({
+        error: 'Spoonacular API is rate limited',
+        message: 'Daily request quota exceeded. Please try again later.',
+        rateLimitResetTime: status.rateLimitResetTime?.toISOString()
+      });
+    }
+    
+    // Check API health before proceeding
+    const isHealthy = spoonacularMonitor.getStatus().isHealthy;
+    if (!isHealthy) {
+      console.log('Spoonacular API is unhealthy, forcing health check...');
+      const healthCheckResult = await spoonacularMonitor.forceCheck();
+      if (!healthCheckResult) {
+        return res.status(503).json({
+          error: 'Spoonacular API is currently unavailable',
+          message: 'The recipe service is experiencing issues. Please try again later.'
+        });
+      }
     }
     
     // Map common cooking tutorial categories to search queries
@@ -780,14 +814,7 @@ router.get('/videos/category/:category', async (req, res) => {
     
     res.json(response.data);
   } catch (error) {
-    console.error('Spoonacular API error:', error);
-    if (axios.isAxiosError(error) && error.response) {
-      res.status(error.response.status).json({ 
-        error: `Spoonacular API error: ${error.response.data.message || 'Unknown error'}` 
-      });
-    } else {
-      res.status(500).json({ error: 'Failed to fetch cooking videos by category from Spoonacular' });
-    }
+    return handleSpoonacularError(error, res, 'Failed to fetch cooking videos by category from Spoonacular');
   }
 });
 
