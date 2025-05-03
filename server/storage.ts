@@ -1215,12 +1215,16 @@ export class DatabaseStorage implements IStorage {
   async recordUserActivity(userId: number, type: string, data?: any, pointsEarned?: number): Promise<UserActivity> {
     try {
       const timestamp = new Date();
+      
+      // Convert data to a proper JSON object if it's not already
+      const jsonData = data ? (typeof data === 'string' ? JSON.parse(data) : data) : {};
+      
       const [activity] = await db
         .insert(userActivities)
         .values({
           userId,
           type, 
-          data: data ? JSON.stringify(data) : {},
+          data: jsonData,
           pointsEarned: pointsEarned || 0,
           timestamp
         })
@@ -1276,6 +1280,12 @@ export class DatabaseStorage implements IStorage {
           points: 0, // No additional points for leveling up
           awardedAt: new Date()
         });
+        
+        // Continue checking for higher levels if points are sufficient
+        // This handles the case where a user gains multiple levels at once
+        if (newPoints >= getPointsForLevel(nextLevel + 1)) {
+          await this.checkForLevelUp(userId, nextLevel, newPoints);
+        }
       }
     } catch (error) {
       console.error('Error checking for level up:', error);

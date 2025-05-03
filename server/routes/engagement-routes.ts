@@ -90,6 +90,37 @@ router.get('/achievements', ensureAuth, async (req, res) => {
   }
 });
 
+// Get achievement summary (counts by type)
+router.get('/achievement-summary', ensureAuth, async (req, res) => {
+  try {
+    const userId = req.user!.id;
+    const achievements = await storage.getUserAchievements(userId);
+    
+    // Group achievements by type and count them
+    const summary = achievements.reduce((acc, achievement) => {
+      const type = achievement.type;
+      if (!acc[type]) {
+        acc[type] = 0;
+      }
+      acc[type]++;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    // Calculate total earned points
+    const totalPoints = achievements.reduce((sum, achievement) => sum + achievement.points, 0);
+    
+    res.json({
+      summary,
+      totalAchievements: achievements.length,
+      totalPoints,
+      recentAchievements: achievements.slice(0, 5) // Return 5 most recent achievements
+    });
+  } catch (error) {
+    console.error('Error getting achievement summary:', error);
+    res.status(500).json({ error: 'Failed to get achievement summary' });
+  }
+});
+
 // Get user activity history
 router.get('/activities', ensureAuth, async (req, res) => {
   try {
