@@ -67,24 +67,33 @@ This document consolidates our strategic approach for Fundamenta, focusing on av
    - Mentor matching
    - Group challenges
 
-## Monetization Framework
+## Phased Monetization Framework
 
-### Free Tier Strategy
-- Limited functionality with clear value demonstration
-- Strategic "walls" at high-value moments
-- Daily engagement incentives
+### Phase 1: Value Creation & Data Collection (Months 1-3)
+- Focus on building core engagement and retention without monetization barriers
+- Collect comprehensive usage analytics 
+- Design features with future monetization boundaries in mind but don't enforce them
+- Track key metrics: engagement rates, retention, feature usage patterns
 
-### Premium Tier Strategy
-- Enhanced versions of free features
-- Exclusive content and interventions
-- Personalization enhancements
-- Priority access to emerging features
+### Phase 2: Monetization Testing (Months 4-6)
+- Identify high-value features based on usage data
+- Introduce "premium preview" periods where users can temporarily access future paid features
+- Implement soft conversion prompts at key value moments (no hard paywalls)
+- Test price sensitivity with limited user segments
 
-### Conversion Path
-- 3-day trial with structured experience
-- Strategic conversion triggers at emotional pain points
-- Clear value differentiation between tiers
-- Post-trial re-engagement strategy
+### Phase 3: Full Monetization Rollout (Months 6+)
+- Implement sustainable premium tier with proper paywalls
+- Maintain generous free tier to continue user acquisition
+- Create clear upgrade paths at proven conversion points
+- Optimize pricing and packaging based on test data
+
+### Monetization Readiness Checklist
+Before implementing full paywalls, ensure:
+- Minimum 5,000+ monthly active users
+- 40%+ 30-day retention rate
+- Clear data on high-value features
+- Positive user feedback on premium concepts
+- Proven engagement loops in free experience
 
 ## Accessibility Integration
 
@@ -97,22 +106,24 @@ All features will be developed with these accessibility principles:
 
 ## Implementation Timeline
 
-### Month 1
+### Phase 1: Value Creation & Data Collection (Months 1-3)
 - Begin Engagement Engine development
 - Prototype first 3 Life Moments interventions
+- Start mobile optimization
+- Implement feedback and analytics systems
 
-### Month 2-3
-- Mobile optimization
-- Implement feedback systems
+### Phase 2: Monetization Testing (Months 4-6)
+- Complete mobile optimization
+- Begin learning pathway personalization
+- Start Fundi emotional evolution
+- Test premium concepts with user segments
 
-### Month 4-6
-- Learning pathway personalization
-- Fundi emotional evolution
-
-### Ongoing
+### Phase 3: Full Monetization (Months 6+)
+- Complete learning pathways and Fundi evolution
+- Begin community features rollout
+- Implement full premium tier
 - Quarterly content refreshes
-- Community feature gradual rollout
-- Accessibility enhancements
+- Ongoing accessibility enhancements
 
 ---
 
