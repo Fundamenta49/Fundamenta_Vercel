@@ -116,7 +116,7 @@ export function AgeVerificationForm({
       </CardHeader>
       
       <CardContent className="space-y-4">
-        <Alert variant="info" className="bg-blue-50 text-blue-800 border-blue-200">
+        <Alert className="bg-blue-50 text-blue-800 border-blue-200">
           <Info className="h-4 w-4" />
           <AlertTitle>Why we need this information</AlertTitle>
           <AlertDescription>
@@ -166,7 +166,7 @@ export function AgeVerificationForm({
            new Date().getFullYear() - parseInt(birthYear, 10) < MINOR_AGE_CUTOFF && 
            new Date().getFullYear() - parseInt(birthYear, 10) >= MIN_AGE_WITHOUT_CONSENT && (
             <div className="mt-4 space-y-2">
-              <Alert variant="warning" className="bg-amber-50 text-amber-800 border-amber-200">
+              <Alert className="bg-amber-50 text-amber-800 border-amber-200">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Parental Consent Required</AlertTitle>
                 <AlertDescription>

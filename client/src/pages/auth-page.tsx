@@ -6,10 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, CalendarIcon } from 'lucide-react';
+import { Loader2, CalendarIcon, ShieldCheck } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { TermsOfServiceModal, AgeVerificationModal, AgeVerificationData } from '@/components/legal';
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>('login');
@@ -21,10 +22,14 @@ export default function AuthPage() {
     confirmPassword: '', 
     birthYear: '', 
     agreeTerms: false,
-    ageVerification: false 
+    ageVerification: false,
+    hasParentalConsent: false
   });
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [ageError, setAgeError] = useState<string | null>(null);
+  const [showTosModal, setShowTosModal] = useState<boolean>(false);
+  const [showAgeVerificationModal, setShowAgeVerificationModal] = useState<boolean>(false);
+  const [ageVerificationData, setAgeVerificationData] = useState<AgeVerificationData | null>(null);
   const { login, signUp, loading, error, setError } = useAuth();
   const [, setLocation] = useLocation();
 
@@ -78,11 +83,11 @@ export default function AuthPage() {
 
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { name, email, password, confirmPassword, birthYear, ageVerification, agreeTerms } = registerData;
+    const { name, email, password, confirmPassword, birthYear, ageVerification, agreeTerms, hasParentalConsent } = registerData;
     
     // Validation
-    if (!name || !email || !password || !confirmPassword || !birthYear) {
-      setError('All fields are required');
+    if (!name || !email || !password || !confirmPassword) {
+      setError('All name, email, and password fields are required');
       return;
     }
     
@@ -96,41 +101,38 @@ export default function AuthPage() {
       return;
     }
     
-    // Age verification
-    const currentYear = new Date().getFullYear();
-    const age = currentYear - parseInt(birthYear, 10);
-    
-    if (age < 13) {
-      setAgeError('You must be at least 13 years old to use this platform');
+    // Age verification - we now use our enhanced verification process
+    if (!birthYear || !ageVerification) {
+      setAgeError('Please complete the age verification process');
+      setShowAgeVerificationModal(true);
       return;
     }
     
-    if (!ageVerification) {
-      setAgeError('You must confirm you are at least 13 years old');
+    // Check if the user is a minor and requires parental consent
+    const currentYear = new Date().getFullYear();
+    const userAge = currentYear - parseInt(birthYear, 10);
+    const userIsMinor = userAge < 18;
+    
+    // If user is a minor (13-17), they need parental consent
+    if (userIsMinor && !hasParentalConsent) {
+      setAgeError('Parental consent is required for users under 18 years old');
+      setShowAgeVerificationModal(true);
       return;
     }
     
     if (!agreeTerms) {
       setError('You must agree to the Terms of Service and Privacy Policy');
+      setShowTosModal(true);
       return;
     }
     
     // All validation passed, sign up the user
-    // Phase 2: We now store age verification data in the database
-    const birthYearInt = parseInt(birthYear, 10);
-    // Use birthYearNum instead to avoid redeclaration
-    const birthYearNum = birthYearInt;
-    const userAge = new Date().getFullYear() - birthYearNum;
-    const userIsMinor = userAge < 18;
-    
-    // We will pass this metadata to the signup process
+    // Enhanced age verification data from our verification process
     const userMetadata = {
-      birthYear: birthYearNum,
+      birthYear: parseInt(birthYear, 10),
       ageVerified: true,
       isMinor: userIsMinor,
-      // For minors between 13-18, we will set hasParentalConsent to false
-      // until we implement the parental consent system in Phase 3
-      hasParentalConsent: !userIsMinor
+      hasParentalConsent: userIsMinor ? hasParentalConsent : true
     };
     
     const success = await signUp(name, email, password, userMetadata);
@@ -139,6 +141,9 @@ export default function AuthPage() {
       try {
         localStorage.setItem('userAgeVerified', 'true');
         localStorage.setItem('userBirthYear', birthYear);
+        if (userIsMinor) {
+          localStorage.setItem('userHasParentalConsent', hasParentalConsent ? 'true' : 'false');
+        }
       } catch (err) {
         // Silent catch - this is just for an extra layer of tracking
         console.error("Could not save age verification to localStorage");
@@ -148,8 +153,56 @@ export default function AuthPage() {
     }
   };
 
+  // Handle age verification from modal
+  const handleAgeVerificationComplete = (data: AgeVerificationData) => {
+    setAgeVerificationData(data);
+    setRegisterData(prev => ({
+      ...prev,
+      birthYear: data.birthYear.toString(),
+      ageVerification: true,
+      hasParentalConsent: data.hasParentalConsent
+    }));
+    setAgeError(null);
+  };
+
+  // Handle terms of service acceptance
+  const handleTermsAccept = () => {
+    setRegisterData(prev => ({
+      ...prev,
+      agreeTerms: true
+    }));
+    setError(null);
+  };
+
+  // Open age verification modal
+  const openAgeVerification = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowAgeVerificationModal(true);
+  };
+
+  // Open terms of service modal
+  const openTermsOfService = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowTosModal(true);
+  };
+
   return (
     <div className="flex min-h-screen bg-background">
+      {/* Modals */}
+      <TermsOfServiceModal
+        open={showTosModal}
+        onOpenChange={setShowTosModal}
+        onAccept={handleTermsAccept}
+        showCheckbox={true}
+        isRequired={true}
+      />
+      
+      <AgeVerificationModal
+        open={showAgeVerificationModal}
+        onOpenChange={setShowAgeVerificationModal}
+        onVerify={handleAgeVerificationComplete}
+      />
+      
       {/* Left section with form */}
       <div className="flex flex-col justify-center items-center w-full lg:w-1/2 px-6 py-12">
         <div className="w-full max-w-md">
@@ -309,47 +362,52 @@ export default function AuthPage() {
                       )}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="birth-year">Year of Birth</Label>
-                      <Select 
-                        value={registerData.birthYear} 
-                        onValueChange={(value) => handleSelectChange('birthYear', value)}
-                      >
-                        <SelectTrigger id="birth-year">
-                          <SelectValue placeholder="Select year" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.from({ length: 100 }, (_, i) => {
-                            const year = new Date().getFullYear() - i;
-                            return (
-                              <SelectItem key={year} value={year.toString()}>
-                                {year}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex justify-between items-center mb-1">
+                        <Label htmlFor="birth-year">Age Verification</Label>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="h-8 text-xs flex items-center gap-1"
+                          onClick={openAgeVerification}
+                        >
+                          <ShieldCheck className="h-3.5 w-3.5" />
+                          Verify Age
+                        </Button>
+                      </div>
+                      {registerData.birthYear ? (
+                        <div className="bg-muted p-3 rounded-md">
+                          <div className="flex justify-between text-sm">
+                            <span>Birth Year:</span>
+                            <span className="font-medium">{registerData.birthYear}</span>
+                          </div>
+                          <div className="flex justify-between text-sm mt-1">
+                            <span>Status:</span>
+                            <span className="font-medium text-green-600">
+                              {registerData.ageVerification ? 'Verified' : 'Not Verified'}
+                            </span>
+                          </div>
+                          {ageVerificationData?.isMinor && (
+                            <div className="flex justify-between text-sm mt-1">
+                              <span>Parental Consent:</span>
+                              <span className={`font-medium ${registerData.hasParentalConsent ? 'text-green-600' : 'text-amber-600'}`}>
+                                {registerData.hasParentalConsent ? 'Provided' : 'Required'}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="bg-muted/50 border border-border rounded-md p-4 text-center">
+                          <p className="text-sm text-muted-foreground">
+                            Please verify your age to continue
+                          </p>
+                        </div>
+                      )}
                       {ageError && (
                         <p className="text-xs text-destructive mt-1">{ageError}</p>
                       )}
                     </div>
                     
                     <div className="flex items-center space-x-2 mt-4">
-                      <Checkbox 
-                        id="age-verification" 
-                        checked={registerData.ageVerification}
-                        onCheckedChange={(checked) => 
-                          handleCheckboxChange('ageVerification', checked as boolean)
-                        }
-                      />
-                      <Label
-                        htmlFor="age-verification"
-                        className="text-sm leading-tight"
-                      >
-                        I confirm that I am at least 13 years of age
-                      </Label>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2 mt-2">
                       <Checkbox 
                         id="terms-agreement" 
                         checked={registerData.agreeTerms}
@@ -361,7 +419,18 @@ export default function AuthPage() {
                         htmlFor="terms-agreement"
                         className="text-sm leading-tight"
                       >
-                        I agree to the <a href="/terms-of-service" className="underline text-primary">Terms of Service</a> and <a href="/privacy-policy" className="underline text-primary">Privacy Policy</a>
+                        I agree to the{" "}
+                        <Button 
+                          variant="link" 
+                          className="p-0 h-auto text-primary underline" 
+                          onClick={openTermsOfService}
+                        >
+                          Terms of Service
+                        </Button>
+                        {" "}and{" "}
+                        <a href="/privacy-policy" className="underline text-primary">
+                          Privacy Policy
+                        </a>
                       </Label>
                     </div>
                   </CardContent>
