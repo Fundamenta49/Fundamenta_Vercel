@@ -150,6 +150,67 @@ If tests fail, check the following:
 4. **User ID**: Make sure you're using a valid user ID that exists in the database
 5. **Import Errors**: If you get ES module import errors, try using the `test-db-functions.js` script instead
 
+## Automated Testing Script
+
+We've created a shell script that runs all tests in sequence to make it easy to verify the Engagement Engine functionality after any code changes:
+
+```bash
+./test-engagement.sh
+```
+
+This script will:
+1. Verify the schema matches the database structure
+2. Run the basic database function tests
+3. Ask if you want to run advanced tests (which modify data)
+
+### Setting Up Regular Testing
+
+To ensure consistent quality as the codebase evolves, we've created several options:
+
+#### 1. Manual Testing
+
+Run the test script manually after making changes:
+
+```bash
+./test-engagement.sh
+```
+
+#### 2. Automated Watching
+
+We've created a script that watches for changes and automatically runs tests:
+
+```bash
+./schedule-engagement-tests.sh
+```
+
+This will:
+- Monitor all JS and TS files in the project
+- Automatically run the basic tests whenever a file changes
+- Skip the advanced tests to avoid modifying data unnecessarily
+
+You can specify a specific directory to watch:
+
+```bash
+./schedule-engagement-tests.sh ./server
+```
+
+#### 3. Git Pre-commit Hook
+
+Add this to your `.git/hooks/pre-commit` file to prevent committing code that doesn't pass tests:
+
+```bash
+#!/bin/bash
+./test-engagement.sh
+if [ $? -ne 0 ]; then
+  echo "Tests failed. Commit aborted."
+  exit 1
+fi
+```
+
+#### 4. CI/CD Integration
+
+Include the test script in your continuous integration pipeline to ensure all pushed code maintains quality.
+
 ## Next Steps
 
 After verifying the backend functionality works correctly, you can proceed with implementing the frontend components that will use these API endpoints.
