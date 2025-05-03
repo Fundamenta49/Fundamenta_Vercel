@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 // Import original components
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 // Import standardized components
-import { StandardCard, MobileScroller, SearchBar, TabNav } from "@/components/ui-standard";
+import { StandardCard, MobileScroller, SearchBar, TabNav, StandardBadge } from "@/components/ui-standard";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
@@ -387,9 +387,14 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
         <h3 className="text-lg font-semibold mb-3 flex items-center">
           <Zap className="h-5 w-5 mr-2 text-amber-500" />
           Smart Prompts
-          <span className="ml-2 text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+          <StandardBadge 
+            size="sm" 
+            className="ml-2" 
+            sectionTheme="learning"
+            pill={true}
+          >
             {smartPrompts.filter(p => p.isNew).length} new
-          </span>
+          </StandardBadge>
         </h3>
         
         <ScrollArea className="h-[320px] pr-4">
@@ -419,9 +424,13 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
                     {promptIcon()}
                     {prompt.title}
                     {prompt.isNew && (
-                      <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">
+                      <StandardBadge 
+                        size="sm" 
+                        className="ml-2" 
+                        sectionTheme={getSectionTheme()}
+                      >
                         New
-                      </span>
+                      </StandardBadge>
                     )}
                   </div>
                 );
@@ -485,9 +494,13 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
                         {promptIcon()}
                         {prompt.title}
                         {prompt.isNew && (
-                          <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">
+                          <StandardBadge 
+                            size="sm" 
+                            className="ml-2" 
+                            sectionTheme={getSectionTheme()}
+                          >
                             New
-                          </span>
+                          </StandardBadge>
                         )}
                       </CardTitle>
                       <CardDescription className="text-xs">
