@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { ArrowLeft, BookOpenIcon, Clock, CalendarClock, ClipboardList, LineChart, Hourglass } from 'lucide-react';
+import { ArrowLeft, BookOpenIcon, Clock, CalendarClock, ClipboardList, LineChart, Hourglass, CheckCircle, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import SimpleResourceLinks from '@/components/simple-resource-links';
@@ -9,6 +9,7 @@ import FloatingChat from '@/components/floating-chat';
 import LearningCoachPopOut from '@/components/learning-coach-pop-out';
 import QuizComponent from '@/components/quiz-component';
 import { cn } from "@/lib/utils";
+import { StandardBadge } from "@/components/ui-standard";
 import {
   FullScreenDialog,
   FullScreenDialogTrigger,
@@ -365,97 +366,350 @@ export default function TimeManagementCourse() {
       description: 'Practical methods to maximize efficiency and focus',
       icon: Hourglass,
       content: (
-        <div className="space-y-4">
-          <p>
+        <div className="space-y-6">
+          <p className="text-lg">
             Once you've identified your priorities, you need practical techniques to execute them efficiently. 
             This module presents proven productivity methods that can help you manage your time effectively 
             and maintain focus.
           </p>
           
-          <h3 className="text-lg font-semibold mt-6">The Pomodoro Technique</h3>
-          <div className="space-y-2">
-            <p>
-              This time-tested method uses focused work periods followed by short breaks:
-            </p>
-            <ol className="list-decimal pl-5 space-y-2">
-              <li>Choose a task to work on</li>
-              <li>Set a timer for 25 minutes (one "Pomodoro")</li>
-              <li>Work with complete focus until the timer rings</li>
-              <li>Take a short 5-minute break</li>
-              <li>After 4 Pomodoros, take a longer 15-30 minute break</li>
-            </ol>
-            <p className="mt-2">
-              Benefits include improved focus, reduced mental fatigue, and a clear sense of accomplishment.
-            </p>
-          </div>
-          
-          <h3 className="text-lg font-semibold mt-6">Time Blocking</h3>
-          <div className="space-y-2">
-            <p>
-              Reserve specific blocks of time for specific activities:
-            </p>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>Divide your day into blocks (e.g., 30-90 minute segments)</li>
-              <li>Assign specific tasks or categories of work to each block</li>
-              <li>Include blocks for breaks, email, meetings, and deep work</li>
-              <li>Batch similar tasks together when possible</li>
-              <li>Be realistic about how long tasks will take</li>
-            </ul>
-            <p className="mt-2">
-              Time blocking creates a visual schedule, reduces decision fatigue, and helps prevent multitasking.
-            </p>
-          </div>
-          
-          <h3 className="text-lg font-semibold mt-6">The 2-Minute Rule</h3>
-          <p>
-            From David Allen's Getting Things Done methodology:
-          </p>
-          <div className="bg-gray-50 p-4 rounded-md mt-2">
-            <p className="italic">
-              "If an action will take less than two minutes, it should be done at the moment it's defined."
-            </p>
-          </div>
-          <p className="mt-2">
-            This simple rule prevents small tasks from piling up and taking more time later.
-          </p>
-          
-          <h3 className="text-lg font-semibold mt-6">The ABCDE Method in Practice</h3>
-          <div className="space-y-2">
-            <p>
-              Here's how to implement the ABCDE method in your daily routine:
-            </p>
-            <ol className="list-decimal pl-5 space-y-2">
-              <li>Before starting your day or the night before, list everything you need to do</li>
-              <li>Assign each task a letter from A to E</li>
-              <li>Number all A tasks by priority (A1, A2, A3...)</li>
-              <li>Do the same for B and C tasks</li>
-              <li>Start with A1 and work your way down the list</li>
-            </ol>
-          </div>
-          
-          <h3 className="text-lg font-semibold mt-6">Eat That Frog</h3>
-          <div className="space-y-2">
-            <p>
-              Based on Brian Tracy's productivity system:
-            </p>
-            <div className="bg-gray-50 p-4 rounded-md">
-              <p className="italic">
-                "If the first thing you do each morning is to eat a live frog, you can go through the day with the satisfaction of knowing that it's probably the worst thing that's going to happen to you all day long."
-              </p>
+          {/* Pomodoro Technique with enhanced visual design */}
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <Clock className="h-8 w-8 text-orange-500" strokeWidth={1.5} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">The Pomodoro Technique</h3>
+                  <StandardBadge size="sm" sectionTheme="learning" className="ml-2" blurEffect={true}>Focus</StandardBadge>
+                </div>
+                <p className="text-orange-700 text-sm">Time-tested method for maintaining concentration and beating procrastination</p>
+              </div>
             </div>
-            <p className="mt-2">
-              Your "frog" is your biggest, most important task—the one you're most likely to procrastinate on. 
-              Do it first thing in the morning when your willpower and energy are highest.
-            </p>
+            <div className="p-6">
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex-1">
+                  <p className="mb-3 text-gray-700">
+                    This method uses focused work periods followed by short breaks to maintain high productivity:
+                  </p>
+                  <ol className="space-y-3 list-none pl-0">
+                    <li className="flex items-start gap-3">
+                      <div className="bg-orange-100 text-orange-700 rounded-full h-7 w-7 flex items-center justify-center flex-shrink-0 mt-0.5">1</div>
+                      <div>Choose a task to work on</div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="bg-orange-100 text-orange-700 rounded-full h-7 w-7 flex items-center justify-center flex-shrink-0 mt-0.5">2</div>
+                      <div>Set a timer for 25 minutes (one "Pomodoro")</div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="bg-orange-100 text-orange-700 rounded-full h-7 w-7 flex items-center justify-center flex-shrink-0 mt-0.5">3</div>
+                      <div>Work with complete focus until the timer rings</div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="bg-orange-100 text-orange-700 rounded-full h-7 w-7 flex items-center justify-center flex-shrink-0 mt-0.5">4</div>
+                      <div>Take a short 5-minute break</div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <div className="bg-orange-100 text-orange-700 rounded-full h-7 w-7 flex items-center justify-center flex-shrink-0 mt-0.5">5</div>
+                      <div>After 4 Pomodoros, take a longer 15-30 minute break</div>
+                    </li>
+                  </ol>
+                </div>
+                <div className="md:w-64 flex-shrink-0 bg-orange-50 rounded-lg p-4">
+                  <h4 className="font-medium text-orange-800 mb-2">Benefits</h4>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-orange-500 mt-0.5" />
+                      <span className="text-sm">Improved focus</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-orange-500 mt-0.5" />
+                      <span className="text-sm">Reduced mental fatigue</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-orange-500 mt-0.5" />
+                      <span className="text-sm">Concrete sense of accomplishment</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-orange-500 mt-0.5" />
+                      <span className="text-sm">Less distractions</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-orange-500 mt-0.5" />
+                      <span className="text-sm">Better workload estimation</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
           
-          <div className="p-4 bg-green-50 rounded-md mt-6">
-            <h4 className="font-medium text-green-800">Success Strategy</h4>
-            <p className="text-green-800">
-              Don't try to implement all of these techniques at once. Choose one that resonates with you, 
-              practice it until it becomes a habit, then consider adding another. Consistency with one technique 
-              is better than inconsistent use of many.
-            </p>
+          {/* Time Blocking with enhanced visual design */}
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-blue-100 hover:shadow-lg transition-shadow">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b border-blue-100">
+              <CalendarClock className="h-8 w-8 text-blue-500" strokeWidth={1.5} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-blue-800">Time Blocking</h3>
+                  <StandardBadge size="sm" sectionTheme="financial" className="ml-2" blurEffect={true}>Structure</StandardBadge>
+                </div>
+                <p className="text-blue-700 text-sm">Schedule specific blocks of time for specific activities</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4">
+                Reserve specific blocks of time for specific activities to create a visual schedule and reduce context switching:
+              </p>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                  <h4 className="font-medium text-blue-800 mb-3">How to Implement:</h4>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2">
+                      <div className="bg-blue-100 text-blue-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm">1</div>
+                      <span>Divide your day into blocks (e.g., 30-90 minute segments)</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="bg-blue-100 text-blue-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm">2</div>
+                      <span>Assign specific tasks or categories of work to each block</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="bg-blue-100 text-blue-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm">3</div>
+                      <span>Include blocks for breaks, email, meetings, and deep work</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="bg-blue-100 text-blue-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 mt-0.5 text-sm">4</div>
+                      <span>Batch similar tasks together when possible</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                  <h4 className="font-medium text-blue-800 mb-3">Benefits:</h4>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5" />
+                      <span>Creates a clear visual schedule</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5" />
+                      <span>Reduces decision fatigue throughout the day</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5" />
+                      <span>Helps prevent multitasking and context switching</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5" />
+                      <span>Improves time estimation skills</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-blue-500 mt-0.5" />
+                      <span>Creates realistic boundaries for work</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* The 2-Minute Rule with enhanced visual design */}
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-green-100 hover:shadow-lg transition-shadow">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-green-50 to-green-100 px-6 py-4 border-b border-green-100">
+              <Clock className="h-8 w-8 text-green-500" strokeWidth={1.5} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-green-800">The 2-Minute Rule</h3>
+                  <StandardBadge size="sm" sectionTheme="wellness" className="ml-2" blurEffect={true}>Quick Wins</StandardBadge>
+                </div>
+                <p className="text-green-700 text-sm">From David Allen's Getting Things Done methodology</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex-1">
+                  <div className="bg-green-50 p-6 rounded-lg border-l-4 border-green-400 mb-4">
+                    <p className="text-lg font-medium text-green-800 italic">
+                      "If an action will take less than two minutes, it should be done at the moment it's defined."
+                    </p>
+                  </div>
+                  <p className="text-gray-700">
+                    This simple but powerful rule prevents small tasks from piling up and ultimately taking more 
+                    time later. It's especially effective for handling email, minor decisions, and small household chores.
+                  </p>
+                </div>
+                <div className="md:w-64 flex-shrink-0 bg-green-50 rounded-lg p-4">
+                  <h4 className="font-medium text-green-800 mb-2">Examples:</h4>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                      <span className="text-sm">Responding to a simple email</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                      <span className="text-sm">Filing a document</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                      <span className="text-sm">Making a quick phone call</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                      <span className="text-sm">Putting away items on your desk</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* ABCDE Method with enhanced visual design */}
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-purple-100 hover:shadow-lg transition-shadow">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-purple-50 to-purple-100 px-6 py-4 border-b border-purple-100">
+              <ClipboardList className="h-8 w-8 text-purple-500" strokeWidth={1.5} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-purple-800">The ABCDE Method</h3>
+                  <StandardBadge size="sm" sectionTheme="career" className="ml-2" blurEffect={true}>Prioritization</StandardBadge>
+                </div>
+                <p className="text-purple-700 text-sm">A systematic approach to prioritizing your daily tasks</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4">
+                Here's how to implement the ABCDE method in your daily routine:
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+                <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-400 flex flex-col items-center">
+                  <div className="font-bold text-2xl text-purple-800 mb-2">A</div>
+                  <div className="text-center text-sm">Must do</div>
+                  <div className="text-center text-xs text-purple-600 mt-1">Critical tasks</div>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-300 flex flex-col items-center">
+                  <div className="font-bold text-2xl text-purple-700 mb-2">B</div>
+                  <div className="text-center text-sm">Should do</div>
+                  <div className="text-center text-xs text-purple-600 mt-1">Important tasks</div>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-200 flex flex-col items-center">
+                  <div className="font-bold text-2xl text-purple-600 mb-2">C</div>
+                  <div className="text-center text-sm">Nice to do</div>
+                  <div className="text-center text-xs text-purple-600 mt-1">Minor consequences</div>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-100 flex flex-col items-center">
+                  <div className="font-bold text-2xl text-purple-500 mb-2">D</div>
+                  <div className="text-center text-sm">Delegate</div>
+                  <div className="text-center text-xs text-purple-600 mt-1">If possible</div>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-gray-200 flex flex-col items-center">
+                  <div className="font-bold text-2xl text-gray-400 mb-2">E</div>
+                  <div className="text-center text-sm">Eliminate</div>
+                  <div className="text-center text-xs text-purple-600 mt-1">Not necessary</div>
+                </div>
+              </div>
+              <ol className="space-y-2 list-none">
+                <li className="flex items-center gap-2">
+                  <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 text-sm">1</div>
+                  <span>Before starting your day (or the night before), list everything you need to do</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 text-sm">2</div>
+                  <span>Assign each task a letter from A to E based on importance and urgency</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 text-sm">3</div>
+                  <span>Number all A tasks by priority (A1, A2, A3...), then do the same for B and C tasks</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="bg-purple-100 text-purple-700 rounded-full h-6 w-6 flex items-center justify-center flex-shrink-0 text-sm">4</div>
+                  <span>Start with A1 and work your way down the list in order</span>
+                </li>
+              </ol>
+            </div>
+          </div>
+          
+          {/* Eat That Frog with enhanced visual design */}
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-yellow-100 hover:shadow-lg transition-shadow">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-yellow-50 to-yellow-100 px-6 py-4 border-b border-yellow-100">
+              <BookOpenIcon className="h-8 w-8 text-yellow-600" strokeWidth={1.5} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-yellow-800">Eat That Frog</h3>
+                  <StandardBadge size="sm" sectionTheme="learning" className="ml-2" blurEffect={true}>First Things First</StandardBadge>
+                </div>
+                <p className="text-yellow-700 text-sm">Based on Brian Tracy's productivity system</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="bg-yellow-50 p-6 rounded-lg border-l-4 border-yellow-400 mb-4">
+                <p className="text-lg font-medium text-yellow-800 italic">
+                  "If the first thing you do each morning is to eat a live frog, you can go through the day with the 
+                  satisfaction of knowing that it's probably the worst thing that's going to happen to you all day long."
+                </p>
+                <p className="text-right text-yellow-600 text-sm mt-2">— Mark Twain</p>
+              </div>
+              <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex-1">
+                  <p className="text-gray-700">
+                    Your "frog" is your biggest, most important task—the one you're most likely to procrastinate on. 
+                    Do it first thing in the morning when your willpower and energy are highest.
+                  </p>
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-yellow-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-yellow-800">Why it works:</h4>
+                      <ul className="mt-2 space-y-2">
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                          <span className="text-sm">Tackles highest-value tasks first</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                          <span className="text-sm">Uses peak energy hours productively</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <CheckCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                          <span className="text-sm">Creates momentum for the rest of the day</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="bg-yellow-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-yellow-800">Rules to follow:</h4>
+                      <ul className="mt-2 space-y-2">
+                        <li className="flex items-start gap-2">
+                          <div className="bg-yellow-200 text-yellow-800 rounded-full h-5 w-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs">1</div>
+                          <span className="text-sm">Identify your most important task</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <div className="bg-yellow-200 text-yellow-800 rounded-full h-5 w-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs">2</div>
+                          <span className="text-sm">Do it first thing, no exceptions</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <div className="bg-yellow-200 text-yellow-800 rounded-full h-5 w-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs">3</div>
+                          <span className="text-sm">Prepare your "frog" the night before</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-6 border border-green-200 shadow-sm">
+            <div className="flex items-start gap-4">
+              <div className="bg-green-200 p-2 rounded-full">
+                <Lightbulb className="h-6 w-6 text-green-700" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-green-800 text-lg">Success Strategy</h4>
+                <p className="text-green-800 mt-2">
+                  Don't try to implement all of these techniques at once. Choose one that resonates with you, 
+                  practice it until it becomes a habit, then consider adding another. Consistency with one technique 
+                  is better than inconsistent use of many.
+                </p>
+                <div className="flex items-center gap-2 mt-3">
+                  <StandardBadge sectionTheme="wellness" className="font-semibold">Start Small</StandardBadge>
+                  <StandardBadge sectionTheme="wellness" className="font-semibold">Be Consistent</StandardBadge>
+                  <StandardBadge sectionTheme="wellness" className="font-semibold">Build Habits</StandardBadge>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )
