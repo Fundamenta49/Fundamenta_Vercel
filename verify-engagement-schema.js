@@ -7,10 +7,16 @@
  * Run with: node verify-engagement-schema.js
  */
 
-const { Pool } = require('pg');
-const fs = require('fs');
-const chalk = require('chalk'); // For colored console output
-const path = require('path');
+import pkg from 'pg';
+const { Pool } = pkg;
+import fs from 'fs';
+import chalk from 'chalk'; // For colored console output
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// __dirname equivalent for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Tables to verify
 const ENGAGEMENT_TABLES = [

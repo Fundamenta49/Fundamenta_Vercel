@@ -7,8 +7,9 @@
  * Run with: node test-engagement-api.js
  */
 
-const axios = require('axios');
-const chalk = require('chalk'); // For colored console output
+import axios from 'axios';
+import chalk from 'chalk'; // For colored console output
+import { createInterface } from 'readline';
 
 // Configuration
 const BASE_URL = 'http://localhost:3000';
@@ -195,7 +196,8 @@ console.log(chalk.gray(`   To continue with the placeholder cookie (will likely 
 console.log(chalk.gray(`   press Enter, or Ctrl+C to cancel and update the cookie.`));
 
 // Wait for user confirmation or update
-const readline = require('readline').createInterface({
+
+const readline = createInterface({
   input: process.stdin,
   output: process.stdout
 });

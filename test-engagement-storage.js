@@ -8,13 +8,13 @@
  */
 
 // Import required modules
-require('dotenv').config(); // Load environment variables
+import 'dotenv/config'; // Load environment variables
 
 // These imports would need to be adjusted based on your project structure
-// Since this is a script run from the command line, we need to use require
-const { storage } = require('./server/storage');
-const { Pool } = require('pg');
-const chalk = require('chalk'); // For colored output
+// For ESM modules
+import { storage } from './server/storage.js';
+import { Pool } from 'pg';
+import chalk from 'chalk'; // For colored output
 
 // Configuration
 const TEST_USER_ID = 1; // Replace with a valid user ID from your database
