@@ -420,3 +420,23 @@ export type DataExportRequest = typeof dataExportRequests.$inferSelect;
 
 export type InsertAccountDeletionRequest = z.infer<typeof insertAccountDeletionRequestSchema>;
 export type AccountDeletionRequest = typeof accountDeletionRequests.$inferSelect;
+
+// Engagement Engine schemas 
+export const insertUserEngagementSchema = createInsertSchema(userEngagement)
+  .omit({ id: true, createdAt: true, updatedAt: true });
+
+export const insertUserAchievementSchema = createInsertSchema(userAchievements)
+  .omit({ id: true, createdAt: true });
+
+export const insertUserActivitySchema = createInsertSchema(userActivities)
+  .omit({ id: true, timestamp: true });
+
+// Engagement Engine types
+export type InsertUserEngagement = z.infer<typeof insertUserEngagementSchema>;
+export type UserEngagement = typeof userEngagement.$inferSelect;
+
+export type InsertUserAchievement = z.infer<typeof insertUserAchievementSchema>;
+export type UserAchievement = typeof userAchievements.$inferSelect;
+
+export type InsertUserActivity = z.infer<typeof insertUserActivitySchema>;
+export type UserActivity = typeof userActivities.$inferSelect;

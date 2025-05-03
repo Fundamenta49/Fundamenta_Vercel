@@ -6,6 +6,9 @@ import {
   CustomPathwayModule, InsertCustomPathwayModule,
   AssignedPathway, InsertAssignedPathway,
   ProgressNote, InsertProgressNote,
+  UserEngagement, InsertUserEngagement,
+  UserAchievement, InsertUserAchievement,
+  UserActivity, InsertUserActivity,
   users
 } from "@shared/schema";
 import { db, pool } from "./db";
@@ -59,6 +62,17 @@ export interface IStorage {
   
   // Session
   sessionStore: session.Store;
+  
+  // Engagement Engine methods
+  getUserEngagement(userId: number): Promise<UserEngagement | undefined>;
+  createUserEngagement(userId: number): Promise<UserEngagement>;
+  updateUserEngagement(userId: number, updates: Partial<InsertUserEngagement>): Promise<UserEngagement>;
+  checkInUser(userId: number): Promise<UserEngagement>;
+  recordUserActivity(userId: number, type: string, data?: any, pointsEarned?: number): Promise<UserActivity>;
+  getUserActivities(userId: number, limit?: number): Promise<UserActivity[]>;
+  getUserAchievements(userId: number): Promise<UserAchievement[]>;
+  addUserAchievement(achievement: InsertUserAchievement): Promise<UserAchievement>;
+  getStreak(userId: number): Promise<number>;
 }
 
 import createMemoryStore from "memorystore";
@@ -550,6 +564,309 @@ export class DatabaseStorage implements IStorage {
       pool, 
       createTableIfMissing: true 
     });
+  }
+  
+  // Engagement Engine methods
+  
+  async getUserEngagement(userId: number): Promise<UserEngagement | undefined> {
+    try {
+      const [engagement] = await db.select().from(schema.userEngagement)
+        .where(eq(schema.userEngagement.userId, userId));
+      return engagement;
+    } catch (error) {
+      console.error('Error getting user engagement:', error);
+      return undefined;
+    }
+  }
+  
+  async createUserEngagement(userId: number): Promise<UserEngagement> {
+    try {
+      const now = new Date();
+      const [engagement] = await db.insert(schema.userEngagement)
+        .values({
+          userId,
+          currentStreak: 0,
+          longestStreak: 0,
+          lastCheckIn: null,
+          streakUpdatedAt: now,
+          totalPoints: 0,
+          level: 1,
+          updatedAt: now
+        })
+        .returning();
+      return engagement;
+    } catch (error) {
+      console.error('Error creating user engagement:', error);
+      throw error;
+    }
+  }
+  
+  async updateUserEngagement(userId: number, updates: Partial<InsertUserEngagement>): Promise<UserEngagement> {
+    try {
+      // First, check if engagement exists
+      const engagement = await this.getUserEngagement(userId);
+      
+      if (!engagement) {
+        // Create if it doesn't exist
+        return this.createUserEngagement(userId);
+      }
+      
+      // Update with new values
+      const [updatedEngagement] = await db.update(schema.userEngagement)
+        .set({
+          ...updates,
+          updatedAt: new Date()
+        })
+        .where(eq(schema.userEngagement.userId, userId))
+        .returning();
+      
+      return updatedEngagement;
+    } catch (error) {
+      console.error('Error updating user engagement:', error);
+      throw error;
+    }
+  }
+  
+  async checkInUser(userId: number): Promise<UserEngagement> {
+    try {
+      const now = new Date();
+      const engagement = await this.getUserEngagement(userId);
+      
+      if (!engagement) {
+        // Create a new engagement record with a streak of 1
+        return this.createUserEngagement(userId).then(newEngagement => {
+          return this.updateUserEngagement(userId, {
+            currentStreak: 1,
+            longestStreak: 1,
+            lastCheckIn: now,
+            streakUpdatedAt: now,
+            totalPoints: 10 // Initial points for first check-in
+          });
+        });
+      }
+      
+      // Check if this is a streak continuation
+      let isNewStreak = true;
+      let streakBroken = false;
+      const currentStreak = engagement.currentStreak || 0;
+      let newStreak = currentStreak;
+      let bonusPoints = 0;
+      
+      if (engagement.lastCheckIn) {
+        const lastCheckIn = new Date(engagement.lastCheckIn);
+        
+        // Check if the last check-in was yesterday (for streak continuation)
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        const lastCheckInDay = lastCheckIn.setHours(0, 0, 0, 0);
+        const yesterdayDay = yesterday.setHours(0, 0, 0, 0);
+        const todayDay = new Date(now).setHours(0, 0, 0, 0);
+        
+        if (lastCheckInDay === todayDay) {
+          // Already checked in today
+          isNewStreak = false;
+        } else if (lastCheckInDay === yesterdayDay) {
+          // Checked in yesterday, maintain streak
+          newStreak = currentStreak + 1;
+          
+          // Calculate bonus points based on streak
+          if (newStreak >= 30) {
+            bonusPoints = 50; // 30+ day streak
+          } else if (newStreak >= 7) {
+            bonusPoints = 25; // 7+ day streak
+          } else if (newStreak >= 3) {
+            bonusPoints = 15; // 3+ day streak
+          } else {
+            bonusPoints = 5; // normal streak continuation
+          }
+        } else {
+          // Streak broken
+          newStreak = 1;
+          streakBroken = true;
+        }
+      } else {
+        // First check-in
+        newStreak = 1;
+      }
+      
+      // Only update if it's a new check-in
+      if (isNewStreak) {
+        const basePoints = 10; // Base points for daily check-in
+        const totalPointsEarned = basePoints + bonusPoints;
+        
+        // Update engagement record
+        const updates: Partial<InsertUserEngagement> = {
+          currentStreak: newStreak,
+          lastCheckIn: now,
+          streakUpdatedAt: now,
+          totalPoints: (engagement.totalPoints || 0) + totalPointsEarned
+        };
+        
+        // Update longest streak if current streak is longer
+        if (newStreak > (engagement.longestStreak || 0)) {
+          updates.longestStreak = newStreak;
+        }
+        
+        // Log the check-in activity
+        await this.recordUserActivity(userId, 'check_in', {
+          streakContinued: !streakBroken,
+          newStreak,
+          previousStreak: currentStreak,
+          bonusPoints
+        }, totalPointsEarned);
+        
+        // Check for streak achievements
+        if (newStreak === 7) {
+          await this.addUserAchievement({
+            userId,
+            achievementId: 'streak_7days',
+            type: 'streak',
+            name: '7-Day Streak',
+            description: 'Maintained a 7-day activity streak!',
+            iconUrl: '/images/achievements/streak-7.svg',
+            points: 50,
+            unlockedAt: now
+          });
+        } else if (newStreak === 30) {
+          await this.addUserAchievement({
+            userId,
+            achievementId: 'streak_30days',
+            type: 'streak',
+            name: '30-Day Streak',
+            description: 'Maintained a 30-day activity streak!',
+            iconUrl: '/images/achievements/streak-30.svg',
+            points: 200,
+            unlockedAt: now
+          });
+        }
+        
+        // Update level if needed
+        const newTotalPoints = (engagement.totalPoints || 0) + totalPointsEarned;
+        const newLevel = Math.floor(Math.sqrt(newTotalPoints / 100)) + 1;
+        
+        if (newLevel > (engagement.level || 1)) {
+          updates.level = newLevel;
+          
+          // Add level-up achievement
+          await this.addUserAchievement({
+            userId,
+            achievementId: `level_${newLevel}`,
+            type: 'special',
+            name: `Level ${newLevel}`,
+            description: `Reached Level ${newLevel}!`,
+            iconUrl: `/images/achievements/level-${newLevel}.svg`,
+            points: newLevel * 20,
+            unlockedAt: now
+          });
+        }
+        
+        return this.updateUserEngagement(userId, updates);
+      }
+      
+      return engagement;
+    } catch (error) {
+      console.error('Error checking in user:', error);
+      throw error;
+    }
+  }
+  
+  async recordUserActivity(userId: number, type: string, data: any = {}, pointsEarned: number = 0): Promise<UserActivity> {
+    try {
+      const [activity] = await db.insert(schema.userActivities)
+        .values({
+          userId,
+          type,
+          data,
+          pointsEarned,
+          timestamp: new Date()
+        })
+        .returning();
+      
+      return activity;
+    } catch (error) {
+      console.error('Error recording user activity:', error);
+      throw error;
+    }
+  }
+  
+  async getUserActivities(userId: number, limit: number = 20): Promise<UserActivity[]> {
+    try {
+      return await db.select()
+        .from(schema.userActivities)
+        .where(eq(schema.userActivities.userId, userId))
+        .orderBy(desc(schema.userActivities.timestamp))
+        .limit(limit);
+    } catch (error) {
+      console.error('Error getting user activities:', error);
+      return [];
+    }
+  }
+  
+  async getUserAchievements(userId: number): Promise<UserAchievement[]> {
+    try {
+      return await db.select()
+        .from(schema.userAchievements)
+        .where(eq(schema.userAchievements.userId, userId))
+        .orderBy(desc(schema.userAchievements.unlockedAt));
+    } catch (error) {
+      console.error('Error getting user achievements:', error);
+      return [];
+    }
+  }
+  
+  async addUserAchievement(achievement: InsertUserAchievement): Promise<UserAchievement> {
+    try {
+      // Check if achievement already exists for user
+      const existingAchievements = await db.select()
+        .from(schema.userAchievements)
+        .where(
+          and(
+            eq(schema.userAchievements.userId, achievement.userId),
+            eq(schema.userAchievements.achievementId, achievement.achievementId)
+          )
+        );
+      
+      if (existingAchievements.length > 0) {
+        // Achievement already exists, return it
+        return existingAchievements[0];
+      }
+      
+      // Add achievement points to user's total
+      const engagement = await this.getUserEngagement(achievement.userId);
+      if (engagement) {
+        await this.updateUserEngagement(achievement.userId, {
+          totalPoints: (engagement.totalPoints || 0) + achievement.points
+        });
+      }
+      
+      // Create activity record for achievement
+      await this.recordUserActivity(achievement.userId, 'achievement_earned', {
+        achievementId: achievement.achievementId,
+        name: achievement.name,
+        type: achievement.type
+      }, achievement.points);
+      
+      // Insert the achievement
+      const [newAchievement] = await db.insert(schema.userAchievements)
+        .values(achievement)
+        .returning();
+      
+      return newAchievement;
+    } catch (error) {
+      console.error('Error adding user achievement:', error);
+      throw error;
+    }
+  }
+  
+  async getStreak(userId: number): Promise<number> {
+    try {
+      const engagement = await this.getUserEngagement(userId);
+      return engagement?.currentStreak || 0;
+    } catch (error) {
+      console.error('Error getting streak:', error);
+      return 0;
+    }
   }
 
   async getUser(id: number): Promise<User | undefined> {
