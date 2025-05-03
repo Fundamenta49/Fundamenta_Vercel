@@ -304,7 +304,7 @@ export default function MealPlanning() {
         }
         
         // Transform the API response into our app's data structure
-        const formattedPlan: DayPlan[] = weekData.map((day, index) => {
+        const formattedPlan: DayPlan[] = weekData.map((day: any, index: number) => {
           const dayName = DAYS_OF_WEEK[index % 7];
           
           // Determine meal types

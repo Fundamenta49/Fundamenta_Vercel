@@ -388,15 +388,7 @@ router.get('/meal-plan', async (req, res) => {
             // The API response format has changed - it now returns days as objects instead of an array
             const weekDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
             
-            // Define a type for the day structure
-            interface EnhancedDay {
-              dayName: string;
-              meals: any[];
-              nutrients: any;
-              aiEnhanced: boolean;
-            }
-            
-            // Initialize the enhanced week with a typed array
+            // Initialize the enhanced week with our EnhancedDay type
             const enhancedWeek: { days: EnhancedDay[] } = { days: [] };
             
             for (const dayName of weekDays) {
