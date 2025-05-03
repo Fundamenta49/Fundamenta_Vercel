@@ -1,6 +1,6 @@
-import { Router, Request, Response } from 'express';
+import { Router, Response } from 'express';
 import { db } from '../db';
-import { isAuthenticated } from '../auth/auth-middleware';
+import { authenticateJWT, requireUser, AuthenticatedRequest } from '../auth/auth-middleware';
 import { customPathways, customPathwayModules } from '../../shared/schema';
 import { and, eq, asc } from 'drizzle-orm';
 
@@ -9,9 +9,9 @@ const router = Router();
 /**
  * Get all pathways for the current user
  */
-router.get('/', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = req.user!.id;
+    const userId = req.user.id;
     
     // Get all pathways created by this user
     const pathways = await db.query.customPathways.findMany({
@@ -36,10 +36,10 @@ router.get('/', isAuthenticated, async (req: Request, res: Response) => {
 /**
  * Create a new custom pathway
  */
-router.post('/', isAuthenticated, async (req: Request, res: Response) => {
+router.post('/', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { title, description, category, isPublic } = req.body;
-    const userId = req.user!.id;
+    const userId = req.user.id;
     
     if (!title) {
       return res.status(400).json({ error: 'Title is required' });
@@ -66,10 +66,10 @@ router.post('/', isAuthenticated, async (req: Request, res: Response) => {
 /**
  * Get a specific pathway by ID
  */
-router.get('/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/:id', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const pathwayId = parseInt(req.params.id);
-    const userId = req.user!.id;
+    const userId = req.user.id;
     
     if (isNaN(pathwayId)) {
       return res.status(400).json({ error: 'Invalid pathway ID' });
@@ -101,10 +101,10 @@ router.get('/:id', isAuthenticated, async (req: Request, res: Response) => {
 /**
  * Update a pathway
  */
-router.patch('/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.patch('/:id', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const pathwayId = parseInt(req.params.id);
-    const userId = req.user!.id;
+    const userId = req.user.id;
     const updates = req.body;
     
     if (isNaN(pathwayId)) {
@@ -145,10 +145,10 @@ router.patch('/:id', isAuthenticated, async (req: Request, res: Response) => {
 /**
  * Delete a pathway
  */
-router.delete('/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.delete('/:id', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const pathwayId = parseInt(req.params.id);
-    const userId = req.user!.id;
+    const userId = req.user.id;
     
     if (isNaN(pathwayId)) {
       return res.status(400).json({ error: 'Invalid pathway ID' });
@@ -184,10 +184,10 @@ router.delete('/:id', isAuthenticated, async (req: Request, res: Response) => {
 /**
  * Get all modules for a pathway
  */
-router.get('/:id/modules', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/:id/modules', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const pathwayId = parseInt(req.params.id);
-    const userId = req.user!.id;
+    const userId = req.user.id;
     
     if (isNaN(pathwayId)) {
       return res.status(400).json({ error: 'Invalid pathway ID' });
@@ -221,10 +221,10 @@ router.get('/:id/modules', isAuthenticated, async (req: Request, res: Response) 
 /**
  * Create a new module for a pathway
  */
-router.post('/:id/modules', isAuthenticated, async (req: Request, res: Response) => {
+router.post('/:id/modules', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const pathwayId = parseInt(req.params.id);
-    const userId = req.user!.id;
+    const userId = req.user.id;
     const { title, description, content, type, order, estimatedDuration, skillLevel } = req.body;
     
     if (isNaN(pathwayId)) {

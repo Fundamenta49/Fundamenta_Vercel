@@ -1,106 +1,41 @@
-import { Request, Response, NextFunction } from "express";
-import { verifyToken } from './jwt-utils';
+/**
+ * Authentication middleware for securing API routes
+ */
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import { User } from '@shared/schema';
 
-// Define authenticated request interface
+// Extended Request interface with authenticated user
 export interface AuthenticatedRequest extends Request {
-  user?: {
-    id: number;
-    name: string;
-    email: string;
-    role?: string;
-    emailVerified?: boolean;
-    privacyConsent?: boolean;
-    birthYear?: number;
-    ageVerified?: boolean;
-    isMinor?: boolean;
-    hasParentalConsent?: boolean;
-  };
+  user?: User;
 }
 
-// Define express request + user interface
-declare global {
-  namespace Express {
-    interface User {
-      id: number;
-      name: string;
-      email: string;
-      role?: string;
-      emailVerified?: boolean;
-      privacyConsent?: boolean;
-      birthYear?: number;
-      ageVerified?: boolean;
-      isMinor?: boolean;
-      hasParentalConsent?: boolean;
-    }
-    
-    interface Request {
-      user?: User;
-    }
+// Middleware to authenticate JWT token
+export const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  // Get token from cookie or authorization header
+  const token = req.cookies?.authToken || req.headers.authorization?.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized', message: 'Authentication required' });
   }
-}
-
-// Middleware to authenticate JWT tokens
-export function authenticateJWT(req: Request, res: Response, next: NextFunction) {
+  
   try {
-    // Get token from Authorization header or cookie
-    const token = req.cookies?.access_token || extractBearerToken(req);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret-key') as { userId: number };
     
-    if (!token) {
-      return res.status(401).json({ error: 'Authentication required' });
-    }
-    
-    // Verify token
-    const payload = verifyToken(token);
-    if (!payload) {
-      return res.status(401).json({ error: 'Invalid token' });
-    }
-    
-    // Add user data to request
-    (req as AuthenticatedRequest).user = {
-      id: payload.userId,
-      name: payload.name || '',
-      email: payload.email,
-      role: payload.role || 'user',
-      emailVerified: payload.emailVerified || false,
-      privacyConsent: payload.privacyConsent || false,
-      birthYear: payload.birthYear,
-      ageVerified: payload.ageVerified || false,
-      isMinor: payload.isMinor || false,
-      hasParentalConsent: payload.hasParentalConsent || false,
-    };
-    
+    // At this point we've verified the token, but not fetched the user
+    // This just marks the request as authenticated with a userId
+    // The actual user object will be fetched in the route handler if needed
+    req.user = { id: decoded.userId } as User;
     next();
   } catch (error) {
-    console.error('Authentication error:', error);
-    res.status(401).json({ error: 'Authentication failed' });
+    return res.status(401).json({ error: 'Unauthorized', message: 'Invalid or expired token' });
   }
-}
+};
 
-// Helper function to extract bearer token from Authorization header
-function extractBearerToken(req: Request): string | null {
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    return authHeader.substring(7);
+// Helper middleware to ensure user is authenticated and exists
+export const requireUser = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({ error: 'Unauthorized', message: 'Authentication required' });
   }
-  return null;
-}
-
-// Middleware to check if user is authenticated (alias for compatibility)
-export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
-  return authenticateJWT(req, res, next);
-}
-
-// Middleware to check if user has specific role
-export function hasRole(roles: string[]) {
-  return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    
-    if (!roles.includes(req.user.role || "")) {
-      return res.status(403).json({ message: "Forbidden: Insufficient permissions" });
-    }
-    
-    next();
-  };
-}
+  next();
+};

@@ -1,6 +1,6 @@
-import { Router, Request, Response } from 'express';
+import { Router, Response } from 'express';
 import { db } from '../db';
-import { isAuthenticated } from '../auth/auth-middleware';
+import { authenticateJWT, requireUser, AuthenticatedRequest } from '../auth/auth-middleware';
 import { 
   assignedPathways, 
   customPathways, 
@@ -16,7 +16,7 @@ const router = Router();
  * Get analytics for a specific user
  * @route GET /api/analytics/user/:userId
  */
-router.get('/user/:userId', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/user/:userId', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = parseInt(req.params.userId);
     
@@ -196,9 +196,9 @@ router.get('/user/:userId', isAuthenticated, async (req: Request, res: Response)
  * This endpoint provides aggregate data on pathway usage and performance
  * @route GET /api/analytics/pathways
  */
-router.get('/pathways', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/pathways', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = req.user!.id;
+    const userId = req.user.id;
     
     // Get all pathways created by this educator
     const educatorPathways = await db.query.customPathways.findMany({

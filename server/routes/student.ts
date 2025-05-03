@@ -1,6 +1,6 @@
-import { Router, Request, Response } from 'express';
+import { Router, Response } from 'express';
 import { db } from '../db';
-import { isAuthenticated } from '../auth/auth-middleware';
+import { authenticateJWT, requireUser, AuthenticatedRequest } from '../auth/auth-middleware';
 import { 
   assignedPathways, 
   customPathways, 
@@ -15,9 +15,9 @@ const router = Router();
 /**
  * Get all assignments for the current student
  */
-router.get('/assignments', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/assignments', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = req.user!.id;
+    const userId = req.user.id;
     
     // Get all assignments for this student
     const assignments = await db.query.assignedPathways.findMany({
@@ -50,9 +50,9 @@ router.get('/assignments', isAuthenticated, async (req: Request, res: Response) 
 /**
  * Get completed assignments for the current student
  */
-router.get('/assignments/completed', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/assignments/completed', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = req.user!.id;
+    const userId = req.user.id;
     
     // Get all completed assignments for this student
     const assignments = await db.query.assignedPathways.findMany({
@@ -85,9 +85,9 @@ router.get('/assignments/completed', isAuthenticated, async (req: Request, res: 
 /**
  * Get learning statistics for the current student
  */
-router.get('/statistics', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/statistics', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const userId = req.user!.id;
+    const userId = req.user.id;
     
     // Get module completion count
     const moduleCompletion = await db
@@ -187,10 +187,10 @@ router.get('/statistics', isAuthenticated, async (req: Request, res: Response) =
 /**
  * Get details for a specific assignment
  */
-router.get('/assignments/:id', isAuthenticated, async (req: Request, res: Response) => {
+router.get('/assignments/:id', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const assignmentId = parseInt(req.params.id);
-    const userId = req.user!.id;
+    const userId = req.user.id;
     
     if (isNaN(assignmentId)) {
       return res.status(400).json({ error: 'Invalid assignment ID' });
@@ -252,11 +252,11 @@ router.get('/assignments/:id', isAuthenticated, async (req: Request, res: Respon
 /**
  * Update module progress
  */
-router.post('/progress/:assignmentId/:moduleId', isAuthenticated, async (req: Request, res: Response) => {
+router.post('/progress/:assignmentId/:moduleId', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const assignmentId = parseInt(req.params.assignmentId);
     const moduleId = parseInt(req.params.moduleId);
-    const userId = req.user!.id;
+    const userId = req.user.id;
     const { completed } = req.body;
     
     if (isNaN(assignmentId) || isNaN(moduleId)) {
@@ -372,10 +372,10 @@ router.post('/progress/:assignmentId/:moduleId', isAuthenticated, async (req: Re
 /**
  * Rate a completed assignment
  */
-router.post('/assignments/:id/rate', isAuthenticated, async (req: Request, res: Response) => {
+router.post('/assignments/:id/rate', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const assignmentId = parseInt(req.params.id);
-    const userId = req.user!.id;
+    const userId = req.user.id;
     const { rating } = req.body;
     
     if (isNaN(assignmentId)) {

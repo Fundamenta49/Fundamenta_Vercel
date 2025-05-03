@@ -4,7 +4,7 @@
  */
 
 import express, { Router, Request, Response } from 'express';
-import { authenticateJWT, AuthenticatedRequest } from '../auth/auth-middleware';
+import { authenticateJWT, AuthenticatedRequest, requireUser } from '../auth/auth-middleware';
 import { db } from '../db';
 import { termsOfServiceVersions, dataExportRequests, accountDeletionRequests, users } from '@shared/schema';
 import { eq, desc, and } from 'drizzle-orm';
@@ -69,11 +69,7 @@ router.get('/terms-of-service', async (req: Request, res: Response) => {
  * Accept the Terms of Service
  * POST /api/legal/terms-of-service/accept
  */
-router.post('/terms-of-service/accept', authenticateJWT, async (req: AuthenticatedRequest, res: Response) => {
-  // Ensure user is authenticated
-  if (!req.user) {
-    return res.status(401).json({ error: 'Unauthorized', message: 'Authentication required' });
-  }
+router.post('/terms-of-service/accept', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const validation = tosAcceptanceSchema.safeParse(req.body);
     
@@ -129,7 +125,7 @@ router.post('/terms-of-service/accept', authenticateJWT, async (req: Authenticat
  * Get Terms of Service status for the current user
  * GET /api/legal/terms-of-service/status
  */
-router.get('/terms-of-service/status', authenticateJWT, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/terms-of-service/status', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     // Get the current TOS version
     const [currentTos] = await db
@@ -176,7 +172,7 @@ router.get('/terms-of-service/status', authenticateJWT, async (req: Authenticate
  * Request a data export
  * POST /api/legal/data-export
  */
-router.post('/data-export', authenticateJWT, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/data-export', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const validation = dataExportRequestSchema.safeParse(req.body);
     
@@ -248,7 +244,7 @@ router.post('/data-export', authenticateJWT, async (req: AuthenticatedRequest, r
  * Get data export request status
  * GET /api/legal/data-export/status
  */
-router.get('/data-export/status', authenticateJWT, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/data-export/status', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     // Get the user's most recent data export request
     const [exportRequest] = await db
@@ -290,7 +286,7 @@ router.get('/data-export/status', authenticateJWT, async (req: AuthenticatedRequ
  * Request account deletion
  * POST /api/legal/account-deletion
  */
-router.post('/account-deletion', authenticateJWT, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/account-deletion', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const validation = accountDeletionRequestSchema.safeParse(req.body);
     
@@ -370,7 +366,7 @@ router.post('/account-deletion', authenticateJWT, async (req: AuthenticatedReque
  * Get account deletion request status
  * GET /api/legal/account-deletion/status
  */
-router.get('/account-deletion/status', authenticateJWT, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/account-deletion/status', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     // Get the user's most recent account deletion request
     const [deletionRequest] = await db
@@ -410,7 +406,7 @@ router.get('/account-deletion/status', authenticateJWT, async (req: Authenticate
  * Cancel account deletion request
  * POST /api/legal/account-deletion/cancel
  */
-router.post('/account-deletion/cancel', authenticateJWT, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/account-deletion/cancel', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
   try {
     // Get the user's pending account deletion request
     const [deletionRequest] = await db
