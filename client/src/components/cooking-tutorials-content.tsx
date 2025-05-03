@@ -635,8 +635,8 @@ export const TechniqueTutorials: React.FC<CookingTutorialsSectionProps> = ({ onP
   };
   
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="space-y-8 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
         {techniques.map(tutorial => (
           <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={handlePlayVideo} />
         ))}
@@ -649,8 +649,8 @@ export const KitchenSafetyTutorials: React.FC<CookingTutorialsSectionProps> = ({
   const safetyTutorials = cookingTutorials.filter(tutorial => tutorial.category === 'kitchen-safety');
   
   return (
-    <div className="space-y-8">
-      <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg mb-6">
+    <div className="space-y-8 w-full">
+      <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg mb-6 w-full">
         <div className="flex items-start gap-3">
           <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
           <div>
@@ -663,7 +663,7 @@ export const KitchenSafetyTutorials: React.FC<CookingTutorialsSectionProps> = ({
         </div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
         {safetyTutorials.map(tutorial => (
           <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
         ))}
@@ -676,8 +676,8 @@ export const BasicRecipesTutorials: React.FC<CookingTutorialsSectionProps> = ({ 
   const basicRecipes = cookingTutorials.filter(tutorial => tutorial.category === 'basic-recipe');
   
   return (
-    <div className="space-y-6">
-      <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
+    <div className="space-y-6 w-full">
+      <Card className="border-0 shadow-sm rounded-2xl overflow-hidden w-full mx-auto">
         {/* Top gradient accent line */}
         <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
         
@@ -708,7 +708,7 @@ export const MealTutorials: React.FC<CookingTutorialsSectionProps> = ({ onPlayVi
   const dinnerTutorials = cookingTutorials.filter(tutorial => tutorial.category === 'dinner');
   
   return (
-    <Tabs defaultValue="breakfast" className="space-y-6">
+    <Tabs defaultValue="breakfast" className="space-y-6 w-full">
       <div className="flex space-x-1 mb-4">
         <TabsList className="h-9 bg-transparent p-0 w-auto">
           <TabsTrigger 
@@ -735,16 +735,16 @@ export const MealTutorials: React.FC<CookingTutorialsSectionProps> = ({ onPlayVi
         </TabsList>
       </div>
       
-      <TabsContent value="breakfast" className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <TabsContent value="breakfast" className="space-y-4 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
           {breakfastTutorials.map(tutorial => (
             <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
           ))}
         </div>
       </TabsContent>
       
-      <TabsContent value="lunch" className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <TabsContent value="lunch" className="space-y-4 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
           {lunchTutorials.map(tutorial => (
             <TutorialCard key={tutorial.id} tutorial={tutorial} onPlayVideo={onPlayVideo} />
           ))}
