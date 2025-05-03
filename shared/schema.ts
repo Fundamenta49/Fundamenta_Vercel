@@ -227,6 +227,68 @@ export const termsOfServiceVersions = pgTable("terms_of_service_versions", {
   createdAt: timestamp("created_at").notNull().defaultNow()
 });
 
+// Engagement Engine Tables
+
+// User engagement tracking (streaks, check-ins, etc.)
+export const userEngagement = pgTable("user_engagement", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  currentStreak: integer("current_streak").notNull().default(0),
+  longestStreak: integer("longest_streak").notNull().default(0),
+  lastCheckIn: timestamp("last_check_in"),
+  streakUpdatedAt: timestamp("streak_updated_at"),
+  totalPoints: integer("total_points").notNull().default(0),
+  level: integer("level").notNull().default(1),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+// Achievement types constants
+export const achievementTypes = {
+  STREAK: "streak",
+  COMPLETION: "completion",
+  ACTIVITY: "activity",
+  SPECIAL: "special",
+} as const;
+
+export type AchievementType = keyof typeof achievementTypes;
+
+// User achievements table
+export const userAchievements = pgTable("user_achievements", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  achievementId: text("achievement_id").notNull(), // E.g., "streak_7days", "complete_module_5"
+  type: text("type").notNull(), // E.g., "streak", "completion", "activity", "special"
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  iconUrl: text("icon_url"),
+  points: integer("points").notNull().default(0),
+  unlockedAt: timestamp("unlocked_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+// User activity types constants
+export const activityTypes = {
+  CHECK_IN: "check_in",
+  COMPLETE_MODULE: "complete_module",
+  CHAT_INTERACTION: "chat_interaction",
+  EXERCISE_COMPLETION: "exercise_completion",
+  PLAN_CREATION: "plan_creation",
+  ASSESSMENT_COMPLETION: "assessment_completion"
+} as const;
+
+export type ActivityType = keyof typeof activityTypes;
+
+// User activity log
+export const userActivities = pgTable("user_activities", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  type: text("type").notNull(), // E.g., "check_in", "complete_module"
+  data: jsonb("data").default({}), // Additional context data about the activity
+  pointsEarned: integer("points_earned").notNull().default(0),
+  timestamp: timestamp("timestamp").notNull().defaultNow()
+});
+
 // Data Export Requests Table
 export const dataExportRequests = pgTable("data_export_requests", {
   id: serial("id").primaryKey(),
