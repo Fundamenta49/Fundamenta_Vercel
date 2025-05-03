@@ -1290,133 +1290,640 @@ export default function TimeManagementCourse() {
             obstacles to productivity.
           </p>
           
-          <h3 className="text-lg font-semibold mt-6">Understanding Habit Formation</h3>
-          <p>
-            According to James Clear's "Atomic Habits," every habit consists of four stages:
-          </p>
-          <div className="space-y-4 mt-4">
-            <div className="border-l-4 border-blue-500 pl-4 py-2">
-              <h4 className="font-medium">1. Cue</h4>
-              <p className="text-sm">The trigger that initiates the behavior (time of day, location, emotional state)</p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-indigo-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-50 to-indigo-100 px-6 py-4 border-b border-indigo-100">
+              <LineChart className="h-8 w-8 text-indigo-500" strokeWidth={1.5} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-indigo-800">Understanding Habit Formation</h3>
+                  <StandardBadge size="sm" sectionTheme="learning" className="ml-2" blurEffect={true}>Framework</StandardBadge>
+                </div>
+                <p className="text-indigo-700 text-sm">The four stages of habit formation from "Atomic Habits" by James Clear</p>
+              </div>
             </div>
-            
-            <div className="border-l-4 border-green-500 pl-4 py-2">
-              <h4 className="font-medium">2. Craving</h4>
-              <p className="text-sm">The motivation or desire for the reward</p>
-            </div>
-            
-            <div className="border-l-4 border-yellow-500 pl-4 py-2">
-              <h4 className="font-medium">3. Response</h4>
-              <p className="text-sm">The actual habit or action you take</p>
-            </div>
-            
-            <div className="border-l-4 border-red-500 pl-4 py-2">
-              <h4 className="font-medium">4. Reward</h4>
-              <p className="text-sm">The benefit gained from performing the habit</p>
-            </div>
-          </div>
-          
-          <h3 className="text-lg font-semibold mt-6">Building Better Time Habits</h3>
-          <div className="space-y-4 mt-4">
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Make It Obvious</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Set clear implementation intentions ("At 9am, I will...")</li>
-                <li>Design your environment to support good habits</li>
-                <li>Use visual cues and reminders</li>
-              </ul>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Make It Attractive</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Use temptation bundling (pair difficult tasks with something enjoyable)</li>
-                <li>Join a culture where your desired behavior is the norm</li>
-                <li>Create a motivation ritual before difficult tasks</li>
-              </ul>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Make It Easy</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Reduce friction for good habits (set out materials in advance)</li>
-                <li>Start with two-minute versions of habits</li>
-                <li>Automate and eliminate decisions where possible</li>
-              </ul>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Make It Satisfying</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Use immediate rewards to reinforce behavior</li>
-                <li>Track your habits with a habit tracker</li>
-                <li>Never miss twice (if you break a streak, get back on track immediately)</li>
-              </ul>
-            </div>
-          </div>
-          
-          <h3 className="text-lg font-semibold mt-6">Breaking Bad Time Habits</h3>
-          <div className="space-y-4 mt-4">
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Make It Invisible</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Remove cues for bad habits from your environment</li>
-                <li>Leave your phone in another room while working</li>
-                <li>Use website blockers during focused work</li>
-              </ul>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Make It Unattractive</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Reframe your mindset about the habit</li>
-                <li>Highlight the benefits of avoiding bad habits</li>
-                <li>Find a community that reinforces positive behaviors</li>
-              </ul>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Make It Difficult</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Increase friction for bad habits</li>
-                <li>Use commitment devices (like website blockers)</li>
-                <li>Create an environment where good choices are easier</li>
-              </ul>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Make It Unsatisfying</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Create accountability through a habit contract</li>
-                <li>Find an accountability partner</li>
-                <li>Make the costs of bad habits immediate and visible</li>
-              </ul>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                To build better time management habits, it's important to understand how habits form. According to James Clear's "Atomic Habits," every habit follows a four-stage process:
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200 shadow-sm overflow-hidden">
+                  <div className="bg-blue-100 py-3 px-4 border-b border-blue-200">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold text-blue-800 text-lg">1. Cue</h4>
+                      <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center text-blue-500 font-bold border border-blue-300">1</div>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-blue-900">The trigger that initiates the behavior</p>
+                    <div className="mt-3 bg-white/60 p-3 rounded-md border border-blue-200">
+                      <p className="text-sm text-blue-800 italic">
+                        Examples: Time of day, physical location, preceding event, emotional state, other people
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200 shadow-sm overflow-hidden">
+                  <div className="bg-green-100 py-3 px-4 border-b border-green-200">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold text-green-800 text-lg">2. Craving</h4>
+                      <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center text-green-500 font-bold border border-green-300">2</div>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-green-900">The motivation or desire for the reward</p>
+                    <div className="mt-3 bg-white/60 p-3 rounded-md border border-green-200">
+                      <p className="text-sm text-green-800 italic">
+                        The emotional force that drives your behavior; what you really want is the change in internal state
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg border border-amber-200 shadow-sm overflow-hidden">
+                  <div className="bg-amber-100 py-3 px-4 border-b border-amber-200">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold text-amber-800 text-lg">3. Response</h4>
+                      <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center text-amber-500 font-bold border border-amber-300">3</div>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-amber-900">The actual habit or action you take</p>
+                    <div className="mt-3 bg-white/60 p-3 rounded-md border border-amber-200">
+                      <p className="text-sm text-amber-800 italic">
+                        The action itself; depends on your motivation and the amount of friction associated with the behavior
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-rose-50 to-rose-100 rounded-lg border border-rose-200 shadow-sm overflow-hidden">
+                  <div className="bg-rose-100 py-3 px-4 border-b border-rose-200">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold text-rose-800 text-lg">4. Reward</h4>
+                      <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center text-rose-500 font-bold border border-rose-300">4</div>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-rose-900">The benefit gained from performing the habit</p>
+                    <div className="mt-3 bg-white/60 p-3 rounded-md border border-rose-200">
+                      <p className="text-sm text-rose-800 italic">
+                        The end goal of every habit; rewards satisfy your craving and teach you which actions to remember in the future
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           
-          <h3 className="text-lg font-semibold mt-6">The Power of Identity</h3>
-          <p>
-            The most effective way to change your habits is to focus on who you wish to become:
-          </p>
-          <div className="bg-gray-50 p-4 rounded-md mt-2">
-            <p className="italic">
-              "The goal is not to read a book, the goal is to become a reader.<br />
-              The goal is not to run a marathon, the goal is to become a runner.<br />
-              The goal is not to learn an instrument, the goal is to become a musician."
-            </p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-teal-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-teal-50 to-teal-100 px-6 py-4 border-b border-teal-100">
+              <CheckCircle className="h-8 w-8 text-teal-500" strokeWidth={1.5} />
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-teal-800">Building Better Time Habits</h3>
+                  <StandardBadge size="sm" sectionTheme="wellness" className="ml-2" blurEffect={true}>Strategies</StandardBadge>
+                </div>
+                <p className="text-teal-700 text-sm">Four powerful methods to create lasting time management habits</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Using James Clear's habit framework, here are four powerful strategies to build effective time management habits that last:
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gradient-to-b from-teal-50 to-white rounded-lg shadow-sm border border-teal-100 overflow-hidden">
+                  <div className="px-6 py-3 bg-teal-100 border-b border-teal-200">
+                    <h4 className="font-semibold text-teal-800 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                      Make It Obvious
+                    </h4>
+                  </div>
+                  <div className="p-6">
+                    <p className="text-gray-700 mb-3">Create clear cues that trigger your time management habits:</p>
+                    <ul className="space-y-3">
+                      <li className="flex items-start gap-3">
+                        <div className="bg-teal-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-700">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </div>
+                        <span className="text-gray-800">Set clear implementation intentions ("At 9am, I will review my top priorities for the day")</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="bg-teal-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-700">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </div>
+                        <span className="text-gray-800">Design your environment to support good habits (clear workspace, visible planner)</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="bg-teal-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-700">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </div>
+                        <span className="text-gray-800">Use visual cues and reminders (calendar notifications, sticky notes)</span>
+                      </li>
+                    </ul>
+                    <div className="mt-4 bg-teal-50 p-3 rounded-md border border-teal-100">
+                      <p className="text-sm text-teal-800 italic">
+                        "We don't rise to the level of our goals, we fall to the level of our systems." — James Clear
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-b from-teal-50 to-white rounded-lg shadow-sm border border-teal-100 overflow-hidden">
+                  <div className="px-6 py-3 bg-teal-100 border-b border-teal-200">
+                    <h4 className="font-semibold text-teal-800 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+                      </svg>
+                      Make It Attractive
+                    </h4>
+                  </div>
+                  <div className="p-6">
+                    <p className="text-gray-700 mb-3">Increase your desire to perform time management habits:</p>
+                    <ul className="space-y-3">
+                      <li className="flex items-start gap-3">
+                        <div className="bg-teal-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-700">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </div>
+                        <span className="text-gray-800">Use temptation bundling (pair planning tasks with your favorite coffee)</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="bg-teal-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-700">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </div>
+                        <span className="text-gray-800">Join a productivity group or find an accountability partner</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="bg-teal-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-700">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </div>
+                        <span className="text-gray-800">Create a motivation ritual before starting your daily planning</span>
+                      </li>
+                    </ul>
+                    <div className="mt-4 bg-teal-50 p-3 rounded-md border border-teal-100">
+                      <p className="text-sm text-teal-800 italic">
+                        "Habits are the compound interest of self-improvement." — James Clear
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-b from-teal-50 to-white rounded-lg shadow-sm border border-teal-100 overflow-hidden">
+                  <div className="px-6 py-3 bg-teal-100 border-b border-teal-200">
+                    <h4 className="font-semibold text-teal-800 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                        <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V5a2 2 0 1 0-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9"></path>
+                      </svg>
+                      Make It Easy
+                    </h4>
+                  </div>
+                  <div className="p-6">
+                    <p className="text-gray-700 mb-3">Reduce friction to make time management habits simpler:</p>
+                    <ul className="space-y-3">
+                      <li className="flex items-start gap-3">
+                        <div className="bg-teal-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-700">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </div>
+                        <span className="text-gray-800">Reduce friction (prepare your workspace and tools the night before)</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="bg-teal-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-700">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </div>
+                        <span className="text-gray-800">Start with two-minute versions of habits ("I'll just plan for two minutes")</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="bg-teal-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-700">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </div>
+                        <span className="text-gray-800">Automate recurring tasks and use templates for common activities</span>
+                      </li>
+                    </ul>
+                    <div className="mt-4 bg-teal-50 p-3 rounded-md border border-teal-100">
+                      <p className="text-sm text-teal-800 italic">
+                        "The best way to build a habit is to make it so easy you can't say no." — Leo Babauta
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-b from-teal-50 to-white rounded-lg shadow-sm border border-teal-100 overflow-hidden">
+                  <div className="px-6 py-3 bg-teal-100 border-b border-teal-200">
+                    <h4 className="font-semibold text-teal-800 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                      </svg>
+                      Make It Satisfying
+                    </h4>
+                  </div>
+                  <div className="p-6">
+                    <p className="text-gray-700 mb-3">Create rewards to reinforce your time management habits:</p>
+                    <ul className="space-y-3">
+                      <li className="flex items-start gap-3">
+                        <div className="bg-teal-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-700">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </div>
+                        <span className="text-gray-800">Use immediate rewards after completing planning or time blocks</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="bg-teal-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-700">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </div>
+                        <span className="text-gray-800">Track your time management habits with a visual progress tracker</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <div className="bg-teal-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-700">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </div>
+                        <span className="text-gray-800">Never miss twice - if you break your planning streak, get back on track immediately</span>
+                      </li>
+                    </ul>
+                    <div className="mt-4 bg-teal-50 p-3 rounded-md border border-teal-100">
+                      <p className="text-sm text-teal-800 italic">
+                        "What gets measured gets managed." — Peter Drucker
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <p className="mt-2">
-            When you focus on building identity-based habits, you're not just doing things differently, 
-            you're becoming someone different.
-          </p>
           
-          <div className="p-4 bg-blue-50 rounded-md mt-6">
-            <h4 className="font-medium text-blue-800">Continuous Improvement</h4>
-            <p className="text-blue-800">
-              The goal isn't perfection; it's continuous improvement. Aim to get 1% better each day. 
-              These small improvements compound over time, leading to remarkable changes in your productivity 
-              and time management abilities.
-            </p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-amber-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-amber-50 to-amber-100 px-6 py-4 border-b border-amber-100">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-amber-800">Breaking Bad Time Habits</h3>
+                  <StandardBadge size="sm" sectionTheme="emergency" className="ml-2" blurEffect={true}>Solutions</StandardBadge>
+                </div>
+                <p className="text-amber-700 text-sm">How to overcome procrastination and other productivity killers</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Just as we can apply habit formation principles to build good time habits, we can also use them to break bad ones. Here's how to invert the four laws of habit formation to eliminate time management obstacles:
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gradient-to-br from-amber-50 to-white rounded-lg overflow-hidden border border-amber-100 shadow-sm">
+                  <div className="px-5 py-3 bg-gradient-to-r from-amber-100 to-amber-50 border-b border-amber-200">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold text-amber-800">Make It Invisible</h4>
+                      <div className="bg-white h-8 w-8 rounded-full flex items-center justify-center shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
+                          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                          <line x1="2" y1="2" x2="22" y2="22"></line>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <p className="text-gray-700 mb-3">Remove cues that trigger distracting behaviors:</p>
+                    <ul className="space-y-2.5">
+                      <li className="flex items-start gap-2.5">
+                        <div className="bg-amber-100 h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-amber-600 text-xs font-bold">1</span>
+                        </div>
+                        <span className="text-gray-800">Eliminate distractions from your environment (put your phone in another room)</span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <div className="bg-amber-100 h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-amber-600 text-xs font-bold">2</span>
+                        </div>
+                        <span className="text-gray-800">Use website blockers to prevent access to distracting sites during focused work time</span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <div className="bg-amber-100 h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-amber-600 text-xs font-bold">3</span>
+                        </div>
+                        <span className="text-gray-800">Hide time-wasting apps from your home screen or delete them entirely</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-amber-50 to-white rounded-lg overflow-hidden border border-amber-100 shadow-sm">
+                  <div className="px-5 py-3 bg-gradient-to-r from-amber-100 to-amber-50 border-b border-amber-200">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold text-amber-800">Make It Unattractive</h4>
+                      <div className="bg-white h-8 w-8 rounded-full flex items-center justify-center shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <p className="text-gray-700 mb-3">Change how you think about unproductive habits:</p>
+                    <ul className="space-y-2.5">
+                      <li className="flex items-start gap-2.5">
+                        <div className="bg-amber-100 h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-amber-600 text-xs font-bold">1</span>
+                        </div>
+                        <span className="text-gray-800">Reframe your mindset (think "I don't scroll social media during work hours" instead of "I can't")</span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <div className="bg-amber-100 h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-amber-600 text-xs font-bold">2</span>
+                        </div>
+                        <span className="text-gray-800">Highlight the benefits of avoiding distractions ("I'll finish earlier and have more free time")</span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <div className="bg-amber-100 h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-amber-600 text-xs font-bold">3</span>
+                        </div>
+                        <span className="text-gray-800">Spend time with people who reinforce productive behaviors and good time management</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-amber-50 to-white rounded-lg overflow-hidden border border-amber-100 shadow-sm">
+                  <div className="px-5 py-3 bg-gradient-to-r from-amber-100 to-amber-50 border-b border-amber-200">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold text-amber-800">Make It Difficult</h4>
+                      <div className="bg-white h-8 w-8 rounded-full flex items-center justify-center shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <p className="text-gray-700 mb-3">Increase friction for unproductive behaviors:</p>
+                    <ul className="space-y-2.5">
+                      <li className="flex items-start gap-2.5">
+                        <div className="bg-amber-100 h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-amber-600 text-xs font-bold">1</span>
+                        </div>
+                        <span className="text-gray-800">Use commitment devices (like website blockers with password protection)</span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <div className="bg-amber-100 h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-amber-600 text-xs font-bold">2</span>
+                        </div>
+                        <span className="text-gray-800">Log out of social media and email accounts when focusing on important work</span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <div className="bg-amber-100 h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-amber-600 text-xs font-bold">3</span>
+                        </div>
+                        <span className="text-gray-800">Require two-step processes to engage in distracting behaviors</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-amber-50 to-white rounded-lg overflow-hidden border border-amber-100 shadow-sm">
+                  <div className="px-5 py-3 bg-gradient-to-r from-amber-100 to-amber-50 border-b border-amber-200">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold text-amber-800">Make It Unsatisfying</h4>
+                      <div className="bg-white h-8 w-8 rounded-full flex items-center justify-center shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <path d="M16 16s-1.5-2-4-2-4 2-4 2"></path>
+                          <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                          <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <p className="text-gray-700 mb-3">Create immediate negative consequences:</p>
+                    <ul className="space-y-2.5">
+                      <li className="flex items-start gap-2.5">
+                        <div className="bg-amber-100 h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-amber-600 text-xs font-bold">1</span>
+                        </div>
+                        <span className="text-gray-800">Create a habit contract with consequences (donate to a cause you dislike if you procrastinate)</span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <div className="bg-amber-100 h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-amber-600 text-xs font-bold">2</span>
+                        </div>
+                        <span className="text-gray-800">Find an accountability partner who will check in on your progress regularly</span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <div className="bg-amber-100 h-5 w-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-amber-600 text-xs font-bold">3</span>
+                        </div>
+                        <span className="text-gray-800">Use time tracking software to make wasted time visible and immediate</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 bg-amber-50 p-4 rounded-lg border border-amber-200">
+                <h5 className="font-medium text-amber-800 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  Pro Tip
+                </h5>
+                <p className="text-amber-900 mt-2">
+                  Don't try to break all your bad time habits at once. Start with the one that has the biggest negative impact on your productivity, master that change, and then move on to the next habit.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div className="bg-white rounded-xl shadow-md overflow-hidden border border-violet-100 hover:shadow-lg transition-shadow">
+              <div className="bg-gradient-to-r from-violet-50 to-violet-100 px-6 py-4 border-b border-violet-100">
+                <div className="flex items-center gap-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-violet-500">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <div>
+                    <h3 className="text-lg font-bold text-violet-800">The Power of Identity</h3>
+                    <p className="text-violet-600 text-sm">Become the type of person who manages time well</p>
+                  </div>
+                </div>
+              </div>
+              <div className="p-6">
+                <p className="text-gray-700">
+                  The most effective way to change your habits is to focus on who you wish to become, not just what you want to achieve.
+                </p>
+                
+                <div className="mt-4 bg-gradient-to-r from-violet-50 to-purple-50 p-5 rounded-lg border border-violet-100">
+                  <p className="italic text-violet-800 font-medium">
+                    "The goal is not to manage time, the goal is to become a person who values time.<br />
+                    <br />
+                    The goal is not to plan your day, the goal is to become a planner.<br />
+                    <br />
+                    The goal is not to be productive occasionally, the goal is to become a productive person."
+                  </p>
+                </div>
+                
+                <p className="mt-4 text-gray-700">
+                  Identity-based habits focus on changing your beliefs about yourself. When you believe you are a certain type of person, you act accordingly.
+                </p>
+                
+                <div className="mt-4 grid grid-cols-1 gap-3">
+                  <div className="flex items-start gap-3">
+                    <div className="bg-violet-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-violet-700">
+                        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <span className="text-gray-800 font-medium">Start with small wins</span>
+                      <p className="text-gray-600 text-sm">Build evidence that you are becoming the type of person who manages time well</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="bg-violet-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-violet-700">
+                        <circle cx="12" cy="8" r="7"></circle>
+                        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                      </svg>
+                    </div>
+                    <div>
+                      <span className="text-gray-800 font-medium">Reframe your self-talk</span>
+                      <p className="text-gray-600 text-sm">Say "I'm the type of person who doesn't miss deadlines" instead of "I need to stop missing deadlines"</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="bg-violet-100 rounded-full p-1 mt-0.5 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-violet-700">
+                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <span className="text-gray-800 font-medium">Join communities</span>
+                      <p className="text-gray-600 text-sm">Surround yourself with people who already have the identity you want to build</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-md overflow-hidden border border-blue-100 hover:shadow-lg transition-shadow">
+              <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b border-blue-100">
+                <div className="flex items-center gap-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                  </svg>
+                  <div>
+                    <h3 className="text-lg font-bold text-blue-800">Continuous Improvement</h3>
+                    <p className="text-blue-600 text-sm">Small daily improvements lead to remarkable results</p>
+                  </div>
+                </div>
+              </div>
+              <div className="p-6">
+                <p className="text-gray-700 mb-4">
+                  The goal isn't perfection; it's continuous improvement. This approach, inspired by the Japanese concept of <span className="italic">Kaizen</span>, focuses on getting just a little bit better each day.
+                </p>
+                
+                <div className="bg-blue-50 p-5 rounded-lg border border-blue-100">
+                  <div className="flex justify-center mb-4">
+                    <div className="relative w-64 h-64">
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full opacity-10"></div>
+                      <div className="absolute inset-3 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full opacity-20"></div>
+                      <div className="absolute inset-6 bg-gradient-to-br from-blue-300 to-indigo-400 rounded-full opacity-30"></div>
+                      <div className="absolute inset-9 bg-gradient-to-br from-blue-200 to-indigo-300 rounded-full opacity-40"></div>
+                      <div className="absolute inset-12 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full opacity-50"></div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="text-blue-800 font-bold text-lg">1% Better</div>
+                          <div className="text-blue-600 text-sm">Every Day</div>
+                          <div className="font-bold text-2xl text-blue-900 mt-2">37x</div>
+                          <div className="text-blue-600 text-sm">Better in a Year</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-center text-blue-800">
+                    <div className="font-medium">The Math of Small Improvements</div>
+                    <p className="text-sm mt-1">1.01<sup>365</sup> = 37.8</p>
+                  </div>
+                </div>
+                
+                <div className="mt-4 space-y-3">
+                  <div className="p-3 bg-gradient-to-r from-blue-50 to-white rounded-lg border border-blue-100">
+                    <h4 className="font-medium text-blue-800 flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      The 2-Minute Rule
+                    </h4>
+                    <p className="text-gray-700 text-sm mt-1">
+                      When you find yourself procrastinating, commit to just 2 minutes of work. Often, starting is the hardest part, but once begun, you're likely to continue.
+                    </p>
+                  </div>
+                  
+                  <div className="p-3 bg-gradient-to-r from-blue-50 to-white rounded-lg border border-blue-100">
+                    <h4 className="font-medium text-blue-800 flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                      </svg>
+                      The Forgiveness Principle
+                    </h4>
+                    <p className="text-gray-700 text-sm mt-1">
+                      When you slip up (and you will), forgive yourself and get back on track immediately. Consistency over time matters more than perfection.
+                    </p>
+                  </div>
+                  
+                  <div className="p-3 bg-gradient-to-r from-blue-50 to-white rounded-lg border border-blue-100">
+                    <h4 className="font-medium text-blue-800 flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                      </svg>
+                      Track Your Progress
+                    </h4>
+                    <p className="text-gray-700 text-sm mt-1">
+                      Keep a journal of your improvements, no matter how small. Seeing your progress over time provides motivation and reinforces your identity as someone who values time.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )
