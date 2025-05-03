@@ -17,18 +17,19 @@ type FeatureFlags = {
 };
 
 const defaultFlags: FeatureFlags = {
-  // Start with component flags enabled for testing but section flags disabled
+  // Enable all component standardization flags
   USE_STANDARD_CARDS: true,
   USE_STANDARD_TABS: true,
   USE_STANDARD_DIALOGS: true,
   USE_STANDARD_SEARCH: true,
   USE_STANDARD_MOBILE_SCROLL: true,
   
-  UI_STANDARDIZE_FINANCIAL: false,
-  UI_STANDARDIZE_CAREER: false,
-  UI_STANDARDIZE_WELLNESS: false,
-  UI_STANDARDIZE_EMERGENCY: false,
-  UI_STANDARDIZE_EDUCATION: false,
+  // Enable section standardization flags for testing
+  UI_STANDARDIZE_FINANCIAL: true,
+  UI_STANDARDIZE_CAREER: true,
+  UI_STANDARDIZE_WELLNESS: true,
+  UI_STANDARDIZE_EMERGENCY: true,
+  UI_STANDARDIZE_EDUCATION: true,
 };
 
 const FeatureFlagsContext = createContext<FeatureFlags>(defaultFlags);

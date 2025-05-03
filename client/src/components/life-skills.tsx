@@ -387,6 +387,7 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
         <h3 className="text-lg font-semibold mb-3 flex items-center">
           <Zap className="h-5 w-5 mr-2 text-amber-500" />
           Smart Prompts
+          {/* Always use StandardBadge for consistent styling */}
           <StandardBadge 
             size="sm" 
             className="ml-2" 
@@ -428,6 +429,7 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
                         size="sm" 
                         className="ml-2" 
                         sectionTheme={getSectionTheme()}
+                        blurEffect={true}
                       >
                         New
                       </StandardBadge>
@@ -498,6 +500,7 @@ export const LifeSkillsComponent = ({ initialTab = "financial" }: LifeSkillsComp
                             size="sm" 
                             className="ml-2" 
                             sectionTheme={getSectionTheme()}
+                            blurEffect={true}
                           >
                             New
                           </StandardBadge>
