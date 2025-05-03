@@ -13,7 +13,7 @@ Fundamenta aims to overcome the limitations of previous life skills platforms by
 5. **Focusing on Our Audience** - Targeted support for 16-30 year olds navigating critical life transitions
 
 Our comprehensive strategic approach is documented in:
-- [Fundamenta Success Blueprint](docs/FUNDAMENTA_SUCCESS_BLUEPRINT.md)
+- [Fundamenta Success Blueprint](docs/FUNDAMENTA_SUCCESS_BLUEPRINT_UPDATED.md)
 - [Consolidated Strategy 2025](docs/CONSOLIDATED_STRATEGY_2025.md)
 
 ## Core Technologies

@@ -8,10 +8,10 @@ As of May 3, 2025, we have consolidated and updated our strategy documentation t
 
 ### New Strategy Documents
 
-1. **[Fundamenta Success Blueprint](FUNDAMENTA_SUCCESS_BLUEPRINT.md)**
+1. **[Fundamenta Success Blueprint](FUNDAMENTA_SUCCESS_BLUEPRINT_UPDATED.md)**
    - Core strategy to avoid common life skills platform failures
    - Prioritized implementation plan with clear timelines
-   - Integrated monetization analysis
+   - Phased approach to monetization with data-driven decisions
 
 2. **[Consolidated Strategy 2025](CONSOLIDATED_STRATEGY_2025.md)**
    - Comprehensive approach integrating all strategic elements
