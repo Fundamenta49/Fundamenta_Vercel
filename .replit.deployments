@@ -1,7 +1,7 @@
 {
-  "startCommand": "npm start",
-  "buildCommand": "./build.sh",
-  "entrypoint": "dist/index.js",
-  "installCommand": "npm ci",
-  "deploymentTarget": "cloudrun"
+  "deploymentId": "db52ba45-0ef8-411f-af31-4b71e7f22e4c",
+  "restartPolicyType": "NEVER",
+  "restartPolicyValue": 1,
+  "healthCheckPath": "/",
+  "healthCheckTimeout": 10
 }

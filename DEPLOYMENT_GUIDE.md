@@ -1,80 +1,107 @@
 # Fundamenta Deployment Guide
 
-This guide covers how to deploy the Fundamenta application to CloudRun via Replit Deployments.
+This guide explains how to deploy the Fundamenta application to Replit CloudRun.
 
-## Pre-Deployment Checklist
+## Prerequisites
 
-1. **Database Setup**
-   - Ensure PostgreSQL database is provisioned and accessible
-   - Verify DATABASE_URL environment variable is set correctly
-   - Verify all migrations have been run
+1. A Replit account
+2. The Fundamenta project cloned to your Replit workspace
+3. Required secrets and API keys configured in your Replit environment
 
-2. **Environment Variables**
-   - Ensure the following variables are set:
-     - `DATABASE_URL`: Connection string for PostgreSQL
-     - `NODE_ENV`: Set to "production" for deployment
-     - `SESSION_SECRET`: Secure random string for session encryption
+## Deployment Steps
 
-3. **Build Process**
-   - Run `npm run build` to build both frontend and backend
-   - Verify the `dist` directory is created with all required files
-   - Run the verification script: `node verify-deployment.js`
+### 1. Prepare Your Application
 
-## Deploying with Replit
+Make sure your application is properly configured for production:
 
-1. Click the **Deploy** button in the Replit interface
-2. Follow the prompts to configure your deployment
-3. Choose the CloudRun option when available
+- Check that all necessary dependencies are installed
+- Verify that environment variables are correctly set up
+- Ensure your database is properly configured
 
-## CloudRun Health Check Configuration
+### 2. CloudRun Deployment
 
-The application has been specially configured to work with CloudRun's health checking requirements:
+#### Special Note on Health Checks
 
-1. **Root Health Check Endpoint**
-   - The application responds to GET requests at the root path (/) with a simple JSON response: `{"status":"ok"}`
-   - This is required for CloudRun to consider the service healthy
+CloudRun requires an endpoint that responds to health checks at the `/` path. We've implemented multiple approaches to ensure CloudRun health checks work:
 
-2. **Multiple Levels of Protection**
-   - Three levels of health check handlers are implemented:
-     1. First-priority middleware to catch requests before any other handlers
-     2. Dedicated health check router mounted at the root path
-     3. Direct Express route handler as a fallback
+1. **Primary Health Check**: The application handles GET requests to `/` with the appropriate response when it detects a health check request
+2. **Bare Health Check**: A low-level health check implementation that intercepts HTTP requests before Express
+3. **Direct Health Check**: A middleware that specifically handles health check requests
+4. **Standalone Health Check**: If needed, you can deploy a standalone health check server
 
-3. **Production Optimization**
-   - When `NODE_ENV` is set to "production", specialized CloudRun-specific health checks are enabled
-   - The response format is minimized to reduce overhead
+#### Handling Health Check Fallback
 
-## Troubleshooting Deployment Issues
+If the deployed application is still failing health checks, you can try the following:
 
-If deployment fails, check the following:
+1. Run the standalone health check server on port 8080:
+   ```
+   node server/standalone-health.js
+   ```
 
-1. **Health Check Failures**
-   - Verify that the root path (/) returns `{"status":"ok"}` with a 200 status code
-   - Check logs for any errors in the health check handlers
+2. Alternatively, you can modify `.replit.deployments` to include the health check property:
+   ```json
+   {
+     "healthCheckPath": "/_health", 
+     "healthCheckTimeout": 5
+   }
+   ```
 
-2. **Database Connection Issues**
-   - Verify DATABASE_URL is correctly set in environment variables
-   - Test database connectivity using `check_database_status` tool
-   - Ensure IP allowlist includes CloudRun service IP ranges
+### 3. Deploy Using Replit UI
 
-3. **Build Errors**
-   - Check if frontend and backend were successfully built
-   - Verify all required files exist in the `dist` directory
-   - Run verification script to identify potential issues
+To deploy your application:
 
-## Post-Deployment Verification
+1. Click the **Deploy** button in the Replit UI
+2. Follow the on-screen instructions to configure your deployment
+3. Select the appropriate scaling options for your needs
+4. Complete the deployment process
 
-After deployment completes, verify the application by:
+### 4. Verify Deployment
 
-1. Accessing the root URL to ensure it loads properly
-2. Checking CloudRun logs for any startup errors
-3. Testing key functionality to ensure everything works as expected
+Once deployed, verify that your application is properly serving:
 
-## Maintenance and Updates
+1. Check the deployment logs for any errors
+2. Visit the deployed URL to ensure the frontend loads correctly
+3. Test critical functionality to ensure everything works as expected
 
-For future updates:
+### Troubleshooting
 
-1. Make your changes to the codebase
-2. Run `npm run build` to rebuild the application
-3. Run verification script to check for potential issues
-4. Deploy using the Replit Deploy button
+If you encounter issues during deployment:
+
+#### Health Check Failures
+
+If CloudRun can't detect your health check:
+
+1. Verify that the `/` endpoint responds with `{"status":"ok"}` for health check requests
+2. Check server logs for any health check related errors
+3. Try using the standalone health check server approach
+4. Make sure the application starts and binds to the correct port (PORT environment variable)
+
+#### Database Connection Issues
+
+If the application can't connect to the database:
+
+1. Verify database URL and credentials in environment variables
+2. Check for database connection timeout errors in the logs
+3. Ensure database migrations are running correctly
+
+#### General Troubleshooting Steps
+
+1. Check deployment logs for any errors
+2. Verify environment variables are correctly set
+3. Test the application locally before deploying
+4. Try the minimal standalone health check server if all else fails
+
+## Maintenance
+
+To keep your deployment running smoothly:
+
+1. Regularly update dependencies
+2. Monitor server logs for errors
+3. Set up monitoring for critical endpoints
+4. Implement automated database maintenance tasks
+
+## Additional Resources
+
+- CloudRun Documentation: [https://cloud.google.com/run/docs](https://cloud.google.com/run/docs)
+- Replit Deployments: [https://docs.replit.com/hosting/deployments](https://docs.replit.com/hosting/deployments)
+- Express.js Production Best Practices: [https://expressjs.com/en/advanced/best-practice-performance.html](https://expressjs.com/en/advanced/best-practice-performance.html)
