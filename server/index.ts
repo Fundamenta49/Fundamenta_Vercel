@@ -72,8 +72,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Root health check middleware - this will be used for CloudRun deployment checks
-app.use(rootHealthCheckMiddleware);
+// Root health check middleware is already registered as the first middleware
+// app.use(rootHealthCheckMiddleware); - Removed duplicate registration
 
 // API health check endpoint
 app.get("/api/health", (_req, res) => {
