@@ -3,15 +3,10 @@
  * This script checks for potential issues that could affect CloudRun deployment
  */
 
-import fs from 'fs';
-import path from 'path';
-import http from 'http';
-import { exec } from 'child_process';
-import { fileURLToPath } from 'url';
-
-// Get current directory name
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const fs = require('fs');
+const path = require('path');
+const http = require('http');
+const { exec } = require('child_process');
 
 // Files that should exist for successful deployment
 const requiredFiles = [
