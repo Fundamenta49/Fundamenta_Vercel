@@ -1118,196 +1118,77 @@ export default function DecisionMakingCourse() {
               </div>
             </div>
           </div>
-          
-          <div className="space-y-4 mt-6">
-            <h3 className="text-lg font-semibold">More Common Cognitive Biases</h3>
-            <div className="space-y-4">
-              <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-                <div className="flex items-start gap-2">
-                  <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-orange-800">Sunk Cost Fallacy</h4>
-                    <p className="text-orange-700 text-sm mt-1">Continuing an endeavor due to previously invested resources that cannot be recovered</p>
-                    <div className="bg-white p-2 rounded mt-2 border border-orange-100">
-                      <p className="text-xs text-gray-700"><span className="font-medium">Example:</span> Watching a movie to the end despite not enjoying it, because you've already spent time on it</p>
-                    </div>
-                    <div className="bg-white p-2 rounded mt-2 border border-orange-100">
-                      <p className="text-xs text-gray-700"><span className="font-medium text-orange-800">How to overcome:</span> Make decisions based on future benefits, not past investments</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-                <div className="flex items-start gap-2">
-                  <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-orange-800">Bandwagon Effect</h4>
-                    <p className="text-orange-700 text-sm mt-1">Adopting beliefs or behaviors because others have done so</p>
-                    <div className="bg-white p-2 rounded mt-2 border border-orange-100">
-                      <p className="text-xs text-gray-700"><span className="font-medium">Example:</span> Buying a product because it's trending, not because you need it</p>
-                    </div>
-                    <div className="bg-white p-2 rounded mt-2 border border-orange-100">
-                      <p className="text-xs text-gray-700"><span className="font-medium text-orange-800">How to overcome:</span> Identify your own values and make decisions aligned with them</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            
+            <div className="border rounded-md p-4">
+              <h4 className="font-medium">Sunk Cost Fallacy</h4>
+              <p className="text-sm">Continuing an endeavor due to previously invested resources that cannot be recovered</p>
+              <p className="text-sm mt-2"><strong>Example:</strong> Watching a movie to the end despite not enjoying it, because you've already spent time on it</p>
+              <p className="text-sm mt-2"><strong>How to overcome:</strong> Make decisions based on future benefits, not past investments</p>
             </div>
             
-            <h3 className="text-lg font-semibold mt-6">Strategies to Combat Cognitive Biases</h3>
-            <div className="space-y-4 mt-4">
-              <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-                <div className="flex items-center mb-3">
-                  <div className="bg-orange-100 rounded-full p-2 mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-                    </svg>
-                  </div>
-                  <h4 className="font-semibold text-orange-800">Seek Diverse Perspectives</h4>
-                </div>
-                <ul className="space-y-1 pl-2">
-                  {["Consult people with different backgrounds and viewpoints", 
-                    "Encourage devil's advocate thinking", 
-                    "Consider options you initially dismissed"].map((item, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-700 text-sm">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-                <div className="flex items-center mb-3">
-                  <div className="bg-orange-100 rounded-full p-2 mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <h4 className="font-semibold text-orange-800">Use Pre-mortem Analysis</h4>
-                </div>
-                <ul className="space-y-1 pl-2">
-                  {["Imagine your decision has failed and work backwards to identify what went wrong", 
-                    "Helps identify potential pitfalls before they occur", 
-                    "Reduces overconfidence and reveals blind spots"].map((item, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-700 text-sm">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-                <div className="flex items-center mb-3">
-                  <div className="bg-orange-100 rounded-full p-2 mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <h4 className="font-semibold text-orange-800">Consider the Opposite</h4>
-                </div>
-                <ul className="space-y-1 pl-2">
-                  {["Deliberately challenge your initial beliefs", 
-                    "Generate reasons why your intuitive judgment might be wrong", 
-                    "Look for disconfirming evidence"].map((item, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-700 text-sm">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-                <div className="flex items-center mb-3">
-                  <div className="bg-orange-100 rounded-full p-2 mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-                    </svg>
-                  </div>
-                  <h4 className="font-semibold text-orange-800">Use Decision Tools Systematically</h4>
-                </div>
-                <ul className="space-y-1 pl-2">
-                  {["Apply tools like decision matrices and trees", 
-                    "Base decisions on objective criteria rather than feelings alone", 
-                    "Document your decision-making process"].map((item, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-700 text-sm">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-                <div className="flex items-center mb-3">
-                  <div className="bg-orange-100 rounded-full p-2 mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <h4 className="font-semibold text-orange-800">Take Your Time</h4>
-                </div>
-                <ul className="space-y-1 pl-2">
-                  {["Avoid rushed decisions whenever possible", 
-                    "Sleep on important decisions", 
-                    "Create distance between information gathering and decision-making"].map((item, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-gray-700 text-sm">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div className="border rounded-md p-4">
+              <h4 className="font-medium">Bandwagon Effect</h4>
+              <p className="text-sm">Adopting beliefs or behaviors because others have done so</p>
+              <p className="text-sm mt-2"><strong>Example:</strong> Buying a product because it's trending, not because you need it</p>
+              <p className="text-sm mt-2"><strong>How to overcome:</strong> Identify your own values and make decisions aligned with them</p>
             </div>
           </div>
           
-          <div className="p-4 bg-[#FFE8CC] rounded-lg mt-6 border border-orange-100">
-            <div className="flex items-start gap-3">
-              <div className="bg-orange-100 rounded-full p-2 flex-shrink-0 mt-1">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-              </div>
-              <div>
-                <h4 className="font-medium text-orange-800 mb-2">Wisdom Note</h4>
-                <p className="text-gray-700 text-sm">
-                  Complete elimination of biases is impossible, as they are intrinsic to human cognition. 
-                  The goal is not perfection, but awareness and mitigation. By recognizing our cognitive 
-                  tendencies, we can design decision processes that compensate for our natural biases.
-                </p>
-              </div>
+          <h3 className="text-lg font-semibold mt-6">Strategies to Combat Cognitive Biases</h3>
+          <div className="space-y-4 mt-4">
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h4 className="font-medium">Seek Diverse Perspectives</h4>
+              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
+                <li>Consult people with different backgrounds and viewpoints</li>
+                <li>Encourage devil's advocate thinking</li>
+                <li>Consider options you initially dismissed</li>
+              </ul>
             </div>
+            
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h4 className="font-medium">Use Pre-mortem Analysis</h4>
+              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
+                <li>Imagine your decision has failed and work backwards to identify what went wrong</li>
+                <li>Helps identify potential pitfalls before they occur</li>
+                <li>Reduces overconfidence and reveals blind spots</li>
+              </ul>
+            </div>
+            
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h4 className="font-medium">Consider the Opposite</h4>
+              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
+                <li>Deliberately challenge your initial beliefs</li>
+                <li>Generate reasons why your intuitive judgment might be wrong</li>
+                <li>Look for disconfirming evidence</li>
+              </ul>
+            </div>
+            
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h4 className="font-medium">Use Decision Tools Systematically</h4>
+              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
+                <li>Apply tools like decision matrices and trees</li>
+                <li>Base decisions on objective criteria rather than feelings alone</li>
+                <li>Document your decision-making process</li>
+              </ul>
+            </div>
+            
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h4 className="font-medium">Take Your Time</h4>
+              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
+                <li>Avoid rushed decisions whenever possible</li>
+                <li>Sleep on important decisions</li>
+                <li>Create distance between information gathering and decision-making</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="p-4 bg-purple-50 rounded-md mt-6">
+            <h4 className="font-medium text-purple-800">Wisdom Note</h4>
+            <p className="text-purple-800">
+              Complete elimination of biases is impossible, as they are intrinsic to human cognition. 
+              The goal is not perfection, but awareness and mitigation. By recognizing our cognitive 
+              tendencies, we can design decision processes that compensate for our natural biases.
+            </p>
           </div>
         </div>
       )
@@ -1336,261 +1217,110 @@ export default function DecisionMakingCourse() {
           
           <h3 className="text-lg font-semibold mt-6">Challenges of Group Decision-Making</h3>
           <div className="space-y-4 mt-4">
-            <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-              <div className="flex items-start gap-2">
-                <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-medium text-orange-800">Groupthink</h4>
-                  <p className="text-orange-700 text-sm mt-1">The tendency for groups to prioritize consensus over critical evaluation</p>
-                  <div className="bg-white p-2 rounded mt-2 border border-orange-100">
-                    <p className="text-xs text-gray-700"><span className="font-medium">Signs:</span> Illusion of invulnerability, collective rationalization, self-censorship</p>
-                  </div>
-                </div>
-              </div>
+            <div className="border-l-4 border-red-500 pl-4 py-2">
+              <h4 className="font-medium">Groupthink</h4>
+              <p className="text-sm">The tendency for groups to prioritize consensus over critical evaluation</p>
+              <p className="text-sm mt-2"><strong>Signs:</strong> Illusion of invulnerability, collective rationalization, self-censorship</p>
             </div>
             
-            <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-              <div className="flex items-start gap-2">
-                <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-medium text-orange-800">Social Loafing</h4>
-                  <p className="text-orange-700 text-sm mt-1">Individual members reducing their effort when working in groups</p>
-                  <div className="bg-white p-2 rounded mt-2 border border-orange-100">
-                    <p className="text-xs text-gray-700"><span className="font-medium">Signs:</span> Reduced participation, deferring responsibility, lack of accountability</p>
-                  </div>
-                </div>
-              </div>
+            <div className="border-l-4 border-red-500 pl-4 py-2">
+              <h4 className="font-medium">Social Loafing</h4>
+              <p className="text-sm">Individual members reducing their effort when working in groups</p>
+              <p className="text-sm mt-2"><strong>Signs:</strong> Reduced participation, deferring responsibility, lack of accountability</p>
             </div>
             
-            <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-              <div className="flex items-start gap-2">
-                <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-medium text-orange-800">Conformity Pressure</h4>
-                  <p className="text-orange-700 text-sm mt-1">Members feeling pressure to agree with the majority or authority figures</p>
-                  <div className="bg-white p-2 rounded mt-2 border border-orange-100">
-                    <p className="text-xs text-gray-700"><span className="font-medium">Signs:</span> Quick agreement, limited debate, hierarchical influence</p>
-                  </div>
-                </div>
-              </div>
+            <div className="border-l-4 border-red-500 pl-4 py-2">
+              <h4 className="font-medium">Conformity Pressure</h4>
+              <p className="text-sm">Members feeling pressure to agree with the majority or authority figures</p>
+              <p className="text-sm mt-2"><strong>Signs:</strong> Quick agreement, limited debate, hierarchical influence</p>
             </div>
             
-            <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-              <div className="flex items-start gap-2">
-                <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-medium text-orange-800">Process Inefficiency</h4>
-                  <p className="text-orange-700 text-sm mt-1">Group decision-making can be time-consuming and poorly structured</p>
-                  <div className="bg-white p-2 rounded mt-2 border border-orange-100">
-                    <p className="text-xs text-gray-700"><span className="font-medium">Signs:</span> Lengthy meetings, circular discussions, unclear outcomes</p>
-                  </div>
-                </div>
-              </div>
+            <div className="border-l-4 border-red-500 pl-4 py-2">
+              <h4 className="font-medium">Process Inefficiency</h4>
+              <p className="text-sm">Group decision-making can be time-consuming and poorly structured</p>
+              <p className="text-sm mt-2"><strong>Signs:</strong> Lengthy meetings, circular discussions, unclear outcomes</p>
             </div>
           </div>
           
           <h3 className="text-lg font-semibold mt-6">Effective Group Decision-Making Techniques</h3>
           <div className="space-y-4 mt-4">
-            <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-              <div className="flex items-center mb-3">
-                <div className="bg-orange-100 rounded-full p-2 mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                </div>
-                <h4 className="font-semibold text-orange-800">Brainstorming</h4>
-              </div>
-              <p className="text-orange-700 text-sm mb-2">Generating many ideas without evaluation</p>
-              <ul className="space-y-1 pl-2">
-                {["Separate idea generation from evaluation", 
-                  "Encourage wild ideas", 
-                  "Build on others' ideas",
-                  "Aim for quantity of ideas"].map((item, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-gray-700 text-sm">{item}</span>
-                  </li>
-                ))}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h4 className="font-medium">Brainstorming</h4>
+              <p className="text-sm">Generating many ideas without evaluation</p>
+              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
+                <li>Separate idea generation from evaluation</li>
+                <li>Encourage wild ideas</li>
+                <li>Build on others' ideas</li>
+                <li>Aim for quantity of ideas</li>
               </ul>
             </div>
             
-            <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-              <div className="flex items-center mb-3">
-                <div className="bg-orange-100 rounded-full p-2 mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                </div>
-                <h4 className="font-semibold text-orange-800">Nominal Group Technique</h4>
-              </div>
-              <p className="text-orange-700 text-sm mb-2">Structured method for generating and prioritizing ideas</p>
-              <ol className="space-y-1 pl-2">
-                {["Members write down ideas independently", 
-                  "Ideas are shared one at a time in round-robin fashion", 
-                  "Group discussion for clarification (not criticism)",
-                  "Anonymous voting or ranking of options"].map((item, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0 w-5 h-5 flex items-center justify-center">
-                      <span className="text-orange-500 text-xs font-medium">{idx+1}</span>
-                    </div>
-                    <span className="text-gray-700 text-sm">{item}</span>
-                  </li>
-                ))}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h4 className="font-medium">Nominal Group Technique</h4>
+              <p className="text-sm">Structured method for generating and prioritizing ideas</p>
+              <ol className="list-decimal pl-5 mt-2 text-sm space-y-1">
+                <li>Members write down ideas independently</li>
+                <li>Ideas are shared one at a time in round-robin fashion</li>
+                <li>Group discussion for clarification (not criticism)</li>
+                <li>Anonymous voting or ranking of options</li>
               </ol>
             </div>
             
-            <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-              <div className="flex items-center mb-3">
-                <div className="bg-orange-100 rounded-full p-2 mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h4 className="font-semibold text-orange-800">Delphi Technique</h4>
-              </div>
-              <p className="text-orange-700 text-sm mb-2">Anonymous, iterative process for expert consensus</p>
-              <ol className="space-y-1 pl-2">
-                {["Experts anonymously provide judgments on an issue", 
-                  "Responses are summarized", 
-                  "Experts review the summary and revise their judgments",
-                  "Process repeats until sufficient consensus is reached"].map((item, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0 w-5 h-5 flex items-center justify-center">
-                      <span className="text-orange-500 text-xs font-medium">{idx+1}</span>
-                    </div>
-                    <span className="text-gray-700 text-sm">{item}</span>
-                  </li>
-                ))}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h4 className="font-medium">Delphi Technique</h4>
+              <p className="text-sm">Anonymous, iterative process for expert consensus</p>
+              <ol className="list-decimal pl-5 mt-2 text-sm space-y-1">
+                <li>Experts anonymously provide judgments on an issue</li>
+                <li>Responses are summarized</li>
+                <li>Experts review the summary and revise their judgments</li>
+                <li>Process repeats until sufficient consensus is reached</li>
               </ol>
             </div>
             
-            <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-              <div className="flex items-center mb-3">
-                <div className="bg-orange-100 rounded-full p-2 mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-                  </svg>
-                </div>
-                <h4 className="font-semibold text-orange-800">Stepladder Technique</h4>
-              </div>
-              <p className="text-orange-700 text-sm mb-2">Gradually integrating members to reduce conformity pressure</p>
-              <ol className="space-y-1 pl-2">
-                {["Core group of two members discusses the problem", 
-                  "A third member joins, presenting their ideas before hearing the group's thinking", 
-                  "The expanded group discusses",
-                  "Process continues with each new member"].map((item, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0 w-5 h-5 flex items-center justify-center">
-                      <span className="text-orange-500 text-xs font-medium">{idx+1}</span>
-                    </div>
-                    <span className="text-gray-700 text-sm">{item}</span>
-                  </li>
-                ))}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h4 className="font-medium">Stepladder Technique</h4>
+              <p className="text-sm">Gradually integrating members to reduce conformity pressure</p>
+              <ol className="list-decimal pl-5 mt-2 text-sm space-y-1">
+                <li>Core group of two members discusses the problem</li>
+                <li>A third member joins, presenting their ideas before hearing the group's thinking</li>
+                <li>The expanded group discusses</li>
+                <li>Process continues with each new member</li>
               </ol>
             </div>
             
-            <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
-              <div className="flex items-center mb-3">
-                <div className="bg-orange-100 rounded-full p-2 mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </div>
-                <h4 className="font-semibold text-orange-800">Multivoting</h4>
-              </div>
-              <p className="text-orange-700 text-sm mb-2">Efficiently narrowing down a large list of options</p>
-              <ol className="space-y-1 pl-2">
-                {["Generate a list of options", 
-                  "Eliminate duplicates and clarify items", 
-                  "Each member gets multiple votes (typically 1/3 of total items)",
-                  "Items with most votes advance to next round",
-                  "Process repeats until manageable number of options remains"].map((item, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0 w-5 h-5 flex items-center justify-center">
-                      <span className="text-orange-500 text-xs font-medium">{idx+1}</span>
-                    </div>
-                    <span className="text-gray-700 text-sm">{item}</span>
-                  </li>
-                ))}
+            <div className="bg-gray-50 p-4 rounded-md">
+              <h4 className="font-medium">Multivoting</h4>
+              <p className="text-sm">Efficiently narrowing down a large list of options</p>
+              <ol className="list-decimal pl-5 mt-2 text-sm space-y-1">
+                <li>Generate a list of options</li>
+                <li>Eliminate duplicates and clarify items</li>
+                <li>Each member gets multiple votes (typically 1/3 of total items)</li>
+                <li>Items with most votes advance to next round</li>
+                <li>Process repeats until manageable number of options remains</li>
               </ol>
             </div>
           </div>
           
-          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6 mt-6">
-            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-bold text-orange-800">Best Practices for Group Decision-Making</h3>
-                </div>
-                <p className="text-orange-700 text-sm">Core principles for effective collective decisions</p>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  {title: "Establish clear roles", description: "Designate a facilitator, timekeeper, and note-taker"},
-                  {title: "Set ground rules", description: "Ensure respectful communication and equal participation"},
-                  {title: "Define the method upfront", description: "Consensus, majority vote, leader decides with input, etc."},
-                  {title: "Assign a devil's advocate", description: "Someone responsible for challenging assumptions"},
-                  {title: "Use structured processes", description: "Apply appropriate techniques based on the situation"},
-                  {title: "Document decisions", description: "Record the decision, rationale, and implementation steps"},
-                  {title: "Follow up", description: "Evaluate the decision and learn from the process"}
-                ].map((practice, idx) => (
-                  <div key={idx} className="flex items-start bg-[#FFE8CC] p-3 rounded-lg border border-orange-100">
-                    <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-orange-800">{practice.title}</h4>
-                      <p className="text-gray-700 text-sm">{practice.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="p-4 bg-[#FFE8CC] rounded-lg mt-6 border border-orange-100">
-                <div className="flex items-start gap-3">
-                  <div className="bg-orange-100 rounded-full p-2 flex-shrink-0 mt-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-orange-800 mb-2">Continuous Improvement</h4>
-                    <p className="text-gray-700 text-sm">
-                      Like individual decision-making, group decision-making is a skill that improves with practice and 
-                      reflection. Regularly debrief on the decision-making process itself: What worked well? What could 
-                      be improved? How can we make better decisions together in the future?
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <h3 className="text-lg font-semibold mt-6">Best Practices for Group Decision-Making</h3>
+          <div className="space-y-2">
+            <ul className="list-disc pl-5 space-y-2">
+              <li><strong>Establish clear roles:</strong> Designate a facilitator, timekeeper, and note-taker</li>
+              <li><strong>Set ground rules:</strong> Ensure respectful communication and equal participation</li>
+              <li><strong>Define the decision-making method upfront:</strong> Consensus, majority vote, leader decides with input, etc.</li>
+              <li><strong>Assign a devil's advocate:</strong> Someone responsible for challenging assumptions</li>
+              <li><strong>Use structured processes:</strong> Apply appropriate techniques based on the situation</li>
+              <li><strong>Document decisions:</strong> Record the decision, rationale, and implementation steps</li>
+              <li><strong>Follow up:</strong> Evaluate the decision and learn from the process</li>
+            </ul>
+          </div>
+          
+          <div className="p-4 bg-blue-50 rounded-md mt-6">
+            <h4 className="font-medium text-blue-800">Continuous Improvement</h4>
+            <p className="text-blue-800">
+              Like individual decision-making, group decision-making is a skill that improves with practice and 
+              reflection. Regularly debrief on the decision-making process itself: What worked well? What could 
+              be improved? How can we make better decisions together in the future?
+            </p>
           </div>
         </div>
       )
