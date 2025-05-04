@@ -10,6 +10,7 @@ import { initializeFundiCore } from "./fundi-core/fundi-integration";
 import { performDatabaseMaintenance, performAggressiveCleanup } from "./maintenance";
 import { rootHealthCheckMiddleware, healthCheckRouter } from "./health-checks";
 import { setupCloudRunHealth, cloudRunHealthMiddleware } from "./cloud-run-health";
+import { setupDirectHealthCheck } from "./direct-health";
 
 const startTime = Date.now();
 log("Starting server...");
@@ -21,6 +22,11 @@ log(`Platform: ${process.platform}`);
 // Initialize Express
 const app = express();
 log(`Express initialized (${Date.now() - startTime}ms)`);
+
+// CRITICAL FIX: First, register the ultra-direct health check for CloudRun compatibility
+// This must come before ANYTHING else to ensure CloudRun health checks work
+setupDirectHealthCheck(app);
+log("Ultra-direct health check registered (highest priority)");
 
 // In production, use the CloudRun-optimized health check
 if (process.env.NODE_ENV === 'production') {
