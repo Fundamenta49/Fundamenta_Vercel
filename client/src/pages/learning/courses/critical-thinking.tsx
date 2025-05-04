@@ -185,34 +185,214 @@ export default function CriticalThinkingCourse() {
             fundamental concepts and skills that form the foundation of critical thinking.
           </p>
           
-          <h3 className="text-lg font-semibold mt-6">Core Elements of Critical Thinking</h3>
-          <ul className="list-disc pl-5 space-y-2">
-            <li><strong>Analysis:</strong> Breaking down complex information into smaller, manageable parts</li>
-            <li><strong>Evaluation:</strong> Assessing the credibility and logical strength of information</li>
-            <li><strong>Inference:</strong> Drawing reasonable conclusions from available evidence</li>
-            <li><strong>Interpretation:</strong> Understanding and expressing the meaning of information</li>
-            <li><strong>Explanation:</strong> Clearly presenting reasoning and results</li>
-            <li><strong>Self-regulation:</strong> Monitoring and correcting your own thinking</li>
-          </ul>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Core Elements of Critical Thinking</h3>
+                </div>
+                <p className="text-orange-700 text-sm">Six fundamental skills for effective analytical thinking</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Critical thinking consists of several interrelated skills that work together to help you evaluate information effectively:
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Analysis</h4>
+                      <p className="text-orange-700 text-sm mt-1">Breaking down complex information into smaller, manageable parts</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Evaluation</h4>
+                      <p className="text-orange-700 text-sm mt-1">Assessing the credibility and logical strength of information</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Inference</h4>
+                      <p className="text-orange-700 text-sm mt-1">Drawing reasonable conclusions from available evidence</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Interpretation</h4>
+                      <p className="text-orange-700 text-sm mt-1">Understanding and expressing the meaning of information</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Explanation</h4>
+                      <p className="text-orange-700 text-sm mt-1">Clearly presenting reasoning and results</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Self-regulation</h4>
+                      <p className="text-orange-700 text-sm mt-1">Monitoring and correcting your own thinking</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           
-          <h3 className="text-lg font-semibold mt-6">Why Critical Thinking Matters</h3>
-          <p>
-            In today's information-rich world, critical thinking is essential for:
-          </p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>Making better decisions in personal and professional life</li>
-            <li>Avoiding manipulation by misinformation or propaganda</li>
-            <li>Solving complex problems more effectively</li>
-            <li>Evaluating claims and arguments based on evidence</li>
-            <li>Developing intellectual autonomy and self-confidence</li>
-          </ul>
-          
-          <div className="p-4 bg-orange-50 rounded-md mt-6">
-            <h4 className="font-medium text-orange-800">Key Insight</h4>
-            <p className="text-orange-800">
-              Critical thinking is not about being critical in the negative sense. It's about approaching information 
-              with curiosity and disciplined evaluation rather than passive acceptance.
-            </p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6 mt-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Why Critical Thinking Matters</h3>
+                </div>
+                <p className="text-orange-700 text-sm">Key benefits in today's information-rich society</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                In our complex world filled with an abundance of information, critical thinking skills have become essential for navigating daily life and making informed decisions:
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Better Decisions</h4>
+                      <p className="text-orange-700 text-sm mt-1">Make informed choices in personal and professional life</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Resist Manipulation</h4>
+                      <p className="text-orange-700 text-sm mt-1">Avoid being misled by misinformation or propaganda</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Problem-Solving</h4>
+                      <p className="text-orange-700 text-sm mt-1">Tackle complex problems more systematically and effectively</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Evidence-Based</h4>
+                      <p className="text-orange-700 text-sm mt-1">Evaluate claims and arguments based on credible evidence</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 md:col-span-2">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Personal Confidence</h4>
+                      <p className="text-orange-700 text-sm mt-1">Develop intellectual autonomy and self-confidence in your thinking abilities</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-200 mt-6">
+                <h4 className="font-medium text-orange-800 flex items-center mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Key Insight
+                </h4>
+                <p className="text-orange-800">
+                  Critical thinking is not about being critical in the negative sense. It's about approaching information 
+                  with curiosity and disciplined evaluation rather than passive acceptance.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )
@@ -230,49 +410,210 @@ export default function CriticalThinkingCourse() {
             overcome common biases that can impair critical thinking.
           </p>
           
-          <h3 className="text-lg font-semibold mt-6">Common Cognitive Biases</h3>
-          
-          <div className="space-y-4 mt-4">
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Confirmation Bias</h4>
-              <p className="text-sm">The tendency to search for, interpret, and recall information that confirms pre-existing beliefs</p>
-              <p className="text-sm mt-2 italic">Example: Only reading news sources that align with your political views</p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6 mt-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Common Cognitive Biases</h3>
+                </div>
+                <p className="text-orange-700 text-sm">Mental shortcuts that can distort thinking and decision-making</p>
+              </div>
             </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Anchoring Bias</h4>
-              <p className="text-sm">Relying too heavily on the first piece of information encountered</p>
-              <p className="text-sm mt-2 italic">Example: A $2,000 watch seems reasonable after looking at a $10,000 watch</p>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Availability Heuristic</h4>
-              <p className="text-sm">Overestimating the likelihood of events based on their availability in memory</p>
-              <p className="text-sm mt-2 italic">Example: Fearing air travel after hearing about a plane crash in the news</p>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Dunning-Kruger Effect</h4>
-              <p className="text-sm">Overestimating one's abilities when knowledge or competence is low</p>
-              <p className="text-sm mt-2 italic">Example: A beginner believing they've mastered a skill after basic training</p>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Cognitive biases are systematic errors in thinking that affect our judgments and decisions. They develop as mental shortcuts but can lead to irrational conclusions:
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-orange-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Confirmation Bias</h4>
+                  </div>
+                  <p className="text-gray-700">The tendency to search for, interpret, and recall information that confirms pre-existing beliefs</p>
+                  <div className="mt-3 bg-white p-3 rounded-lg border border-orange-100">
+                    <p className="text-orange-800 text-sm italic flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-0.5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Example: Only reading news sources that align with your political views</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-orange-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Anchoring Bias</h4>
+                  </div>
+                  <p className="text-gray-700">Relying too heavily on the first piece of information encountered when making decisions</p>
+                  <div className="mt-3 bg-white p-3 rounded-lg border border-orange-100">
+                    <p className="text-orange-800 text-sm italic flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-0.5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Example: A $2,000 watch seems reasonable after looking at a $10,000 watch</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-orange-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Availability Heuristic</h4>
+                  </div>
+                  <p className="text-gray-700">Overestimating the likelihood of events based on their availability in memory</p>
+                  <div className="mt-3 bg-white p-3 rounded-lg border border-orange-100">
+                    <p className="text-orange-800 text-sm italic flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-0.5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Example: Fearing air travel after hearing about a plane crash in the news</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-orange-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Dunning-Kruger Effect</h4>
+                  </div>
+                  <p className="text-gray-700">Overestimating one's abilities when knowledge or competence is low</p>
+                  <div className="mt-3 bg-white p-3 rounded-lg border border-orange-100">
+                    <p className="text-orange-800 text-sm italic flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-0.5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Example: A beginner believing they've mastered a skill after basic training</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           
-          <h3 className="text-lg font-semibold mt-6">Overcoming Cognitive Biases</h3>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>Actively seek out contradictory evidence and viewpoints</li>
-            <li>Be aware of your personal biases and blind spots</li>
-            <li>Engage with diverse perspectives and sources</li>
-            <li>Practice intellectual humility and openness to being wrong</li>
-            <li>Use structured decision-making frameworks</li>
-          </ul>
-          
-          <div className="p-4 bg-yellow-50 rounded-md mt-6">
-            <h4 className="font-medium text-yellow-800">Important Note</h4>
-            <p className="text-yellow-800">
-              Everyone has cognitive biases—awareness is the first step to mitigation. Even experts in critical 
-              thinking must constantly work to recognize and overcome their own biases.
-            </p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6 mt-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Overcoming Cognitive Biases</h3>
+                </div>
+                <p className="text-orange-700 text-sm">Strategies for minimizing the impact of biases on thinking</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                While we can't eliminate cognitive biases completely, we can develop practices to minimize their influence on our thinking and decision-making:
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.879-4.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Seek Contrary Evidence</h4>
+                      <p className="text-orange-700 text-sm mt-1">Actively search for information that challenges your existing beliefs</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Self-Awareness</h4>
+                      <p className="text-orange-700 text-sm mt-1">Recognize your personal biases and blind spots</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Diverse Perspectives</h4>
+                      <p className="text-orange-700 text-sm mt-1">Engage with people who think differently than you do</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Intellectual Humility</h4>
+                      <p className="text-orange-700 text-sm mt-1">Practice openness to being wrong and willingness to change your mind</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 sm:col-span-2">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Structured Decision-Making</h4>
+                      <p className="text-orange-700 text-sm mt-1">Use formal frameworks and checklists to make important decisions, reducing the opportunity for biases to take over</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-200 mt-6">
+                <h4 className="font-medium text-orange-800 flex items-center mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Important Note
+                </h4>
+                <p className="text-orange-800">
+                  Everyone has cognitive biases—awareness is the first step to mitigation. Even experts in critical 
+                  thinking must constantly work to recognize and overcome their own biases.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )
@@ -289,55 +630,230 @@ export default function CriticalThinkingCourse() {
             fallacies helps you evaluate arguments more effectively and construct stronger arguments yourself.
           </p>
           
-          <h3 className="text-lg font-semibold mt-6">Common Logical Fallacies</h3>
-          
-          <div className="space-y-4 mt-4">
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Ad Hominem</h4>
-              <p className="text-sm">Attacking the person instead of addressing their argument</p>
-              <p className="text-sm mt-2 italic">Example: "You can't trust his economic policy because he's never had a real job."</p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6 mt-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Common Logical Fallacies</h3>
+                </div>
+                <p className="text-orange-700 text-sm">Frequent errors in reasoning that undermine sound arguments</p>
+              </div>
             </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Straw Man</h4>
-              <p className="text-sm">Misrepresenting someone's argument to make it easier to attack</p>
-              <p className="text-sm mt-2 italic">Example: "You want better healthcare? So you want complete government control of medicine!"</p>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">False Dichotomy</h4>
-              <p className="text-sm">Presenting only two options when others exist</p>
-              <p className="text-sm mt-2 italic">Example: "Either we cut education funding or we go bankrupt."</p>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Appeal to Authority</h4>
-              <p className="text-sm">Claiming something is true because an authority says it is</p>
-              <p className="text-sm mt-2 italic">Example: "This famous doctor endorsed this supplement, so it must work."</p>
-            </div>
-            
-            <div className="border rounded-md p-4">
-              <h4 className="font-medium">Slippery Slope</h4>
-              <p className="text-sm">Asserting that a small first step will inevitably lead to extreme consequences</p>
-              <p className="text-sm mt-2 italic">Example: "If we ban assault rifles, all guns will eventually be banned."</p>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Logical fallacies are errors in reasoning that can make arguments appear stronger than they actually are. Recognizing these patterns helps you evaluate information more critically:
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-orange-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Ad Hominem</h4>
+                  </div>
+                  <p className="text-gray-700">Attacking the person instead of addressing their argument</p>
+                  <div className="mt-3 bg-white p-3 rounded-lg border border-orange-100">
+                    <p className="text-orange-800 text-sm italic flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-0.5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>"You can't trust his economic policy because he's never had a real job."</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-orange-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Straw Man</h4>
+                  </div>
+                  <p className="text-gray-700">Misrepresenting someone's argument to make it easier to attack</p>
+                  <div className="mt-3 bg-white p-3 rounded-lg border border-orange-100">
+                    <p className="text-orange-800 text-sm italic flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-0.5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>"You want better healthcare? So you want complete government control of medicine!"</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-orange-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">False Dichotomy</h4>
+                  </div>
+                  <p className="text-gray-700">Presenting only two options when others exist</p>
+                  <div className="mt-3 bg-white p-3 rounded-lg border border-orange-100">
+                    <p className="text-orange-800 text-sm italic flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-0.5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>"Either we cut education funding or we go bankrupt."</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-orange-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Appeal to Authority</h4>
+                  </div>
+                  <p className="text-gray-700">Claiming something is true because an authority says it is</p>
+                  <div className="mt-3 bg-white p-3 rounded-lg border border-orange-100">
+                    <p className="text-orange-800 text-sm italic flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-0.5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>"This famous doctor endorsed this supplement, so it must work."</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm md:col-span-2">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-orange-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 13l-7 7-7-7m14-8l-7 7-7-7" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Slippery Slope</h4>
+                  </div>
+                  <p className="text-gray-700">Asserting that a small first step will inevitably lead to extreme consequences</p>
+                  <div className="mt-3 bg-white p-3 rounded-lg border border-orange-100">
+                    <p className="text-orange-800 text-sm italic flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-0.5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>"If we ban assault rifles, all guns will eventually be banned."</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           
-          <h3 className="text-lg font-semibold mt-6">How to Spot and Counter Fallacies</h3>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>Focus on the structure of arguments rather than just content</li>
-            <li>Ask what evidence actually supports the conclusion</li>
-            <li>Identify hidden assumptions in the reasoning</li>
-            <li>Consider whether premises logically connect to conclusions</li>
-            <li>Address fallacies by redirecting to the actual argument</li>
-          </ul>
-          
-          <div className="p-4 bg-orange-50 rounded-md mt-6">
-            <h4 className="font-medium text-orange-800">Pro Tip</h4>
-            <p className="text-orange-800">
-              When you spot a fallacy in someone else's argument, pointing it out directly can make them defensive. 
-              Instead, ask questions that help them see the gap in their reasoning.
-            </p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6 mt-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Spotting & Countering Fallacies</h3>
+                </div>
+                <p className="text-orange-700 text-sm">Practical techniques for identifying and addressing logical errors</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Developing your ability to spot logical fallacies takes practice. These strategies will help you identify and respond to fallacious reasoning effectively:
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Analyze Structure</h4>
+                      <p className="text-orange-700 text-sm mt-1">Focus on the structure of arguments rather than just content</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Examine Evidence</h4>
+                      <p className="text-orange-700 text-sm mt-1">Ask what evidence actually supports the conclusion</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Find Assumptions</h4>
+                      <p className="text-orange-700 text-sm mt-1">Identify hidden assumptions in the reasoning</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Check Connections</h4>
+                      <p className="text-orange-700 text-sm mt-1">Consider whether premises logically connect to conclusions</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 sm:col-span-2">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Redirection</h4>
+                      <p className="text-orange-700 text-sm mt-1">Address fallacies by redirecting discussion back to the actual argument rather than getting sidetracked</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-200 mt-6">
+                <h4 className="font-medium text-orange-800 flex items-center mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                  Pro Tip
+                </h4>
+                <p className="text-orange-800">
+                  When you spot a fallacy in someone else's argument, pointing it out directly can make them defensive. 
+                  Instead, ask questions that help them see the gap in their reasoning.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )
