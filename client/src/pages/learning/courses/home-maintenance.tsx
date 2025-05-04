@@ -73,16 +73,16 @@ export default function HomeMaintenanceCourse() {
         </h1>
       </div>
 
-      {/* Banner card - Standardized with Yoga-style UI */}
+      {/* Banner card - Standardized with Yoga-style UI with mint-colored accent */}
       <div className="w-full sm:px-0 mb-6 px-4">
         <Card className="border-0 shadow-sm rounded-none sm:rounded-2xl overflow-hidden w-full">
           {/* Top gradient accent line */}
-          <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+          <div className="h-1.5 bg-gradient-to-r from-teal-300 via-teal-400 to-teal-300"></div>
           
           <div className="p-4 sm:p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center">
-                <Wrench className="h-6 w-6 text-orange-500" />
+              <div className="h-12 w-12 rounded-full bg-teal-100 flex items-center justify-center">
+                <Wrench className="h-6 w-6 text-teal-500" />
               </div>
               <div>
                 <h2 className="text-xl font-semibold">Learn Home Maintenance</h2>
@@ -99,7 +99,7 @@ export default function HomeMaintenanceCourse() {
             <div 
               className={`flex-1 text-center py-2 px-4 rounded-md cursor-pointer transition-all ${
                 activeTab === 'learn' 
-                  ? 'bg-orange-500 text-white shadow-sm' 
+                  ? 'bg-teal-500 text-white shadow-sm' 
                   : 'text-gray-700 hover:bg-gray-200'
               }`}
               onClick={() => handleTabChange('learn')}
@@ -112,7 +112,7 @@ export default function HomeMaintenanceCourse() {
             <div 
               className={`flex-1 text-center py-2 px-4 rounded-md cursor-pointer transition-all ${
                 activeTab === 'practice' 
-                  ? 'bg-orange-500 text-white shadow-sm' 
+                  ? 'bg-teal-500 text-white shadow-sm' 
                   : 'text-gray-700 hover:bg-gray-200'
               }`}
               onClick={() => handleTabChange('practice')}
@@ -125,7 +125,7 @@ export default function HomeMaintenanceCourse() {
             <div 
               className={`flex-1 text-center py-2 px-4 rounded-md cursor-pointer transition-all ${
                 activeTab === 'resources' 
-                  ? 'bg-orange-500 text-white shadow-sm' 
+                  ? 'bg-teal-500 text-white shadow-sm' 
                   : 'text-gray-700 hover:bg-gray-200'
               }`}
               onClick={() => handleTabChange('resources')}
@@ -143,7 +143,7 @@ export default function HomeMaintenanceCourse() {
         <div className="px-4 sm:px-0">
           <Card className="mb-6 border-0 shadow-sm rounded-2xl overflow-hidden">
             {/* Top gradient accent line */}
-            <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+            <div className="h-0.5 bg-gradient-to-r from-teal-300 via-teal-500 to-teal-300"></div>
             
             <CardHeader className="bg-white border-b border-gray-100">
               <CardTitle>Introduction to Home Maintenance</CardTitle>
@@ -241,7 +241,7 @@ export default function HomeMaintenanceCourse() {
         <div className="px-4 sm:px-0">
           <Card className="mb-6 border-0 shadow-sm rounded-2xl overflow-hidden">
             {/* Top gradient accent line */}
-            <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+            <div className="h-0.5 bg-gradient-to-r from-teal-300 via-teal-500 to-teal-300"></div>
             
             <CardHeader className="bg-white border-b border-gray-100">
               <CardTitle>Test Your Knowledge</CardTitle>
@@ -389,7 +389,7 @@ export default function HomeMaintenanceCourse() {
         <div className="px-4 sm:px-0">
           <Card className="mb-6 border-0 shadow-sm rounded-2xl overflow-hidden">
             {/* Top gradient accent line */}
-            <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+            <div className="h-0.5 bg-gradient-to-r from-teal-300 via-teal-500 to-teal-300"></div>
             
             <CardHeader className="bg-white border-b border-gray-100">
               <CardTitle>Home Maintenance Resources</CardTitle>
