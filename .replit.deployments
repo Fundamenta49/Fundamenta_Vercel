@@ -5,9 +5,10 @@
   "healthCheckPath": "/",
   "healthCheckType": "HTTP",
   "healthCheckTimeout": 10,
-  "startCommand": "node cloudrun-health-web.js",
+  "startCommand": "node bare-health.cjs",
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "PORT": "8080"
   },
   "nixPackages": {
     "nodejs-20_x": "nodejs_20"

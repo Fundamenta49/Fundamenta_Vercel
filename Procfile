@@ -1,1 +1,1 @@
-web: node cloudrun-health-web.js
+web: node bare-health.cjs
