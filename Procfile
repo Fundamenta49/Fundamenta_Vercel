@@ -1,1 +1,1 @@
-web: node cloud-server.js
+web: node cloud-server.cjs
