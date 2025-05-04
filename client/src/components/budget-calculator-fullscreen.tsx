@@ -64,6 +64,9 @@ export default function BudgetCalculatorFullscreen({
     { category: "Utilities", amount: 200 },
     { category: "Entertainment", amount: 200 },
   ]);
+  const [totalExpenses, setTotalExpenses] = useState(0);
+  const [remaining, setRemaining] = useState(0);
+  const [expensePercentage, setExpensePercentage] = useState(0);
   const [newExpenseCategory, setNewExpenseCategory] = useState("Other");
   const [newExpenseAmount, setNewExpenseAmount] = useState<number | "">(0);
   const [activeTab, setActiveTab] = useState("budget");
@@ -96,15 +99,20 @@ export default function BudgetCalculatorFullscreen({
 
   useEffect(() => {
     // Calculate total expenses and update the budget data
-    const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-    const remainingAmount = income - totalExpenses;
-    const expensePercentage = (totalExpenses / income) * 100;
+    const calculatedTotalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const calculatedRemaining = income - calculatedTotalExpenses;
+    const calculatedExpensePercentage = (calculatedTotalExpenses / income) * 100;
+    
+    // Update state values
+    setTotalExpenses(calculatedTotalExpenses);
+    setRemaining(calculatedRemaining);
+    setExpensePercentage(calculatedExpensePercentage);
 
     const budgetData: BudgetData = {
       income,
       expenses,
-      remaining: remainingAmount,
-      expensePercentage,
+      remaining: calculatedRemaining,
+      expensePercentage: calculatedExpensePercentage,
       savingsGoals,
       retirementSavings,
     };
@@ -170,10 +178,7 @@ export default function BudgetCalculatorFullscreen({
     setSavingsGoals(newGoals);
   };
 
-  // Calculate totals
-  const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-  const remaining = income - totalExpenses;
-  const expensePercentage = (totalExpenses / income) * 100;
+  // No need to recalculate totals here since we're using state variables
 
   const expenseCategories = [
     "Housing",
