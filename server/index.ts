@@ -26,6 +26,10 @@ log(`Platform: ${process.platform}`);
 
 // Initialize Express
 const app = express();
+
+// Setup CloudRun health checks
+import { setupCloudRunHealth } from './cloud-run-health';
+setupCloudRunHealth(app);
 log(`Express initialized (${Date.now() - startTime}ms)`);
 
 // CRITICAL FIX: First, register the ultra-direct health check for CloudRun compatibility
