@@ -188,9 +188,9 @@ export default function CookingBasics() {
           Cooking Basics
         </h1>
         
-        <Alert variant="default" className="mx-4 sm:mx-0 mb-4 bg-learning-color/10 border-learning-color">
-          <Info className="h-4 w-4 text-learning-color" />
-          <AlertDescription className="text-sm">
+        <Alert variant="default" className="mx-4 sm:mx-0 mb-4 bg-[#FFE8CC] border-orange-500">
+          <Info className="h-4 w-4 text-orange-500" />
+          <AlertDescription className="text-sm text-orange-700">
             Learn essential cooking skills, discover new recipes, and build your confidence in the kitchen.
           </AlertDescription>
         </Alert>
@@ -235,9 +235,9 @@ export default function CookingBasics() {
         {/* Proper container handling for both mobile and desktop */}
         <Card className="border-0 shadow-sm rounded-none sm:rounded-2xl overflow-hidden w-full sm:mx-auto mb-8">
           {/* Top gradient accent line */}
-          <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+          <div className="h-1.5 bg-[#FFE8CC]"></div>
           
-          <div className="relative aspect-video sm:aspect-auto sm:h-[300px] overflow-hidden">
+          <div className="relative aspect-video overflow-hidden">
             <img 
               src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1024&auto=format&fit=crop"
               alt="Kitchen with cooking setup"
@@ -252,7 +252,7 @@ export default function CookingBasics() {
               </p>
               <Button 
                 onClick={() => handleCardClick('intro')}
-                className="bg-white/90 hover:bg-white text-learning-color hover:text-learning-color/90 w-full sm:w-auto mt-2"
+                className="bg-white/90 hover:bg-white text-orange-500 hover:text-orange-600 w-full sm:w-auto mt-2"
                 size="sm"
               >
                 <Book className="h-4 w-4 mr-2" />
@@ -266,7 +266,7 @@ export default function CookingBasics() {
       {/* Grid-style cards layout - Standardized with Yoga UI for both mobile and desktop */}
       <div className="w-full sm:px-6">
         <div className="mb-4 w-full">
-          <h2 className="text-lg font-bold mb-4 px-4 sm:px-0 py-1 bg-learning-color/10 text-learning-color/90 rounded-md border-l-4 border-learning-color">
+          <h2 className="text-lg font-bold mb-4 px-4 sm:px-0 py-1 bg-[#FFE8CC] text-orange-700 rounded-md border-l-4 border-orange-500">
             Cooking Resources
           </h2>
           {/* Grid with standardized gap sizes and improved responsive behavior */}
@@ -277,12 +277,12 @@ export default function CookingBasics() {
                   className="border-0 shadow-sm rounded-xl overflow-hidden h-full w-full cursor-pointer hover:shadow-md hover:translate-y-[-2px] transition-all duration-300"
                   onClick={() => handleCardClick(section.id)}
                 >
-                  {/* iOS-style subtle gradient accent at top */}
-                  <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+                  {/* Top accent line */}
+                  <div className="h-0.5 bg-[#FFE8CC]"></div>
                   
                   <div className="flex flex-col items-center justify-between p-3 sm:p-4 h-full">
                     <div className="flex items-center justify-center h-10 sm:h-14 w-full mb-1 sm:mb-2">
-                      <section.icon className={`w-8 h-8 sm:w-10 sm:h-10 ${section.color}`} />
+                      <section.icon className="w-8 h-8 sm:w-10 sm:h-10 text-orange-500" />
                     </div>
                     
                     <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">{section.title}</span>
