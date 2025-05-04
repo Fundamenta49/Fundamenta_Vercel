@@ -340,20 +340,37 @@ export default function FinancialLiteracyCourse() {
       </div>
 
       <Tabs defaultValue="learn" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="learn">Learn</TabsTrigger>
-          <TabsTrigger value="practice">Practice</TabsTrigger>
+        <TabsList className="h-12 bg-gray-100 p-1.5 rounded-full w-full grid grid-cols-2 max-w-md mx-auto">
+          <TabsTrigger 
+            value="learn" 
+            className="rounded-full text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-emerald-800 data-[state=active]:shadow-sm"
+          >
+            Learn
+          </TabsTrigger>
+          <TabsTrigger 
+            value="practice" 
+            className="rounded-full text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-emerald-800 data-[state=active]:shadow-sm"
+          >
+            Practice
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="learn" className="mt-6">
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Introduction to Financial Literacy</CardTitle>
+          <Card className="mb-6 border-0 shadow-sm rounded-2xl overflow-hidden">
+            {/* iOS-style gradient header bar with finance theme colors */}
+            <div className="h-1.5 bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500"></div>
+            
+            <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
+              <CardTitle className="flex items-center">
+                <DollarSign className="h-5 w-5 mr-2 text-emerald-600" />
+                Introduction to Financial Literacy
+              </CardTitle>
               <CardDescription>
                 Master essential financial concepts to build a secure future
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            
+            <CardContent className="p-4 sm:p-6 bg-gray-50">
               <p className="mb-4">
                 Financial literacy provides the knowledge and skills necessary to make informed and effective decisions 
                 about money management. Whether you're just starting your financial journey or looking to strengthen 
@@ -372,23 +389,33 @@ export default function FinancialLiteracyCourse() {
             {COURSE_MODULES.map((module) => {
               const Icon = module.icon;
               return (
-                <Card key={module.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate(`#${module.id}`)}>
-                  <CardHeader className="pb-2">
+                <Card key={module.id} className="cursor-pointer border-0 shadow-sm rounded-2xl overflow-hidden hover:shadow-md transition-all" onClick={() => navigate(`#${module.id}`)}>
+                  {/* Thin gradient accent line - slightly different for each module to create visual variety */}
+                  <div className={`h-1 ${
+                    module.id === 'fundamentals' ? 'bg-gradient-to-r from-green-400 to-emerald-500' :
+                    module.id === 'budgeting' ? 'bg-gradient-to-r from-emerald-400 to-teal-500' :
+                    module.id === 'credit' ? 'bg-gradient-to-r from-teal-400 to-green-500' :
+                    'bg-gradient-to-r from-green-500 to-teal-400'
+                  }`}></div>
+                  
+                  <CardHeader className="p-4 sm:p-5 pb-2 border-b border-gray-100 bg-white">
                     <CardTitle className="text-base flex items-center">
-                      <Icon className="h-5 w-5 mr-2 text-green-500" />
+                      <Icon className="h-5 w-5 mr-2 text-emerald-600" />
                       {module.title}
                     </CardTitle>
                     <CardDescription>{module.description}</CardDescription>
                   </CardHeader>
-                  <CardContent className="pb-2">
+                  
+                  <CardContent className="p-4 sm:p-5 pb-2 bg-gray-50">
                     <p className="text-sm line-clamp-2">
                       {typeof module.content === 'string' 
                         ? module.content 
                         : 'Explore key concepts and practical applications.'}
                     </p>
                   </CardContent>
-                  <CardFooter>
-                    <Button variant="outline" size="sm" className="w-full">
+                  
+                  <CardFooter className="p-4 sm:p-5 pt-2 bg-gray-50">
+                    <Button variant="outline" size="sm" className="w-full rounded-full hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200">
                       Learn More
                     </Button>
                   </CardFooter>
@@ -406,14 +433,21 @@ export default function FinancialLiteracyCourse() {
         </TabsContent>
         
         <TabsContent value="practice" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Financial Literacy Quiz</CardTitle>
+          <Card className="border-0 shadow-sm rounded-2xl overflow-hidden">
+            {/* iOS-style gradient header bar with finance theme colors */}
+            <div className="h-1.5 bg-gradient-to-r from-emerald-400 via-teal-500 to-green-400"></div>
+            
+            <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
+              <CardTitle className="flex items-center">
+                <BookOpen className="h-5 w-5 mr-2 text-emerald-600" />
+                Financial Literacy Quiz
+              </CardTitle>
               <CardDescription>
                 Test your knowledge of key financial concepts
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            
+            <CardContent className="p-4 sm:p-6 bg-gray-50">
               <p className="mb-6">
                 Take this quiz to assess your understanding of financial literacy concepts. 
                 Each question has one correct answer. Choose the best option for each question.
@@ -421,7 +455,7 @@ export default function FinancialLiteracyCourse() {
               
               {/* Hide Learning Coach button on mobile, show only on SM and larger screens */}
               <div className="mt-8 hidden sm:block">
-                <Button className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto rounded-full px-6 bg-emerald-600 hover:bg-emerald-700">
                   Ask Learning Coach
                 </Button>
               </div>
