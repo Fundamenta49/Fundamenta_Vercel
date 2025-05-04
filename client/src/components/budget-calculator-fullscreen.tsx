@@ -212,8 +212,8 @@ export default function BudgetCalculatorFullscreen({
       </div>
       
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6">
-        <Alert className="mb-6 border-blue-500 bg-blue-50">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6">
+        <Alert className="mb-4 border-blue-500 bg-blue-50">
           <AlertCircle className="h-4 w-4 text-blue-500" />
           <AlertDescription className="text-blue-800 text-sm">
             Changes you make to your budget are automatically saved and will be reflected in your financial dashboard.
@@ -348,31 +348,31 @@ export default function BudgetCalculatorFullscreen({
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="w-full max-w-2xl mx-auto">
               <CardHeader>
                 <CardTitle>Budget Summary</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between">
+              <CardContent className="space-y-6 pb-8">
+                <div className="flex justify-between text-lg">
                   <span>Total Income:</span>
                   <span className="font-bold">${income.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-lg">
                   <span>Total Expenses:</span>
                   <span className="font-bold text-red-500">${totalExpenses.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-lg">
                   <span>Remaining:</span>
                   <span className={`font-bold ${remaining >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                     ${remaining.toFixed(2)}
                   </span>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 pt-2">
                   <div className="flex justify-between">
                     <span>Budget Used:</span>
-                    <span>{expensePercentage.toFixed(1)}%</span>
+                    <span className="font-semibold">{expensePercentage.toFixed(1)}%</span>
                   </div>
-                  <Progress value={expensePercentage} className="h-2" />
+                  <Progress value={expensePercentage} className="h-3" />
                 </div>
               </CardContent>
             </Card>
@@ -523,7 +523,7 @@ export default function BudgetCalculatorFullscreen({
         </Tabs>
         
         {/* Add a more prominent close button at the bottom */}
-        <div className="flex justify-center mt-8 mb-4">
+        <div className="flex justify-center mt-4 mb-2">
           <Button 
             onClick={onClose} 
             className="budget-close-btn px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md flex items-center gap-2"
