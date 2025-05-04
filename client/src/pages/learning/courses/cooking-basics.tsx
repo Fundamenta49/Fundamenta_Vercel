@@ -230,10 +230,10 @@ export default function CookingBasics() {
         </FullScreenDialogContent>
       </FullScreenDialog>
 
-      {/* Introduction Header - Mobile Optimized - Standardized with Yoga style */}
-      <div className="w-full">
-        {/* Removing mx-auto to ensure full-width stretch on mobile */}
-        <Card className="border-0 shadow-sm rounded-none sm:rounded-2xl overflow-hidden w-full mb-8">
+      {/* Introduction Header - Standardized with Yoga style for both mobile and desktop */}
+      <div className="w-full sm:px-6">
+        {/* Proper container handling for both mobile and desktop */}
+        <Card className="border-0 shadow-sm rounded-none sm:rounded-2xl overflow-hidden w-full sm:mx-auto mb-8">
           {/* Top gradient accent line */}
           <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
           
@@ -263,14 +263,14 @@ export default function CookingBasics() {
         </Card>
       </div>
       
-      {/* Grid-style cards layout - Mobile Optimized with Yoga-style standardization */}
-      <div className="w-full">
+      {/* Grid-style cards layout - Standardized with Yoga UI for both mobile and desktop */}
+      <div className="w-full sm:px-6">
         <div className="mb-4 w-full">
-          <h2 className="text-lg font-bold mb-4 px-4 sm:px-6 py-1 bg-learning-color/10 text-learning-color/90 rounded-md border-l-4 border-learning-color">
+          <h2 className="text-lg font-bold mb-4 px-4 sm:px-0 py-1 bg-learning-color/10 text-learning-color/90 rounded-md border-l-4 border-learning-color">
             Cooking Resources
           </h2>
           {/* Grid with standardized gap sizes and improved responsive behavior */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mt-4 px-4 sm:px-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mt-4 px-4 sm:px-0">
             {SECTIONS.map((section) => (
               <div key={section.id} className="flex flex-col h-full w-full">
                 <Card 
