@@ -353,7 +353,7 @@ export default function FinancialLiteracyCourse() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const headerOffset = 80; // Account for fixed header
+      const headerOffset = sectionId === 'credit' ? 120 : 80; // Additional offset for credit section due to sticky header
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
       
@@ -525,8 +525,8 @@ export default function FinancialLiteracyCourse() {
             >
               {/* Display sticky header for active module */}
               {module.id === 'credit' && (
-                <div className={`sticky top-0 z-10 transition-all duration-300 bg-white shadow-sm 
-                  ${activeSection === 'credit' ? 'opacity-100 -mx-4 px-4 py-3 border-b' : 'opacity-0 py-0 h-0 overflow-hidden'}`}>
+                <div className={`sticky top-0 z-50 transition-all duration-300 bg-white shadow-sm 
+                  ${activeSection === 'credit' ? 'opacity-100 -mx-4 px-4 py-3 border-b mb-4' : 'opacity-0 py-0 h-0 overflow-hidden'}`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <CreditCard className="h-5 w-5 mr-2 text-emerald-600" />
@@ -544,7 +544,9 @@ export default function FinancialLiteracyCourse() {
                   </div>
                 </div>
               )}
-              {renderModuleContent(module.id)}
+              <div className={activeSection === 'credit' && module.id === 'credit' ? 'pt-2' : ''}>
+                {renderModuleContent(module.id)}
+              </div>
             </div>
           ))}
         </TabsContent>
