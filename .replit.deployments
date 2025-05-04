@@ -2,10 +2,14 @@
   "deploymentId": "db52ba45-0ef8-411f-af31-4b71e7f22e4c",
   "restartPolicyType": "NEVER", 
   "restartPolicyValue": 1,
-  "healthCheckPath": "/_health",
+  "healthCheckPath": "/",
+  "healthCheckType": "HTTP",
   "healthCheckTimeout": 10,
-  "startCommand": "node health-check-express.js",
+  "startCommand": "node cloudrun-health-web.js",
   "env": {
     "NODE_ENV": "production"
+  },
+  "nixPackages": {
+    "nodejs-20_x": "nodejs_20"
   }
 }

@@ -6,53 +6,77 @@
  */
 
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
+
+// Create a new express app
 const app = express();
+const PORT = process.env.PORT || 8080;
 
-// Health check middleware for CloudRun - multiple paths for maximum compatibility
-const HEALTH_RESPONSE = JSON.stringify({ status: 'ok' });
+// Health check response
+const HEALTH_RESPONSE = { status: 'ok' };
 
-// Handle root path
-app.get('/', (req, res) => {
-  res.status(200).json({ status: 'ok' });
-  console.log(`Health check responded at root path at ${new Date().toISOString()}`);
-});
+// Create static health check files
+fs.writeFileSync(path.join(__dirname, '_health'), JSON.stringify(HEALTH_RESPONSE));
+fs.writeFileSync(path.join(__dirname, 'health'), JSON.stringify(HEALTH_RESPONSE));
 
-// Handle /_health path
-app.get('/_health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
-  console.log(`Health check responded at /_health path at ${new Date().toISOString()}`);
-});
-
-// Handle /health path
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
-  console.log(`Health check responded at /health path at ${new Date().toISOString()}`);
-});
-
-// Handle query parameter health check - domain.com/?health=true
-app.get('/', (req, res, next) => {
-  if (req.query.health === 'true' || req.query['health-check'] === 'true') {
-    res.status(200).json({ status: 'ok' });
-    console.log(`Health check responded to query parameter at ${new Date().toISOString()}`);
-  } else {
-    next();
+// Log all requests for debugging
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  
+  // Check if this is a health check request based on headers
+  const isGoogleHealthCheck = req.headers['user-agent'] && 
+                             (req.headers['user-agent'].includes('GoogleHC') || 
+                              req.headers['user-agent'].includes('kube-probe'));
+  
+  if (isGoogleHealthCheck) {
+    console.log('Detected GoogleHC health check request');
+    return res.status(200).json(HEALTH_RESPONSE);
   }
+  
+  next();
 });
 
-// Fallback route for any other URL
-app.use('*', (req, res) => {
-  res.status(404).json({ error: 'Not found' });
+// Handle root path for CloudRun health checks
+app.get('/', (req, res) => {
+  // Check for health check query parameter
+  if (req.query['health-check'] === 'true' || req.query['health'] === 'true') {
+    console.log('Responding to health check query parameter');
+    return res.status(200).json(HEALTH_RESPONSE);
+  }
+  
+  // Check for JSON Accept header
+  if (req.headers['accept'] && req.headers['accept'].includes('application/json')) {
+    console.log('Responding to JSON accept header');
+    return res.status(200).json(HEALTH_RESPONSE);
+  }
+  
+  // Default response for root path
+  console.log('Sending health check response for root path');
+  res.status(200).json(HEALTH_RESPONSE);
+});
+
+// Explicit health check path
+app.get('/_health', (req, res) => {
+  console.log('Responding to explicit /_health endpoint');
+  res.status(200).json(HEALTH_RESPONSE);
+});
+
+// Alternative health check path
+app.get('/health', (req, res) => {
+  console.log('Responding to explicit /health endpoint');
+  res.status(200).json(HEALTH_RESPONSE);
 });
 
 // Start the server
-const PORT = process.env.PORT || 8080;
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Express health check server running on port ${PORT}`);
-  console.log('Server responds only to GET / with {"status":"ok"}');
+  console.log(`Health check server listening on port ${PORT}`);
+  console.log(`Server time: ${new Date().toISOString()}`);
+  console.log('Ready to handle CloudRun health checks');
 });
 
-// Handle process termination
+// Handle graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down...');
+  console.log('SIGTERM received, shutting down gracefully');
   process.exit(0);
 });
