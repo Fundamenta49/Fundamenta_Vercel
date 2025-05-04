@@ -857,71 +857,307 @@ export default function ConflictResolutionCourse() {
             be adapted to different situations and relationships.
           </p>
           
-          <h3 className="text-lg font-semibold mt-6">The Resolution Process</h3>
-          <div className="space-y-4 mt-4">
-            <div className="border-l-4 border-orange-500 pl-4 py-2">
-              <h4 className="font-medium">1. Create a Suitable Environment</h4>
-              <p className="text-sm">Choose a neutral, private space with enough time to talk without interruption</p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">The Resolution Process</h3>
+                </div>
+                <p className="text-orange-700 text-sm">A step-by-step framework for effectively resolving conflicts</p>
+              </div>
             </div>
-            
-            <div className="border-l-4 border-orange-500 pl-4 py-2">
-              <h4 className="font-medium">2. Clarify Positions and Interests</h4>
-              <p className="text-sm">Distinguish between what people say they want (positions) and why they want it (interests)</p>
-            </div>
-            
-            <div className="border-l-4 border-orange-500 pl-4 py-2">
-              <h4 className="font-medium">3. Focus on Interests, Not Positions</h4>
-              <p className="text-sm">Look beneath surface demands to find underlying needs that might be satisfied in multiple ways</p>
-            </div>
-            
-            <div className="border-l-4 border-orange-500 pl-4 py-2">
-              <h4 className="font-medium">4. Generate Multiple Solutions</h4>
-              <p className="text-sm">Brainstorm options without judgment before evaluating them</p>
-            </div>
-            
-            <div className="border-l-4 border-orange-500 pl-4 py-2">
-              <h4 className="font-medium">5. Evaluate and Select Solutions</h4>
-              <p className="text-sm">Use objective criteria to assess options and choose the best approach</p>
-            </div>
-            
-            <div className="border-l-4 border-orange-500 pl-4 py-2">
-              <h4 className="font-medium">6. Create an Action Plan</h4>
-              <p className="text-sm">Establish who will do what, by when, and how progress will be measured</p>
-            </div>
-            
-            <div className="border-l-4 border-orange-500 pl-4 py-2">
-              <h4 className="font-medium">7. Follow Up</h4>
-              <p className="text-sm">Check in on the implementation and adjust as needed</p>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Following a structured process can help make conflict resolution more manageable and effective. 
+                Here's a proven sequence of steps to work through conflicts systematically:
+              </p>
+              
+              <div className="space-y-4 mt-5">
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 transition-all hover:shadow-md">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 bg-white rounded-full h-8 w-8 flex items-center justify-center mr-4 border border-orange-200">
+                      <span className="text-orange-600 font-semibold">1</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Create a Suitable Environment</h4>
+                      <p className="text-orange-700 mt-1">Choose a neutral, private space with enough time to talk without interruption</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 transition-all hover:shadow-md">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 bg-white rounded-full h-8 w-8 flex items-center justify-center mr-4 border border-orange-200">
+                      <span className="text-orange-600 font-semibold">2</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Clarify Positions and Interests</h4>
+                      <p className="text-orange-700 mt-1">Distinguish between what people say they want (positions) and why they want it (interests)</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 transition-all hover:shadow-md">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 bg-white rounded-full h-8 w-8 flex items-center justify-center mr-4 border border-orange-200">
+                      <span className="text-orange-600 font-semibold">3</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Focus on Interests, Not Positions</h4>
+                      <p className="text-orange-700 mt-1">Look beneath surface demands to find underlying needs that might be satisfied in multiple ways</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 transition-all hover:shadow-md">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 bg-white rounded-full h-8 w-8 flex items-center justify-center mr-4 border border-orange-200">
+                      <span className="text-orange-600 font-semibold">4</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Generate Multiple Solutions</h4>
+                      <p className="text-orange-700 mt-1">Brainstorm options without judgment before evaluating them</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 transition-all hover:shadow-md">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 bg-white rounded-full h-8 w-8 flex items-center justify-center mr-4 border border-orange-200">
+                      <span className="text-orange-600 font-semibold">5</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Evaluate and Select Solutions</h4>
+                      <p className="text-orange-700 mt-1">Use objective criteria to assess options and choose the best approach</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 transition-all hover:shadow-md">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 bg-white rounded-full h-8 w-8 flex items-center justify-center mr-4 border border-orange-200">
+                      <span className="text-orange-600 font-semibold">6</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Create an Action Plan</h4>
+                      <p className="text-orange-700 mt-1">Establish who will do what, by when, and how progress will be measured</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 transition-all hover:shadow-md">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 bg-white rounded-full h-8 w-8 flex items-center justify-center mr-4 border border-orange-200">
+                      <span className="text-orange-600 font-semibold">7</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Follow Up</h4>
+                      <p className="text-orange-700 mt-1">Check in on the implementation and adjust as needed</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           
-          <h3 className="text-lg font-semibold mt-6">Negotiation Principles</h3>
-          <ul className="list-disc pl-5 space-y-2">
-            <li><strong>Separate people from the problem:</strong> Address issues without attacking individuals</li>
-            <li><strong>Focus on interests:</strong> Look for the needs behind stated positions</li>
-            <li><strong>Invent options for mutual gain:</strong> Expand possibilities before narrowing choices</li>
-            <li><strong>Use objective criteria:</strong> Base decisions on fair standards or principles</li>
-            <li><strong>Know your BATNA:</strong> Understand your Best Alternative To a Negotiated Agreement</li>
-          </ul>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Negotiation Principles</h3>
+                </div>
+                <p className="text-orange-700 text-sm">Core concepts for effective negotiation from Harvard's method</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                These principles from the Harvard Negotiation Project provide a foundation for principled negotiation 
+                that can help reach mutually beneficial agreements:
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Separate People from the Problem</h4>
+                      <p className="text-orange-700 text-sm mt-1">Address issues without attacking individuals; be soft on people but hard on problems</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Focus on Interests</h4>
+                      <p className="text-orange-700 text-sm mt-1">Look for the needs, desires, concerns, and fears behind stated positions</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Invent Options for Mutual Gain</h4>
+                      <p className="text-orange-700 text-sm mt-1">Expand possibilities before narrowing choices; look for win-win solutions</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Use Objective Criteria</h4>
+                      <p className="text-orange-700 text-sm mt-1">Base decisions on fair standards, expert opinions, or principles rather than pressure</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 md:col-span-2">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Know Your BATNA</h4>
+                      <p className="text-orange-700 text-sm mt-1">Understand your Best Alternative To a Negotiated Agreement — the course of action you'll take if negotiation fails. A strong BATNA increases your negotiating power.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           
-          <h3 className="text-lg font-semibold mt-6">Mediation Basics</h3>
-          <p>
-            When direct negotiation isn't working, a neutral third party can help:
-          </p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>Creates a safe space for open discussion</li>
-            <li>Ensures both parties are heard</li>
-            <li>Helps identify common ground</li>
-            <li>Facilitates brainstorming solutions</li>
-            <li>Maintains focus on resolution rather than blame</li>
-          </ul>
-          
-          <div className="p-4 bg-green-50 rounded-md mt-6">
-            <h4 className="font-medium text-green-800">Success Strategy</h4>
-            <p className="text-green-800">
-              The most successful conflict resolution occurs when both parties shift from seeing each other as 
-              opponents to viewing themselves as partners in solving a shared problem.
-            </p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Mediation Basics</h3>
+                </div>
+                <p className="text-orange-700 text-sm">When to involve a neutral third party to facilitate resolution</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                When direct negotiation isn't working, a neutral third party mediator can help move the conflict toward resolution. 
+                Here's how mediation can help:
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Safe Space</h4>
+                      <p className="text-orange-700 text-sm mt-1">Creates a neutral environment for open discussion</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Equal Voice</h4>
+                      <p className="text-orange-700 text-sm mt-1">Ensures both parties are heard fairly</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Common Ground</h4>
+                      <p className="text-orange-700 text-sm mt-1">Helps identify shared interests and values</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Idea Generation</h4>
+                      <p className="text-orange-700 text-sm mt-1">Facilitates creative brainstorming of solutions</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Forward Focus</h4>
+                      <p className="text-orange-700 text-sm mt-1">Maintains focus on resolution rather than blame</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-green-50 p-5 rounded-lg border border-green-100 mt-6">
+                <h4 className="font-medium text-green-800 flex items-center mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  Success Strategy
+                </h4>
+                <p className="text-green-800">
+                  The most successful conflict resolution occurs when both parties shift from seeing each other as 
+                  opponents to viewing themselves as partners in solving a shared problem.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )
@@ -939,27 +1175,189 @@ export default function ConflictResolutionCourse() {
             difficult situations.
           </p>
           
-          <h3 className="text-lg font-semibold mt-6">Dealing with Strong Emotions</h3>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>Recognize emotions without being controlled by them</li>
-            <li>Allow emotional expression in controlled ways</li>
-            <li>Take breaks when emotions become overwhelming</li>
-            <li>Use grounding techniques (deep breathing, focusing on physical sensations)</li>
-            <li>Name the emotion to help process it: "I notice I'm feeling frustrated right now"</li>
-          </ul>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Dealing with Strong Emotions</h3>
+                </div>
+                <p className="text-orange-700 text-sm">Strategies for when feelings run high in conflicts</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Strong emotions are natural in conflicts but can derail resolution efforts if not managed effectively.
+                Here are techniques to handle emotional intensity:
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Recognize Emotions</h4>
+                      <p className="text-orange-700 text-sm mt-1">Acknowledge feelings without being controlled by them</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Controlled Expression</h4>
+                      <p className="text-orange-700 text-sm mt-1">Allow emotional expression in appropriate ways</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Take Breaks</h4>
+                      <p className="text-orange-700 text-sm mt-1">Pause when emotions become overwhelming</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Grounding Techniques</h4>
+                      <p className="text-orange-700 text-sm mt-1">Use deep breathing and focus on physical sensations</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Name the Emotion</h4>
+                      <p className="text-orange-700 text-sm mt-1">"I notice I'm feeling frustrated right now"</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           
-          <h3 className="text-lg font-semibold mt-6">Addressing Power Imbalances</h3>
-          <div className="space-y-4 mt-4">
-            <p>
-              Power differences (boss/employee, parent/child, etc.) can complicate conflict resolution:
-            </p>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>Focus on mutual interests and shared goals</li>
-              <li>Use objective standards rather than personal authority</li>
-              <li>Consider involving a mediator or facilitator</li>
-              <li>Document agreements for accountability</li>
-              <li>Ensure psychological safety for the less powerful party</li>
-            </ul>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Addressing Power Imbalances</h3>
+                </div>
+                <p className="text-orange-700 text-sm">Managing conflicts with unequal power dynamics</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Power differences (boss/employee, parent/child, etc.) can complicate conflict resolution.
+                These strategies help create more balanced interactions:
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Use a Neutral Third Party</h4>
+                      <p className="text-orange-700 text-sm mt-1">Consider bringing in a mediator who has no stake in the outcome</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Establish Ground Rules</h4>
+                      <p className="text-orange-700 text-sm mt-1">Set clear guidelines for fair participation by all parties</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Focus on Objective Standards</h4>
+                      <p className="text-orange-700 text-sm mt-1">Use fair principles and mutual interests as decision criteria</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Create a Safe Environment</h4>
+                      <p className="text-orange-700 text-sm mt-1">Ensure all parties feel secure in expressing themselves honestly</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 sm:col-span-2">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Acknowledge the Power Difference</h4>
+                      <p className="text-orange-700 text-sm mt-1">When appropriate, openly recognize the power dynamic to demonstrate awareness and build trust</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           
           <h3 className="text-lg font-semibold mt-6">Cross-Cultural Conflict</h3>
