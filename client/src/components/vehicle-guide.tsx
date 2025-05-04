@@ -372,7 +372,7 @@ export default function VehicleGuide() {
         estimatedTime: 'Variable',
         steps: ["Search YouTube for detailed instructions"],
         tools: ["As shown in video guides"],
-        icon: <Wrench className="h-4 w-4 text-blue-500" />
+        icon: <Wrench className="h-4 w-4 text-orange-500" />
       };
 
       setSelectedTask(searchTask);
@@ -576,10 +576,10 @@ export default function VehicleGuide() {
     <div className={`space-y-6 ${isVideoFocused ? 'overflow-hidden h-screen' : ''}`}>
       <div className={`transition-all duration-300 ${isVideoFocused ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}>
         {/* Vehicle Information Form */}
-        <Card>
-          <CardHeader>
+        <Card className="border-0">
+          <CardHeader className="bg-[#FFE8CC]">
             <CardTitle className="flex items-center gap-2">
-              <Car className="h-5 w-5 text-[#4D9EAF]" />
+              <Car className="h-5 w-5 text-orange-500" />
               Vehicle Maintenance Guide
             </CardTitle>
             <CardDescription>
