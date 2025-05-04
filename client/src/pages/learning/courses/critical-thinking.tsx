@@ -870,80 +870,311 @@ export default function CriticalThinkingCourse() {
             provides frameworks and approaches for applying critical thinking to various contexts and situations.
           </p>
           
-          <h3 className="text-lg font-semibold mt-6">The IDEA Framework for Critical Thinking</h3>
-          
-          <div className="space-y-4 mt-4">
-            <div className="border-l-4 border-orange-500 pl-4 py-2">
-              <h4 className="font-medium">I - Identify</h4>
-              <p className="text-sm">Identify the claim, assertion, or decision to be evaluated</p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6 mt-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">The IDEA Framework</h3>
+                </div>
+                <p className="text-orange-700 text-sm">A systematic approach to critical thinking in any situation</p>
+              </div>
             </div>
-            
-            <div className="border-l-4 border-orange-500 pl-4 py-2">
-              <h4 className="font-medium">D - Determine</h4>
-              <p className="text-sm">Determine relevant facts, evidence, and perspectives</p>
-            </div>
-            
-            <div className="border-l-4 border-orange-500 pl-4 py-2">
-              <h4 className="font-medium">E - Evaluate</h4>
-              <p className="text-sm">Evaluate the quality of information and logic of arguments</p>
-            </div>
-            
-            <div className="border-l-4 border-orange-500 pl-4 py-2">
-              <h4 className="font-medium">A - Act</h4>
-              <p className="text-sm">Act based on your reasoned conclusion</p>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                The IDEA framework provides a structured approach to critical thinking that you can apply to virtually any decision or evaluation:
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="flex items-center justify-center bg-orange-100 rounded-full h-10 w-10 mr-3">
+                      <span className="font-bold text-orange-500 text-lg">I</span>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Identify</h4>
+                  </div>
+                  <p className="text-gray-700">Clearly identify the claim, assertion, or decision that needs to be evaluated</p>
+                  <div className="mt-3 bg-white p-3 rounded-lg border border-orange-100">
+                    <p className="text-orange-800 text-sm flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-0.5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      <span>Example: "What exactly is being claimed in this article about climate change?"</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="flex items-center justify-center bg-orange-100 rounded-full h-10 w-10 mr-3">
+                      <span className="font-bold text-orange-500 text-lg">D</span>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Determine</h4>
+                  </div>
+                  <p className="text-gray-700">Gather and determine what facts, evidence, and perspectives are relevant</p>
+                  <div className="mt-3 bg-white p-3 rounded-lg border border-orange-100">
+                    <p className="text-orange-800 text-sm flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-0.5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      <span>Example: "What scientific studies, data, and expert opinions relate to this climate claim?"</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="flex items-center justify-center bg-orange-100 rounded-full h-10 w-10 mr-3">
+                      <span className="font-bold text-orange-500 text-lg">E</span>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Evaluate</h4>
+                  </div>
+                  <p className="text-gray-700">Critically evaluate the quality, credibility, and logic of the information and arguments</p>
+                  <div className="mt-3 bg-white p-3 rounded-lg border border-orange-100">
+                    <p className="text-orange-800 text-sm flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-0.5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      <span>Example: "Are these climate studies peer-reviewed? Do the conclusions logically follow from the data?"</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="flex items-center justify-center bg-orange-100 rounded-full h-10 w-10 mr-3">
+                      <span className="font-bold text-orange-500 text-lg">A</span>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Act</h4>
+                  </div>
+                  <p className="text-gray-700">Make a decision or form a conclusion based on your reasoned evaluation</p>
+                  <div className="mt-3 bg-white p-3 rounded-lg border border-orange-100">
+                    <p className="text-orange-800 text-sm flex items-start">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 mt-0.5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      <span>Example: "Based on credible evidence, I'll adjust my lifestyle to reduce my carbon footprint."</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           
-          <h3 className="text-lg font-semibold mt-6">Applying Critical Thinking to Different Contexts</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            <div className="border rounded-md p-4 bg-gray-50">
-              <h4 className="font-medium">Media & News</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Verify information with multiple credible sources</li>
-                <li>Distinguish between facts and opinions</li>
-                <li>Recognize emotional manipulation techniques</li>
-                <li>Consider what information might be missing</li>
-              </ul>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6 mt-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Real-World Applications</h3>
+                </div>
+                <p className="text-orange-700 text-sm">How to apply critical thinking in different contexts</p>
+              </div>
             </div>
-            
-            <div className="border rounded-md p-4 bg-gray-50">
-              <h4 className="font-medium">Personal Decisions</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Clarify your goals and values</li>
-                <li>Generate multiple alternatives</li>
-                <li>Evaluate pros and cons systematically</li>
-                <li>Consider long-term implications</li>
-              </ul>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Critical thinking is most valuable when applied to real-life situations. Here are strategies for using critical thinking across various aspects of your daily life:
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-orange-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Media & News</h4>
+                  </div>
+                  <ul className="space-y-2">
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Verify information with multiple credible sources</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Distinguish between facts and opinions</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Recognize emotional manipulation techniques</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Consider what information might be missing</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-orange-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Personal Decisions</h4>
+                  </div>
+                  <ul className="space-y-2">
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Clarify your goals and values</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Generate multiple alternatives</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Evaluate pros and cons systematically</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Consider long-term implications</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-orange-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Workplace</h4>
+                  </div>
+                  <ul className="space-y-2">
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Define problems clearly before solving</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Gather relevant data and expertise</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Challenge group assumptions</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Evaluate solutions against objectives</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-orange-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-orange-800 text-lg">Social Media</h4>
+                  </div>
+                  <ul className="space-y-2">
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Be skeptical of viral content</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Check the source and creation date</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Look for context before sharing</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm">Be aware of algorithmic bubbles</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-200 mt-6">
+                <h4 className="font-medium text-orange-800 flex items-center mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  Success Strategy
+                </h4>
+                <p className="text-orange-800">
+                  Start small by applying critical thinking to one area of your life. As it becomes habitual, expand 
+                  to other areas. The skill strengthens with regular practice.
+                </p>
+              </div>
             </div>
-            
-            <div className="border rounded-md p-4 bg-gray-50">
-              <h4 className="font-medium">Workplace</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Define problems clearly before solving</li>
-                <li>Gather relevant data and expertise</li>
-                <li>Challenge group assumptions</li>
-                <li>Evaluate solutions against objectives</li>
-              </ul>
-            </div>
-            
-            <div className="border rounded-md p-4 bg-gray-50">
-              <h4 className="font-medium">Social Media</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Be skeptical of viral content</li>
-                <li>Check the source and creation date</li>
-                <li>Look for context before sharing</li>
-                <li>Be aware of algorithmic bubbles</li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="p-4 bg-green-50 rounded-md mt-6">
-            <h4 className="font-medium text-green-800">Success Strategy</h4>
-            <p className="text-green-800">
-              Start small by applying critical thinking to one area of your life. As it becomes habitual, expand 
-              to other areas. The skill strengthens with regular practice.
-            </p>
           </div>
         </div>
       )
