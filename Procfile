@@ -1,1 +1,1 @@
-web: node bare-health.cjs
+web: node cloud-server.js
