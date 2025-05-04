@@ -1360,80 +1360,315 @@ export default function ConflictResolutionCourse() {
             </div>
           </div>
           
-          <h3 className="text-lg font-semibold mt-6">Cross-Cultural Conflict</h3>
-          <div className="space-y-4 mt-4">
-            <p>
-              Cultural differences can lead to misunderstandings and conflicts:
-            </p>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>Be aware of different communication styles (direct vs. indirect)</li>
-              <li>Recognize varying attitudes toward hierarchy and authority</li>
-              <li>Understand different approaches to time and deadlines</li>
-              <li>Consider collectivist vs. individualist cultural values</li>
-              <li>Ask questions to understand cultural context rather than making assumptions</li>
-            </ul>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Cross-Cultural Conflict</h3>
+                </div>
+                <p className="text-orange-700 text-sm">Navigating conflicts across cultural differences</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Cultural differences can lead to significant misunderstandings and conflicts.
+                Here are important factors to consider in cross-cultural conflict resolution:
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Communication Styles</h4>
+                      <p className="text-orange-700 text-sm mt-1">Be aware of direct vs. indirect communication preferences</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Hierarchy Attitudes</h4>
+                      <p className="text-orange-700 text-sm mt-1">Recognize varying approaches to authority and status</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Time Orientation</h4>
+                      <p className="text-orange-700 text-sm mt-1">Understand different approaches to time and deadlines</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Group Orientation</h4>
+                      <p className="text-orange-700 text-sm mt-1">Consider collectivist vs. individualist cultural values</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 md:col-span-2">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Ask, Don't Assume</h4>
+                      <p className="text-orange-700 text-sm mt-1">Ask questions to understand cultural context rather than making assumptions based on stereotypes or limited knowledge</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           
-          <h3 className="text-lg font-semibold mt-6">Dealing with Difficult Personalities</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            <div className="border rounded-md p-4 bg-gray-50">
-              <h4 className="font-medium">The Aggressive Person</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Stay calm and don't match their intensity</li>
-                <li>Set clear boundaries on acceptable behavior</li>
-                <li>Use timeouts if necessary</li>
-                <li>Focus on the issue, not the attacks</li>
-              </ul>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Difficult Personality Types</h3>
+                </div>
+                <p className="text-orange-700 text-sm">Tailored approaches for challenging interpersonal dynamics</p>
+              </div>
             </div>
-            
-            <div className="border rounded-md p-4 bg-gray-50">
-              <h4 className="font-medium">The Passive-Aggressive Person</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Address behaviors directly but non-accusatorily</li>
-                <li>Create safety for honest expression</li>
-                <li>Focus on specific actions, not character</li>
-                <li>Be patient but persistent</li>
-              </ul>
-            </div>
-            
-            <div className="border rounded-md p-4 bg-gray-50">
-              <h4 className="font-medium">The Stonewaller</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Take breaks when communication shuts down</li>
-                <li>Try different formats (writing vs. talking)</li>
-                <li>Use gentle, open-ended questions</li>
-                <li>Express the importance of their input</li>
-              </ul>
-            </div>
-            
-            <div className="border rounded-md p-4 bg-gray-50">
-              <h4 className="font-medium">The Victim</h4>
-              <ul className="list-disc pl-5 mt-2 text-sm space-y-1">
-                <li>Validate feelings without reinforcing helplessness</li>
-                <li>Focus on what can be controlled</li>
-                <li>Encourage solution-oriented thinking</li>
-                <li>Break problems into manageable pieces</li>
-              </ul>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                Some personality types present specific challenges in conflict resolution. 
+                These targeted strategies can help navigate difficult interpersonal dynamics:
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div className="bg-gradient-to-br from-white to-red-50 p-5 rounded-lg border border-red-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-red-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-red-500">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-red-800 text-lg">The Aggressive Person</h4>
+                  </div>
+                  <p className="text-gray-700 mb-3">Confrontational, intimidating, and sometimes hostile in conflicts</p>
+                  <div className="bg-white p-3 rounded-lg border border-red-100">
+                    <h5 className="font-medium text-red-700 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      Effective Strategies:
+                    </h5>
+                    <ul className="mt-2 space-y-2 pl-6 list-disc text-gray-700">
+                      <li>Stay calm and don't match their intensity</li>
+                      <li>Set clear boundaries on acceptable behavior</li>
+                      <li>Use timeouts if necessary</li>
+                      <li>Focus on the issue, not the attacks</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-white to-blue-50 p-5 rounded-lg border border-blue-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-blue-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-blue-500">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 13l-7 7-7-7m14-8l-7 7-7-7" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-blue-800 text-lg">The Passive-Aggressive Person</h4>
+                  </div>
+                  <p className="text-gray-700 mb-3">Indirect resistance, avoids direct confrontation but expresses negativity indirectly</p>
+                  <div className="bg-white p-3 rounded-lg border border-blue-100">
+                    <h5 className="font-medium text-blue-700 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      Effective Strategies:
+                    </h5>
+                    <ul className="mt-2 space-y-2 pl-6 list-disc text-gray-700">
+                      <li>Address behaviors directly but non-accusatorily</li>
+                      <li>Create safety for honest expression</li>
+                      <li>Focus on specific actions, not character</li>
+                      <li>Be patient but persistent</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-white to-gray-50 p-5 rounded-lg border border-gray-200 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-gray-200 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-gray-500">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11v.01M12 11v.01M8 11v.01" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-gray-800 text-lg">The Stonewaller</h4>
+                  </div>
+                  <p className="text-gray-700 mb-3">Withdraws from communication, refuses to engage or respond</p>
+                  <div className="bg-white p-3 rounded-lg border border-gray-200">
+                    <h5 className="font-medium text-gray-700 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      Effective Strategies:
+                    </h5>
+                    <ul className="mt-2 space-y-2 pl-6 list-disc text-gray-700">
+                      <li>Take breaks when communication shuts down</li>
+                      <li>Try different formats (writing vs. talking)</li>
+                      <li>Use gentle, open-ended questions</li>
+                      <li>Express the importance of their input</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-white to-purple-50 p-5 rounded-lg border border-purple-100 shadow-sm">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-purple-100 rounded-full p-2 mr-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-purple-500">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-purple-800 text-lg">The Victim</h4>
+                  </div>
+                  <p className="text-gray-700 mb-3">Avoids taking responsibility, feels helpless, blames others</p>
+                  <div className="bg-white p-3 rounded-lg border border-purple-100">
+                    <h5 className="font-medium text-purple-700 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                      Effective Strategies:
+                    </h5>
+                    <ul className="mt-2 space-y-2 pl-6 list-disc text-gray-700">
+                      <li>Validate feelings without reinforcing helplessness</li>
+                      <li>Focus on what can be controlled</li>
+                      <li>Encourage solution-oriented thinking</li>
+                      <li>Break problems into manageable pieces</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           
-          <h3 className="text-lg font-semibold mt-6">When to Step Back</h3>
-          <p>
-            Sometimes the wisest approach is to recognize when a conflict can't be resolved immediately:
-          </p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>When safety is at risk (physical or psychological)</li>
-            <li>When one party is unwilling to engage in good faith</li>
-            <li>When the timing is wrong (e.g., during crisis or extreme stress)</li>
-            <li>When professional help is needed (counselor, mediator, lawyer)</li>
-          </ul>
-          
-          <div className="p-4 bg-purple-50 rounded-md mt-6">
-            <h4 className="font-medium text-purple-800">Wisdom Note</h4>
-            <p className="text-purple-800">
-              Not all conflicts need to be resolved immediately. Sometimes setting the issue aside temporarily 
-              or agreeing to disagree respectfully is the best approach. Choose your battles wisely.
-            </p>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">When to Step Back</h3>
+                </div>
+                <p className="text-orange-700 text-sm">Recognizing when conflicts need space or professional help</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                While resolving conflicts directly is often best, there are times when stepping back is the wisest approach. 
+                Consider these situations where immediate resolution may not be possible or advisable:
+              </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Safety Concerns</h4>
+                      <p className="text-orange-700 text-sm mt-1">When physical or psychological safety is at risk</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Bad Faith Engagement</h4>
+                      <p className="text-orange-700 text-sm mt-1">When one party is unwilling to engage honestly or constructively</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Poor Timing</h4>
+                      <p className="text-orange-700 text-sm mt-1">During crisis, extreme stress, or when emotions are too high</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100">
+                  <div className="flex items-start gap-2">
+                    <div className="bg-orange-100 rounded-full p-1 mt-1 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-800">Need For Expertise</h4>
+                      <p className="text-orange-700 text-sm mt-1">When professional help is needed (counselor, mediator, lawyer)</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-[#FFE8CC] p-5 rounded-lg border border-orange-200 mt-6">
+                <h4 className="font-medium text-orange-800 flex items-center mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Wisdom Note
+                </h4>
+                <p className="text-orange-800">
+                  Not all conflicts need to be resolved immediately. Sometimes setting the issue aside temporarily 
+                  or agreeing to disagree respectfully is the best approach. Choose your battles wisely and know when
+                  to preserve your energy and wellbeing.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )
