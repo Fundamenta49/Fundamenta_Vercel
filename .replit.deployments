@@ -1,0 +1,7 @@
+{
+  "startCommand": "npm start",
+  "buildCommand": "npm run build",
+  "entrypoint": "dist/index.js",
+  "installCommand": "npm ci",
+  "deploymentTarget": "cloudrun"
+}
