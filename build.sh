@@ -56,8 +56,15 @@ chmod -R 755 dist dist/data 2>/dev/null || true
 
 echo "Build preparation complete!"
 
-# Run the regular build
-npm run build
+# Run the modified build to ensure health checks are included
+echo "Running customized build process..."
+
+# First, build the frontend with Vite
+vite build
+
+# Then build the backend with esbuild, explicitly including health-checks.ts
+echo "Building backend with health-checks module..."
+esbuild server/index.ts server/health-checks.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
 
 # Final check - ensure health check file is available
 echo "Adding deployment health check verification..."
@@ -73,5 +80,60 @@ fi
 # Log verification of health check
 echo '// Deployment health check verification' >> dist/index.js
 echo 'console.log("Root health check endpoint is configured and ready for deployment");' >> dist/index.js
+
+# Add boot-time self-test for health check availability
+echo "Adding health check self-test..."
+cat >> dist/index.js << 'EOF'
+
+// Self-test for health check (runs at startup)
+setTimeout(async () => {
+  try {
+    console.log("Running health check self-test...");
+    const http = (await import('node:http')).default;
+    
+    const options = {
+      hostname: 'localhost',
+      port: process.env.PORT || 5000,
+      path: '/',
+      method: 'GET',
+      timeout: 2000,
+    };
+    
+    const req = http.request(options, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        if (res.statusCode === 200) {
+          try {
+            const healthData = JSON.parse(data);
+            if (healthData && healthData.status === 'ok') {
+              console.log("✅ Health check self-test passed: Root endpoint returns correct JSON response");
+            } else {
+              console.log("⚠️ Health check self-test warning: Response format incorrect", healthData);
+            }
+          } catch (e) {
+            console.log("⚠️ Health check self-test warning: Response not valid JSON", data);
+          }
+        } else {
+          console.log(`⚠️ Health check self-test warning: Status code ${res.statusCode}`);
+        }
+      });
+    });
+    
+    req.on('error', (e) => {
+      console.log(`⚠️ Health check self-test error: ${e.message}`);
+    });
+    
+    req.on('timeout', () => {
+      console.log("⚠️ Health check self-test warning: Request timed out");
+      req.destroy();
+    });
+    
+    req.end();
+  } catch (error) {
+    console.log(`⚠️ Health check self-test error: ${error.message}`);
+  }
+}, 3000); // Wait 3 seconds after startup to run test
+EOF
 
 echo "Build fully completed!"

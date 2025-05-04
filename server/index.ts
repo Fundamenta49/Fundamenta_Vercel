@@ -21,6 +21,10 @@ log(`Platform: ${process.platform}`);
 const app = express();
 log(`Express initialized (${Date.now() - startTime}ms)`);
 
+// Root health check middleware - this must be FIRST, before any other middleware
+app.use(rootHealthCheckMiddleware);
+log("Root health check middleware registered as first priority middleware");
+
 // Basic middleware setup with increased JSON payload limit
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
