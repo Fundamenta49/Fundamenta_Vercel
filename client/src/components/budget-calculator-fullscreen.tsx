@@ -350,7 +350,7 @@ export default function BudgetCalculatorFullscreen({
             </Card>
             
             {/* Enhanced Budget Summary Card with expense categories */}
-            <div className="w-full">
+            <div className="w-full px-0 md:px-4 lg:px-6">
               <BudgetSummaryCard
                 income={income}
                 totalExpenses={totalExpenses}
