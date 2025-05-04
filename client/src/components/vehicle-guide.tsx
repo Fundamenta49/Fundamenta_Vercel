@@ -806,7 +806,7 @@ export default function VehicleGuide() {
                         <Badge
                           key={idx}
                           variant="outline"
-                          className="cursor-pointer hover:bg-primary/10 transition-colors"
+                          className="cursor-pointer hover:bg-[#FFE8CC] transition-colors"
                           onClick={() => loadSavedVehicle(vehicle)}
                         >
                           {vehicle.year} {vehicle.make} {vehicle.model}
@@ -880,7 +880,7 @@ export default function VehicleGuide() {
                     variant="outline"
                     onClick={addCustomTask}
                     disabled={!customMaintenanceQuery.trim() || !isVehicleInfoComplete()}
-                    className="w-full hover:bg-primary/5"
+                    className="w-full hover:bg-[#FFE8CC]"
                   >
                     <Star className="h-4 w-4 mr-1 sm:mr-2 flex-shrink-0" />
                     <span className="truncate">Save Task</span>
@@ -908,7 +908,7 @@ export default function VehicleGuide() {
                             fetchYouTubeVideos(task);
                           }
                         }}
-                        className="flex items-center justify-between py-3 hover:bg-primary/5 cursor-pointer"
+                        className="flex items-center justify-between py-3 hover:bg-[#FFE8CC] cursor-pointer"
                       >
                         <div className="flex items-center gap-2 min-w-0">
                           <span className="flex-shrink-0">

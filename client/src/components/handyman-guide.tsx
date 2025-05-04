@@ -264,7 +264,7 @@ export default function HandymanGuide() {
                 variant="outline"
                 onClick={addCustomTask}
                 disabled={!customMaintenanceQuery.trim()}
-                className="flex-none hover:bg-wood hover:text-[#f4f1de]"
+                className="flex-none hover:bg-[#FFE8CC] hover:text-orange-800"
               >
                 <Star className="h-4 w-4 mr-2" />
                 Save
@@ -294,7 +294,7 @@ export default function HandymanGuide() {
                       setSelectedTask(id);
                       fetchYouTubeVideos(task.title);
                     }}
-                    className="flex items-center justify-between py-2 hover:bg-wood/5"
+                    className="flex items-center justify-between py-2 hover:bg-[#FFE8CC]"
                   >
                     <div className="flex items-center gap-2">
                       {task.isCustom ? (
@@ -385,7 +385,7 @@ export default function HandymanGuide() {
                           <h3 className="font-medium text-md line-clamp-2">{video.title}</h3>
                           <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
                             <Badge variant="outline" className="bg-[#FFE8CC] text-orange-700 border-orange-200">Beginner</Badge>
-                            <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-100">Free</Badge>
+                            <Badge variant="outline" className="bg-[#FFE8CC] text-orange-700 border-orange-200">Free</Badge>
                           </div>
                         </div>
                       </div>
