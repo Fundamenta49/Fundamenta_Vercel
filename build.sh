@@ -35,6 +35,15 @@ else
   echo "Warning: client/src/data directory not found"
 fi
 
+# Copy public assets folder if it exists
+if [ -d client/public ]; then
+  echo "Copying client public assets to dist/public"
+  mkdir -p dist/public
+  cp -r client/public/* dist/public/
+else 
+  echo "Warning: client/public directory not found"
+fi
+
 # Fix permissions for all data files
 echo "Setting correct permissions for data files"
 if [ -d dist/data ]; then
@@ -50,8 +59,18 @@ echo "Build preparation complete!"
 # Run the regular build
 npm run build
 
-# Final check - make sure the root health endpoint will be served
-echo "Adding deployment checks..."
+# Final check - ensure health check file is available
+echo "Adding deployment health check verification..."
+if [ -f dist/health-checks.js ]; then
+  echo "health-checks.js found - health check should be working properly"
+else 
+  echo "WARNING: health-checks.js not found in dist directory!"
+  echo "Copying health-checks.js module..."
+  cp server/health-checks.ts dist/health-checks.js
+  echo "// Make sure middleware is properly registered" >> dist/health-checks.js
+fi
+
+# Log verification of health check
 echo '// Deployment health check verification' >> dist/index.js
 echo 'console.log("Root health check endpoint is configured and ready for deployment");' >> dist/index.js
 

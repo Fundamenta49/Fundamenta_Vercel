@@ -8,6 +8,7 @@ import { runAllMigrations } from "./db/index";
 import { ensureTables } from "./db";
 import { initializeFundiCore } from "./fundi-core/fundi-integration";
 import { performDatabaseMaintenance, performAggressiveCleanup } from "./maintenance";
+import { rootHealthCheckMiddleware } from "./health-checks";
 
 const startTime = Date.now();
 log("Starting server...");
@@ -67,21 +68,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health check endpoints
-app.get("/api/health", (_req, res) => {
-  const health = {
-    status: "ok",
-    uptime: Date.now() - startTime,
-    environment: process.env.NODE_ENV,
-    port: process.env.PORT || 5000,
-    timestamp: new Date().toISOString(),
-    pid: process.pid
-  };
-  log(`Health check requested, responding with: ${JSON.stringify(health)}`);
-  res.json(health);
-});
+// Root health check middleware - this will be used for CloudRun deployment checks
+app.use(rootHealthCheckMiddleware);
 
-// Health check endpoints
+// API health check endpoint
 app.get("/api/health", (_req, res) => {
   const health = {
     status: "ok",
@@ -93,18 +83,6 @@ app.get("/api/health", (_req, res) => {
   };
   log(`API health check requested, responding with: ${JSON.stringify(health)}`);
   res.json(health);
-});
-
-// Root health check endpoint for deployment checks (needs to be before any other middleware)
-app.get("/", (_req, res) => {
-  const health = {
-    status: "ok",
-    uptime: Date.now() - startTime,
-    environment: process.env.NODE_ENV,
-    timestamp: new Date().toISOString()
-  };
-  log(`Root health check requested, responding with: ${JSON.stringify(health)}`);
-  res.status(200).json(health);
 });
 
 // Maintenance endpoint - protected with a simple key to prevent unauthorized access
