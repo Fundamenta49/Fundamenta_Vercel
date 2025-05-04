@@ -45,6 +45,7 @@ import VehicleMaintenanceCourse from "@/pages/learning/courses/vehicle-maintenan
 import HomeMaintenanceCourse from "@/pages/learning/courses/home-maintenance";
 import CookingBasicsCourse from "@/pages/learning/courses/cooking-basics";
 import HealthWellnessCourse from "@/pages/learning/courses/health-wellness";
+import FinancialLiteracyCourse from "@/pages/learning/courses/financial-literacy";
 import CriticalThinkingCourse from "@/pages/learning/courses/critical-thinking";
 import ConflictResolutionCourse from "@/pages/learning/courses/conflict-resolution";
 import DecisionMakingCourse from "@/pages/learning/courses/decision-making";
@@ -368,6 +369,11 @@ function Router() {
             <Route path="/learning/courses/economics">
               <ProtectedRoute>
                 <EconomicsCourse />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning/courses/financial-literacy">
+              <ProtectedRoute>
+                <FinancialLiteracyCourse />
               </ProtectedRoute>
             </Route>
             <Route path="/learning/courses/critical-thinking">
