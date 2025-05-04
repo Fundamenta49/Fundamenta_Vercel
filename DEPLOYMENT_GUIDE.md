@@ -25,12 +25,12 @@ Note: We're using the CommonJS (.cjs) file extension to avoid ES module system c
 If the primary solution doesn't work, try one of these alternatives:
 
 1. **Ultra-Minimal HTTP Server**:
-   - `cloudrun-health-web.js`: Bare-bones HTTP server with zero dependencies
-   - Update Procfile to: `web: node cloudrun-health-web.js`
+   - `cloudrun-health-web.cjs`: Bare-bones HTTP server with zero dependencies
+   - Update Procfile to: `web: node cloudrun-health-web.cjs`
 
 2. **Express-based Health Check Server**:
-   - `health-check-express.js`: Minimal Express server for health checks
-   - Update Procfile to: `web: node health-check-express.js`
+   - `health-check-express.cjs`: Minimal Express server for health checks
+   - Update Procfile to: `web: node health-check-express.cjs`
 
 ## Deployment Steps
 
@@ -97,17 +97,17 @@ For persistent deployment issues:
 1. If `cloud-server.cjs` doesn't work, try:
    ```
    # In Procfile
-   web: node cloudrun-health-web.js
+   web: node cloudrun-health-web.cjs
    ```
 
 2. If that fails too, try:
    ```
    # In Procfile
-   web: node health-check-express.js
+   web: node health-check-express.cjs
    ```
 
 ### Extreme Simplification
-Create a new file `bare-minimum.js`:
+Create a new file `bare-minimum.cjs`:
 ```javascript
 require('http').createServer((req, res) => {
   res.writeHead(200, {'Content-Type': 'application/json'});
@@ -117,7 +117,7 @@ require('http').createServer((req, res) => {
 
 Update Procfile:
 ```
-web: node bare-minimum.js
+web: node bare-minimum.cjs
 ```
 
 ### CloudRun Deployment Verification
