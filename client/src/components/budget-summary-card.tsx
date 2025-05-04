@@ -50,16 +50,16 @@ export default function BudgetSummaryCard({
           <div className="space-y-4">
             <div className="flex justify-between text-lg">
               <span>Total Income:</span>
-              <span className="font-bold">{formatCurrencyPrecise(income)}</span>
+              <span className="font-bold">${formatCurrencyPrecise(income)}</span>
             </div>
             <div className="flex justify-between text-lg">
               <span>Total Expenses:</span>
-              <span className="font-bold text-red-500">{formatCurrencyPrecise(totalExpenses)}</span>
+              <span className="font-bold text-red-500">${formatCurrencyPrecise(totalExpenses)}</span>
             </div>
             <div className="flex justify-between text-lg">
               <span>Remaining:</span>
               <span className={`font-bold ${remaining >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                {formatCurrencyPrecise(remaining)}
+                ${formatCurrencyPrecise(remaining)}
               </span>
             </div>
             <div className="space-y-2 pt-2">
@@ -89,7 +89,7 @@ export default function BudgetSummaryCard({
                       <div className="flex justify-between text-sm mb-1">
                         <span className="font-medium">{expense.category}</span>
                         <div className="flex items-center gap-2">
-                          <span className="text-gray-500">{formatCurrencyPrecise(expense.amount)}</span>
+                          <span className="text-gray-500">${formatCurrencyPrecise(expense.amount)}</span>
                           <span className="font-semibold">{percent}%</span>
                         </div>
                       </div>
@@ -112,15 +112,15 @@ export default function BudgetSummaryCard({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-slate-50 p-4 rounded-lg text-center">
               <div className="text-sm text-gray-500">Daily Available</div>
-              <div className="text-lg font-semibold text-green-600">{formatCurrencyPrecise(dailyBudgetValue)}</div>
+              <div className="text-lg font-semibold text-green-600">${formatCurrencyPrecise(dailyBudgetValue)}</div>
             </div>
             <div className="bg-slate-50 p-4 rounded-lg text-center">
               <div className="text-sm text-gray-500">Weekly Available</div>
-              <div className="text-lg font-semibold text-green-600">{formatCurrencyPrecise(weeklyBudgetValue)}</div>
+              <div className="text-lg font-semibold text-green-600">${formatCurrencyPrecise(weeklyBudgetValue)}</div>
             </div>
             <div className="bg-slate-50 p-4 rounded-lg text-center">
               <div className="text-sm text-gray-500">Annual Savings</div>
-              <div className="text-lg font-semibold text-green-600">{formatCurrencyPrecise(annualSavingsValue)}</div>
+              <div className="text-lg font-semibold text-green-600">${formatCurrencyPrecise(annualSavingsValue)}</div>
             </div>
           </div>
         </div>
@@ -160,7 +160,7 @@ export default function BudgetSummaryCard({
                       <div className="font-medium">Rent Payment</div>
                       <div className="text-gray-500">Due in 5 days</div>
                     </div>
-                    <span className="font-semibold">{formatCurrencyPrecise(1500)}</span>
+                    <span className="font-semibold">${formatCurrencyPrecise(1500)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <div>
