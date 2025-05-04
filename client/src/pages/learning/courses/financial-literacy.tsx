@@ -530,7 +530,7 @@ export default function FinancialLiteracyCourse() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <CreditCard className="h-5 w-5 mr-2 text-emerald-600" />
-                      <h3 className="text-lg font-medium">Understanding Credit</h3>
+                      <h3 className="text-lg font-medium">Credit</h3>
                     </div>
                     <Button 
                       variant="ghost" 
