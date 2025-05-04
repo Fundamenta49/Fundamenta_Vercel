@@ -167,14 +167,14 @@ export default function BudgetSummaryCard({
                       <div className="font-medium">Electric Bill</div>
                       <div className="text-gray-500">Due in 12 days</div>
                     </div>
-                    <span className="font-semibold">{formatCurrencyPrecise(120)}</span>
+                    <span className="font-semibold">${formatCurrencyPrecise(120)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <div>
                       <div className="font-medium">Car Insurance</div>
                       <div className="text-gray-500">Due in 15 days</div>
                     </div>
-                    <span className="font-semibold">{formatCurrencyPrecise(85)}</span>
+                    <span className="font-semibold">${formatCurrencyPrecise(85)}</span>
                   </div>
                 </div>
               </div>
