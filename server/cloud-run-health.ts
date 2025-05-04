@@ -17,6 +17,22 @@ import { Request, Response, NextFunction, Router, Express } from 'express';
 const HEALTH_CHECK_RESPONSE = { status: 'ok' };
 
 /**
+ * Helper function to detect if a request is a health check
+ * @param req Express request
+ * @returns boolean - true if the request is a health check
+ */
+function isHealthCheckRequest(req: Request): boolean {
+  return (
+    // Check for explicit health check parameter
+    req.query['health-check'] !== undefined || 
+    // Check for Google Health Check user agent
+    (req.headers['user-agent'] && req.headers['user-agent'].includes('GoogleHC')) ||
+    // For direct health check testing with curl
+    req.headers['x-health-check'] === 'true'
+  );
+}
+
+/**
  * Specialized middleware for CloudRun health checks.
  * This middleware only handles specific health check requests to the root path (/).
  * It looks for either:
@@ -26,17 +42,8 @@ const HEALTH_CHECK_RESPONSE = { status: 'ok' };
  * This allows regular app traffic to pass through to the normal SPA.
  */
 export function cloudRunHealthMiddleware(req: Request, res: Response, next: NextFunction) {
-  // Special detection for health check requests to avoid interfering with normal app traffic
-  const isHealthCheck = 
-    // Check for explicit health check parameter
-    req.query['health-check'] !== undefined || 
-    // Check for Google Health Check user agent
-    (req.headers['user-agent'] && req.headers['user-agent'].includes('GoogleHC')) ||
-    // For direct health check testing with curl
-    req.headers['x-health-check'] === 'true';
-    
   // Only handle GET requests to the root path that are identified as health checks
-  if (req.method === 'GET' && (req.path === '/' || req.originalUrl === '/') && isHealthCheck) {
+  if (req.method === 'GET' && (req.path === '/' || req.originalUrl === '/') && isHealthCheckRequest(req)) {
     try {
       // Set explicit headers and status code
       res.status(200);
@@ -62,9 +69,14 @@ export function cloudRunHealthMiddleware(req: Request, res: Response, next: Next
  */
 export const cloudRunHealthRouter = Router();
 
-// Add direct root path handler to router
-cloudRunHealthRouter.get('/', (_req: Request, res: Response) => {
-  res.status(200).json(HEALTH_CHECK_RESPONSE);
+// Add direct root path handler to router with conditional check
+cloudRunHealthRouter.get('/', (req: Request, res: Response, next: NextFunction) => {
+  if (isHealthCheckRequest(req)) {
+    res.status(200).json(HEALTH_CHECK_RESPONSE);
+  } else {
+    // Pass through for normal application traffic
+    next();
+  }
 });
 
 /**
@@ -79,8 +91,13 @@ export function setupCloudRunHealth(app: Express) {
   app.use('/', cloudRunHealthRouter);
   
   // Register a direct route handler as a third level of protection
-  app.get('/', (_req: Request, res: Response) => {
-    res.status(200).json(HEALTH_CHECK_RESPONSE);
+  app.get('/', (req: Request, res: Response, next: NextFunction) => {
+    if (isHealthCheckRequest(req)) {
+      res.status(200).json(HEALTH_CHECK_RESPONSE);
+    } else {
+      // Pass through for normal application traffic
+      next();
+    }
   });
   
   console.log('CloudRun health check handlers registered (3 levels of protection)');

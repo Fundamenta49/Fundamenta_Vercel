@@ -8,6 +8,22 @@ export const healthCheckRouter = Router();
 const startTime = Date.now();
 
 /**
+ * Helper function to detect if a request is a health check
+ * @param req Express request
+ * @returns boolean - true if the request is a health check
+ */
+function isHealthCheckRequest(req: Request): boolean {
+  return (
+    // Check for explicit health check parameter
+    req.query['health-check'] !== undefined || 
+    // Check for Google Health Check user agent
+    (req.headers['user-agent'] && req.headers['user-agent'].includes('GoogleHC')) ||
+    // For direct health check testing with curl
+    req.headers['x-health-check'] === 'true'
+  );
+}
+
+/**
  * Root Health Check Handler - Must be used as middleware BEFORE static file handling
  * This is specifically designed for CloudRun deployment health checks
  * 
@@ -16,8 +32,8 @@ const startTime = Date.now();
  * @param next Express next function
  */
 export function rootHealthCheckMiddleware(req: Request, res: Response, next: NextFunction) {
-  // Only handle GET requests to the root path
-  if (req.method === 'GET' && req.path === '/') {
+  // Only handle GET requests to the root path that are identified as health checks
+  if (req.method === 'GET' && req.path === '/' && isHealthCheckRequest(req)) {
     try {
       // Simple status object - CloudRun simply needs a 200 status code
       // Note: For CloudRun health checks, the response format doesn't matter as long as
@@ -59,7 +75,13 @@ export function rootHealthCheckMiddleware(req: Request, res: Response, next: Nex
 }
 
 // Add a direct route handler for the root health check
-healthCheckRouter.get('/', (_req: Request, res: Response) => {
-  // Always return 200 OK with minimal payload
-  res.status(200).json({ status: "ok" });
+healthCheckRouter.get('/', (req: Request, res: Response, next: NextFunction) => {
+  // Only respond to actual health check requests
+  if (isHealthCheckRequest(req)) {
+    // Return 200 OK with minimal payload
+    res.status(200).json({ status: "ok" });
+  } else {
+    // Pass through normal application traffic
+    next();
+  }
 });
