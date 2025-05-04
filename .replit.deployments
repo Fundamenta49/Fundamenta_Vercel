@@ -1,7 +1,11 @@
 {
   "deploymentId": "db52ba45-0ef8-411f-af31-4b71e7f22e4c",
-  "restartPolicyType": "NEVER",
+  "restartPolicyType": "NEVER", 
   "restartPolicyValue": 1,
-  "healthCheckPath": "/",
-  "healthCheckTimeout": 10
+  "healthCheckPath": "/_health",
+  "healthCheckTimeout": 10,
+  "startCommand": "node health-check-express.js",
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
