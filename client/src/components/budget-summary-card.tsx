@@ -23,9 +23,9 @@ export default function BudgetSummaryCard({
   expenses = []
 }: BudgetSummaryCardProps) {
   // Calculate budget metrics
-  const dailyBudget = remaining > 0 ? (remaining / 30).toFixed(2) : '0.00';
-  const weeklyBudget = remaining > 0 ? (remaining / 4.3).toFixed(2) : '0.00';
-  const annualSavings = remaining > 0 ? (remaining * 12).toFixed(2) : '0.00';
+  const dailyBudgetValue = remaining > 0 ? (remaining / 30) : 0;
+  const weeklyBudgetValue = remaining > 0 ? (remaining / 4.3) : 0;
+  const annualSavingsValue = remaining > 0 ? (remaining * 12) : 0;
   
   // Calculate expense distribution based on actual expenses
   const getExpensePercentByCategory = (category: string): number => {
@@ -112,15 +112,15 @@ export default function BudgetSummaryCard({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-slate-50 p-4 rounded-lg text-center">
               <div className="text-sm text-gray-500">Daily Available</div>
-              <div className="text-lg font-semibold text-green-600">{formatCurrencyPrecise(parseFloat(dailyBudget))}</div>
+              <div className="text-lg font-semibold text-green-600">{formatCurrencyPrecise(dailyBudgetValue)}</div>
             </div>
             <div className="bg-slate-50 p-4 rounded-lg text-center">
               <div className="text-sm text-gray-500">Weekly Available</div>
-              <div className="text-lg font-semibold text-green-600">{formatCurrencyPrecise(parseFloat(weeklyBudget))}</div>
+              <div className="text-lg font-semibold text-green-600">{formatCurrencyPrecise(weeklyBudgetValue)}</div>
             </div>
             <div className="bg-slate-50 p-4 rounded-lg text-center">
               <div className="text-sm text-gray-500">Annual Savings</div>
-              <div className="text-lg font-semibold text-green-600">{formatCurrencyPrecise(parseFloat(annualSavings))}</div>
+              <div className="text-lg font-semibold text-green-600">{formatCurrencyPrecise(annualSavingsValue)}</div>
             </div>
           </div>
         </div>
