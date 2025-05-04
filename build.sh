@@ -64,9 +64,9 @@ vite build
 
 # Then build the backend with esbuild, explicitly including all health check modules
 echo "Building backend with health check modules..."
-esbuild server/index.ts server/health-checks.ts server/cloud-run-health.ts server/direct-health.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+esbuild server/index.ts server/health-checks.ts server/cloud-run-health.ts server/direct-health.ts server/bare-health.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
 
-# Final check - ensure health check file is available
+# Final check - ensure all health check files are available
 echo "Adding deployment health check verification..."
 if [ -f dist/health-checks.js ]; then
   echo "health-checks.js found - health check should be working properly"
@@ -75,6 +75,24 @@ else
   echo "Copying health-checks.js module..."
   cp server/health-checks.ts dist/health-checks.js
   echo "// Make sure middleware is properly registered" >> dist/health-checks.js
+fi
+
+if [ -f dist/bare-health.js ]; then
+  echo "bare-health.js found - bare health check should be working properly"
+else 
+  echo "WARNING: bare-health.js not found in dist directory!"
+  echo "Copying bare-health.js module..."
+  cp server/bare-health.ts dist/bare-health.js
+  echo "// Make sure the bare health check is properly installed" >> dist/bare-health.js
+fi
+
+if [ -f dist/direct-health.js ]; then
+  echo "direct-health.js found - direct health check should be working properly"
+else 
+  echo "WARNING: direct-health.js not found in dist directory!"
+  echo "Copying direct-health.js module..."
+  cp server/direct-health.ts dist/direct-health.js
+  echo "// Make sure the direct health check is properly installed" >> dist/direct-health.js
 fi
 
 # Add a direct root health check handler as backup

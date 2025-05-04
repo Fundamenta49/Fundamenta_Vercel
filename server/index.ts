@@ -11,6 +11,11 @@ import { performDatabaseMaintenance, performAggressiveCleanup } from "./maintena
 import { rootHealthCheckMiddleware, healthCheckRouter } from "./health-checks";
 import { setupCloudRunHealth, cloudRunHealthMiddleware } from "./cloud-run-health";
 import { setupDirectHealthCheck } from "./direct-health";
+import { installBareHealthCheck } from "./bare-health";
+
+// INSTALL ABSOLUTE LOWEST-LEVEL HEALTH CHECK
+// This must be done before anything else to ensure CloudRun health checks work
+installBareHealthCheck();
 
 const startTime = Date.now();
 log("Starting server...");
