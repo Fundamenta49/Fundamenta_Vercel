@@ -1,66 +1,65 @@
 /**
- * Bare-bones health check module
- * This is the simplest possible implementation 
- * with no dependencies on any middleware or framework
+ * Bare Health Check for CloudRun
+ * 
+ * This module adds a direct, high-priority health check handler for CloudRun
+ * It intercepts requests before they reach the Express middleware stack.
  */
 
-import http from 'http';
+import * as http from 'http';
+
+// Health check response that exactly matches CloudRun expectations
+const HEALTH_RESPONSE = JSON.stringify({ status: 'ok' });
 
 /**
- * Install a bare-bones health check that operates at the lowest level
- * This should be incredibly reliable for CloudRun
+ * Installs a bare-bones health check interceptor at the HTTP server level
+ * This runs before Express middleware and handles health checks directly
  */
-export function installBareHealthCheck() {
-  // Save the original createServer function
-  const originalCreateServer = http.createServer;
+export function installBareHealthCheck(server: http.Server) {
+  const originalListeners = server.listeners('request');
   
-  // Replace with our version that intercepts health checks
-  http.createServer = function(
-    optionsOrListener?: http.ServerOptions<typeof http.IncomingMessage, typeof http.ServerResponse> | http.RequestListener,
-    listener?: http.RequestListener
-  ) {
-    // Create the server as normal
-    const server = originalCreateServer.call(this, optionsOrListener as any, listener as any);
+  // Remove all existing listeners
+  for (const listener of originalListeners) {
+    server.removeListener('request', listener as (...args: any[]) => void);
+  }
+  
+  // Add our interceptor first
+  server.on('request', (req: http.IncomingMessage, res: http.ServerResponse) => {
+    const isHealthCheck = req.url === '/' || 
+                          req.url === '/_health' ||
+                          req.url === '/health' ||
+                          req.url?.includes('health-check=true') ||
+                          req.url?.includes('?health=true');
     
-    // Get the original request listeners
-    const originalListeners = server.listeners('request');
-    
-    // Remove all existing listeners
-    server.removeAllListeners('request');
-    
-    // Add our own listener that handles the health check first
-    server.on('request', (req: http.IncomingMessage, res: http.ServerResponse) => {
-      // Check if this is the root path (health check)
-      if (req.method === 'GET' && (req.url === '/' || req.url === '/?')) {
-        // Try to detect if this is a health check
-        const isHealthCheck = 
-          !req.headers['accept']?.includes('text/html') || 
-          req.headers['accept']?.includes('application/json') ||
-          req.headers['user-agent']?.includes('GoogleHC') ||
-          req.headers['user-agent']?.includes('kube-probe');
-        
-        // If it seems like a health check, respond directly
-        if (isHealthCheck) {
-          // Send a 200 OK response with the expected format
-          res.writeHead(200, {
-            'Content-Type': 'application/json',
-            'X-Health-Check': 'true'
-          });
-          res.end(JSON.stringify({ status: 'ok' }));
-          
-          console.log('Bare-bones health check responded to request');
-          return;
-        }
-      }
+    const isGoogleHealthCheck = req.headers['user-agent'] && 
+                               (req.headers['user-agent'].includes('GoogleHC') || 
+                                req.headers['user-agent'].includes('kube-probe'));
+                               
+    // If it's a health check request, respond immediately
+    if (isHealthCheck || isGoogleHealthCheck) {
+      console.log(`Bare-bones health check handling request: ${req.method} ${req.url}`);
       
-      // Pass through to the original listeners for normal requests
-      for (const listener of originalListeners) {
-        listener.call(server, req, res);
-      }
-    });
+      res.writeHead(200, {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(HEALTH_RESPONSE),
+        'Cache-Control': 'no-cache',
+        'X-Health-Check': 'true'
+      });
+      
+      res.end(HEALTH_RESPONSE);
+      return;
+    }
     
-    return server;
-  };
+    // Otherwise, call all the original listeners in order
+    let handled = false;
+    for (const listener of originalListeners) {
+      if (!handled) {
+        listener(req, res);
+        handled = true;
+      }
+    }
+  });
   
   console.log('Bare-bones health check installed (intercepts at HTTP level)');
+  
+  return server;
 }

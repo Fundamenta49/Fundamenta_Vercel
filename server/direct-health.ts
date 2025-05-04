@@ -1,63 +1,53 @@
 /**
- * Ultra-minimal direct health check middleware
- * Designed for maximum compatibility with CloudRun
- * 
- * This handles only the root path with NO detection logic at all
+ * Ultra-direct health check for CloudRun compatibility
+ * This module adds a direct health check endpoint at the Express level
  */
+import { Express } from 'express';
 
-import { Request, Response, NextFunction, Express } from 'express';
-
-// Absolute minimum health check response
-const MINIMAL_RESPONSE = JSON.stringify({ status: 'ok' });
+// Health check response that exactly matches CloudRun expectations
+const HEALTH_RESPONSE = JSON.stringify({ status: 'ok' });
 
 /**
- * The simplest possible health check middleware for CloudRun
- * This will ALWAYS respond to GET / with 200 OK {"status":"ok"}
+ * Setup an ultra-direct, first-priority health check for CloudRun compatibility
+ * @param app Express application instance
  */
-export function setupDirectHealthCheck(app: Express) {
-  // Add a direct route handler at the very top of our app
-  app.get('/', (req: Request, res: Response, next: NextFunction) => {
-    // If this is a health check, respond immediately
-    if (req.headers.accept && req.headers.accept.includes('application/json')) {
-      // Health checks often have Accept: application/json
-      res.status(200);
-      res.setHeader('Content-Type', 'application/json');
-      res.end(MINIMAL_RESPONSE);
+export function setupDirectHealthCheck(app: Express): void {
+  // Add a direct route handler at the very beginning of the middleware stack
+  app.use((req, res, next) => {
+    // Only handle GET requests to specific health check paths
+    if (req.method !== 'GET') {
+      return next();
+    }
+    
+    // Check if this is a health check request
+    const isHealthCheck = 
+      req.path === '/' ||
+      req.path === '/_health' || 
+      req.path === '/health' ||
+      req.originalUrl?.includes('health-check=true') ||
+      req.originalUrl?.includes('?health=true');
+      
+    // Check for health check user agent
+    const isHealthAgent = 
+      req.headers['user-agent']?.includes('GoogleHC') || 
+      req.headers['user-agent']?.includes('kube-probe');
+      
+    if (isHealthCheck || isHealthAgent) {
+      console.log(`Ultra-direct health check handling request: ${req.method} ${req.path}`);
+      
+      // Send exact CloudRun expected response
+      res.status(200)
+        .set({
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'X-Health-Check': 'true'
+        })
+        .send(HEALTH_RESPONSE);
+      
       return;
     }
     
-    // If it's not clearly a health check, check the User-Agent
-    if (req.headers['user-agent'] && 
-        (req.headers['user-agent'].includes('GoogleHC') || 
-         req.headers['user-agent'].includes('kube-probe'))) {
-      res.status(200);
-      res.setHeader('Content-Type', 'application/json');
-      res.end(MINIMAL_RESPONSE);
-      return;
-    }
-    
-    // Also add a hard-coded path for explicit health checks
-    if (req.path === '/_health' || req.query.health === 'true' || req.query['health-check'] === 'true') {
-      res.status(200);
-      res.setHeader('Content-Type', 'application/json');
-      res.end(MINIMAL_RESPONSE);
-      return;
-    }
-    
-    // Not a health check, continue to the next middleware
-    next();
-  });
-  
-  // Also add a super-direct middleware as an absolute fallback
-  // This captures *any* GET request to / and responds with 200
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    if (req.method === 'GET' && req.path === '/' && !req.headers.accept?.includes('text/html')) {
-      // If it's not specifically requesting HTML, treat as a health check
-      res.status(200);
-      res.setHeader('Content-Type', 'application/json');
-      res.end(MINIMAL_RESPONSE);
-      return;
-    }
+    // Not a health check request, continue to next middleware
     next();
   });
   

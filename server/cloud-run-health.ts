@@ -1,48 +1,80 @@
 /**
- * CloudRun Health Check Handler Module
- * This module provides a specialized health check handler for CloudRun deployments.
- * 
- * CloudRun requires a 200 OK response at the root path (/) to consider the service healthy.
- * 
- * The health check handler in this module is optimized for production deployment:
- * - Minimal response payload ({"status":"ok"})
- * - No dependency on other modules
- * - Designed to be the first middleware in the chain
- * - Does not interfere with other middleware
+ * CloudRun Health Check Module
+ * Specialized middleware and setup for CloudRun deployment health checks
  */
+import { Express, Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
 
-import { Request, Response, NextFunction, Express } from 'express';
-
-// Simple health check response
+// Health check response for CloudRun
 const HEALTH_RESPONSE = { status: 'ok' };
 
 /**
- * Specialized middleware for CloudRun health checks
+ * CloudRun health check middleware
+ * Immediately responds to health check requests without further processing
  */
 export function cloudRunHealthMiddleware(req: Request, res: Response, next: NextFunction) {
-  if (req.method === 'GET' && req.path === '/') {
-    // For health checks, return immediate success
-    res.status(200).json(HEALTH_RESPONSE);
-    return;
+  // Check for health check paths
+  const isHealthCheck = req.path === '/' || 
+                        req.path === '/_health' || 
+                        req.path === '/health';
+  
+  // Check for health check query parameters
+  const hasHealthParam = req.query['health'] === 'true' || 
+                         req.query['health-check'] === 'true';
+  
+  // Check for GoogleHC user agent
+  const isGoogleHealthCheck = req.headers['user-agent']?.includes('GoogleHC') || 
+                             req.headers['user-agent']?.includes('kube-probe');
+  
+  // If this is a health check request, respond immediately
+  if (isHealthCheck || hasHealthParam || isGoogleHealthCheck) {
+    console.log(`CloudRun health check: ${req.method} ${req.path}`);
+    return res.status(200).json(HEALTH_RESPONSE);
   }
+  
+  // Not a health check request, continue to next middleware
   next();
 }
 
 /**
- * Configure an Express app with CloudRun health check handlers
+ * Setup health check endpoints for CloudRun
+ * @param app Express application
  */
-export function setupCloudRunHealth(app: Express) {
-  // Register health check middleware first
+export function setupCloudRunHealthChecks(app: Express) {
+  // Add middleware as early as possible in the stack
   app.use(cloudRunHealthMiddleware);
-
-  // Also add a direct route handler as backup
+  
+  // Also add explicit routes for health checks
   app.get('/', (req, res, next) => {
-    if (!req.headers.accept?.includes('text/html')) {
-      res.status(200).json(HEALTH_RESPONSE);
-      return;
+    // Only handle health checks at root, pass through to the app otherwise
+    const isHealthCheck = 
+      req.query['health'] === 'true' || 
+      req.query['health-check'] === 'true' ||
+      req.headers['user-agent']?.includes('GoogleHC') ||
+      req.headers['user-agent']?.includes('kube-probe') ||
+      req.headers['accept']?.includes('application/json');
+      
+    if (isHealthCheck) {
+      return res.status(200).json(HEALTH_RESPONSE);
     }
+    
     next();
   });
-
-  console.log('CloudRun health check handlers registered');
+  
+  // Create a dedicated router for health check endpoints
+  const healthRouter = Router();
+  
+  // Handle health check endpoints
+  healthRouter.get('/_health', (req, res) => {
+    res.status(200).json(HEALTH_RESPONSE);
+  });
+  
+  healthRouter.get('/health', (req, res) => {
+    res.status(200).json(HEALTH_RESPONSE);
+  });
+  
+  // Mount the health router
+  app.use(healthRouter);
+  
+  console.log('CloudRun health check endpoints configured');
 }
