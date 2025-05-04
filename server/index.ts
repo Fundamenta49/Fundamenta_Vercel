@@ -67,7 +67,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health check endpoint
+// Health check endpoints
 app.get("/api/health", (_req, res) => {
   const health = {
     status: "ok",
@@ -78,6 +78,18 @@ app.get("/api/health", (_req, res) => {
     pid: process.pid
   };
   log(`Health check requested, responding with: ${JSON.stringify(health)}`);
+  res.json(health);
+});
+
+// Root health check endpoint for deployment checks
+app.get("/", (_req, res) => {
+  const health = {
+    status: "ok",
+    uptime: Date.now() - startTime,
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString()
+  };
+  log(`Root health check requested, responding with: ${JSON.stringify(health)}`);
   res.json(health);
 });
 

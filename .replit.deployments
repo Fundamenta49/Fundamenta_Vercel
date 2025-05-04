@@ -1,6 +1,6 @@
 {
   "startCommand": "npm start",
-  "buildCommand": "npm run build",
+  "buildCommand": "./build.sh",
   "entrypoint": "dist/index.js",
   "installCommand": "npm ci",
   "deploymentTarget": "cloudrun"
