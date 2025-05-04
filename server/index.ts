@@ -81,7 +81,21 @@ app.get("/api/health", (_req, res) => {
   res.json(health);
 });
 
-// Root health check endpoint for deployment checks
+// Health check endpoints
+app.get("/api/health", (_req, res) => {
+  const health = {
+    status: "ok",
+    uptime: Date.now() - startTime,
+    environment: process.env.NODE_ENV,
+    port: process.env.PORT || 5000,
+    timestamp: new Date().toISOString(),
+    pid: process.pid
+  };
+  log(`API health check requested, responding with: ${JSON.stringify(health)}`);
+  res.json(health);
+});
+
+// Root health check endpoint for deployment checks (needs to be before any other middleware)
 app.get("/", (_req, res) => {
   const health = {
     status: "ok",
@@ -90,7 +104,7 @@ app.get("/", (_req, res) => {
     timestamp: new Date().toISOString()
   };
   log(`Root health check requested, responding with: ${JSON.stringify(health)}`);
-  res.json(health);
+  res.status(200).json(health);
 });
 
 // Maintenance endpoint - protected with a simple key to prevent unauthorized access
@@ -255,8 +269,21 @@ app.post("/api/maintenance/sessions", async (req, res) => {
 
 // Error handling middleware
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
-  const status = err instanceof Error && 'status' in err ? (err as any).status : 500;
-  const message = err instanceof Error ? err.message : "Internal Server Error";
-  log(`Error handler: ${status} - ${message}`);
-  res.status(status).json({ message });
+  try {
+    const status = err instanceof Error && 'status' in err ? (err as any).status : 500;
+    const message = err instanceof Error ? err.message : "Internal Server Error";
+    log(`Error handler: ${status} - ${message}`);
+    
+    // Check if the response has already been sent
+    if (!res.headersSent) {
+      res.status(status).json({ message });
+    }
+  } catch (handlerError) {
+    console.error('Error in error handler:', handlerError);
+    // If we can't use res.status, try a simple end() as a last resort
+    if (!res.headersSent) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: 'Internal Server Error' }));
+    }
+  }
 });
