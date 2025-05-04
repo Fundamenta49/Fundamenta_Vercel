@@ -322,35 +322,38 @@ export default function FinancialLiteracyCourse() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-6xl">
-      <div className="flex items-center mb-6">
+    <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-6xl">
+      <div className="flex flex-wrap items-center gap-2 mb-4 sm:mb-6">
         <Button 
           variant="ghost" 
           onClick={() => navigate('/learning')}
-          className="mr-4"
+          className="p-2 h-auto sm:p-3"
+          size="sm"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Learning
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          <span className="text-sm">Back</span>
         </Button>
         
-        <h1 className="text-2xl font-bold flex items-center">
-          <BookOpen className="h-6 w-6 mr-2 text-green-500" />
+        <h1 className="text-xl sm:text-2xl font-bold flex items-center">
+          <BookOpen className="h-5 w-5 mr-2 text-green-500" />
           Financial Literacy
         </h1>
       </div>
 
       <Tabs defaultValue="learn" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="h-12 bg-gray-100 p-1.5 rounded-full w-full grid grid-cols-2 max-w-md mx-auto">
+        <TabsList className="h-10 sm:h-12 bg-gray-100 p-1 sm:p-1.5 rounded-full w-full grid grid-cols-2 max-w-full sm:max-w-md mx-auto">
           <TabsTrigger 
             value="learn" 
-            className="rounded-full text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-emerald-800 data-[state=active]:shadow-sm"
+            className="rounded-full text-xs sm:text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-emerald-800 data-[state=active]:shadow-sm"
           >
+            <BookOpen className="h-3 w-3 mr-1 sm:h-4 sm:w-4 inline-block" />
             Learn
           </TabsTrigger>
           <TabsTrigger 
             value="practice" 
-            className="rounded-full text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-emerald-800 data-[state=active]:shadow-sm"
+            className="rounded-full text-xs sm:text-sm font-medium data-[state=active]:bg-white data-[state=active]:text-emerald-800 data-[state=active]:shadow-sm"
           >
+            <CheckCircle className="h-3 w-3 mr-1 sm:h-4 sm:w-4 inline-block" />
             Practice
           </TabsTrigger>
         </TabsList>
@@ -385,7 +388,7 @@ export default function FinancialLiteracyCourse() {
           </Card>
           
           {/* Course modules as cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {COURSE_MODULES.map((module) => {
               const Icon = module.icon;
               return (
@@ -398,24 +401,24 @@ export default function FinancialLiteracyCourse() {
                     'bg-gradient-to-r from-green-500 to-teal-400'
                   }`}></div>
                   
-                  <CardHeader className="p-4 sm:p-5 pb-2 border-b border-gray-100 bg-white">
-                    <CardTitle className="text-base flex items-center">
-                      <Icon className="h-5 w-5 mr-2 text-emerald-600" />
-                      {module.title}
+                  <CardHeader className="p-3 sm:p-4 pb-1 sm:pb-2 border-b border-gray-100 bg-white">
+                    <CardTitle className="text-sm sm:text-base flex items-center">
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 text-emerald-600 flex-shrink-0" />
+                      <span className="truncate">{module.title}</span>
                     </CardTitle>
-                    <CardDescription>{module.description}</CardDescription>
+                    <CardDescription className="text-xs sm:text-sm">{module.description}</CardDescription>
                   </CardHeader>
                   
-                  <CardContent className="p-4 sm:p-5 pb-2 bg-gray-50">
-                    <p className="text-sm line-clamp-2">
+                  <CardContent className="p-3 sm:p-4 pb-1 sm:pb-2 bg-gray-50">
+                    <p className="text-xs sm:text-sm line-clamp-2">
                       {typeof module.content === 'string' 
                         ? module.content 
                         : 'Explore key concepts and practical applications.'}
                     </p>
                   </CardContent>
                   
-                  <CardFooter className="p-4 sm:p-5 pt-2 bg-gray-50">
-                    <Button variant="outline" size="sm" className="w-full rounded-full hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200">
+                  <CardFooter className="p-3 sm:p-4 pt-1 sm:pt-2 pb-3 sm:pb-4 bg-gray-50">
+                    <Button variant="outline" size="sm" className="w-full h-8 text-xs sm:text-sm rounded-full hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200">
                       Learn More
                     </Button>
                   </CardFooter>
