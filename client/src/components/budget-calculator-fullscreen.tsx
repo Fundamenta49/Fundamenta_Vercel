@@ -64,9 +64,6 @@ export default function BudgetCalculatorFullscreen({
     { category: "Utilities", amount: 200 },
     { category: "Entertainment", amount: 200 },
   ]);
-  const [totalExpenses, setTotalExpenses] = useState(0);
-  const [remaining, setRemaining] = useState(0);
-  const [expensePercentage, setExpensePercentage] = useState(0);
   const [newExpenseCategory, setNewExpenseCategory] = useState("Other");
   const [newExpenseAmount, setNewExpenseAmount] = useState<number | "">(0);
   const [activeTab, setActiveTab] = useState("budget");
@@ -78,6 +75,11 @@ export default function BudgetCalculatorFullscreen({
   const [newGoalTarget, setNewGoalTarget] = useState<number | "">(0);
   const [newGoalCurrent, setNewGoalCurrent] = useState<number | "">(0);
   const [retirementSavings, setRetirementSavings] = useState(25000);
+  
+  // Calculate budget metrics for rendering
+  const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+  const remaining = income - totalExpenses;
+  const expensePercentage = income > 0 ? (totalExpenses / income) * 100 : 0;
 
   // Handle ESC key
   useEffect(() => {
@@ -98,27 +100,18 @@ export default function BudgetCalculatorFullscreen({
   }, [onClose]);
 
   useEffect(() => {
-    // Calculate total expenses and update the budget data
-    const calculatedTotalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-    const calculatedRemaining = income - calculatedTotalExpenses;
-    const calculatedExpensePercentage = (calculatedTotalExpenses / income) * 100;
-    
-    // Update state values
-    setTotalExpenses(calculatedTotalExpenses);
-    setRemaining(calculatedRemaining);
-    setExpensePercentage(calculatedExpensePercentage);
-
+    // Update the parent component with current budget data
     const budgetData: BudgetData = {
       income,
       expenses,
-      remaining: calculatedRemaining,
-      expensePercentage: calculatedExpensePercentage,
+      remaining,
+      expensePercentage,
       savingsGoals,
       retirementSavings,
     };
 
     onBudgetUpdate(budgetData);
-  }, [income, expenses, savingsGoals, retirementSavings, onBudgetUpdate]);
+  }, [income, expenses, remaining, expensePercentage, savingsGoals, retirementSavings, onBudgetUpdate]);
 
   const handleAddExpense = () => {
     if (newExpenseAmount && newExpenseCategory) {
