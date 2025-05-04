@@ -112,15 +112,15 @@ export default function BudgetSummaryCard({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-slate-50 p-4 rounded-lg text-center">
               <div className="text-sm text-gray-500">Daily Available</div>
-              <div className="text-lg font-semibold text-green-600">${dailyBudget}</div>
+              <div className="text-lg font-semibold text-green-600">{formatCurrencyPrecise(parseFloat(dailyBudget))}</div>
             </div>
             <div className="bg-slate-50 p-4 rounded-lg text-center">
               <div className="text-sm text-gray-500">Weekly Available</div>
-              <div className="text-lg font-semibold text-green-600">${weeklyBudget}</div>
+              <div className="text-lg font-semibold text-green-600">{formatCurrencyPrecise(parseFloat(weeklyBudget))}</div>
             </div>
             <div className="bg-slate-50 p-4 rounded-lg text-center">
               <div className="text-sm text-gray-500">Annual Savings</div>
-              <div className="text-lg font-semibold text-green-600">${annualSavings}</div>
+              <div className="text-lg font-semibold text-green-600">{formatCurrencyPrecise(parseFloat(annualSavings))}</div>
             </div>
           </div>
         </div>
@@ -160,21 +160,21 @@ export default function BudgetSummaryCard({
                       <div className="font-medium">Rent Payment</div>
                       <div className="text-gray-500">Due in 5 days</div>
                     </div>
-                    <span className="font-semibold">$1,500.00</span>
+                    <span className="font-semibold">{formatCurrencyPrecise(1500)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <div>
                       <div className="font-medium">Electric Bill</div>
                       <div className="text-gray-500">Due in 12 days</div>
                     </div>
-                    <span className="font-semibold">$120.00</span>
+                    <span className="font-semibold">{formatCurrencyPrecise(120)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <div>
                       <div className="font-medium">Car Insurance</div>
                       <div className="text-gray-500">Due in 15 days</div>
                     </div>
-                    <span className="font-semibold">$85.00</span>
+                    <span className="font-semibold">{formatCurrencyPrecise(85)}</span>
                   </div>
                 </div>
               </div>
