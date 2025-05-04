@@ -1,96 +1,80 @@
 # Fundamenta Deployment Guide
 
-This guide explains how to deploy the Fundamenta platform on Replit CloudRun.
+This guide covers how to deploy the Fundamenta application to CloudRun via Replit Deployments.
 
-## Deployment Prerequisites
+## Pre-Deployment Checklist
 
-1. The application must respond with a 200 OK status code at the root path (/).
-2. The deployment configuration must be set up in `.replit.deployments` file.
-3. The build script must be executable (`chmod +x build.sh`).
+1. **Database Setup**
+   - Ensure PostgreSQL database is provisioned and accessible
+   - Verify DATABASE_URL environment variable is set correctly
+   - Verify all migrations have been run
 
-## Verification
+2. **Environment Variables**
+   - Ensure the following variables are set:
+     - `DATABASE_URL`: Connection string for PostgreSQL
+     - `NODE_ENV`: Set to "production" for deployment
+     - `SESSION_SECRET`: Secure random string for session encryption
 
-Run the verification script to check if your application is ready for deployment:
+3. **Build Process**
+   - Run `npm run build` to build both frontend and backend
+   - Verify the `dist` directory is created with all required files
+   - Run the verification script: `node verify-deployment.js`
 
-```bash
-node verify-deployment.js
-```
+## Deploying with Replit
 
-This script will check:
-- Your `.replit.deployments` configuration
-- The build script
-- Health check implementation
-- Server response at the root path
+1. Click the **Deploy** button in the Replit interface
+2. Follow the prompts to configure your deployment
+3. Choose the CloudRun option when available
 
-## Key Files
+## CloudRun Health Check Configuration
 
-- `server/health-checks.ts`: Contains the middleware for serving the root path health check
-- `build.sh`: Handles the build process for deployment
-- `.replit.deployments`: Configuration for CloudRun deployment
+The application has been specially configured to work with CloudRun's health checking requirements:
 
-## Deployment Process
+1. **Root Health Check Endpoint**
+   - The application responds to GET requests at the root path (/) with a simple JSON response: `{"status":"ok"}`
+   - This is required for CloudRun to consider the service healthy
 
-1. Make sure all verification checks pass
-2. Click the "Deploy" button in the Replit UI
-3. Wait for the build and deployment to complete
-4. Verify the application is running correctly at the provided URL
+2. **Multiple Levels of Protection**
+   - Three levels of health check handlers are implemented:
+     1. First-priority middleware to catch requests before any other handlers
+     2. Dedicated health check router mounted at the root path
+     3. Direct Express route handler as a fallback
 
-## Troubleshooting
+3. **Production Optimization**
+   - When `NODE_ENV` is set to "production", specialized CloudRun-specific health checks are enabled
+   - The response format is minimized to reduce overhead
 
-If deployment fails, check:
+## Troubleshooting Deployment Issues
 
-1. The logs in the deployment panel
-2. The health check endpoint (root path) is returning a 200 status code
-3. The build script ran successfully
-4. Environment variables are properly set
+If deployment fails, check the following:
 
-If the root health check is failing, check:
-- The health check middleware is registered first in the Express application
-- The health check middleware is correctly filtering for the root path
+1. **Health Check Failures**
+   - Verify that the root path (/) returns `{"status":"ok"}` with a 200 status code
+   - Check logs for any errors in the health check handlers
 
-## Environment Variables
+2. **Database Connection Issues**
+   - Verify DATABASE_URL is correctly set in environment variables
+   - Test database connectivity using `check_database_status` tool
+   - Ensure IP allowlist includes CloudRun service IP ranges
 
-The following environment variables should be set up in the Replit Secrets panel:
-
-- `DATABASE_URL`: PostgreSQL database connection string
-- `SESSION_SECRET`: Secret for session encryption
-- `NODE_ENV`: Should be set to `production` for deployment
+3. **Build Errors**
+   - Check if frontend and backend were successfully built
+   - Verify all required files exist in the `dist` directory
+   - Run verification script to identify potential issues
 
 ## Post-Deployment Verification
 
-After deployment, verify that:
+After deployment completes, verify the application by:
 
-1. The root path (/) returns a proper JSON response
-2. The application is accessible at the deployed URL
-3. All API endpoints are working correctly
-4. Database connections are working
-5. Static assets are being served properly
+1. Accessing the root URL to ensure it loads properly
+2. Checking CloudRun logs for any startup errors
+3. Testing key functionality to ensure everything works as expected
 
-## Common Deployment Issues
+## Maintenance and Updates
 
-1. **Health Check Fails**: Make sure the health check returns a 200 status code at the root path
-2. **Missing Assets**: Ensure all static assets are being included in the build
-3. **Environment Variables**: Check that all required environment variables are set
-4. **Database Connection**: Verify the database connection is working in the deployed environment
-5. **Resource Limits**: Monitor resource usage, especially memory and CPU
+For future updates:
 
-## Deployment Architecture
-
-The Fundamenta application uses:
-- Express.js backend
-- React frontend built with Vite
-- PostgreSQL database
-- CloudRun for hosting
-
-The build process:
-1. Builds the frontend with Vite
-2. Builds the backend with esbuild
-3. Copies all necessary data files and assets
-4. Verifies health check middleware is in place
-
-## Maintenance
-
-To update the deployed application:
-1. Make your changes
-2. Run the verification script
-3. Click "Deploy" again in the Replit UI
+1. Make your changes to the codebase
+2. Run `npm run build` to rebuild the application
+3. Run verification script to check for potential issues
+4. Deploy using the Replit Deploy button

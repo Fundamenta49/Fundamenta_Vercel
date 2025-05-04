@@ -9,6 +9,7 @@ import { ensureTables } from "./db";
 import { initializeFundiCore } from "./fundi-core/fundi-integration";
 import { performDatabaseMaintenance, performAggressiveCleanup } from "./maintenance";
 import { rootHealthCheckMiddleware, healthCheckRouter } from "./health-checks";
+import { setupCloudRunHealth, cloudRunHealthMiddleware } from "./cloud-run-health";
 
 const startTime = Date.now();
 log("Starting server...");
@@ -21,13 +22,20 @@ log(`Platform: ${process.platform}`);
 const app = express();
 log(`Express initialized (${Date.now() - startTime}ms)`);
 
-// Root health check middleware - this must be FIRST, before any other middleware
-app.use(rootHealthCheckMiddleware);
-log("Root health check middleware registered as first priority middleware");
+// In production, use the CloudRun-optimized health check
+if (process.env.NODE_ENV === 'production') {
+  // Setup specialized handlers for CloudRun
+  setupCloudRunHealth(app);
+  log("CloudRun production health checks registered");
+} else {
+  // In development, use the standard health check
+  app.use(rootHealthCheckMiddleware);
+  log("Root health check middleware registered as first priority middleware");
 
-// Also mount the dedicated health check router
-app.use('/', healthCheckRouter);
-log("Dedicated health check router mounted at root path");
+  // Also mount the dedicated health check router
+  app.use('/', healthCheckRouter);
+  log("Dedicated health check router mounted at root path");
+}
 
 // Basic middleware setup with increased JSON payload limit
 app.use(express.json({ limit: '50mb' }));
