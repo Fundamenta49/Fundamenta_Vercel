@@ -700,105 +700,211 @@ export default function DecisionMakingCourse() {
             decision-making tools you can apply in different situations.
           </p>
           
-          <h3 className="text-lg font-semibold mt-6">Decision Matrix (Weighted Scoring Model)</h3>
-          <div className="space-y-2">
-            <p>
-              A decision matrix helps you evaluate and compare multiple options using weighted criteria:
-            </p>
-            <ol className="list-decimal pl-5 space-y-2">
-              <li>Identify the alternatives you're considering</li>
-              <li>Determine the important criteria for your decision</li>
-              <li>Assign weights to each criterion based on importance (e.g., 1-5 or percentages)</li>
-              <li>Rate each alternative against each criterion (e.g., 1-5 scale)</li>
-              <li>Multiply the ratings by the weights and sum the scores for each alternative</li>
-              <li>The alternative with the highest score is potentially your best option</li>
-            </ol>
-            <div className="overflow-auto mt-4">
-              <table className="min-w-full border-collapse border border-gray-300">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border border-gray-300 p-2">Criteria</th>
-                    <th className="border border-gray-300 p-2">Weight</th>
-                    <th className="border border-gray-300 p-2">Option A Score</th>
-                    <th className="border border-gray-300 p-2">Option A Weighted</th>
-                    <th className="border border-gray-300 p-2">Option B Score</th>
-                    <th className="border border-gray-300 p-2">Option B Weighted</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="border border-gray-300 p-2">Cost</td>
-                    <td className="border border-gray-300 p-2 text-center">3</td>
-                    <td className="border border-gray-300 p-2 text-center">4</td>
-                    <td className="border border-gray-300 p-2 text-center">12</td>
-                    <td className="border border-gray-300 p-2 text-center">2</td>
-                    <td className="border border-gray-300 p-2 text-center">6</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 p-2">Quality</td>
-                    <td className="border border-gray-300 p-2 text-center">5</td>
-                    <td className="border border-gray-300 p-2 text-center">3</td>
-                    <td className="border border-gray-300 p-2 text-center">15</td>
-                    <td className="border border-gray-300 p-2 text-center">5</td>
-                    <td className="border border-gray-300 p-2 text-center">25</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 p-2">Time</td>
-                    <td className="border border-gray-300 p-2 text-center">4</td>
-                    <td className="border border-gray-300 p-2 text-center">5</td>
-                    <td className="border border-gray-300 p-2 text-center">20</td>
-                    <td className="border border-gray-300 p-2 text-center">3</td>
-                    <td className="border border-gray-300 p-2 text-center">12</td>
-                  </tr>
-                  <tr className="bg-gray-100 font-semibold">
-                    <td className="border border-gray-300 p-2" colSpan={3}>Total Score</td>
-                    <td className="border border-gray-300 p-2 text-center">47</td>
-                    <td className="border border-gray-300 p-2"></td>
-                    <td className="border border-gray-300 p-2 text-center">43</td>
-                  </tr>
-                </tbody>
-              </table>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6 mt-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Decision Matrix</h3>
+                </div>
+                <p className="text-orange-700 text-sm">Weighted scoring model for comparing multiple options</p>
+              </div>
             </div>
-            <p className="mt-4">
-              This tool is particularly useful for complex decisions with multiple factors to consider.
-            </p>
-          </div>
-          
-          <h3 className="text-lg font-semibold mt-6">Pros and Cons List (T-Chart)</h3>
-          <div className="space-y-2">
-            <p>
-              A simple but effective way to evaluate a single option:
-            </p>
-            <ol className="list-decimal pl-5 space-y-2">
-              <li>Draw a line down the middle of a page</li>
-              <li>List all the positives (pros) on one side</li>
-              <li>List all the negatives (cons) on the other side</li>
-              <li>Consider weighting particularly important factors</li>
-              <li>Compare the overall weight of pros versus cons</li>
-            </ol>
-            <div className="grid grid-cols-2 gap-4 mt-4 border-2 border-gray-200 rounded-lg overflow-hidden">
-              <div className="bg-green-50 p-4">
-                <h4 className="font-medium text-center border-b pb-2 mb-2">Pros</h4>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>Increases income</li>
-                  <li>Better benefits package</li>
-                  <li>More challenging work</li>
-                  <li>Room for advancement</li>
-                </ul>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                A decision matrix helps you evaluate and compare multiple options using weighted criteria. This systematic approach is ideal for complex decisions with multiple factors to consider.
+              </p>
+              
+              <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 mb-5">
+                <h4 className="font-medium text-orange-800 mb-2">How to Use a Decision Matrix:</h4>
+                <ol className="space-y-2 ml-5 text-gray-700">
+                  <li className="flex items-start">
+                    <span className="bg-orange-100 rounded-full h-5 w-5 flex items-center justify-center text-orange-600 font-semibold mr-2 flex-shrink-0 mt-0.5">1</span>
+                    <span>Identify the alternatives you're considering</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-orange-100 rounded-full h-5 w-5 flex items-center justify-center text-orange-600 font-semibold mr-2 flex-shrink-0 mt-0.5">2</span>
+                    <span>Determine the important criteria for your decision</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-orange-100 rounded-full h-5 w-5 flex items-center justify-center text-orange-600 font-semibold mr-2 flex-shrink-0 mt-0.5">3</span>
+                    <span>Assign weights to each criterion based on importance (e.g., 1-5 or percentages)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-orange-100 rounded-full h-5 w-5 flex items-center justify-center text-orange-600 font-semibold mr-2 flex-shrink-0 mt-0.5">4</span>
+                    <span>Rate each alternative against each criterion (e.g., 1-5 scale)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-orange-100 rounded-full h-5 w-5 flex items-center justify-center text-orange-600 font-semibold mr-2 flex-shrink-0 mt-0.5">5</span>
+                    <span>Multiply the ratings by the weights and sum the scores for each alternative</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-orange-100 rounded-full h-5 w-5 flex items-center justify-center text-orange-600 font-semibold mr-2 flex-shrink-0 mt-0.5">6</span>
+                    <span>The alternative with the highest score is potentially your best option</span>
+                  </li>
+                </ol>
               </div>
               
-              <div className="bg-red-50 p-4">
-                <h4 className="font-medium text-center border-b pb-2 mb-2">Cons</h4>
-                <ul className="list-disc pl-5 space-y-1">
-                  <li>Longer commute</li>
-                  <li>Less flexible hours</li>
-                  <li>Uncertain company culture</li>
-                </ul>
+              <div className="overflow-auto rounded-lg border border-orange-100 shadow-sm">
+                <table className="min-w-full border-collapse">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-orange-50 to-[#FFE8CC]">
+                      <th className="border-b border-r border-orange-100 p-2 text-orange-800">Criteria</th>
+                      <th className="border-b border-r border-orange-100 p-2 text-orange-800">Weight</th>
+                      <th className="border-b border-r border-orange-100 p-2 text-orange-800">Option A Score</th>
+                      <th className="border-b border-r border-orange-100 p-2 text-orange-800">Option A Weighted</th>
+                      <th className="border-b border-r border-orange-100 p-2 text-orange-800">Option B Score</th>
+                      <th className="border-b border-orange-100 p-2 text-orange-800">Option B Weighted</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="hover:bg-orange-50">
+                      <td className="border-b border-r border-orange-100 p-2 text-gray-700">Cost</td>
+                      <td className="border-b border-r border-orange-100 p-2 text-center text-gray-700">3</td>
+                      <td className="border-b border-r border-orange-100 p-2 text-center text-gray-700">4</td>
+                      <td className="border-b border-r border-orange-100 p-2 text-center text-gray-700 bg-[#FFE8CC]">12</td>
+                      <td className="border-b border-r border-orange-100 p-2 text-center text-gray-700">2</td>
+                      <td className="border-b border-orange-100 p-2 text-center text-gray-700 bg-[#FFE8CC]">6</td>
+                    </tr>
+                    <tr className="hover:bg-orange-50">
+                      <td className="border-b border-r border-orange-100 p-2 text-gray-700">Quality</td>
+                      <td className="border-b border-r border-orange-100 p-2 text-center text-gray-700">5</td>
+                      <td className="border-b border-r border-orange-100 p-2 text-center text-gray-700">3</td>
+                      <td className="border-b border-r border-orange-100 p-2 text-center text-gray-700 bg-[#FFE8CC]">15</td>
+                      <td className="border-b border-r border-orange-100 p-2 text-center text-gray-700">5</td>
+                      <td className="border-b border-orange-100 p-2 text-center text-gray-700 bg-[#FFE8CC]">25</td>
+                    </tr>
+                    <tr className="hover:bg-orange-50">
+                      <td className="border-b border-r border-orange-100 p-2 text-gray-700">Time</td>
+                      <td className="border-b border-r border-orange-100 p-2 text-center text-gray-700">4</td>
+                      <td className="border-b border-r border-orange-100 p-2 text-center text-gray-700">5</td>
+                      <td className="border-b border-r border-orange-100 p-2 text-center text-gray-700 bg-[#FFE8CC]">20</td>
+                      <td className="border-b border-r border-orange-100 p-2 text-center text-gray-700">3</td>
+                      <td className="border-b border-orange-100 p-2 text-center text-gray-700 bg-[#FFE8CC]">12</td>
+                    </tr>
+                    <tr className="bg-gradient-to-r from-orange-50 to-[#FFE8CC] font-semibold">
+                      <td className="border-r border-orange-100 p-2 text-orange-800" colSpan={3}>Total Score</td>
+                      <td className="border-r border-orange-100 p-2 text-center text-orange-800">47</td>
+                      <td className="border-r border-orange-100 p-2"></td>
+                      <td className="p-2 text-center text-orange-800">43</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <div className="flex items-center gap-2 mt-4 text-orange-800 bg-orange-50 p-3 rounded-lg border border-orange-100">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-sm">
+                  In this example, Option A scores higher (47 vs 43), suggesting it may be the better choice overall.
+                </p>
               </div>
             </div>
-            <p className="mt-4">
-              Pros and cons lists work well for relatively straightforward decisions.
-            </p>
+          </div>
+          
+          <div className="bg-white rounded-xl shadow-md overflow-hidden border border-orange-100 hover:shadow-lg transition-shadow mb-6 mt-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-4 border-b border-orange-100">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+              </svg>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-orange-800">Pros and Cons List</h3>
+                </div>
+                <p className="text-orange-700 text-sm">T-Chart method for evaluating a single option</p>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="mb-4 text-gray-700">
+                A pros and cons list is a simple but powerful way to evaluate a single option or choice. This method helps clarify your thinking by visually organizing the positive and negative aspects.
+              </p>
+              
+              <div className="bg-[#FFE8CC] p-4 rounded-lg border border-orange-100 mb-5">
+                <h4 className="font-medium text-orange-800 mb-2">How to Create a Pros and Cons List:</h4>
+                <ol className="space-y-2 ml-5 text-gray-700">
+                  <li className="flex items-start">
+                    <span className="bg-orange-100 rounded-full h-5 w-5 flex items-center justify-center text-orange-600 font-semibold mr-2 flex-shrink-0 mt-0.5">1</span>
+                    <span>Draw a line down the middle of a page</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-orange-100 rounded-full h-5 w-5 flex items-center justify-center text-orange-600 font-semibold mr-2 flex-shrink-0 mt-0.5">2</span>
+                    <span>List all the positives (pros) on one side</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-orange-100 rounded-full h-5 w-5 flex items-center justify-center text-orange-600 font-semibold mr-2 flex-shrink-0 mt-0.5">3</span>
+                    <span>List all the negatives (cons) on the other side</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-orange-100 rounded-full h-5 w-5 flex items-center justify-center text-orange-600 font-semibold mr-2 flex-shrink-0 mt-0.5">4</span>
+                    <span>Consider weighting particularly important factors</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="bg-orange-100 rounded-full h-5 w-5 flex items-center justify-center text-orange-600 font-semibold mr-2 flex-shrink-0 mt-0.5">5</span>
+                    <span>Compare the overall weight of pros versus cons</span>
+                  </li>
+                </ol>
+              </div>
+              
+              <div className="shadow-sm rounded-lg overflow-hidden border border-orange-100">
+                <div className="bg-gradient-to-r from-orange-50 to-[#FFE8CC] px-4 py-2 border-b border-orange-100">
+                  <h4 className="font-medium text-center text-orange-800">Example: Considering a Job Offer</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2">
+                  <div className="p-5 border-r border-orange-100">
+                    <h4 className="font-medium text-center text-orange-800 border-b border-orange-100 pb-2 mb-3">Pros</h4>
+                    <ul className="space-y-2">
+                      {[
+                        "Increases income",
+                        "Better benefits package",
+                        "More challenging work",
+                        "Room for advancement"
+                      ].map((item, idx) => (
+                        <li key={idx} className="flex items-start">
+                          <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                          <span className="text-gray-700">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <div className="p-5 bg-[#FFE8CC] bg-opacity-30">
+                    <h4 className="font-medium text-center text-orange-800 border-b border-orange-100 pb-2 mb-3">Cons</h4>
+                    <ul className="space-y-2">
+                      {[
+                        "Longer commute",
+                        "Less flexible hours",
+                        "Uncertain company culture"
+                      ].map((item, idx) => (
+                        <li key={idx} className="flex items-start">
+                          <div className="bg-orange-100 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </div>
+                          <span className="text-gray-700">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2 mt-4 text-orange-800 bg-orange-50 p-3 rounded-lg border border-orange-100">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-sm">
+                  Pros and cons lists work best for relatively straightforward decisions where you need clarity on the tradeoffs involved.
+                </p>
+              </div>
+            </div>
           </div>
           
           <h3 className="text-lg font-semibold mt-6">SWOT Analysis</h3>
