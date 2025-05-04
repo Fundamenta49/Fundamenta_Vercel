@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { 
   ArrowLeft, 
@@ -11,7 +11,8 @@ import {
   PiggyBank, 
   BarChart4, 
   CheckCircle,
-  QuestionMarkCircle 
+  HelpCircle,
+  ChevronUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,6 +42,9 @@ interface ModuleProps {
 export default function FinancialLiteracyCourse() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState("learn");
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const sectionRefs = useRef<{[key: string]: HTMLDivElement | null}>({});
 
   // Course modules with content
   const COURSE_MODULES: ModuleProps[] = [
@@ -316,6 +320,58 @@ export default function FinancialLiteracyCourse() {
   ];
 
   // Render the selected module content
+  // Scroll handling functions
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show/hide scroll top button
+      setShowScrollTop(window.scrollY > 300);
+      
+      // Update active section based on scroll position
+      const scrollPosition = window.scrollY + 120; // Adding offset for header
+      
+      // Find which section is currently in view
+      let currentSection = null;
+      Object.entries(sectionRefs.current).forEach(([id, ref]) => {
+        if (ref && ref.offsetTop <= scrollPosition && 
+            ref.offsetTop + ref.offsetHeight > scrollPosition) {
+          currentSection = id;
+        }
+      });
+      
+      if (currentSection !== activeSection) {
+        setActiveSection(currentSection);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [activeSection]);
+  
+  // Smooth scroll to section
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const headerOffset = 80; // Account for fixed header
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+  
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   const renderModuleContent = (moduleId: string) => {
     const module = COURSE_MODULES.find((m) => m.id === moduleId);
     if (!module) return null;
@@ -471,7 +527,7 @@ export default function FinancialLiteracyCourse() {
               {/* Show Learning Coach button on all screens but style for mobile */}
               <div className="mt-4 sm:mt-8">
                 <Button className="w-full sm:w-auto h-9 sm:h-10 text-xs sm:text-sm rounded-full px-4 sm:px-6 bg-emerald-600 hover:bg-emerald-700">
-                  <QuestionMarkCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                  <HelpCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
                   Ask Learning Coach
                 </Button>
               </div>
