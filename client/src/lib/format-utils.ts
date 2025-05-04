@@ -14,16 +14,12 @@ export const formatCurrency = (amount: number): string => {
 
 // Format currency with cents (returns number formatted without the $ sign)
 export const formatCurrencyPrecise = (amount: number): string => {
-  // Use the formatter but strip the $ symbol
-  const formatted = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  // Format without currency style to avoid the $ symbol completely
+  return new Intl.NumberFormat('en-US', {
+    style: 'decimal',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount);
-  
-  // Remove the $ symbol
-  return formatted.replace(/^\$/, '');
 };
 
 // Format percentage

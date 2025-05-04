@@ -375,7 +375,7 @@ export default function BudgetCalculatorFullscreen({
                           <div>
                             <span className="font-medium">{goal.name}</span>
                             <div className="text-sm text-gray-500">
-                              ${goal.currentAmount.toFixed(2)} of ${goal.targetAmount.toFixed(2)}
+                              ${formatCurrencyPrecise(goal.currentAmount)} of ${formatCurrencyPrecise(goal.targetAmount)}
                             </div>
                           </div>
                           <Button
@@ -484,7 +484,7 @@ export default function BudgetCalculatorFullscreen({
                   <div className="space-y-3">
                     <div className="flex justify-between items-center bg-blue-50 p-3 rounded-md">
                       <span>Recommended Monthly Contribution:</span>
-                      <span className="font-bold">${Math.max(income * 0.15, 0).toFixed(2)}</span>
+                      <span className="font-bold">${formatCurrencyPrecise(Math.max(income * 0.15, 0))}</span>
                     </div>
                     <div className="flex justify-between items-center bg-blue-50 p-3 rounded-md">
                       <span>Annual Contribution:</span>
