@@ -55,9 +55,8 @@ export default function VehicleMaintenanceCourse() {
   ];
   
   return (
-    <div className="container mx-auto px-4 py-6 max-w-6xl relative" style={{ overflowX: 'hidden' }}>
-      
-      <div className="flex items-center mb-6">
+    <div className="container mx-auto max-w-6xl px-0 sm:px-4 py-6 relative">
+      <div className="flex items-center mb-6 px-4 sm:px-0">
         <Button 
           variant="ghost" 
           onClick={handleBackNavigation}
@@ -73,7 +72,7 @@ export default function VehicleMaintenanceCourse() {
         </h1>
       </div>
 
-      <div className="mb-6">
+      <div className="mb-6 px-4 sm:px-0">
         <div className="bg-gray-100 p-1 rounded-lg">
           <div className="flex items-center justify-between">
             <div 
@@ -120,7 +119,7 @@ export default function VehicleMaintenanceCourse() {
       </div>
 
       {activeTab === 'learn' && (
-        <div className="mb-6 course-content">
+        <div className="px-4 sm:px-0">
           <Card className="mb-6">
             <CardHeader>
               <CardTitle>Introduction to Vehicle Maintenance</CardTitle>
@@ -138,13 +137,15 @@ export default function VehicleMaintenanceCourse() {
             </CardContent>
           </Card>
           
-          <VehicleGuide />
+          <div className="mb-6">
+            <VehicleGuide />
+          </div>
         </div>
       )}
 
       {activeTab === 'practice' && (
-        <div className="mb-6">
-          <Card>
+        <div className="px-4 sm:px-0">
+          <Card className="mb-6">
             <CardHeader>
               <CardTitle>Test Your Knowledge</CardTitle>
               <CardDescription>
@@ -191,90 +192,6 @@ export default function VehicleMaintenanceCourse() {
                     ],
                     correctAnswer: 0,
                     explanation: "Tires should be rotated approximately every 6,000-8,000 miles to ensure even wear. This helps extend tire life and maintains optimal handling and traction."
-                  },
-                  {
-                    id: 4,
-                    question: "What does the check engine light typically indicate?",
-                    options: [
-                      "You need to immediately pull over and turn off the engine", 
-                      "Your vehicle needs an oil change", 
-                      "A sensor has detected an issue that needs attention", 
-                      "You're low on windshield washer fluid"
-                    ],
-                    correctAnswer: 2,
-                    explanation: "The check engine light indicates that the onboard diagnostic system has detected an issue. While not always an emergency, it should be checked soon with a diagnostic scanner to determine the specific problem."
-                  },
-                  {
-                    id: 5,
-                    question: "Which of these fluids should NOT be topped off if low?",
-                    options: [
-                      "Windshield washer fluid", 
-                      "Engine coolant", 
-                      "Transmission fluid", 
-                      "Power steering fluid"
-                    ],
-                    correctAnswer: 2,
-                    explanation: "Low transmission fluid is often a sign of a leak, as it operates in a closed system and shouldn't be consumed. Adding fluid without fixing the leak is a temporary solution at best and could mask a serious problem."
-                  },
-                  {
-                    id: 6,
-                    question: "What is the purpose of a vehicle's alternator?",
-                    options: [
-                      "To start the engine", 
-                      "To power the vehicle when the engine is off", 
-                      "To charge the battery and power electrical systems while the engine runs", 
-                      "To control the air conditioning system"
-                    ],
-                    correctAnswer: 2,
-                    explanation: "The alternator charges the battery and powers the vehicle's electrical systems while the engine is running. Without a functioning alternator, the battery would eventually drain completely."
-                  },
-                  {
-                    id: 7,
-                    question: "How often should you replace your vehicle's air filter?",
-                    options: [
-                      "Every 15,000-30,000 miles", 
-                      "With every oil change", 
-                      "Once a year regardless of mileage", 
-                      "Only when the check engine light comes on"
-                    ],
-                    correctAnswer: 0,
-                    explanation: "Most manufacturers recommend replacing the air filter every 15,000-30,000 miles, though this can vary based on driving conditions. Dusty or polluted environments may require more frequent changes."
-                  },
-                  {
-                    id: 8,
-                    question: "What is the main purpose of a vehicle's timing belt or chain?",
-                    options: [
-                      "To connect the transmission to the wheels", 
-                      "To synchronize the rotation of the crankshaft and camshaft", 
-                      "To control the vehicle's speed", 
-                      "To operate the power steering"
-                    ],
-                    correctAnswer: 1,
-                    explanation: "The timing belt or chain synchronizes the rotation of the crankshaft and camshaft, ensuring valves open and close at the proper times relative to piston movement. A broken timing belt can cause serious engine damage in some engine designs."
-                  },
-                  {
-                    id: 9,
-                    question: "What should you check first if your car won't start and makes a clicking sound?",
-                    options: [
-                      "Fuel level", 
-                      "Battery and connections", 
-                      "Starter motor", 
-                      "Spark plugs"
-                    ],
-                    correctAnswer: 1,
-                    explanation: "A clicking sound when trying to start a vehicle often indicates a battery or electrical issue. Check the battery connections for corrosion or looseness, and ensure the battery has sufficient charge before investigating other potential causes."
-                  },
-                  {
-                    id: 10,
-                    question: "What is hydroplaning and how can you prevent it?",
-                    options: [
-                      "Engine overheating due to low coolant; prevent by checking fluid levels", 
-                      "Tires losing contact with the road due to water; prevent by reducing speed and maintaining good tires", 
-                      "Brakes overheating on long descents; prevent by downshifting", 
-                      "Transmission slipping; prevent by changing transmission fluid regularly"
-                    ],
-                    correctAnswer: 1,
-                    explanation: "Hydroplaning occurs when tires lose contact with the road surface due to water, causing a loss of control. Prevent it by reducing speed in wet conditions, maintaining proper tire inflation, and ensuring your tires have adequate tread depth."
                   }
                 ]}
                 onComplete={(score, total) => {
@@ -287,8 +204,8 @@ export default function VehicleMaintenanceCourse() {
       )}
 
       {activeTab === 'resources' && (
-        <div className="mb-6">
-          <Card>
+        <div className="px-4 sm:px-0">
+          <Card className="mb-6">
             <CardHeader>
               <CardTitle>Vehicle Maintenance Resources</CardTitle>
               <CardDescription>Curated resources to help master these skills</CardDescription>
@@ -301,8 +218,6 @@ export default function VehicleMaintenanceCourse() {
           </Card>
         </div>
       )}
-      
-      {/* FloatingChat removed to prevent duplicate Fundi robot icons */}
     </div>
   );
 }
