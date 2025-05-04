@@ -43,6 +43,22 @@ export default function HandymanGuide() {
   const [isLoadingVideos, setIsLoadingVideos] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [customMaintenanceQuery, setCustomMaintenanceQuery] = useState("");
+  
+  // Function to determine badge styling based on difficulty
+  const getDifficultyStyle = (difficulty: string) => {
+    switch (difficulty) {
+      case 'Easy':
+        return 'bg-orange-100 text-orange-700 border-orange-200';
+      case 'Moderate':
+        return 'bg-orange-100 text-orange-700 border-orange-200';
+      case 'Advanced':
+        return 'bg-red-100 text-red-700 border-red-200';
+      case 'Variable':
+        return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+      default:
+        return 'bg-gray-100 text-gray-700 border-gray-200';
+    }
+  };
 
   const [maintenanceTasks, setMaintenanceTasks] = useState<Record<string, MaintenanceGuide>>({
     "sink-ptrap": {
@@ -288,7 +304,7 @@ export default function HandymanGuide() {
                       )}
                       <span>{task.title}</span>
                     </div>
-                    <Badge variant="outline">{task.difficulty}</Badge>
+                    <Badge variant="outline" className={getDifficultyStyle(task.difficulty)}>{task.difficulty}</Badge>
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -303,7 +319,7 @@ export default function HandymanGuide() {
                   {maintenanceTasks[selectedTask].title}
                 </CardTitle>
                 <div className="flex gap-4 text-sm text-muted-foreground">
-                  <span>Difficulty: {maintenanceTasks[selectedTask].difficulty}</span>
+                  <span className={`px-2 py-0.5 rounded-md text-xs ${getDifficultyStyle(maintenanceTasks[selectedTask].difficulty)}`}>Difficulty: {maintenanceTasks[selectedTask].difficulty}</span>
                   <span>Time: {maintenanceTasks[selectedTask].time}</span>
                 </div>
               </CardHeader>
@@ -368,7 +384,7 @@ export default function HandymanGuide() {
                         <div className="flex-1">
                           <h3 className="font-medium text-md line-clamp-2">{video.title}</h3>
                           <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
-                            <Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-100">Beginner</Badge>
+                            <Badge variant="outline" className="bg-orange-100 text-orange-700 border-orange-200">Beginner</Badge>
                             <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-100">Free</Badge>
                           </div>
                         </div>
