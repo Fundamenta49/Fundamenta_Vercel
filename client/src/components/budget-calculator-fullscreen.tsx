@@ -20,6 +20,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import BudgetSummaryCard from "@/components/budget-summary-card";
 
 // Shared types from budget-calculator.tsx
 export interface Expense {
@@ -348,34 +349,16 @@ export default function BudgetCalculatorFullscreen({
               </CardContent>
             </Card>
             
-            <Card className="w-full max-w-2xl mx-auto">
-              <CardHeader>
-                <CardTitle>Budget Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6 pb-8">
-                <div className="flex justify-between text-lg">
-                  <span>Total Income:</span>
-                  <span className="font-bold">${income.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-lg">
-                  <span>Total Expenses:</span>
-                  <span className="font-bold text-red-500">${totalExpenses.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-lg">
-                  <span>Remaining:</span>
-                  <span className={`font-bold ${remaining >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                    ${remaining.toFixed(2)}
-                  </span>
-                </div>
-                <div className="space-y-2 pt-2">
-                  <div className="flex justify-between">
-                    <span>Budget Used:</span>
-                    <span className="font-semibold">{expensePercentage.toFixed(1)}%</span>
-                  </div>
-                  <Progress value={expensePercentage} className="h-3" />
-                </div>
-              </CardContent>
-            </Card>
+            {/* Enhanced Budget Summary Card with expense categories */}
+            <div className="w-full">
+              <BudgetSummaryCard
+                income={income}
+                totalExpenses={totalExpenses}
+                remaining={remaining}
+                expensePercentage={expensePercentage}
+                expenses={expenses}
+              />
+            </div>
           </TabsContent>
           
           <TabsContent value="savings" className="space-y-6">
@@ -526,7 +509,7 @@ export default function BudgetCalculatorFullscreen({
         <div className="flex justify-center mt-4 mb-2">
           <Button 
             onClick={onClose} 
-            className="budget-close-btn px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md flex items-center gap-2"
+            className="budget-close-btn px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md flex items-center gap-2 shadow-md"
             size="lg"
             style={{ zIndex: 999999 }}
           >
