@@ -55,12 +55,13 @@ export default function VehicleMaintenanceCourse() {
   ];
   
   return (
-    <div className="container mx-auto max-w-6xl px-0 sm:px-4 py-6 relative">
+    <div className="container mx-auto px-0 sm:px-4 py-6 max-w-6xl relative">
       <div className="flex items-center mb-6 px-4 sm:px-0">
         <Button 
           variant="ghost" 
           onClick={handleBackNavigation}
           className="mr-4"
+          size="sm"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Learning
@@ -70,6 +71,26 @@ export default function VehicleMaintenanceCourse() {
           <Car className="h-6 w-6 mr-2 text-orange-500" />
           Vehicle Maintenance
         </h1>
+      </div>
+
+      {/* Banner card - Standardized with Yoga-style UI */}
+      <div className="w-full sm:px-0 mb-6 px-4">
+        <Card className="border-0 shadow-sm rounded-none sm:rounded-2xl overflow-hidden w-full">
+          {/* Top gradient accent line */}
+          <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+          
+          <div className="p-4 sm:p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center">
+                <Car className="h-6 w-6 text-orange-500" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold">Learn Vehicle Maintenance</h2>
+                <p className="text-sm text-gray-600">Save money and extend your vehicle's life with proper maintenance</p>
+              </div>
+            </div>
+          </div>
+        </Card>
       </div>
 
       <div className="mb-6 px-4 sm:px-0">
@@ -120,14 +141,18 @@ export default function VehicleMaintenanceCourse() {
 
       {activeTab === 'learn' && (
         <div className="px-4 sm:px-0">
-          <Card className="mb-6">
-            <CardHeader>
+          <Card className="mb-6 border-0 shadow-sm rounded-2xl overflow-hidden">
+            {/* Top gradient accent line */}
+            <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+            
+            <CardHeader className="bg-white border-b border-gray-100">
               <CardTitle>Introduction to Vehicle Maintenance</CardTitle>
               <CardDescription>
                 Regular vehicle maintenance saves money, extends your vehicle's life, and ensures your safety on the road.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            
+            <CardContent className="bg-gray-50 p-4 sm:p-6">
               <p className="mb-4">
                 Understanding the basics of car maintenance is an essential life skill that can save you thousands of dollars over the lifetime of your vehicle. Even if you're not mechanically inclined, learning which issues you can handle yourself and which require professional help is valuable knowledge.
               </p>
@@ -145,14 +170,18 @@ export default function VehicleMaintenanceCourse() {
 
       {activeTab === 'practice' && (
         <div className="px-4 sm:px-0">
-          <Card className="mb-6">
-            <CardHeader>
+          <Card className="mb-6 border-0 shadow-sm rounded-2xl overflow-hidden">
+            {/* Top gradient accent line */}
+            <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+            
+            <CardHeader className="bg-white border-b border-gray-100">
               <CardTitle>Test Your Knowledge</CardTitle>
               <CardDescription>
                 Answer these questions to see how much you've learned about vehicle maintenance.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            
+            <CardContent className="bg-gray-50 p-4 sm:p-6">
               <QuizComponent 
                 subject="Vehicle Maintenance"
                 difficulty="beginner"
@@ -205,12 +234,16 @@ export default function VehicleMaintenanceCourse() {
 
       {activeTab === 'resources' && (
         <div className="px-4 sm:px-0">
-          <Card className="mb-6">
-            <CardHeader>
+          <Card className="mb-6 border-0 shadow-sm rounded-2xl overflow-hidden">
+            {/* Top gradient accent line */}
+            <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+            
+            <CardHeader className="bg-white border-b border-gray-100">
               <CardTitle>Vehicle Maintenance Resources</CardTitle>
               <CardDescription>Curated resources to help master these skills</CardDescription>
             </CardHeader>
-            <CardContent>
+            
+            <CardContent className="bg-gray-50 p-4 sm:p-6">
               <SimpleResourceLinks 
                 resources={resources}
               />
