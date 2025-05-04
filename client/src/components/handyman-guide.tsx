@@ -48,9 +48,9 @@ export default function HandymanGuide() {
   const getDifficultyStyle = (difficulty: string) => {
     switch (difficulty) {
       case 'Easy':
-        return 'bg-orange-100 text-orange-700 border-orange-200';
+        return 'bg-[#FFE8CC] text-orange-700 border-orange-200';
       case 'Moderate':
-        return 'bg-orange-100 text-orange-700 border-orange-200';
+        return 'bg-[#FFE8CC] text-orange-700 border-orange-200';
       case 'Advanced':
         return 'bg-red-100 text-red-700 border-red-200';
       case 'Variable':
@@ -342,8 +342,8 @@ export default function HandymanGuide() {
                   </ol>
                 </div>
 
-                <Alert className="mt-4 bg-orange-50 border-orange-200">
-                  <AlertCircle className="h-4 w-4 text-orange-500" />
+                <Alert className="mt-4 bg-[#FFE8CC] border-orange-200">
+                  <AlertCircle className="h-4 w-4 text-orange-700" />
                   <AlertDescription className="text-orange-800">
                     Note: {maintenanceTasks[selectedTask].notes}
                   </AlertDescription>
@@ -384,7 +384,7 @@ export default function HandymanGuide() {
                         <div className="flex-1">
                           <h3 className="font-medium text-md line-clamp-2">{video.title}</h3>
                           <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
-                            <Badge variant="outline" className="bg-orange-100 text-orange-700 border-orange-200">Beginner</Badge>
+                            <Badge variant="outline" className="bg-[#FFE8CC] text-orange-700 border-orange-200">Beginner</Badge>
                             <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-100">Free</Badge>
                           </div>
                         </div>

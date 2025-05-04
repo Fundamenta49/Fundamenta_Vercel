@@ -441,9 +441,9 @@ export default function VehicleGuide() {
   const getDifficultyStyle = (difficulty: string) => {
     switch (difficulty) {
       case 'Easy':
-        return 'bg-orange-100 text-orange-700 border-orange-200';
+        return 'bg-[#FFE8CC] text-orange-700 border-orange-200';
       case 'Moderate':
-        return 'bg-orange-100 text-orange-700 border-orange-200';
+        return 'bg-[#FFE8CC] text-orange-700 border-orange-200';
       case 'Advanced':
         return 'bg-red-100 text-red-700 border-red-200';
       case 'Variable':
