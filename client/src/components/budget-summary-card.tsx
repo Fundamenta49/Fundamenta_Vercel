@@ -1,5 +1,6 @@
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatCurrency, formatCurrencyPrecise } from "@/lib/format-utils";
 
 import { Expense } from "./budget-calculator-fullscreen";
 
@@ -49,16 +50,16 @@ export default function BudgetSummaryCard({
           <div className="space-y-4">
             <div className="flex justify-between text-lg">
               <span>Total Income:</span>
-              <span className="font-bold">${income.toFixed(2)}</span>
+              <span className="font-bold">{formatCurrencyPrecise(income)}</span>
             </div>
             <div className="flex justify-between text-lg">
               <span>Total Expenses:</span>
-              <span className="font-bold text-red-500">${totalExpenses.toFixed(2)}</span>
+              <span className="font-bold text-red-500">{formatCurrencyPrecise(totalExpenses)}</span>
             </div>
             <div className="flex justify-between text-lg">
               <span>Remaining:</span>
               <span className={`font-bold ${remaining >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                ${remaining.toFixed(2)}
+                {formatCurrencyPrecise(remaining)}
               </span>
             </div>
             <div className="space-y-2 pt-2">
@@ -88,7 +89,7 @@ export default function BudgetSummaryCard({
                       <div className="flex justify-between text-sm mb-1">
                         <span className="font-medium">{expense.category}</span>
                         <div className="flex items-center gap-2">
-                          <span className="text-gray-500">${expense.amount}</span>
+                          <span className="text-gray-500">{formatCurrencyPrecise(expense.amount)}</span>
                           <span className="font-semibold">{percent}%</span>
                         </div>
                       </div>
