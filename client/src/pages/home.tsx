@@ -19,7 +19,7 @@ const features = [
     description: "Learn budgeting, savings, and financial planning",
     icon: DollarSign,
     href: "/finance",
-    color: "text-blue-500", // Changed to Financial Blue (#3b82f6) as per design system
+    color: "text-green-500",
   },
   {
     title: "Career Development",
@@ -113,54 +113,36 @@ export default function Home() {
       {/* Weather Widget removed */}
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-2 sm:gap-4 md:gap-6 max-w-5xl mx-auto">
-        {features.map((feature) => {
-          // Get color hex code based on the feature's section
-          const getColorHex = () => {
-            switch(feature.title) {
-              case "Financial Literacy": return "#3b82f6"; // Financial Blue
-              case "Emergency Guidance": return "#b91c1c"; // Emergency Red
-              case "Wellness & Nutrition": return "#10b981"; // Wellness Green
-              case "Career Development": return "#8b5cf6"; // Career Purple
-              case "Life Skills": return "#f59e0b"; // Learning Yellow
-              case "Active You": return "#ec4899"; // Active Pink
-              default: return "#3b82f6";
-            }
-          };
-          
-          const sectionColorHex = getColorHex();
-          
-          return (
-            <Link key={feature.href} href={feature.href}>
-              <Card 
-                className="hover:shadow-lg transition-all duration-200 cursor-pointer h-full bg-white min-h-[82px] hover:scale-[1.02]"
-                style={{ borderColor: sectionColorHex }} // Section-specific border color
-                data-tour-id={`card-${feature.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
-              >
-                {/* Mobile Layout (XS to SM screens) */}
-                <div className="sm:hidden">
-                  <div className="flex items-center p-2">
-                    <feature.icon className={`h-6 w-6 ${feature.color} flex-shrink-0`} />
-                    <CardTitle style={{ color: sectionColorHex }} className="text-sm font-bold ml-2">{feature.title}</CardTitle>
-                  </div>
-                  <CardContent className="text-center p-1 pb-2">
-                    <p className="text-gray-600 text-xs line-clamp-2">{feature.description}</p>
-                  </CardContent>
+        {features.map((feature) => (
+          <Link key={feature.href} href={feature.href}>
+            <Card 
+              className="hover:shadow-lg transition-shadow cursor-pointer h-full bg-white border border-gray-200 min-h-[82px]"
+              data-tour-id={`card-${feature.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
+            >
+              {/* Mobile Layout (XS to SM screens) */}
+              <div className="sm:hidden">
+                <div className="flex items-center p-2">
+                  <feature.icon className={`h-6 w-6 ${feature.color} flex-shrink-0`} />
+                  <CardTitle className="text-[#1C3D5A] text-sm font-bold ml-2">{feature.title}</CardTitle>
                 </div>
-                
-                {/* Desktop Layout (SM screens and up) */}
-                <div className="hidden sm:block">
-                  <CardHeader className="pb-2">
-                    <feature.icon className={`h-8 w-8 mb-2`} style={{ color: sectionColorHex }} />
-                    <CardTitle style={{ color: sectionColorHex }} className="text-xl">{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 text-pretty">{feature.description}</p>
-                  </CardContent>
-                </div>
-              </Card>
-            </Link>
-          );
-        })}
+                <CardContent className="text-center p-1 pb-2">
+                  <p className="text-gray-600 text-xs line-clamp-2">{feature.description}</p>
+                </CardContent>
+              </div>
+              
+              {/* Desktop Layout (SM screens and up) */}
+              <div className="hidden sm:block">
+                <CardHeader>
+                  <feature.icon className={`h-8 w-8 ${feature.color} mb-2`} />
+                  <CardTitle className="text-[#1C3D5A] text-xl">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600 text-pretty">{feature.description}</p>
+                </CardContent>
+              </div>
+            </Card>
+          </Link>
+        ))}
       </div>
     </div>
   );

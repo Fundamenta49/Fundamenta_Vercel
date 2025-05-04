@@ -149,11 +149,11 @@ export default function Finance() {
 
   return (
     <div className="w-full h-full mx-auto p-0">
-      <h1 className="text-2xl font-bold tracking-tight text-center mb-2">
+      <h1 className="text-3xl font-bold tracking-tight text-center mb-4 text-blue-500">
         Financial Literacy
       </h1>
 
-      <Alert variant="default" className="mx-3 sm:mx-5 mb-2 border-amber-500 bg-amber-50">
+      <Alert variant="default" className="mx-3 sm:mx-5 mb-4 border-amber-500 bg-amber-50">
         <AlertCircle className="h-4 w-4 text-amber-500" />
         <AlertDescription className="text-amber-800 text-sm">
           This app provides general financial information for educational purposes only.
@@ -211,12 +211,17 @@ export default function Finance() {
         </FullScreenDialogContent>
       </FullScreenDialog>
 
-      {/* Grid-style cards layout (similar to Learning section) */}
+      {/* Grid-style cards layout updated to match design system */}
       <div className="px-2">
         <div className="mb-4">
-          <h2 className="text-lg font-bold mb-2 px-2 py-1 bg-green-50 text-green-800 rounded-md border-l-4 border-green-500">
-            Financial Tools
-          </h2>
+          <div className="pb-4 mb-6 border-b border-blue-500">
+            <div className="flex items-center">
+              <DollarSign className="h-6 w-6 mr-2 text-blue-500" />
+              <h2 className="text-2xl font-bold text-blue-500">
+                Financial Tools
+              </h2>
+            </div>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-4 max-w-6xl mx-auto" data-tour="finance-grid">
             {SECTIONS.map((section) => (
               <div 
@@ -225,16 +230,20 @@ export default function Finance() {
               >
                 <button
                   onClick={() => handleCardClick(section.id)}
-                  className={`relative flex flex-col items-center justify-between p-4 rounded-lg border bg-white shadow-sm transition-all duration-200 hover:shadow-md hover:border-green-500 min-h-[130px] sm:min-h-[160px] md:min-h-[170px] lg:min-h-[180px] w-full h-full ${section.id === 'bank' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[140px] md:min-h-[150px]' : ''}`}
+                  className={`relative flex flex-col items-center justify-between p-4 rounded-lg border border-blue-500 bg-white shadow-sm transition-all duration-200 hover:shadow-lg hover:scale-[1.02] min-h-[130px] sm:min-h-[160px] md:min-h-[170px] lg:min-h-[180px] w-full h-full ${section.id === 'bank' ? 'sm:flex-row sm:items-start sm:text-left sm:justify-start sm:min-h-[140px] md:min-h-[150px]' : ''}`} 
                   aria-label={`Open ${section.title}`}
                   data-tour={section.id === 'budget' ? 'budget-calculator' : section.id === 'credit' ? 'credit-skills' : `finance-${section.id}`}
                 >
                   <div className={`flex items-center justify-center h-12 sm:h-14 md:h-14 ${section.id === 'bank' ? 'sm:mr-6' : 'w-full'} mb-2`}>
-                    <section.icon className="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 text-green-500" />
+                    <section.icon className="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 text-blue-500" />
                   </div>
                   
                   <div className={`flex flex-col ${section.id === 'bank' ? 'sm:items-start items-center' : 'items-center'} w-full`}>
-                    <span className={`text-sm sm:text-base md:text-lg font-medium ${section.id === 'bank' ? 'sm:text-left text-center' : 'text-center'} line-clamp-2 w-full`}>{section.title}</span>
+                    <span 
+                      className={`text-sm sm:text-base md:text-lg font-medium ${section.id === 'bank' ? 'sm:text-left text-center' : 'text-center'} line-clamp-2 w-full text-blue-500`}
+                    >
+                      {section.title}
+                    </span>
                     
                     <p className={`text-xs sm:text-sm text-gray-500 mt-1 md:mt-2 line-clamp-3 ${section.id === 'bank' ? 'sm:text-left text-center' : 'text-center'} block`}>
                       {section.description.length > (section.id === 'bank' ? 100 : 80) 
