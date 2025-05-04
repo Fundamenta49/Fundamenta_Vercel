@@ -1,6 +1,18 @@
 import React, { useState } from "react";
 import { useLocation } from "wouter";
-import { ArrowLeft, BookOpen, Calculator, CreditCard, LineChart, Wallet, DollarSign, PiggyBank, BarChart4 } from "lucide-react";
+import { 
+  ArrowLeft, 
+  BookOpen, 
+  Calculator, 
+  CreditCard, 
+  LineChart, 
+  Wallet, 
+  DollarSign, 
+  PiggyBank, 
+  BarChart4, 
+  CheckCircle,
+  QuestionMarkCircle 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -363,24 +375,24 @@ export default function FinancialLiteracyCourse() {
             {/* iOS-style gradient header bar with finance theme colors */}
             <div className="h-1.5 bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500"></div>
             
-            <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
-              <CardTitle className="flex items-center">
-                <DollarSign className="h-5 w-5 mr-2 text-emerald-600" />
-                Introduction to Financial Literacy
+            <CardHeader className="p-3 sm:p-6 border-b border-gray-100 bg-white">
+              <CardTitle className="flex items-center text-lg sm:text-xl">
+                <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 text-emerald-600 flex-shrink-0" />
+                <span>Introduction to Financial Literacy</span>
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
                 Master essential financial concepts to build a secure future
               </CardDescription>
             </CardHeader>
             
-            <CardContent className="p-4 sm:p-6 bg-gray-50">
-              <p className="mb-4">
+            <CardContent className="p-3 sm:p-6 bg-gray-50">
+              <p className="mb-3 sm:mb-4 text-sm sm:text-base">
                 Financial literacy provides the knowledge and skills necessary to make informed and effective decisions 
                 about money management. Whether you're just starting your financial journey or looking to strengthen 
                 your financial foundation, this course will help you develop the skills to navigate today's complex 
                 financial landscape.
               </p>
-              <p className="mb-4">
+              <p className="mb-0 sm:mb-4 text-sm sm:text-base">
                 From creating a budget to understanding credit to planning for the future, you'll learn practical 
                 strategies you can implement immediately to improve your financial well-being.
               </p>
@@ -440,25 +452,26 @@ export default function FinancialLiteracyCourse() {
             {/* iOS-style gradient header bar with finance theme colors */}
             <div className="h-1.5 bg-gradient-to-r from-emerald-400 via-teal-500 to-green-400"></div>
             
-            <CardHeader className="p-4 sm:p-6 border-b border-gray-100 bg-white">
-              <CardTitle className="flex items-center">
-                <BookOpen className="h-5 w-5 mr-2 text-emerald-600" />
-                Financial Literacy Quiz
+            <CardHeader className="p-3 sm:p-6 border-b border-gray-100 bg-white">
+              <CardTitle className="flex items-center text-lg sm:text-xl">
+                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-1.5 sm:mr-2 text-emerald-600 flex-shrink-0" />
+                <span>Financial Literacy Quiz</span>
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-xs sm:text-sm">
                 Test your knowledge of key financial concepts
               </CardDescription>
             </CardHeader>
             
-            <CardContent className="p-4 sm:p-6 bg-gray-50">
-              <p className="mb-6">
+            <CardContent className="p-3 sm:p-6 bg-gray-50">
+              <p className="mb-4 sm:mb-6 text-sm sm:text-base">
                 Take this quiz to assess your understanding of financial literacy concepts. 
                 Each question has one correct answer. Choose the best option for each question.
               </p>
               
-              {/* Hide Learning Coach button on mobile, show only on SM and larger screens */}
-              <div className="mt-8 hidden sm:block">
-                <Button className="w-full sm:w-auto rounded-full px-6 bg-emerald-600 hover:bg-emerald-700">
+              {/* Show Learning Coach button on all screens but style for mobile */}
+              <div className="mt-4 sm:mt-8">
+                <Button className="w-full sm:w-auto h-9 sm:h-10 text-xs sm:text-sm rounded-full px-4 sm:px-6 bg-emerald-600 hover:bg-emerald-700">
+                  <QuestionMarkCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
                   Ask Learning Coach
                 </Button>
               </div>
