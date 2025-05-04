@@ -21,6 +21,7 @@ import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import BudgetSummaryCard from "@/components/budget-summary-card";
+import { formatCurrencyPrecise } from "@/lib/format-utils";
 
 // Shared types from budget-calculator.tsx
 export interface Expense {
@@ -488,7 +489,7 @@ export default function BudgetCalculatorFullscreen({
                     </div>
                     <div className="flex justify-between items-center bg-blue-50 p-3 rounded-md">
                       <span>Annual Contribution:</span>
-                      <span className="font-bold">${(Math.max(income * 0.15, 0) * 12).toFixed(2)}</span>
+                      <span className="font-bold">${formatCurrencyPrecise(Math.max(income * 0.15, 0) * 12)}</span>
                     </div>
                     <Alert className="mt-4 border-yellow-500 bg-yellow-50">
                       <AlertCircle className="h-4 w-4 text-yellow-500" />
