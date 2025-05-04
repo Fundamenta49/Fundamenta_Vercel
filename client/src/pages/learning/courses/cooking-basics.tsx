@@ -171,9 +171,9 @@ export default function CookingBasics() {
   };
 
   return (
-    <div className="w-full h-full mx-auto p-0 overflow-hidden">
-      <div className="p-4 sm:p-6">
-        <div className="flex justify-between items-center mb-6">
+    <div className="relative w-full max-w-full sm:max-w-6xl sm:mx-auto">
+      <div className="px-0 sm:px-6 pt-0">
+        <div className="flex justify-between items-center mb-6 px-4 sm:px-0">
           <div className="flex items-center gap-2">
             <Link href="/learning">
               <Button variant="ghost" size="sm" className="gap-1">
@@ -188,7 +188,7 @@ export default function CookingBasics() {
           Cooking Basics
         </h1>
         
-        <Alert variant="default" className="mx-0 sm:mx-2 mb-4 bg-learning-color/10 border-learning-color">
+        <Alert variant="default" className="mx-4 sm:mx-0 mb-4 bg-learning-color/10 border-learning-color">
           <Info className="h-4 w-4 text-learning-color" />
           <AlertDescription className="text-sm">
             Learn essential cooking skills, discover new recipes, and build your confidence in the kitchen.
@@ -231,8 +231,9 @@ export default function CookingBasics() {
       </FullScreenDialog>
 
       {/* Introduction Header - Mobile Optimized - Standardized with Yoga style */}
-      <div className="px-0 sm:px-6 w-full">
-        <Card className="border-0 shadow-sm rounded-2xl overflow-hidden w-full mx-auto mb-8">
+      <div className="w-full">
+        {/* Removing mx-auto to ensure full-width stretch on mobile */}
+        <Card className="border-0 shadow-sm rounded-none sm:rounded-2xl overflow-hidden w-full mb-8">
           {/* Top gradient accent line */}
           <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
           
@@ -263,24 +264,25 @@ export default function CookingBasics() {
       </div>
       
       {/* Grid-style cards layout - Mobile Optimized with Yoga-style standardization */}
-      <div className="px-0 sm:px-6 w-full">
+      <div className="w-full">
         <div className="mb-4 w-full">
-          <h2 className="text-lg font-bold mb-4 px-4 sm:px-2 py-1 bg-learning-color/10 text-learning-color/90 rounded-md border-l-4 border-learning-color">
+          <h2 className="text-lg font-bold mb-4 px-4 sm:px-6 py-1 bg-learning-color/10 text-learning-color/90 rounded-md border-l-4 border-learning-color">
             Cooking Resources
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 mt-4 px-4 sm:px-0">
+          {/* Grid with standardized gap sizes and improved responsive behavior */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mt-4 px-4 sm:px-6">
             {SECTIONS.map((section) => (
               <div key={section.id} className="flex flex-col h-full w-full">
                 <Card 
-                  className="border-0 shadow-sm rounded-2xl overflow-hidden h-full w-full cursor-pointer hover:shadow-md hover:translate-y-[-2px] transition-all duration-300"
+                  className="border-0 shadow-sm rounded-xl overflow-hidden h-full w-full cursor-pointer hover:shadow-md hover:translate-y-[-2px] transition-all duration-300"
                   onClick={() => handleCardClick(section.id)}
                 >
                   {/* iOS-style subtle gradient accent at top */}
                   <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
                   
-                  <div className="flex flex-col items-center justify-between p-4 h-full">
-                    <div className="flex items-center justify-center h-12 sm:h-14 w-full mb-2">
-                      <section.icon className={`w-9 h-9 sm:w-10 sm:h-10 ${section.color}`} />
+                  <div className="flex flex-col items-center justify-between p-3 sm:p-4 h-full">
+                    <div className="flex items-center justify-center h-10 sm:h-14 w-full mb-1 sm:mb-2">
+                      <section.icon className={`w-8 h-8 sm:w-10 sm:h-10 ${section.color}`} />
                     </div>
                     
                     <span className="text-sm sm:text-base font-medium text-center line-clamp-2 w-full">{section.title}</span>
