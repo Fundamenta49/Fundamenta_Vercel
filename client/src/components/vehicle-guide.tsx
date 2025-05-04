@@ -80,7 +80,7 @@ const COMMON_TASKS: MaintenanceTask[] = [
       'New oil filter',
       'Fresh oil'
     ],
-    icon: <Wrench className="h-4 w-4 text-blue-500" />
+    icon: <Wrench className="h-4 w-4 text-orange-500" />
   },
   {
     id: 'tire-rotation',
@@ -101,7 +101,7 @@ const COMMON_TASKS: MaintenanceTask[] = [
       'Lug wrench',
       'Torque wrench'
     ],
-    icon: <Car className="h-4 w-4 text-blue-500" />
+    icon: <Car className="h-4 w-4 text-orange-500" />
   },
   // ... other common tasks
 ];

@@ -312,10 +312,10 @@ export default function HandymanGuide() {
           </Command>
 
           {selectedTask && maintenanceTasks[selectedTask] && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <Wrench className="h-5 w-5 text-orange-500" />
+            <Card className="border-0">
+              <CardHeader className="bg-[#FFE8CC]">
+                <CardTitle className="text-xl flex items-center gap-2 text-orange-900">
+                  <Wrench className="h-5 w-5 text-orange-700" />
                   {maintenanceTasks[selectedTask].title}
                 </CardTitle>
                 <div className="flex gap-4 text-sm text-muted-foreground">
@@ -357,7 +357,7 @@ export default function HandymanGuide() {
               <div className="flex items-center gap-2 mb-2">
                 <div className="flex-1 border-t border-muted"></div>
                 <h2 className="text-xl font-semibold flex items-center">
-                  <span className="bg-blue-100 text-blue-800 p-1 rounded-md mr-2">
+                  <span className="bg-[#FFE8CC] text-orange-800 p-1 rounded-md mr-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-video"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
                   </span>
                   DIY Home Improvement Videos
