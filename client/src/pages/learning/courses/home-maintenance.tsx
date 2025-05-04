@@ -13,6 +13,18 @@ export default function HomeMaintenanceCourse() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<'learn' | 'practice' | 'resources'>('learn');
 
+  // Function to handle navigation back to Learning page
+  const handleBackNavigation = () => {
+    navigate('/learning');
+    window.scrollTo(0, 0);
+  };
+  
+  // Function to handle tab changes
+  const handleTabChange = (tab: 'learn' | 'practice' | 'resources') => {
+    setActiveTab(tab);
+    window.scrollTo(0, 0);
+  };
+
   // Resources specific to home maintenance
   const resources: SimpleResource[] = [
     {
@@ -43,12 +55,13 @@ export default function HomeMaintenanceCourse() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-6xl">
-      <div className="flex items-center mb-6">
+    <div className="container mx-auto px-0 sm:px-4 py-6 max-w-6xl relative">
+      <div className="flex items-center mb-6 px-4 sm:px-0">
         <Button 
           variant="ghost" 
-          onClick={() => navigate('/learning')}
+          onClick={handleBackNavigation}
           className="mr-4"
+          size="sm"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Learning
@@ -60,40 +73,86 @@ export default function HomeMaintenanceCourse() {
         </h1>
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-6">
-        <Button
-          variant={activeTab === 'learn' ? 'default' : 'outline'}
-          className={activeTab === 'learn' ? 'bg-orange-500 hover:bg-orange-600' : ''}
-          onClick={() => setActiveTab('learn')}
-        >
-          Learn
-        </Button>
-        <Button
-          variant={activeTab === 'practice' ? 'default' : 'outline'}
-          className={activeTab === 'practice' ? 'bg-orange-500 hover:bg-orange-600' : ''}
-          onClick={() => setActiveTab('practice')}
-        >
-          Test Your Knowledge
-        </Button>
-        <Button
-          variant={activeTab === 'resources' ? 'default' : 'outline'}
-          className={activeTab === 'resources' ? 'bg-orange-500 hover:bg-orange-600' : ''}
-          onClick={() => setActiveTab('resources')}
-        >
-          Resources
-        </Button>
+      {/* Banner card - Standardized with Yoga-style UI */}
+      <div className="w-full sm:px-0 mb-6 px-4">
+        <Card className="border-0 shadow-sm rounded-none sm:rounded-2xl overflow-hidden w-full">
+          {/* Top gradient accent line */}
+          <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+          
+          <div className="p-4 sm:p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center">
+                <Wrench className="h-6 w-6 text-orange-500" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold">Learn Home Maintenance</h2>
+                <p className="text-sm text-gray-600">Save money and avoid costly repairs with proper home maintenance</p>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <div className="mb-6 px-4 sm:px-0">
+        <div className="bg-gray-100 p-1 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div 
+              className={`flex-1 text-center py-2 px-4 rounded-md cursor-pointer transition-all ${
+                activeTab === 'learn' 
+                  ? 'bg-orange-500 text-white shadow-sm' 
+                  : 'text-gray-700 hover:bg-gray-200'
+              }`}
+              onClick={() => handleTabChange('learn')}
+              role="tab"
+              aria-selected={activeTab === 'learn'}
+              tabIndex={0}
+            >
+              <span className="text-sm font-medium">Learn</span>
+            </div>
+            <div 
+              className={`flex-1 text-center py-2 px-4 rounded-md cursor-pointer transition-all ${
+                activeTab === 'practice' 
+                  ? 'bg-orange-500 text-white shadow-sm' 
+                  : 'text-gray-700 hover:bg-gray-200'
+              }`}
+              onClick={() => handleTabChange('practice')}
+              role="tab"
+              aria-selected={activeTab === 'practice'}
+              tabIndex={0}
+            >
+              <span className="text-sm font-medium">Practice</span>
+            </div>
+            <div 
+              className={`flex-1 text-center py-2 px-4 rounded-md cursor-pointer transition-all ${
+                activeTab === 'resources' 
+                  ? 'bg-orange-500 text-white shadow-sm' 
+                  : 'text-gray-700 hover:bg-gray-200'
+              }`}
+              onClick={() => handleTabChange('resources')}
+              role="tab"
+              aria-selected={activeTab === 'resources'}
+              tabIndex={0}
+            >
+              <span className="text-sm font-medium">Resources</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {activeTab === 'learn' && (
-        <div className="mb-6">
-          <Card className="mb-6">
-            <CardHeader>
+        <div className="px-4 sm:px-0">
+          <Card className="mb-6 border-0 shadow-sm rounded-2xl overflow-hidden">
+            {/* Top gradient accent line */}
+            <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+            
+            <CardHeader className="bg-white border-b border-gray-100">
               <CardTitle>Introduction to Home Maintenance</CardTitle>
               <CardDescription>
                 Basic home maintenance can save you money and prevent small problems from becoming major disasters.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            
+            <CardContent className="bg-gray-50 p-4 sm:p-6">
               <p className="mb-4">
                 Knowing how to handle common household repairs and maintenance is a fundamental life skill that can save you hundreds or even thousands of dollars over time. From unclogging drains to fixing leaky faucets, these skills help you maintain your living space and respond quickly to problems.
               </p>
@@ -103,9 +162,12 @@ export default function HomeMaintenanceCourse() {
             </CardContent>
           </Card>
 
-          {/* PicFix Smart Repair Assistant Card */}
-          <Card className="mb-6 border-2 border-orange-300 bg-gradient-to-br from-orange-50 to-white">
-            <CardHeader className="pb-2">
+          {/* PicFix Smart Repair Assistant Card - Standardized with Yoga-style UI but keeping unique accent color */}
+          <Card className="mb-6 border-0 shadow-sm rounded-2xl overflow-hidden">
+            {/* Top gradient accent line with orange theme */}
+            <div className="h-0.5 bg-gradient-to-r from-orange-300 via-orange-500 to-orange-300"></div>
+            
+            <CardHeader className="bg-white border-b border-gray-100">
               <div className="flex items-start justify-between">
                 <div>
                   <CardTitle className="flex items-center text-orange-700">
@@ -121,7 +183,8 @@ export default function HomeMaintenanceCourse() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            
+            <CardContent className="bg-gray-50 p-4 sm:p-6">
               <div className="grid md:grid-cols-2 gap-4 items-center">
                 <div className="space-y-3">
                   <h3 className="font-semibold text-gray-800">Fix anything with AI-guided repairs</h3>
@@ -156,7 +219,8 @@ export default function HomeMaintenanceCourse() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="pt-0">
+            
+            <CardFooter className="pt-0 bg-gray-50 p-4 sm:p-6 border-t border-gray-100">
               <Button 
                 onClick={() => navigate('/learning/courses/repair-assistant')}
                 className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-2"
@@ -167,20 +231,26 @@ export default function HomeMaintenanceCourse() {
             </CardFooter>
           </Card>
           
-          <HandymanGuide />
+          <div className="mb-6">
+            <HandymanGuide />
+          </div>
         </div>
       )}
 
       {activeTab === 'practice' && (
-        <div className="mb-6">
-          <Card>
-            <CardHeader>
+        <div className="px-4 sm:px-0">
+          <Card className="mb-6 border-0 shadow-sm rounded-2xl overflow-hidden">
+            {/* Top gradient accent line */}
+            <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+            
+            <CardHeader className="bg-white border-b border-gray-100">
               <CardTitle>Test Your Knowledge</CardTitle>
               <CardDescription>
                 Answer these questions to see how much you've learned about home maintenance.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            
+            <CardContent className="bg-gray-50 p-4 sm:p-6">
               <QuizComponent 
                 subject="Home Maintenance"
                 difficulty="beginner"
@@ -316,13 +386,17 @@ export default function HomeMaintenanceCourse() {
       )}
 
       {activeTab === 'resources' && (
-        <div className="mb-6">
-          <Card>
-            <CardHeader>
+        <div className="px-4 sm:px-0">
+          <Card className="mb-6 border-0 shadow-sm rounded-2xl overflow-hidden">
+            {/* Top gradient accent line */}
+            <div className="h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
+            
+            <CardHeader className="bg-white border-b border-gray-100">
               <CardTitle>Home Maintenance Resources</CardTitle>
               <CardDescription>Curated resources to help master these skills</CardDescription>
             </CardHeader>
-            <CardContent>
+            
+            <CardContent className="bg-gray-50 p-4 sm:p-6">
               <SimpleResourceLinks 
                 resources={resources}
               />
@@ -330,8 +404,6 @@ export default function HomeMaintenanceCourse() {
           </Card>
         </div>
       )}
-
-      {/* FloatingChat removed to prevent duplicate Fundi robots */}
     </div>
   );
 }
