@@ -390,7 +390,19 @@ export default function FinancialLiteracyCourse() {
   };
 
   return (
-    <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-6xl">
+    <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-6xl relative">
+      {/* Floating scroll to top button */}
+      {showScrollTop && (
+        <Button
+          variant="secondary"
+          size="sm"
+          className="fixed bottom-6 right-6 h-10 w-10 rounded-full shadow-md bg-emerald-600 hover:bg-emerald-700 text-white p-0 z-50 flex items-center justify-center"
+          onClick={scrollToTop}
+          aria-label="Scroll to top"
+        >
+          <ChevronUp className="h-5 w-5" />
+        </Button>
+      )}
       <div className="flex flex-wrap items-center gap-2 mb-4 sm:mb-6">
         <Button 
           variant="ghost" 
@@ -460,7 +472,7 @@ export default function FinancialLiteracyCourse() {
             {COURSE_MODULES.map((module) => {
               const Icon = module.icon;
               return (
-                <Card key={module.id} className="cursor-pointer border-0 shadow-sm rounded-2xl overflow-hidden hover:shadow-md transition-all" onClick={() => navigate(`#${module.id}`)}>
+                <Card key={module.id} className="cursor-pointer border-0 shadow-sm rounded-2xl overflow-hidden hover:shadow-md transition-all" onClick={() => scrollToSection(module.id)}>
                   {/* Thin gradient accent line - slightly different for each module to create visual variety */}
                   <div className={`h-1 ${
                     module.id === 'fundamentals' ? 'bg-gradient-to-r from-green-400 to-emerald-500' :
@@ -486,7 +498,15 @@ export default function FinancialLiteracyCourse() {
                   </CardContent>
                   
                   <CardFooter className="p-3 sm:p-4 pt-1 sm:pt-2 pb-3 sm:pb-4 bg-gray-50">
-                    <Button variant="outline" size="sm" className="w-full h-8 text-xs sm:text-sm rounded-full hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full h-8 text-xs sm:text-sm rounded-full hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering the card click
+                        scrollToSection(module.id);
+                      }}
+                    >
                       Learn More
                     </Button>
                   </CardFooter>
@@ -495,9 +515,35 @@ export default function FinancialLiteracyCourse() {
             })}
           </div>
           
-          {/* Module content sections */}
+          {/* Module content sections with ref capture */}
           {COURSE_MODULES.map((module) => (
-            <div key={module.id} id={module.id} className="mt-10 pt-6 border-t">
+            <div 
+              key={module.id} 
+              id={module.id} 
+              className="mt-10 pt-6 border-t"
+              ref={el => sectionRefs.current[module.id] = el}
+            >
+              {/* Display sticky header for active module */}
+              {module.id === 'credit' && (
+                <div className={`sticky top-0 z-10 transition-all duration-300 bg-white shadow-sm 
+                  ${activeSection === 'credit' ? 'opacity-100 -mx-4 px-4 py-3 border-b' : 'opacity-0 py-0 h-0 overflow-hidden'}`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <CreditCard className="h-5 w-5 mr-2 text-emerald-600" />
+                      <h3 className="text-lg font-medium">Understanding Credit</h3>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-8 px-2 hover:bg-emerald-50 hover:text-emerald-700"
+                      onClick={() => scrollToTop()}
+                    >
+                      <ChevronUp className="h-4 w-4 mr-1" />
+                      <span className="text-xs">Top</span>
+                    </Button>
+                  </div>
+                </div>
+              )}
               {renderModuleContent(module.id)}
             </div>
           ))}
