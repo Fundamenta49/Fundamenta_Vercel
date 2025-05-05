@@ -1,1 +1,1 @@
-web: chmod +x ./deploy-prepare.sh && ./deploy-prepare.sh && NODE_ENV=production node dist/server/index.js
+web: chmod +x ./deploy-prepare.sh && ./deploy-prepare.sh && NODE_ENV=production node dist/start.js

@@ -4,8 +4,8 @@
   "restartPolicyValue": 1,
   "healthCheckPath": "/",
   "healthCheckType": "HTTP",
-  "healthCheckTimeout": 30,
-  "startCommand": "chmod +x ./deploy-prepare.sh && ./deploy-prepare.sh && NODE_ENV=production node dist/server/index.js",
+  "healthCheckTimeout": 60,
+  "startCommand": "chmod +x ./deploy-prepare.sh && ./deploy-prepare.sh && NODE_ENV=production node dist/start.js",
   "env": {
     "NODE_ENV": "production",
     "PORT": "8080"
