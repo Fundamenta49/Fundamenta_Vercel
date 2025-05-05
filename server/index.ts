@@ -1,17 +1,17 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { registerRoutes } from "./routes.js";
+import { setupVite, serveStatic, log } from "./vite.js";
 import multer from "multer";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
-import { runAllMigrations } from "./db/index";
-import { ensureTables } from "./db";
-import { initializeFundiCore } from "./fundi-core/fundi-integration";
-import { performDatabaseMaintenance, performAggressiveCleanup } from "./maintenance";
-import { rootHealthCheckMiddleware, healthCheckRouter } from "./health-checks";
-import { cloudRunHealthMiddleware } from "./cloud-run-health";
-import { setupDirectHealthCheck } from "./direct-health";
-import { installBareHealthCheck } from "./bare-health";
+import { runAllMigrations } from "./db/index.js";
+import { ensureTables } from "./db.js";
+import { initializeFundiCore } from "./fundi-core/fundi-integration.js";
+import { performDatabaseMaintenance, performAggressiveCleanup } from "./maintenance.js";
+import { rootHealthCheckMiddleware, healthCheckRouter } from "./health-checks.js";
+import { cloudRunHealthMiddleware, setupCloudRunHealthChecks } from "./cloud-run-health.js";
+import { setupDirectHealthCheck } from "./direct-health.js";
+import { installBareHealthCheck } from "./bare-health.js";
 
 const startTime = Date.now();
 log("Starting server...");
@@ -53,7 +53,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
 // Content advisory middleware - applied to all responses
-import { contentAdvisoryMiddleware } from './middleware/content-advisory-middleware';
+import { contentAdvisoryMiddleware } from './middleware/content-advisory-middleware.js';
 app.use(contentAdvisoryMiddleware({ 
   contentThreshold: 100, // Only analyze content longer than 100 characters
   skipForAuthorizedUsers: false // Apply content advisories for all users
@@ -241,7 +241,7 @@ app.post("/api/maintenance/sessions", async (req, res) => {
     try {
       // We only need to import it - the monitoring will be initialized in the modules 
       // when they are imported
-      const spoonacularMonitor = await import('./services/api-monitors/spoonacular-monitor')
+      const spoonacularMonitor = await import('./services/api-monitors/spoonacular-monitor.js')
         .then(module => module.default);
       
       log(`API health monitoring started (${Date.now() - startTime}ms)`);
