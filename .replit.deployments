@@ -5,11 +5,10 @@
   "healthCheckPath": "/",
   "healthCheckType": "HTTP",
   "healthCheckTimeout": 10,
-  "startCommand": "node cloud-server.cjs",
+  "startCommand": "node bare-health.cjs",
   "env": {
     "NODE_ENV": "production",
-    "PORT": "8080",
-    "MAIN_APP_PORT": "8081"
+    "PORT": "8080"
   },
   "nixPackages": {
     "nodejs-20_x": "nodejs_20"
