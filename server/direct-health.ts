@@ -21,7 +21,14 @@ export function setupDirectHealthCheck(app: Express): void {
     
     // Check if this is a health check request
     const isHealthCheck = 
-      req.path === '/' ||
+      // Only treat root path as health check if there are other indicators
+      (req.path === '/' && (
+        req.query['health-check'] !== undefined ||
+        req.query['health'] !== undefined ||
+        req.headers['user-agent']?.includes('GoogleHC') ||
+        req.headers['user-agent']?.includes('kube-probe') ||
+        req.headers['x-health-check'] === 'true'
+      )) ||
       req.path === '/_health' || 
       req.path === '/health' ||
       req.originalUrl?.includes('health-check=true') ||
