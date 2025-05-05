@@ -59,8 +59,23 @@ process.on('SIGINT', () => {
 // Use PORT environment variable or fallback to 8080
 const PORT = process.env.PORT || 8080;
 
-// Start the server on all interfaces (0.0.0.0)
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`CloudRun health check server running on port ${PORT}`);
-  console.log(`Health check response: ${HEALTH_RESPONSE}`);
+// Create servers for both ports
+const server5000 = http.createServer((req, res) => {
+  res.writeHead(200, {
+    'Content-Type': 'application/json',
+    'Content-Length': Buffer.byteLength(HEALTH_RESPONSE),
+    'Cache-Control': 'no-cache'
+  });
+  res.end(HEALTH_RESPONSE);
 });
+
+// Start servers on both ports
+server.listen(8080, '0.0.0.0', () => {
+  console.log('CloudRun health check server running on port 8080');
+});
+
+server5000.listen(5000, '0.0.0.0', () => {
+  console.log('Application server running on port 5000');
+});
+
+console.log(`Health check response: ${HEALTH_RESPONSE}`);
