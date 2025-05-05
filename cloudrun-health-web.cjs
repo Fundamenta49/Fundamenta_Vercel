@@ -1,11 +1,10 @@
+const http = require('http');
 
 /**
  * Ultra-Minimal CloudRun Health Check Server
  * This server is optimized specifically for passing CloudRun health checks.
  * It responds to all paths with {"status":"ok"} and nothing else.
  */
-
-import http from 'http';
 
 // Path for health check requests
 const HEALTH_CHECK_PATHS = ['/', '/_health', '/health'];
@@ -17,14 +16,14 @@ const HEALTH_RESPONSE = JSON.stringify({ status: 'ok' });
 const server = http.createServer((req, res) => {
   // Log the request for debugging
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url} - User-Agent: ${req.headers['user-agent'] || 'none'}`);
-  
+
   // Always respond with health check, regardless of path or method
   res.writeHead(200, {
     'Content-Type': 'application/json',
     'Content-Length': Buffer.byteLength(HEALTH_RESPONSE), 
     'Cache-Control': 'no-cache'
   });
-  
+
   // Send response
   res.end(HEALTH_RESPONSE);
 });
