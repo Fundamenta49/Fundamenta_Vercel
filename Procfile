@@ -1,1 +1,1 @@
-web: node bare-health.cjs
+web: chmod +x ./deploy-prepare.sh && ./deploy-prepare.sh && NODE_ENV=production node dist/server/index.js

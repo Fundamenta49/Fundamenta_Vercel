@@ -35,6 +35,8 @@ log("Ultra-direct health check registered (highest priority)");
 // In production, use the CloudRun-optimized health check
 if (process.env.NODE_ENV === 'production') {
   // Setup specialized handlers for CloudRun
+  app.use(cloudRunHealthMiddleware);
+  setupCloudRunHealthChecks(app);
   log("CloudRun production health checks registered");
 } else {
   // In development, use the standard health check
