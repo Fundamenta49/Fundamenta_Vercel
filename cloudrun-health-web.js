@@ -1,11 +1,11 @@
+
 /**
  * Ultra-Minimal CloudRun Health Check Server
  * This server is optimized specifically for passing CloudRun health checks.
  * It responds to all paths with {"status":"ok"} and nothing else.
  */
 
-// Import required Node.js HTTP module
-const http = require('http');
+import http from 'http';
 
 // Path for health check requests
 const HEALTH_CHECK_PATHS = ['/', '/_health', '/health'];
