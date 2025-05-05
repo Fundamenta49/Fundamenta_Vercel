@@ -1,14 +1,15 @@
 {
   "deploymentId": "db52ba45-0ef8-411f-af31-4b71e7f22e4c",
-  "restartPolicyType": "NEVER", 
+  "restartPolicyType": "ON_FAILURE", 
   "restartPolicyValue": 1,
   "healthCheckPath": "/",
   "healthCheckType": "HTTP",
   "healthCheckTimeout": 10,
-  "startCommand": "node bare-health.cjs",
+  "startCommand": "node cloud-server.cjs",
   "env": {
     "NODE_ENV": "production",
-    "PORT": "8080"
+    "PORT": "8080",
+    "MAIN_APP_PORT": "8081"
   },
   "nixPackages": {
     "nodejs-20_x": "nodejs_20"
