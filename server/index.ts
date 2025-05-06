@@ -27,25 +27,15 @@ const app = express();
 log("CloudRun health check handlers registered");
 log(`Express initialized (${Date.now() - startTime}ms)`);
 
-// CRITICAL FIX: First, register the ultra-direct health check for CloudRun compatibility
-// This must come before ANYTHING else to ensure CloudRun health checks work
+// Register the simplified, unified health check system for both development and production
+// This ensures a consistent health check implementation across environments
 setupDirectHealthCheck(app);
-log("Ultra-direct health check registered (highest priority)");
+log("Enhanced health check system registered and active");
 
-// In production, use the CloudRun-optimized health check
-if (process.env.NODE_ENV === 'production') {
-  // Setup specialized handlers for CloudRun
-  app.use(cloudRunHealthMiddleware);
-  setupCloudRunHealthChecks(app);
-  log("CloudRun production health checks registered");
-} else {
-  // In development, use the standard health check
-  app.use(rootHealthCheckMiddleware);
-  log("Root health check middleware registered as first priority middleware");
-
-  // Also mount the dedicated health check router
+// For local development, also mount the health check router for testing
+if (process.env.NODE_ENV !== 'production') {
   app.use('/', healthCheckRouter);
-  log("Dedicated health check router mounted at root path");
+  log("Additional health check router mounted for development testing");
 }
 
 // Basic middleware setup with increased JSON payload limit
@@ -173,30 +163,49 @@ app.post("/api/maintenance/sessions", async (req, res) => {
     const server = await registerRoutes(app);
     log(`Routes registered (${Date.now() - startTime}ms)`);
 
-    // Start the server first
-    const port = process.env.PORT || 5000;
-    const host = "0.0.0.0";
+    // Start the server with enhanced deployment configuration
+    const port = parseInt(process.env.PORT || '5000', 10);
+    const host = "0.0.0.0"; // Always bind to all network interfaces for container compatibility
 
     log(`Attempting to start server on ${host}:${port}...`);
 
     await new Promise<void>((resolve, reject) => {
       try {
-        server.listen({
+        // Enhanced server configuration for deployment scenarios
+        const listenOptions = {
           port,
           host,
+          // Support cluster mode in production
           reusePort: true,
-        }, () => {
-          const address = server.address();
-          log(`Server listening on: ${typeof address === 'string' ? address : JSON.stringify(address)}`);
-          log(`API server started on ${host}:${port} (${Date.now() - startTime}ms)`);
-          resolve();
-        });
-
+        };
+        
+        // Add special error handling for the listen operation
         server.on('error', (error: any) => {
           if (error.code === 'EADDRINUSE') {
-            log(`Port ${port} is already in use`);
+            log(`ERROR: Port ${port} is already in use. Choose another port or terminate the process using this port.`);
+            // In production, try to use a different port before giving up
+            if (process.env.NODE_ENV === 'production' && process.env.PORT_RETRY === 'true') {
+              const newPort = port + 1;
+              log(`Attempting to use alternative port ${newPort}...`);
+              server.listen({ ...listenOptions, port: newPort });
+            } else {
+              reject(error);
+            }
+          } else if (error.code === 'EACCES') {
+            log(`ERROR: No permission to use port ${port}. Try using a port number > 1024.`);
+            reject(error);
+          } else {
+            log(`Server error: ${error.message}`);
+            reject(error);
           }
-          reject(error);
+        });
+
+        // Start listening with the configured options
+        server.listen(listenOptions, () => {
+          const address = server.address();
+          log(`Server listening on: ${typeof address === 'string' ? address : JSON.stringify(address)}`);
+          log(`API server started successfully (${Date.now() - startTime}ms)`);
+          resolve();
         });
       } catch (error) {
         log(`Failed to start server: ${error instanceof Error ? error.message : String(error)}`);
