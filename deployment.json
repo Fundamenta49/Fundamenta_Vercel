@@ -1,0 +1,13 @@
+{
+  "name": "Fundamenta Life Skills",
+  "run": "npm run start",
+  "entrypoint": "server/index.js",
+  "fullframe": true,
+  "language": "node",
+  "deployments": [
+    {
+      "environment": "production",
+      "buildCommand": "npm run build"
+    }
+  ]
+}
