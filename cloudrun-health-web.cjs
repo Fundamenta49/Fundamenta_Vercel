@@ -122,6 +122,116 @@ app.get('/api/auth/me', (req, res) => {
   });
 });
 
+// Add simple login page for deployment
+app.get('/login', (req, res) => {
+  console.log('Serving simplified login page');
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Fundamenta - Log In</title>
+      <style>
+        body {
+          font-family: system-ui, -apple-system, sans-serif;
+          background-color: #f9fafb;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 100vh;
+          margin: 0;
+          padding: 1rem;
+          color: #1f2937;
+        }
+        .login-container {
+          background-color: white;
+          border-radius: 0.5rem;
+          padding: 2rem;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          width: 100%;
+          max-width: 24rem;
+        }
+        h1 {
+          margin-top: 0;
+          font-size: 1.5rem;
+          text-align: center;
+          margin-bottom: 1.5rem;
+        }
+        .button {
+          display: block;
+          width: 100%;
+          padding: 0.75rem 1rem;
+          background-color: #2563eb;
+          color: white;
+          border: none;
+          border-radius: 0.375rem;
+          font-size: 1rem;
+          font-weight: 500;
+          text-align: center;
+          cursor: pointer;
+          text-decoration: none;
+          transition: background-color 0.15s;
+        }
+        .button:hover {
+          background-color: #1d4ed8;
+        }
+        .button-guest {
+          margin-top: 0.75rem;
+          background-color: #6b7280;
+        }
+        .button-guest:hover {
+          background-color: #4b5563;
+        }
+        .button-replit {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+        .logo {
+          width: 24px;
+          height: 24px;
+        }
+        .message {
+          text-align: center;
+          margin-top: 1.5rem;
+          font-size: 0.875rem;
+          color: #6b7280;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="login-container">
+        <h1>Log in to Fundamenta</h1>
+        <a href="/api/login" class="button">Log in with Replit</a>
+        <a href="/" class="button button-guest">Continue as Guest</a>
+        <p class="message">
+          Log in to save your progress and access all features.
+        </p>
+      </div>
+    </body>
+    </html>
+  `);
+});
+
+// Add fallback endpoints for Replit auth
+app.get('/api/login', (req, res) => {
+  console.log('Login attempt - redirecting to login page');
+  res.redirect('/login');
+});
+
+app.get('/api/callback', (req, res) => {
+  console.log('Auth callback received - redirecting to home with guest mode');
+  // In a real implementation, this would process the callback and create a session
+  res.redirect('/?guest=true');
+});
+
+app.get('/api/logout', (req, res) => {
+  console.log('Logout attempt - redirecting to home');
+  res.redirect('/');
+});
+
 // Add a fallback for other auth endpoints
 app.all('/api/auth/*', (req, res) => {
   if (req.path !== '/api/auth/me') {
@@ -177,7 +287,7 @@ app.get('*', (req, res) => {
     return res.sendFile(indexPath);
   }
   
-  // If no index.html, serve a generic HTML page
+  // If no index.html, serve a generic HTML page with navigation options
   res.send(`
     <html>
       <head>
@@ -197,13 +307,35 @@ app.get('*', (req, res) => {
             border-radius: 0.5rem;
             margin: 1rem 0;
           }
+          .nav {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+          }
+          .button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: #2563eb;
+            color: white;
+            border-radius: 0.25rem;
+            text-decoration: none;
+            font-weight: 500;
+          }
+          .button:hover {
+            background-color: #1d4ed8;
+          }
         </style>
       </head>
       <body>
         <h1>Fundamenta Life Skills</h1>
         <div class="message">
-          <p>The application is deployed and the health check is successful.</p>
-          <p>Full static files will be served here once configured.</p>
+          <p>Welcome to Fundamenta! The application is deployed and the health check is successful.</p>
+          <p>The full application should be visible. If you only see this page, please try navigating to the home page or login.</p>
+        </div>
+        
+        <div class="nav">
+          <a href="/" class="button">Home</a>
+          <a href="/login" class="button">Login</a>
         </div>
       </body>
     </html>
