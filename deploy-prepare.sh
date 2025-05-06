@@ -1,201 +1,98 @@
 #!/bin/bash
-# deploy-prepare.sh - Script to prepare the application for deployment
+set -e
 
-echo "=== Fundamenta Deployment Preparation Script ==="
-echo "Starting deployment preparation at $(date)"
+# Deploy preparation script
+# This script prepares the application for deployment to CloudRun
 
-# Step 1: Print environment for debugging
-echo "ENVIRONMENT VARIABLES:"
-echo "NODE_ENV: $NODE_ENV"
-echo "PORT: $PORT"
-echo "PWD: $PWD"
+echo "Starting deployment preparation..."
 
-# Step 2: Ensure proper TypeScript config for ES Modules
-echo "Configuring TypeScript for ES Modules (Node.js compatibility)..."
-cat > temp-tsconfig.json <<EOF
-{
-  "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
-  "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
-  "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": ".",
-    "target": "ES2020",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": false,
-    "jsx": "react-jsx",
-    "lib": ["esnext", "dom", "dom.iterable"],
-    "baseUrl": ".",
-    "types": ["node", "vite/client"],
-    "paths": {
-      "@/*": ["./client/src/*"],
-      "@shared/*": ["./shared/*"]
-    }
-  }
-}
-EOF
-mv temp-tsconfig.json tsconfig.json
-echo "TypeScript configuration updated"
+# Environment detection
+echo "Detecting environment..."
+if [ "$NODE_ENV" = "production" ]; then
+    echo "Running in production mode"
+else
+    echo "Setting NODE_ENV to production"
+    export NODE_ENV=production
+fi
 
-# Step 3: Make sure node_modules is available for building
+# Install dependencies if needed
+echo "Checking for node_modules..."
 if [ ! -d "node_modules" ]; then
-  echo "Warning: node_modules directory not found, installing dependencies..."
-  npm install --production=false
+    echo "Installing dependencies..."
+    npm install
+else
+    echo "Dependencies already installed."
 fi
 
-# Step 4: Verify critical dependencies are installed
-echo "Verifying critical dependencies..."
-if [ ! -f "./node_modules/.bin/tsc" ]; then
-  echo "TypeScript not found, installing..."
-  npm install typescript --no-save
-fi
+# Clean up previous build
+echo "Cleaning up previous build..."
+rm -rf dist || true
+mkdir -p dist
 
-if [ ! -f "./node_modules/.bin/vite" ]; then
-  echo "Vite not found, installing..."
-  npm install vite --no-save
-fi
-
-# Step 5: Build TypeScript files
-echo "Building TypeScript files..."
-NODE_OPTIONS="--max-old-space-size=2048" ./node_modules/.bin/tsc
-
-# Step 6: Build frontend with Vite
+# Build the application
 echo "Building frontend with Vite..."
-NODE_OPTIONS="--max-old-space-size=2048" npm run build
+npm run build
 
-# Step 7: Copy static files
-echo "Copying static files..."
-mkdir -p dist/public
-if [ -d "public" ]; then
-  cp -r public/* dist/public/ 2>/dev/null || true
+# Check if the build was successful
+if [ ! -d "dist/client" ]; then
+    echo "Build failed: dist/client directory not found"
+    exit 1
 fi
 
-# Step 8: Copy client build
-echo "Copying client build to dist..."
-if [ -d "dist/client" ]; then
-  echo "Client already in dist"
-else
-  mkdir -p dist/client
-  cp -r client/dist/* dist/client/ 2>/dev/null || true
-fi
+# Copy client files to dist root for easier serving
+echo "Copying client files to dist root..."
+cp -r dist/client/* dist/ || true
 
-# Step 9: Create special production startup file
-echo "Creating production bootstrap script..."
-
-# Just copy our production bootstrap file instead of generating it inline
-if [ -f "./server/production-bootstrap.js" ]; then
-  echo "Using existing production bootstrap file"
-  mkdir -p dist/server
-  cp ./server/production-bootstrap.js ./dist/server/
-  
-  # Create a simple startup script that imports the bootstrap
-  cat > ./dist/start.js <<EOF
-// Production entry point
-console.log('Starting Fundamenta Life Skills application...');
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('PORT:', process.env.PORT);
-console.log('Current directory:', process.cwd());
-
-// Import the production bootstrap file
-import('./server/production-bootstrap.js')
-  .then(() => {
-    console.log('Bootstrap successfully imported');
-  })
-  .catch(err => {
-    console.error('Failed to import bootstrap:', err);
-    process.exit(1);
-  });
+# Ensure index.html exists in the dist root
+if [ ! -f "dist/index.html" ]; then
+    echo "Warning: index.html not found in dist root"
+    
+    # Try to find it elsewhere
+    if [ -f "dist/client/index.html" ]; then
+        echo "Copying index.html from dist/client..."
+        cp dist/client/index.html dist/
+    elif [ -f "client/dist/index.html" ]; then
+        echo "Copying index.html from client/dist..."
+        cp client/dist/index.html dist/
+    else
+        echo "Creating a basic index.html as fallback..."
+        cat > dist/index.html << 'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fundamenta Life Skills</title>
+    <link rel="stylesheet" href="/assets/index.css">
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module" src="/assets/index.js"></script>
+</body>
+</html>
 EOF
-else
-  echo "WARNING: Production bootstrap file not found, creating a minimal one"
-  cat > ./dist/start.js <<EOF
-// Minimal CloudRun startup script
-import express from 'express';
+    fi
+fi
 
-// Create an Express application
-const app = express();
+echo "Checking assets directory..."
+if [ ! -d "dist/assets" ] && [ -d "dist/client/assets" ]; then
+    echo "Copying assets from dist/client..."
+    mkdir -p dist/assets
+    cp -r dist/client/assets/* dist/assets/ || true
+fi
 
-// Handle all requests
-app.use((req, res, next) => {
-  console.log(\`Request: \${req.method} \${req.url}\`);
-  
-  // Handle health checks
+echo "Adding essential files for CloudRun deployment..."
+# Create a health check handler at the root
+cat > dist/api-health.js << 'EOF'
+// Health check handler for CloudRun
+export function handleHealthCheck(req, res) {
   if (req.path === '/' && 
-      (req.query['health-check'] !== undefined || 
-       req.headers['user-agent']?.includes('GoogleHC'))) {
+      (req.headers['user-agent']?.includes('GoogleHC') || 
+       req.query['health-check'] === 'true')) {
     return res.status(200).json({ status: 'ok' });
   }
-  
-  // For non-health check requests, show an info page
-  res.status(200).send(\`
-    <html>
-      <head>
-        <title>Fundamenta Application</title>
-        <style>
-          body { 
-            font-family: system-ui, sans-serif; 
-            max-width: 800px; 
-            margin: 0 auto; 
-            padding: 2rem;
-            line-height: 1.6;
-          }
-          h1 { color: #4B5563; }
-          .message { 
-            padding: 1rem; 
-            background: #f3f4f6; 
-            border-radius: 0.5rem;
-            margin: 1rem 0;
-          }
-        </style>
-      </head>
-      <body>
-        <h1>Fundamenta Life Skills Application</h1>
-        <div class="message">
-          <p>The application is being deployed with minimal configuration.</p>
-          <p>Please check the deployment logs for more information.</p>
-        </div>
-      </body>
-    </html>
-  \`);
-});
-
-// Start the server
-const port = process.env.PORT || 8080;
-app.listen(port, '0.0.0.0', () => {
-  console.log(\`Server running on port \${port}\`);
-});
-EOF
-fi
-
-# Step 10: Verify the build output
-if [ -d "./dist" ] && [ -f "./dist/server/index.js" ]; then
-  echo "✅ Build successful!"
-else
-  echo "❌ Build verification failed. The dist/server/index.js file is missing."
-  echo "Please check the build output for errors."
-  ls -la ./dist/server/ || echo "Server directory not found"
-  exit 1
-fi
-
-# Step 11: Update package.json for CloudRun (if needed)
-echo "Creating minimal package.json for the production build..."
-cat > ./dist/package.json <<EOF
-{
-  "name": "fundamenta-life-skills",
-  "version": "1.0.0",
-  "type": "module",
-  "engines": {
-    "node": ">=16.0.0"
-  },
-  "main": "start.js"
+  return false;
 }
 EOF
 
-echo "Deployment preparation completed at $(date)"
-echo "You can now deploy the application with: NODE_ENV=production node dist/start.js"
+echo "Deployment preparation complete!"
