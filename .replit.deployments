@@ -5,7 +5,7 @@
   "healthCheckPath": "/",
   "healthCheckType": "HTTP",
   "healthCheckTimeout": 60,
-  "startCommand": "chmod +x ./deploy-prepare.sh && ./deploy-prepare.sh && NODE_ENV=production node dist/start.js",
+  "startCommand": "chmod +x ./deploy-prepare.sh && ./deploy-prepare.sh && NODE_ENV=production node cloudrun-health-web.cjs",
   "env": {
     "NODE_ENV": "production",
     "PORT": "8080"

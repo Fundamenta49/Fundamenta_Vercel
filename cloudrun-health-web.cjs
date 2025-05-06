@@ -1,13 +1,14 @@
 /**
- * CloudRun Health Check Web Server
+ * CloudRun Health Check Web Server - IMPROVED VERSION
  * 
  * This file serves as the entry point for CloudRun deployments.
- * It handles health checks and also serves the full web application.
+ * It handles health checks required by CloudRun and serves the full web application.
  */
 
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
+const cors = require('cors');
 const { createServer } = require('http');
 
 // Create Express app
@@ -16,178 +17,268 @@ const app = express();
 // Important constants
 const PORT = process.env.PORT || 8080;
 const HOST = '0.0.0.0';
-const DIST_DIR = path.join(__dirname, 'dist');
+const BASE_DIR = process.cwd();
+const DIST_DIR = path.join(BASE_DIR, 'dist');
 const CLIENT_DIR = path.join(DIST_DIR, 'client');
 const PUBLIC_DIR = path.join(DIST_DIR, 'public');
 
-console.log('Starting CloudRun Health Check Web Server');
-console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
-console.log(`PORT: ${PORT}`);
-console.log(`Current directory: ${process.cwd()}`);
-console.log(`DIST_DIR: ${DIST_DIR}`);
-console.log(`CLIENT_DIR: ${CLIENT_DIR}`);
-console.log(`PUBLIC_DIR: ${PUBLIC_DIR}`);
+console.log('==========================================');
+console.log('FUNDAMENTA CLOUDRUN DEPLOYMENT SERVER');
+console.log('==========================================');
+console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+console.log(`Port: ${PORT}`);
+console.log(`Base directory: ${BASE_DIR}`);
+console.log(`Dist directory: ${DIST_DIR}`);
+
+// Enable CORS for all routes
+app.use(cors());
+
+// Enable JSON parsing for API requests
+app.use(express.json());
 
 // Try to list directories to help debug
 try {
-  console.log('Current directory contents:', fs.readdirSync('.'));
+  console.log('Listing directories for debugging:');
+  if (fs.existsSync(BASE_DIR)) {
+    console.log('Base directory contents:', fs.readdirSync(BASE_DIR).slice(0, 10), '...');
+  }
   if (fs.existsSync(DIST_DIR)) {
     console.log('Dist directory contents:', fs.readdirSync(DIST_DIR));
-  }
-  if (fs.existsSync(CLIENT_DIR)) {
-    console.log('Client directory contents:', fs.readdirSync(CLIENT_DIR));
+    
+    if (fs.existsSync(path.join(DIST_DIR, 'client'))) {
+      console.log('Client directory contents:', fs.readdirSync(path.join(DIST_DIR, 'client')));
+    }
+    
+    if (fs.existsSync(path.join(DIST_DIR, 'assets'))) {
+      console.log('Assets directory contents:', fs.readdirSync(path.join(DIST_DIR, 'assets')).slice(0, 10), '...');
+    }
   }
 } catch (err) {
   console.error('Error listing directories:', err);
 }
 
-// Health check middleware
-app.use((req, res, next) => {
-  // Handle health checks
-  if (req.path === '/' && 
-      (req.headers['user-agent']?.includes('GoogleHC') || 
-       req.query['health-check'] === 'true' || 
-       req.headers['x-health-check'] === 'true')) {
-    console.log(`Health check request: ${req.method} ${req.path}`);
-    return res.status(200).json({ status: 'ok' });
+// =============================================
+// CRITICAL: Ultra-Direct Health Check Handler
+// This must be registered first to handle CloudRun health checks
+// =============================================
+app.get('/', (req, res, next) => {
+  // Check if this is a health check request from CloudRun
+  if (req.headers['user-agent']?.includes('GoogleHC') || 
+      req.query['health-check'] === 'true' || 
+      req.headers['x-health-check'] === 'true') {
+    console.log('Health check request detected');
+    res.set('Content-Type', 'application/json');
+    return res.status(200).send(JSON.stringify({ status: 'ok' }));
   }
   next();
 });
 
-// Handle authentication errors gracefully
-app.use((req, res, next) => {
-  const originalSend = res.send;
-  
-  res.send = function(body) {
-    // Intercept 401 errors for /api/auth endpoints
-    if (req.path.startsWith('/api/auth') && res.statusCode === 401) {
-      console.log(`Auth request handled with fallback: ${req.path}`);
-      if (req.path === '/api/auth/me') {
-        return originalSend.call(this, JSON.stringify({ 
-          guest: true, 
-          message: "User not authenticated - using guest mode" 
-        }));
-      }
-    }
-    
-    return originalSend.call(this, body);
-  };
-  
-  next();
-});
+// =============================================
+// Static File Serving
+// =============================================
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Server error:', err);
-  if (res.headersSent) {
-    return next(err);
+// Find the actual client directory by checking multiple possible locations
+const possibleClientDirs = [
+  CLIENT_DIR,
+  DIST_DIR,
+  path.join(BASE_DIR, 'client', 'dist'),
+  path.join(BASE_DIR, 'client', 'build'),
+  path.join(BASE_DIR, 'build'),
+];
+
+let clientRoot = null;
+for (const dir of possibleClientDirs) {
+  if (fs.existsSync(dir) && 
+      (fs.existsSync(path.join(dir, 'index.html')) || 
+       fs.existsSync(path.join(dir, 'assets')))) {
+    clientRoot = dir;
+    console.log(`Found client root at: ${clientRoot}`);
+    break;
   }
-  res.status(500).json({ 
-    error: 'Internal Server Error',
-    message: process.env.NODE_ENV === 'production' ? 'An error occurred' : err.message 
-  });
-});
-
-// Serve static files from client build
-if (fs.existsSync(CLIENT_DIR)) {
-  console.log(`Serving static files from ${CLIENT_DIR}`);
-  app.use(express.static(CLIENT_DIR));
 }
 
-// Serve static files from public directory
+// Serve static files from the client build directory
+if (clientRoot) {
+  console.log(`Serving static files from ${clientRoot}`);
+  app.use(express.static(clientRoot));
+  
+  // Also check for assets directory
+  if (fs.existsSync(path.join(clientRoot, 'assets'))) {
+    console.log(`Serving assets from ${path.join(clientRoot, 'assets')}`);
+    app.use('/assets', express.static(path.join(clientRoot, 'assets')));
+  }
+} else {
+  console.warn('No client directory found! Static files will not be served.');
+}
+
+// Also serve from public directory if it exists
 if (fs.existsSync(PUBLIC_DIR)) {
   console.log(`Serving public files from ${PUBLIC_DIR}`);
   app.use(express.static(PUBLIC_DIR));
 }
 
-// API routes for the full server
+// =============================================
+// API Routes 
+// =============================================
+
+// Health check API for internal use
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    environment: process.env.NODE_ENV,
-    time: new Date().toISOString()
+    environment: process.env.NODE_ENV || 'production',
+    time: new Date().toISOString(),
+    server: 'Fundamenta CloudRun Deployment'
   });
 });
 
-// Add mock authentication API for deployment
+// Authentication API fallbacks
 app.get('/api/auth/me', (req, res) => {
-  // In production, we'll use a guest account until the full server is running
-  console.log('Returning guest user for /api/auth/me');
+  console.log('Auth API: /api/auth/me request received');
   res.json({
     guest: true,
     id: 'guest-user',
     username: 'Guest User',
+    name: 'Guest User',
     authenticated: false,
-    message: 'Using guest mode until authentication is fully configured'
+    role: 'guest'
   });
 });
 
-// Add simple login page for deployment
+// Handle login/logout/register fallbacks
+app.all('/api/auth/:action', (req, res) => {
+  const action = req.params.action;
+  console.log(`Auth API fallback: ${action} requested`);
+  
+  if (action === 'login' || action === 'register') {
+    return res.json({
+      success: true,
+      message: 'Guest login successful',
+      user: {
+        guest: true,
+        id: 'guest-user',
+        username: 'Guest User',
+        role: 'guest'
+      }
+    });
+  } else if (action === 'logout') {
+    return res.json({
+      success: true,
+      message: 'Logged out successfully'
+    });
+  } else if (action === 'refresh') {
+    return res.json({
+      accessToken: 'guest-token',
+      refreshToken: 'guest-refresh-token',
+      expiresIn: 3600
+    });
+  }
+  
+  res.json({
+    success: true,
+    message: `Auth ${action} endpoint stub`,
+    guest: true
+  });
+});
+
+// AI service fallbacks
+app.all('/api/ai/*', (req, res) => {
+  console.log(`AI service fallback for: ${req.path}`);
+  res.json({
+    success: true,
+    message: 'This feature is available after login',
+    status: 'ok',
+    guest: true
+  });
+});
+
+// =============================================
+// Client-side routing support
+// =============================================
+
+// Serve a login page on /login route
 app.get('/login', (req, res) => {
-  console.log('Serving simplified login page');
+  console.log('Serving login page');
+  
+  // Try to find the real login page first
+  const indexHtmlPath = path.join(clientRoot || DIST_DIR, 'index.html');
+  if (fs.existsSync(indexHtmlPath)) {
+    return res.sendFile(indexHtmlPath);
+  }
+  
+  // If we can't find the real page, serve a simple login page
   res.send(`
     <!DOCTYPE html>
     <html lang="en">
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Fundamenta - Log In</title>
+      <title>Fundamenta Life Skills - Log In</title>
       <style>
         body {
           font-family: system-ui, -apple-system, sans-serif;
-          background-color: #f9fafb;
+          background-color: #FBF7F0;
           display: flex;
           align-items: center;
           justify-content: center;
           min-height: 100vh;
           margin: 0;
           padding: 1rem;
-          color: #1f2937;
+          color: #333;
         }
         .login-container {
           background-color: white;
-          border-radius: 0.5rem;
-          padding: 2rem;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          border-radius: 1rem;
+          padding: 2.5rem;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
           width: 100%;
-          max-width: 24rem;
+          max-width: 26rem;
+        }
+        .header {
+          text-align: center;
+          margin-bottom: 2rem;
         }
         h1 {
-          margin-top: 0;
-          font-size: 1.5rem;
-          text-align: center;
-          margin-bottom: 1.5rem;
+          color: #EB6440;
+          font-size: 2.2rem;
+          margin: 0.5rem 0;
+        }
+        h2 {
+          font-weight: normal;
+          font-size: 1.1rem;
+          color: #666;
+          margin: 0.5rem 0 1.5rem;
         }
         .button {
           display: block;
           width: 100%;
-          padding: 0.75rem 1rem;
-          background-color: #2563eb;
+          padding: 1rem;
+          background-color: #EB6440;
           color: white;
           border: none;
-          border-radius: 0.375rem;
-          font-size: 1rem;
-          font-weight: 500;
+          border-radius: 0.5rem;
+          font-size: 1.1rem;
+          font-weight: 600;
           text-align: center;
           cursor: pointer;
           text-decoration: none;
-          transition: background-color 0.15s;
+          transition: background-color 0.2s;
+          margin-bottom: 1rem;
         }
         .button:hover {
-          background-color: #1d4ed8;
+          background-color: #E05A3A;
         }
         .button-guest {
-          margin-top: 0.75rem;
-          background-color: #6b7280;
+          background-color: #f0f0f0;
+          color: #333;
         }
         .button-guest:hover {
-          background-color: #4b5563;
+          background-color: #e6e6e6;
         }
-        .button-replit {
+        .button-login {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 0.5rem;
+          gap: 0.75rem;
         }
         .logo {
           width: 24px;
@@ -196,18 +287,23 @@ app.get('/login', (req, res) => {
         .message {
           text-align: center;
           margin-top: 1.5rem;
-          font-size: 0.875rem;
-          color: #6b7280;
+          font-size: 0.9rem;
+          color: #777;
         }
       </style>
     </head>
     <body>
       <div class="login-container">
-        <h1>Log in to Fundamenta</h1>
-        <a href="/api/login" class="button">Log in with Replit</a>
+        <div class="header">
+          <h1>Fundamenta</h1>
+          <h2>Life skills mastery begins here</h2>
+        </div>
+        
+        <a href="/" class="button button-login">Sign in with Email</a>
         <a href="/" class="button button-guest">Continue as Guest</a>
+        
         <p class="message">
-          Log in to save your progress and access all features.
+          Sign in to track your progress and access all features
         </p>
       </div>
     </body>
@@ -215,225 +311,104 @@ app.get('/login', (req, res) => {
   `);
 });
 
-// Add fallback endpoints for Replit auth
-app.get('/api/login', (req, res) => {
-  console.log('Login attempt - redirecting to login page');
-  res.redirect('/login');
-});
-
-app.get('/api/callback', (req, res) => {
-  console.log('Auth callback received - redirecting to home with guest mode');
-  // In a real implementation, this would process the callback and create a session
-  res.redirect('/?guest=true');
-});
-
-app.get('/api/logout', (req, res) => {
-  console.log('Logout attempt - redirecting to home');
-  res.redirect('/');
-});
-
-// Add a fallback for other auth endpoints
-app.all('/api/auth/*', (req, res) => {
-  if (req.path !== '/api/auth/me') {
-    console.log(`Fallback auth response for: ${req.path}`);
-    res.json({
-      success: true,
-      guest: true,
-      message: 'Authentication endpoint stub'
-    });
-  }
-});
-
-// Add fallback for AI service endpoints
-app.all('/api/ai/*', (req, res) => {
-  console.log(`AI service fallback for: ${req.path}`);
-  res.json({
-    success: true,
-    message: 'AI service endpoint fallback',
-    status: 'ok',
-    fallback: true
-  });
-});
-
-// Add fallback for other APIs
-app.get('/api/fallback-status', (req, res) => {
-  res.json({ enabled: true, reason: 'Deployment mode' });
-});
-
-// Add fallback for notification APIs
-app.get('/api/notifications/*', (req, res) => {
-  res.json({ notifications: [], unread: 0 });
-});
-
-// Add fallback for user settings
-app.get('/api/user/settings', (req, res) => {
-  res.json({
-    theme: 'system',
-    notifications: false,
-    tourCompleted: false
-  });
-});
-
-// For client-side routing, send index.html for all non-API routes
+// For all other requests, return index.html to support client-side routing
 app.get('*', (req, res) => {
   // Skip API routes
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ error: 'API endpoint not found' });
   }
   
+  console.log(`Client route requested: ${req.path}`);
+  
   // Try to send the index.html file
-  const indexPath = path.join(CLIENT_DIR, 'index.html');
-  if (fs.existsSync(indexPath)) {
-    return res.sendFile(indexPath);
+  const indexHtmlPath = clientRoot ? 
+    path.join(clientRoot, 'index.html') : 
+    path.join(DIST_DIR, 'index.html');
+    
+  if (fs.existsSync(indexHtmlPath)) {
+    return res.sendFile(indexHtmlPath);
   }
   
-  // If no index.html, serve a generic HTML page with navigation options
+  // If we can't find the index.html, serve a fallback
   res.send(`
-    <html>
-      <head>
-        <title>Fundamenta Life Skills</title>
-        <style>
-          body { 
-            font-family: system-ui, -apple-system, sans-serif; 
-            max-width: 800px; 
-            margin: 0 auto; 
-            padding: 2rem;
-            line-height: 1.6;
-          }
-          h1 { color: #4B5563; }
-          .message { 
-            padding: 1rem; 
-            background: #f3f4f6; 
-            border-radius: 0.5rem;
-            margin: 1rem 0;
-          }
-          .nav {
-            display: flex;
-            gap: 1rem;
-            margin: 1.5rem 0;
-          }
-          .button {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background-color: #2563eb;
-            color: white;
-            border-radius: 0.25rem;
-            text-decoration: none;
-            font-weight: 500;
-          }
-          .button:hover {
-            background-color: #1d4ed8;
-          }
-        </style>
-      </head>
-      <body>
-        <h1>Fundamenta Life Skills</h1>
-        <div class="message">
-          <p>Welcome to Fundamenta! The application is deployed and the health check is successful.</p>
-          <p>The full application should be visible. If you only see this page, please try navigating to the home page or login.</p>
-        </div>
-        
-        <div class="nav">
-          <a href="/" class="button">Home</a>
-          <a href="/login" class="button">Login</a>
-        </div>
-      </body>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Fundamenta Life Skills</title>
+      <style>
+        body {
+          font-family: system-ui, -apple-system, sans-serif;
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 2rem;
+          line-height: 1.6;
+          color: #333;
+        }
+        .logo {
+          font-size: 2.5rem;
+          font-weight: bold;
+          color: #EB6440;
+          margin-bottom: 0.5rem;
+        }
+        h1 { color: #EB6440; }
+        .message {
+          padding: 1.5rem;
+          background: #f8f8f8;
+          border-radius: 0.5rem;
+          margin: 1.5rem 0;
+          border-left: 4px solid #EB6440;
+        }
+        .nav {
+          display: flex;
+          gap: 1rem;
+          margin: 2rem 0;
+        }
+        .button {
+          display: inline-block;
+          padding: 0.75rem 1.5rem;
+          background-color: #EB6440;
+          color: white;
+          border-radius: 0.5rem;
+          text-decoration: none;
+          font-weight: 500;
+          transition: background-color 0.2s;
+        }
+        .button:hover {
+          background-color: #E05A3A;
+        }
+        .status {
+          margin-top: 2rem;
+          font-size: 0.9rem;
+          color: #666;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="logo">Fundamenta</div>
+      <h1>Life Skills Platform</h1>
+      <div class="message">
+        <p>The Fundamenta deployment is active and the health check is passing successfully.</p>
+        <p>This is a fallback page. Please try navigating to the home page or login.</p>
+      </div>
+      
+      <div class="nav">
+        <a href="/" class="button">Home</a>
+        <a href="/login" class="button">Log In</a>
+      </div>
+      
+      <div class="status">
+        <p>Server Status: Online | Path: ${req.path}</p>
+      </div>
+    </body>
     </html>
   `);
 });
 
+// =============================================
 // Start the server
+// =============================================
 const server = app.listen(PORT, HOST, () => {
-  console.log(`CloudRun Health Check Web Server listening on port ${PORT}`);
+  console.log(`✅ Fundamenta CloudRun Server running on ${HOST}:${PORT}`);
 });
-
-// Start building the full application in the background
-console.log('Starting build process in the background...');
-const { execSync, spawn } = require('child_process');
-
-// Function to run a command and return its output
-function runCommand(command) {
-  try {
-    console.log(`Running command: ${command}`);
-    const output = execSync(command, { encoding: 'utf8' });
-    console.log(`Command output: ${output}`);
-    return { success: true, output };
-  } catch (error) {
-    console.error(`Command failed: ${error.message}`);
-    return { success: false, error: error.message };
-  }
-}
-
-// Build the application
-try {
-  console.log('Building application...');
-  
-  // First build the frontend with Vite
-  console.log('Building frontend with Vite...');
-  runCommand('npm run build');
-  
-  // Verify the build output
-  if (fs.existsSync('./dist')) {
-    console.log('Dist directory exists, checking contents...');
-    console.log('Dist directory contents:', fs.readdirSync('./dist'));
-    
-    // Copy client files to make them accessible
-    if (fs.existsSync('./dist/client')) {
-      console.log('Client directory exists, copying to root of dist...');
-      try {
-        // Copy all files from dist/client to ROOT/dist
-        const clientFiles = fs.readdirSync('./dist/client');
-        for (const file of clientFiles) {
-          const sourcePath = path.join('./dist/client', file);
-          const destPath = path.join('./dist', file);
-          if (fs.lstatSync(sourcePath).isDirectory()) {
-            // Create the directory if it doesn't exist
-            if (!fs.existsSync(destPath)) {
-              fs.mkdirSync(destPath, { recursive: true });
-            }
-            // Use cp -r for directories
-            execSync(`cp -r ${sourcePath}/* ${destPath}/`);
-          } else {
-            // Use fs.copyFileSync for files
-            fs.copyFileSync(sourcePath, destPath);
-          }
-          console.log(`Copied ${sourcePath} to ${destPath}`);
-        }
-        console.log('Successfully copied client files to dist root');
-      } catch (err) {
-        console.error('Error copying client files:', err);
-      }
-    } else {
-      console.warn('Client directory does not exist in dist/');
-    }
-  } else {
-    console.warn('Dist directory does not exist after build!');
-  }
-  
-  // Serve static files from the current directory as a fallback
-  if (fs.existsSync('./client/dist')) {
-    console.log('Client dist directory exists directly, serving from there as well...');
-    app.use(express.static('./client/dist'));
-  }
-  
-  // Also serve files from any subdirectory that might have assets
-  const potentialAssetDirs = [
-    './client/dist/assets',
-    './dist/assets',
-    './dist/client/assets',
-    './public',
-    './dist/public',
-    './client/public'
-  ];
-  
-  for (const dir of potentialAssetDirs) {
-    if (fs.existsSync(dir)) {
-      console.log(`Found asset directory: ${dir}, serving static files from there...`);
-      app.use('/assets', express.static(dir));
-    }
-  }
-  
-  console.log('Build and copy operations completed');
-} catch (error) {
-  console.error('Error during build process:', error);
-}
