@@ -109,6 +109,61 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Add mock authentication API for deployment
+app.get('/api/auth/me', (req, res) => {
+  // In production, we'll use a guest account until the full server is running
+  console.log('Returning guest user for /api/auth/me');
+  res.json({
+    guest: true,
+    id: 'guest-user',
+    username: 'Guest User',
+    authenticated: false,
+    message: 'Using guest mode until authentication is fully configured'
+  });
+});
+
+// Add a fallback for other auth endpoints
+app.all('/api/auth/*', (req, res) => {
+  if (req.path !== '/api/auth/me') {
+    console.log(`Fallback auth response for: ${req.path}`);
+    res.json({
+      success: true,
+      guest: true,
+      message: 'Authentication endpoint stub'
+    });
+  }
+});
+
+// Add fallback for AI service endpoints
+app.all('/api/ai/*', (req, res) => {
+  console.log(`AI service fallback for: ${req.path}`);
+  res.json({
+    success: true,
+    message: 'AI service endpoint fallback',
+    status: 'ok',
+    fallback: true
+  });
+});
+
+// Add fallback for other APIs
+app.get('/api/fallback-status', (req, res) => {
+  res.json({ enabled: true, reason: 'Deployment mode' });
+});
+
+// Add fallback for notification APIs
+app.get('/api/notifications/*', (req, res) => {
+  res.json({ notifications: [], unread: 0 });
+});
+
+// Add fallback for user settings
+app.get('/api/user/settings', (req, res) => {
+  res.json({
+    theme: 'system',
+    notifications: false,
+    tourCompleted: false
+  });
+});
+
 // For client-side routing, send index.html for all non-API routes
 app.get('*', (req, res) => {
   // Skip API routes
