@@ -34,7 +34,7 @@ export default function RobotFundi({
         }
       }
     }
-    return { x: 63, y: 8 }; // Default position
+    return { x: 57, y: 8 }; // Default position (moved 6px to the left)
   };
   
   // Get stored minimized state from localStorage or use default
