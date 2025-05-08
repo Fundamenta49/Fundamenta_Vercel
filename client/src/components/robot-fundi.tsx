@@ -363,6 +363,15 @@ export default function RobotFundi({
       console.log(`Saved Fundi minimized state (${isMinimized}) to localStorage`);
     }
   }, [isMinimized]);
+  
+  // Force reset position on first load to ensure new position takes effect
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Clear any stored position to force using the new default
+      localStorage.removeItem('fundiPosition');
+      console.log('Forced reset of Fundi position to use new default position');
+    }
+  }, []);
 
   // Much smaller size variants
   const sizeVariants = {
