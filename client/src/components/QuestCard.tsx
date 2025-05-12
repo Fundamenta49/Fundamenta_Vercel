@@ -67,6 +67,21 @@ export interface QuestData {
   zoneId?: string;
 }
 
+// Supports the JungleQuest interface from the jungle-path module
+export type QuestType = QuestData | {
+  id: string;
+  originalTitle: string;
+  originalDescription: string;
+  jungleTitle: string;
+  jungleDescription: string;
+  category: string;
+  estimatedTime: number;
+  difficulty?: number;
+  requiredRank?: number;
+  icon?: string;
+  zoneId?: string;
+}
+
 // Card size variants
 type CardSize = 'sm' | 'md' | 'lg';
 
@@ -79,10 +94,10 @@ const cardSizeStyles: Record<CardSize, string> = {
 
 interface QuestCardProps {
   /** Quest data to display */
-  quest: QuestData;
+  quest: QuestType;
   
   /** Visual theme variant for the card */
-  variant: 'jungle' | 'standard';
+  variant?: 'jungle' | 'standard';
   
   /** Progress tracking */
   progress?: number | QuestProgress;
@@ -109,7 +124,7 @@ interface QuestCardProps {
   className?: string;
   
   /** Click handler for when the quest card is clicked */
-  onClick?: (quest: QuestData) => void;
+  onClick?: (quest: QuestType) => void;
 }
 
 /**

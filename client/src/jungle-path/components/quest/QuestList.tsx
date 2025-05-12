@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { JungleQuest, QuestProgress } from '../../types/quest';
 import { useJungleTheme } from '../../contexts/JungleThemeContext';
-import QuestCard from './QuestCard';
+import QuestCard from '../../../components/QuestCard';
 
 // Display style variants for the quest list
 type DisplayStyle = 'grid' | 'list';
