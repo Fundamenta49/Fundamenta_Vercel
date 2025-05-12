@@ -61,6 +61,7 @@ import IdentityDocumentsPage from "@/pages/learning/identity-documents";
 import CompletedCoursesPage from "@/pages/learning/completed";
 import LearningPathwaysPage from "@/pages/learning/pathways";
 import JunglePathwaysPage from "@/pages/learning/jungle-pathways";
+import JungleDemoPage from "@/pages/learning/jungle-demo";
 import LearningAnalyticsDashboard from "@/pages/learning/analytics";
 import SavedQuizzesPage from "@/pages/learning/saved-quizzes";
 import DesignShowcasePage from "@/pages/design-showcase";
