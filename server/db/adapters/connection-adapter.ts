@@ -163,7 +163,7 @@ export class SupabaseDatabaseAdapter implements DatabaseAdapter {
   async runMigrations(): Promise<void> {
     try {
       // Import dynamically to avoid circular dependencies
-      const { runAllMigrations } = await import('../index');
+      const { runAllMigrations } = await import('../index.js');
       await runAllMigrations();
     } catch (migrationError) {
       console.error('Error running migrations for Supabase:', migrationError);

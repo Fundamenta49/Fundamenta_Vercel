@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm';
-import { databaseService, db, pool } from './db/database-service';
-import * as schema from "@shared/schema";
+import { databaseService, db, pool } from './db/database-service.js';
+import * as schema from "../shared/schema.js";
 
 // Backward compatibility exports
 export { db, pool };

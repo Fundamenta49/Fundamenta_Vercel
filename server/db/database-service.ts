@@ -1,5 +1,5 @@
-import { createDatabaseAdapter, DatabaseAdapter } from './adapters/connection-adapter';
-import { createSessionAdapter, SessionStoreAdapter } from './adapters/session-adapter';
+import { createDatabaseAdapter, DatabaseAdapter } from './adapters/connection-adapter.js';
+import { createSessionAdapter, SessionStoreAdapter } from './adapters/session-adapter.js';
 
 /**
  * Centralized database service to handle all database operations

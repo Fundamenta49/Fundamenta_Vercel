@@ -62,9 +62,8 @@ export class SupabaseSessionAdapter implements SessionStoreAdapter {
       tableName: 'sessions', // Use the table name defined in our schema
       createTableIfMissing: true,
       // Supabase-specific optimizations
-      pruneSessionInterval: 60 * 15, // Prune expired sessions every 15 minutes
-      // Use a transaction for session operations for better reliability
-      errorOnPrune: false, // Don't crash the server if pruning fails
+      pruneSessionInterval: 60 * 15 // Prune expired sessions every 15 minutes
+      // Transaction support is enabled by default
     });
   }
   
