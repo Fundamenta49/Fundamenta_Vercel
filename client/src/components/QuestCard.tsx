@@ -70,6 +70,8 @@ export interface QuestData {
 // Supports the JungleQuest interface from the jungle-path module
 export type QuestType = QuestData | {
   id: string;
+  title?: string; // Standard title (fallback for non-jungle themes)
+  description?: string; // Standard description (fallback for non-jungle themes)
   originalTitle: string;
   originalDescription: string;
   jungleTitle: string;
@@ -169,14 +171,31 @@ const QuestCard: React.FC<QuestCardProps> = ({
     
   const isInProgress = !isCompleted && progressValue > 0;
   
-  // Get appropriate title and description based on theme
-  const title = isJungleTheme 
-    ? (quest.jungleTitle || quest.title) 
-    : quest.title;
+  // Get appropriate title and description based on theme and quest type
+  let title, description;
   
-  const description = isJungleTheme 
-    ? (quest.jungleDescription || quest.description) 
-    : quest.description;
+  // Handle JungleQuest type (which has both original and jungle variants)
+  if ('jungleTitle' in quest && 'originalTitle' in quest) {
+    title = isJungleTheme ? quest.jungleTitle : quest.originalTitle;
+    description = isJungleTheme ? quest.jungleDescription : quest.originalDescription;
+  } 
+  // Handle standard QuestData type
+  else {
+    // For QuestData type that may have optional jungle variants
+    if ('title' in quest) {
+      title = isJungleTheme && quest.jungleTitle 
+        ? quest.jungleTitle 
+        : quest.title;
+        
+      description = isJungleTheme && quest.jungleDescription
+        ? quest.jungleDescription
+        : quest.description;
+    } else {
+      // Fallback for other types that don't have title/description
+      title = "";
+      description = "";
+    }
+  }
   
   // Get zone color based on category (simplified color mapping)
   const getCategoryColor = (category: string): string => {
@@ -290,9 +309,14 @@ const QuestCard: React.FC<QuestCardProps> = ({
         
         <CardContent className={compact ? 'p-3 pt-2' : 'p-4 pt-3'}>
           {/* Original title (if showing in jungle mode) */}
-          {showOriginalTitle && quest.originalTitle && (
+          {isJungleTheme && showOriginalTitle && (
             <div className="text-xs text-gray-400 mb-2">
-              Original: {quest.originalTitle}
+              {('originalTitle' in quest) 
+                ? `Original: ${quest.originalTitle}`
+                : (quest.title !== quest.jungleTitle && quest.title)
+                  ? `Original: ${quest.title}` 
+                  : null
+              }
             </div>
           )}
           
@@ -432,11 +456,11 @@ const QuestCard: React.FC<QuestCardProps> = ({
       
       <CardHeader className="pt-3 pb-2">
         <h3 className="text-lg font-medium text-gray-800">
-          {quest.title}
+          {title}
         </h3>
         
         <p className="text-gray-600 text-sm mt-1">
-          {quest.description}
+          {description}
         </p>
       </CardHeader>
       
