@@ -3,11 +3,11 @@ import { useLocation } from 'wouter';
 import { 
   ArrowRight, Clock, Award, Lock, CheckCircle2, Target, BookOpen
 } from 'lucide-react';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
+import { Card, CardHeader, CardContent, CardFooter } from './ui/card';
+import { Button } from './ui/button';
+import { Badge } from './ui/badge';
+import { Progress } from './ui/progress';
+import { cn } from '../lib/utils';
 
 /**
  * Type for quest progress tracking
@@ -230,13 +230,13 @@ const QuestCard: React.FC<QuestCardProps> = ({
           : isCompleted
             ? 'border-[#94C973] bg-[#1E4A3D]'
             : `border-[${zoneColor}] bg-[#162E26]`,
-        isUnlocked && !isCompleted ? 'hover:shadow-md' : '',
+        !isLocked && !isCompleted ? 'hover:shadow-md' : '',
         'transition-all duration-300',
         className
       )}>
         <CardHeader className={cn(
           compact ? 'px-3 py-2' : 'px-4 py-3',
-          isUnlocked ? 'border-b border-[#94C973]/30' : 'border-b border-gray-700'
+          !isLocked ? 'border-b border-[#94C973]/30' : 'border-b border-gray-700'
         )}>
           <div className="flex justify-between items-start">
             <div>
@@ -244,7 +244,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 'font-medium',
                 compact ? 'text-base' : 'text-lg',
                 isCompleted ? 'text-[#94C973]' : 
-                  isUnlocked ? `text-[${zoneColor}]` : 'text-gray-400'
+                  !isLocked ? `text-[${zoneColor}]` : 'text-gray-400'
               )}>
                 {title}
               </h3>
@@ -261,7 +261,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
               <Badge 
                 variant="outline" 
                 className={cn(
-                  isUnlocked 
+                  !isLocked 
                     ? `border-[${zoneColor}]/50 text-[${zoneColor}]` 
                     : 'border-gray-600 text-gray-400'
                 )}
@@ -293,7 +293,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
                 <span className="mr-1">Zone:</span>
                 <span 
                   className="font-medium" 
-                  style={{ color: isUnlocked ? zoneColor : 'currentColor' }}
+                  style={{ color: !isLocked ? zoneColor : 'currentColor' }}
                 >
                   {quest.category}
                 </span>
@@ -302,7 +302,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
           </div>
           
           {/* Progress bar */}
-          {isUnlocked && (
+          {!isLocked && (
             <div className="mt-2">
               <Progress 
                 value={isCompleted ? 100 : progressValue} 
@@ -357,7 +357,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
               className={cn(
                 isCompleted 
                   ? 'bg-[#94C973] text-[#162E26] hover:bg-[#94C973]/90'
-                  : isUnlocked 
+                  : !isLocked 
                     ? `bg-[${zoneColor}] hover:bg-[${zoneColor}]/90 text-[#162E26]` 
                     : 'bg-gray-600 text-gray-300'
               )}
@@ -367,7 +367,7 @@ const QuestCard: React.FC<QuestCardProps> = ({
                   Revisit Quest
                   <ArrowRight className="h-4 w-4 ml-1" />
                 </>
-              ) : isUnlocked ? (
+              ) : !isLocked ? (
                 <>
                   Begin Quest
                   <ArrowRight className="h-4 w-4 ml-1" />

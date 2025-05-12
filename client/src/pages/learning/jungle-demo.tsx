@@ -17,7 +17,7 @@ import { useJungleFundi } from '../../jungle-path/contexts/JungleFundiContext';
 import { getAllZones, getAccessibleZones } from '../../jungle-path/utils/zoneUtils';
 import { getRankTitle, getRankInfo } from '../../jungle-path/utils/rankCalculator';
 import ZoneCard from '../../jungle-path/components/ZoneCard';
-import QuestCard from '../../jungle-path/components/QuestCard';
+import QuestCard from '@/components/QuestCard';
 import JungleHeader from '../../jungle-path/components/JungleHeader';
 import ExpeditionCard from '../../jungle-path/components/expedition-card';
 
