@@ -1,94 +1,141 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useJungleTheme } from './JungleThemeContext';
-import { QuestType, ZoneType, getFundiGuidance, getFundiZoneTip, getRandomEncouragement } from '../utils/fundiGuidance';
-import { useAIEventStore, AIResponse } from '../../lib/ai-event-system';
+import { getZoneByCategory } from '../utils/zoneUtils';
 
-interface JungleFundiContextType {
-  isGuideMode: boolean;
-  toggleGuideMode: () => void;
-  // Helper methods for contextual guidance
-  showQuestGuidance: (questType: QuestType, phase: 'intro' | 'hint' | 'completion', hintIndex?: number) => void;
-  showZoneGuidance: (zone: ZoneType) => void;
-  showEncouragement: () => void;
-  // Message management methods
-  sendJungleMessage: (message: string, category?: string) => void;
+// Interface for JungleFundi context
+interface JungleFundiContextValue {
+  // Send a message to the AI assistant in jungle style
+  sendJungleMessage: (message: string) => void;
+  
+  // Open the chat with a pre-filled jungle message
+  startJungleConversation: (message: string) => void;
+  
+  // Configure zone-specific assistant styles
+  setActiveZone: (zoneCategory: string) => void;
+  
+  // Current active zone category for theming
+  activeZoneCategory: string | null;
 }
 
-const JungleFundiContext = createContext<JungleFundiContextType | undefined>(undefined);
+// Create the context
+const JungleFundiContext = createContext<JungleFundiContextValue>({
+  sendJungleMessage: () => {},
+  startJungleConversation: () => {},
+  setActiveZone: () => {},
+  activeZoneCategory: null
+});
 
-// This provider integrates with the existing Fundi system instead of creating a custom component
-export function JungleFundiProvider({ children }: { children: React.ReactNode }) {
-  const { isJungleTheme } = useJungleTheme();
-  const [isGuideMode, setIsGuideMode] = useState(false);
-  const { setLastResponse } = useAIEventStore();
+// Props for the provider component
+interface JungleFundiProviderProps {
+  children: ReactNode;
+}
 
-  // Send a message to the existing Fundi system - memoized to prevent infinite loops
-  const sendJungleMessage = useCallback((message: string, category: string = 'learning') => {
-    if (!isJungleTheme) return;
-    
-    // Create a response object that will be processed by the regular Fundi system
-    const jungleResponse: AIResponse = {
-      response: message,
-      category: category,
-      confidence: 0.95,
-      sentiment: 'positive'
-    };
-    
-    // Use the existing AI event store to send the message to Fundi
-    setLastResponse(jungleResponse);
-  }, [isJungleTheme, setLastResponse]);
+/**
+ * Provider component that manages the jungle-themed AI assistant 
+ */
+export const JungleFundiProvider: React.FC<JungleFundiProviderProps> = ({ children }) => {
+  const { isJungleTheme, jungleProgress } = useJungleTheme();
+  const [activeZoneCategory, setActiveZoneCategory] = useState<string | null>(null);
 
-  // Automatically set welcome message when jungle theme becomes active
+  // Update active zone based on last zone in progress if not explicitly set
   useEffect(() => {
-    if (isJungleTheme) {
-      // Default welcome message when entering jungle mode
-      sendJungleMessage("Welcome to the jungle adventure! I'll be your guide through this expedition.");
+    if (!activeZoneCategory && jungleProgress.lastZoneId) {
+      const zone = getZoneByCategory(jungleProgress.lastZoneId);
+      if (zone) {
+        setActiveZoneCategory(zone.category);
+      }
     }
-  }, [isJungleTheme, sendJungleMessage]);
+  }, [activeZoneCategory, jungleProgress.lastZoneId]);
 
-  const toggleGuideMode = useCallback(() => {
-    setIsGuideMode(prev => !prev);
-  }, []);
+  /**
+   * Send a message to the AI assistant with jungle theming
+   */
+  const sendJungleMessage = (message: string) => {
+    if (!isJungleTheme) {
+      console.warn('Attempted to send jungle message when jungle theme is inactive');
+      return;
+    }
 
-  // Helper methods for contextual guidance - memoized to prevent dependency issues
-  const showQuestGuidance = useCallback((questType: QuestType, phase: 'intro' | 'hint' | 'completion', hintIndex = 0) => {
-    if (!isJungleTheme) return;
-    const message = getFundiGuidance(questType, phase, hintIndex);
-    sendJungleMessage(message);
-  }, [isJungleTheme, sendJungleMessage]);
+    // Send message to the AI assistant (implementation will depend on how the chat system is built)
+    // This is a placeholder - actual implementation requires integrating with the existing chat system
+    try {
+      // This is where we'd dispatch an action or call a method to send the message
+      console.log('Jungle Fundi message sent:', message);
+      
+      // Access global Fundi interface if available (example, actual implementation will vary)
+      const globalFundiInterface = (window as any).__FUNDI_INTERFACE__;
+      if (globalFundiInterface?.sendMessage) {
+        globalFundiInterface.sendMessage(message, {
+          theme: 'jungle',
+          zoneCategory: activeZoneCategory || 'general',
+          rank: jungleProgress.rank
+        });
+      }
+    } catch (error) {
+      console.error('Error sending jungle message:', error);
+    }
+  };
 
-  const showZoneGuidance = useCallback((zone: ZoneType) => {
-    if (!isJungleTheme) return;
-    const message = getFundiZoneTip(zone);
-    sendJungleMessage(message);
-  }, [isJungleTheme, sendJungleMessage]);
+  /**
+   * Start a conversation with the AI assistant
+   */
+  const startJungleConversation = (message: string) => {
+    if (!isJungleTheme) {
+      console.warn('Attempted to start jungle conversation when jungle theme is inactive');
+      return;
+    }
 
-  const showEncouragement = useCallback(() => {
-    if (!isJungleTheme) return;
-    const message = getRandomEncouragement();
-    sendJungleMessage(message);
-  }, [isJungleTheme, sendJungleMessage]);
+    // Open the chat UI and pre-fill a message
+    try {
+      // This is where we'd open the chat UI with a pre-filled message
+      console.log('Starting jungle conversation:', message);
+      
+      // Access global Fundi interface if available (example, actual implementation will vary)
+      const globalFundiInterface = (window as any).__FUNDI_INTERFACE__;
+      if (globalFundiInterface?.openChat) {
+        globalFundiInterface.openChat(message, {
+          theme: 'jungle',
+          zoneCategory: activeZoneCategory || 'general',
+          rank: jungleProgress.rank
+        });
+      }
+    } catch (error) {
+      console.error('Error starting jungle conversation:', error);
+    }
+  };
 
+  /**
+   * Set the active zone for contextual assistant styling
+   */
+  const setActiveZone = (zoneCategory: string) => {
+    setActiveZoneCategory(zoneCategory);
+  };
+
+  // Create the context value
+  const contextValue: JungleFundiContextValue = {
+    sendJungleMessage,
+    startJungleConversation,
+    setActiveZone,
+    activeZoneCategory
+  };
+
+  // Provide the context to children
   return (
-    <JungleFundiContext.Provider
-      value={{
-        isGuideMode,
-        toggleGuideMode,
-        showQuestGuidance,
-        showZoneGuidance,
-        showEncouragement,
-        sendJungleMessage
-      }}
-    >
+    <JungleFundiContext.Provider value={contextValue}>
       {children}
     </JungleFundiContext.Provider>
   );
-}
+};
 
-export function useJungleFundi() {
+/**
+ * Custom hook to use the jungle AI assistant context
+ */
+export const useJungleFundi = (): JungleFundiContextValue => {
   const context = useContext(JungleFundiContext);
+  
   if (context === undefined) {
     throw new Error('useJungleFundi must be used within a JungleFundiProvider');
   }
+  
   return context;
-}
+};

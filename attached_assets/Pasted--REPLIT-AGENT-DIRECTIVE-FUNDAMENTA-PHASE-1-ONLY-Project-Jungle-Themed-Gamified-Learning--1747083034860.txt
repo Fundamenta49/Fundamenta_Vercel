@@ -1,0 +1,112 @@
+
+# 🧠 REPLIT AGENT DIRECTIVE — FUNDAMENTA PHASE 1 ONLY
+**Project:** Jungle-Themed Gamified Learning Path  
+**Version:** Phase 1 - Foundation & Navigation  
+
+---
+
+## Instruction to Agent:
+
+You are assisting with the implementation of the Jungle-Themed Learning System in the Fundamenta platform. This directive outlines what you **can** and **cannot** modify during this phase.
+
+---
+
+### ✅ YOU ARE AUTHORIZED TO:
+
+**1. Theme Toggle System**
+- Expand the `JungleThemeContext`
+- Enable persistent theme preferences using localStorage or Supabase
+- Add animated transitions between light mode and jungle mode
+- Preserve last known user zone and XP when switching themes
+
+**2. Quest Mapping Layer**
+- Create `questMapper.ts` to translate standard titles/descriptions into jungle-style names
+- Use a mapping object, no external dependencies
+- Do NOT alter backend schemas
+
+**3. Jungle Navigation & Header**
+- Build a `JungleHeader` React component
+- Include breadcrumb-style navigation that reflects the current zone and user progress
+- Display current XP and rank (pulled from existing context)
+
+**4. Card Components**
+- Build reusable `ZoneCard` and `QuestCard` components themed for jungle
+- Use Tailwind + existing className patterns
+- Integrate iconography based on skill domain (e.g. gold coins for finance)
+
+**5. Testing Hooks & Debug**
+- Create `useDebugJungle()` hook with functions like:
+  - `setXP(500)`
+  - `unlockZone("finance")`
+  - `previewFundiMessage("Welcome back!")`
+
+---
+
+### ❌ YOU ARE NOT AUTHORIZED TO:
+
+**1. SVG Map Implementation**
+- Do NOT begin any SVG map interactions or fog of war systems yet
+- Do NOT generate pan/zoom logic or mobile event listeners for maps
+
+**2. Fundi Companion Behavior**
+- Do NOT implement Fundi logic beyond placeholders
+- Do NOT modify or create emotional guidance systems without explicit instruction
+
+**3. Zip Line Progression**
+- Do NOT implement cross-zone logic or unlock sequences involving XP gating
+
+**4. Performance Optimization**
+- Do NOT attempt performance tuning or animation smoothing — defer to manual QA
+
+**5. External Package Installs**
+- Do NOT install additional libraries unless specifically told to (Framer Motion is already included)
+
+---
+
+### ⚠️ Codebase Hygiene & Refactor Policy
+
+You must follow these rules when modifying or generating code:
+
+#### ✅ When Updating Existing Features:
+- Replace code cleanly within the file  
+- **Do NOT stack duplicate logic** below old code  
+- **Do NOT leave commented-out blocks as "backup"** — all revisions should be clean and complete
+
+#### ✅ When Introducing New Features:
+- Place new files within `/jungle-path` or clearly defined new component folders  
+- Use consistent naming conventions (`JungleCard`, not `Card3_new_v2`)  
+- Prefix temporary files with `WIP_` if needed
+
+#### ❌ You are NOT allowed to:
+- Create unnecessary backups like `OldQuestCard_v2.tsx`
+- Append “just in case” versions to the bottom of files
+- Modify unrelated files in `src/pages`, `src/styles`, or `/auth` unless instructed
+
+#### ✅ File Cleanup:
+If a file is replaced, you must:
+- Remove deprecated versions
+- Ensure imports are updated platform-wide
+- Verify no orphaned or duplicate components remain
+
+---
+
+### 🧪 Testing Requirements:
+- Every new component must support mobile-first responsiveness
+- Use placeholder mock data before attempting live database hooks
+- Avoid hardcoded XP values outside the debug hook
+
+---
+
+### ✅ Deliverables This Phase:
+- `JungleThemeContext.tsx`
+- `questMapper.ts`
+- `JungleHeader.tsx`
+- `ZoneCard.tsx` and `QuestCard.tsx`
+- `useDebugJungle.ts` (for testing progression manually)
+
+---
+
+# Summary:
+You are supporting a live product with a growing complexity layer. Stay within the Jungle Phase 1 scope, avoid overreach into interactive or animated systems, and do not attempt to guess logic paths that have not been explicitly defined.
+
+All generated code must be clear, maintainable, mobile-first, and easily testable.
