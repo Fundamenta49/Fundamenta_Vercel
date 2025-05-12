@@ -16,7 +16,7 @@ import { useJungleTheme } from '../../jungle-path/contexts/JungleThemeContext';
 import { useJungleFundi } from '../../jungle-path/contexts/JungleFundiContext';
 import { getAllZones, getAccessibleZones } from '../../jungle-path/utils/zoneUtils';
 import { getRankTitle, getRankInfo } from '../../jungle-path/utils/rankCalculator';
-import ZoneCard from '../../jungle-path/components/ZoneCard';
+import ZoneCard from '@/components/ZoneCard';
 import QuestCard from '@/components/QuestCard';
 import JungleHeader from '../../jungle-path/components/JungleHeader';
 import ExpeditionCard from '../../jungle-path/components/expedition-card';
@@ -330,11 +330,16 @@ const JungleDemoPage: React.FC = () => {
                   <ZoneCard
                     key={zone.id}
                     zone={zone}
+                    variant="jungle"
                     isUnlocked={accessibleZones.some(z => z.id === zone.id)}
                     questCount={5}
-                    completedQuestCount={
+                    completedQuests={
                       zone.id === 'golden-temple' ? 2 :
                       zone.id === 'healing-springs' ? 1 : 0
+                    }
+                    progress={
+                      zone.id === 'golden-temple' ? 40 :
+                      zone.id === 'healing-springs' ? 20 : 0
                     }
                   />
                 ))}

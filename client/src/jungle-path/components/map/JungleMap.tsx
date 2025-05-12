@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { getAllZones, isZoneUnlocked } from '../../utils/zoneUtils';
 import { useJungleTheme } from '../../contexts/JungleThemeContext';
 import { Map, Compass } from 'lucide-react';
+import ZoneCard from '@/components/ZoneCard';
 
 interface JungleMapProps {
   userRank: number;
@@ -40,32 +41,23 @@ const JungleMap: React.FC<JungleMapProps> = ({
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {zones.map(zone => {
-            const unlocked = isZoneUnlocked(zone.category, userRank);
+            const isUnlocked = isZoneUnlocked(zone.category, userRank);
             const progress = zoneProgress[zone.category] || 0;
+            // Estimate these values as we don't have the actual quest data here
+            const questCount = 5; // Placeholder value
+            const completedQuests = Math.round((progress / 100) * questCount);
             
             return (
-              <Card 
+              <ZoneCard
                 key={zone.id}
-                className={`border-l-4 cursor-pointer transition-all hover:shadow ${
-                  unlocked ? '' : 'opacity-60'
-                }`}
-                style={{ borderLeftColor: zone.color }}
-                onClick={() => unlocked && onZoneSelect && onZoneSelect(zone.id)}
-              >
-                <CardContent className="p-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold">{zone.name}</h3>
-                    {progress > 0 && (
-                      <span className="text-xs font-medium">{progress}%</span>
-                    )}
-                  </div>
-                  {!unlocked && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Requires Rank {zone.requiredRank}
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
+                zone={zone}
+                variant="standard"
+                progress={progress}
+                isUnlocked={isUnlocked}
+                questCount={questCount}
+                completedQuests={completedQuests}
+                onClick={() => onZoneSelect && onZoneSelect(zone.id)}
+              />
             );
           })}
         </div>
