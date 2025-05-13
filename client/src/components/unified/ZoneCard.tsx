@@ -191,19 +191,41 @@ export function ZoneCard({
     >
       {/* Locked overlay */}
       {!isUnlocked && (
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
-          <LockIcon 
-            className={cn("text-white opacity-80", {
-              "text-[#EBCE67]": isJungleTheme
-            })} 
-            size={compact ? 32 : 48} 
-          />
+        <div className={cn(
+          "absolute inset-0 flex items-center justify-center z-10 rounded-lg", 
+          {
+            "bg-black/50": !isJungleTheme,
+            "bg-[#0F2921]/70": isJungleTheme
+          }
+        )}>
+          <div className="flex flex-col items-center">
+            <LockIcon 
+              className={cn("opacity-90", {
+                "text-white": !isJungleTheme,
+                "text-[#E6B933]": isJungleTheme
+              })} 
+              size={compact ? 32 : 40} 
+            />
+            {!compact && isJungleTheme && (
+              <span className="text-amber-200 text-sm mt-2 font-medium">
+                Rank {zone.unlockRank} required
+              </span>
+            )}
+          </div>
         </div>
       )}
       
-      <CardHeader className={compact ? "py-3 px-4" : "py-4 px-6"}>
+      <CardHeader className={cn(
+        compact ? "py-3 px-4" : "py-4 px-6",
+        isJungleTheme && "pb-2" // Reduce bottom padding for jungle theme
+      )}>
+        {isJungleTheme && !compact && (
+          <div className="absolute right-4 top-4">
+            {renderIcon()}
+          </div>
+        )}
         <CardTitle className={titleClasses}>
-          {renderIcon()}
+          {!isJungleTheme && renderIcon()}
           <span>{title}</span>
         </CardTitle>
         {!compact && (
