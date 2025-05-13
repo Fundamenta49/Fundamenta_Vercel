@@ -64,7 +64,7 @@ import JunglePathwaysPage from "@/pages/learning/jungle-pathways";
 import JungleDemoPage from "@/pages/learning/jungle-demo";
 import LearningAnalyticsDashboard from "@/pages/learning/analytics";
 import SavedQuizzesPage from "@/pages/learning/saved-quizzes";
-import JungleNavigationDemo from "@/pages/demos/jungle-navigation-demo";
+// Jungle navigation demo removed and integrated into main application
 import DesignShowcasePage from "@/pages/design-showcase";
 import LoginPage from "@/pages/login";
 import AuthPage from "@/pages/auth-page";
@@ -451,9 +451,7 @@ function Router() {
             <Route path="/learning/jungle-pathways">
               <JunglePathwaysPage />
             </Route>
-            <Route path="/demos/jungle-navigation">
-              <JungleNavigationDemo />
-            </Route>
+            {/* Jungle navigation demo route removed and integrated into main application */}
             <Route path="/learning/analytics">
               <ProtectedRoute>
                 <LearningAnalyticsDashboard />

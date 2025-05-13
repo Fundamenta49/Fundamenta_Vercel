@@ -85,8 +85,8 @@ export function JungleTabs({
       <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full">
         <TabsList
           className={cn(
-            "w-full h-auto flex flex-wrap gap-1 p-1 rounded-lg",
-            variant === 'jungle' ? "bg-[#163027] border border-[#2A5542]" : "bg-muted",
+            "w-full h-auto flex flex-wrap p-1 rounded-lg",
+            variant === 'jungle' ? "bg-[#1E4A3D] border border-[#2A5542]" : "bg-muted",
             stretch ? "justify-between" : "justify-start",
             tabsListClassName
           )}
@@ -108,10 +108,11 @@ export function JungleTabs({
                 // Jungle theme styles
                 variant === 'jungle' && [
                   "text-[#94C973]",
-                  "data-[state=active]:bg-[#2A5542]",
+                  "data-[state=active]:bg-transparent",
                   "data-[state=active]:text-[#EBCE67]",
-                  "data-[state=active]:shadow-sm",
-                  "hover:bg-[#1E4A3D] hover:text-[#EBCE67]"
+                  "data-[state=active]:border-b-2 data-[state=active]:border-[#EBCE67]",
+                  "data-[state=active]:rounded-none",
+                  "hover:text-[#EBCE67]"
                 ],
                 // Standard theme styles
                 variant === 'standard' && [
@@ -130,7 +131,12 @@ export function JungleTabs({
       
       {/* Render active tab content if available */}
       {activeTabContent && (
-        <div className="tab-content mt-4">{activeTabContent}</div>
+        <div className={cn(
+          "tab-content mt-4 p-4 rounded-md", 
+          variant === 'jungle' ? "bg-[#8BA89F] bg-opacity-50 text-gray-800" : "bg-background"
+        )}>
+          {activeTabContent}
+        </div>
       )}
     </div>
   );

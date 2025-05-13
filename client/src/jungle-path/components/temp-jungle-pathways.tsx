@@ -2,8 +2,10 @@ import React, { useEffect } from "react";
 import { useLocation } from "wouter";
 import { 
   ArrowLeft, Award, BookOpen, Clock, Dumbbell, 
-  Flame, Rocket, Shield, Target, MapPin 
+  Flame, Rocket, Shield, Target, MapPin,
+  Briefcase, Coins, Flower
 } from "lucide-react";
+import { JungleTabs } from "./JungleTabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
