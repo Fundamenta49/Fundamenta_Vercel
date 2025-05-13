@@ -154,7 +154,7 @@ export function ZoneCard({
   return (
     <Card 
       className={cardClasses}
-      onClick={() => onClick(zone.id)}
+      onClick={() => handleZoneClick(zone.id)}
     >
       {/* Locked overlay */}
       {!isUnlocked && (
