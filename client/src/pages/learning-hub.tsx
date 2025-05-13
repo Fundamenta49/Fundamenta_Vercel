@@ -8,6 +8,7 @@ import { useLocation } from "wouter";
 import { learningZones, LearningZone } from "@/data/zones-config";
 import { ZoneCard } from "@/components/unified/ZoneCard";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { LearningThemeProvider } from "@/contexts/LearningThemeContext";
 
 // Components
 import { HubLayout } from "@/components/layouts/HubLayout";
@@ -27,20 +28,21 @@ export default function LearningHubPage() {
   }, [setLocation]);
   
   return (
-    <HubLayout
-      title="Select a life skill path to continue"
-      description="Choose a learning zone to explore and develop essential life skills."
-      theme="standard"
-    >
-      {learningZones.map((zone: LearningZone) => (
-        <ZoneCard
-          key={zone.id}
-          zone={zone}
-          theme="standard"
-          userRank={userRank}
-          onClick={handleZoneClick}
-        />
-      ))}
-    </HubLayout>
+    <LearningThemeProvider initialTheme="standard">
+      <HubLayout
+        title="Select a life skill path to continue"
+        description="Choose a learning zone to explore and develop essential life skills."
+        theme="standard"
+      >
+        {learningZones.map((zone: LearningZone) => (
+          <ZoneCard
+            key={zone.id}
+            zone={zone}
+            userRank={userRank}
+            onClick={handleZoneClick}
+          />
+        ))}
+      </HubLayout>
+    </LearningThemeProvider>
   );
 }

@@ -7,6 +7,7 @@ import * as React from "react";
 import { ThemeType } from "@/data/zones-config";
 import { Container } from "@/components/ui/container";
 import { PageHeader } from "@/components/ui/page-header";
+import { useTheme } from "@/contexts/LearningThemeContext";
 
 interface HubLayoutProps {
   /** Title displayed at the top of the hub page */
@@ -24,10 +25,14 @@ interface HubLayoutProps {
 export function HubLayout({ 
   title, 
   description, 
-  theme, 
+  theme: propTheme, 
   children, 
   headerContent 
 }: HubLayoutProps) {
+  // Get theme from context, fallback to prop theme if provided
+  const { theme: contextTheme } = useTheme();
+  const theme = propTheme || contextTheme;
+  
   // Add any theme-specific container classes
   const containerClasses = theme === "jungle" 
     ? "bg-[#1E4A3D] text-white min-h-screen" 

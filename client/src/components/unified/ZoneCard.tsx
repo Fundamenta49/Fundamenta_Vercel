@@ -43,7 +43,7 @@ interface ZoneCardProps {
 
 export function ZoneCard({
   zone,
-  theme,
+  theme: propTheme, // Rename to clearly indicate it's from props
   userRank,
   progress = 0,
   questCount = 0,
@@ -52,6 +52,9 @@ export function ZoneCard({
   compact = false,
   onClick
 }: ZoneCardProps) {
+  // Get theme from context, fallback to prop theme if provided
+  const { theme: contextTheme } = useTheme();
+  const theme = propTheme || contextTheme;
   const isJungleTheme = theme === 'jungle';
   const isUnlocked = typeof userRank === 'number' ? userRank >= zone.unlockRank : false;
   
