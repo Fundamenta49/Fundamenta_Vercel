@@ -93,25 +93,28 @@ export default function JunglePathwaysPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { isJungleTheme } = useJungleTheme();
-  const { showZoneGuidance, sendJungleMessage } = useJungleFundi();
+  const { sendJungleMessage, setActiveZone } = useJungleFundi();
   
   // Update Fundi with tab-specific guidance
   useEffect(() => {
     if (isJungleTheme && activeTab !== 'all') {
       // Map category to zone type for Fundi guidance
-      const zoneMapping: Record<string, any> = {
-        'financial': 'ancient-ruins',
-        'wellness': 'riverlands',
-        'career': 'canopy',
-        'life-skills': 'cave-system'
+      const zoneMapping: Record<string, string> = {
+        'financial': 'finance',
+        'wellness': 'wellness',
+        'career': 'career',
+        'life-skills': 'general'
       };
       
-      const zoneType = zoneMapping[activeTab] || 'riverlands';
-      showZoneGuidance(zoneType as any);
+      const zoneType = zoneMapping[activeTab] || 'general';
+      // Update active zone for Fundi
+      setActiveZone(zoneType);
+      // Send appropriate zone message
+      sendJungleMessage(`You're now exploring the ${zoneType} region of the jungle. What would you like to discover here?`);
     } else if (isJungleTheme && activeTab === 'all') {
       sendJungleMessage("Welcome to the jungle expedition routes! I'll help you navigate through these different regions of knowledge. Which area would you like to explore first?");
     }
-  }, [activeTab, isJungleTheme, showZoneGuidance, sendJungleMessage]);
+  }, [activeTab, isJungleTheme, setActiveZone, sendJungleMessage]);
   
   // For demo purposes, we'll use a hardcoded user ID
   const userId = 1;
