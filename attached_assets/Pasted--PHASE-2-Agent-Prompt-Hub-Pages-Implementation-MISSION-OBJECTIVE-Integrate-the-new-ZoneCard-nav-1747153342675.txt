@@ -1,0 +1,74 @@
+
+PHASE 2: Agent Prompt – Hub Pages Implementation
+
+MISSION OBJECTIVE:
+Integrate the new ZoneCard navigation system into the live Fundamenta platform, replacing the old tab-based interface for both jungle-themed and standard learning paths. Build two themed landing pages—/jungle-hub and /learning-hub—that serve as the new user entry points into their learning journey.
+
+---
+
+STEP 1: Create Hub Pages
+
+Create two new files:
+- client/src/pages/jungle-hub.tsx
+- client/src/pages/learning-hub.tsx
+
+Import:
+import { learningZones } from '@/data/zones-config';
+import { ZoneCard } from '@/components/ZoneCard';
+import { useUserProfile } from '@/hooks/useUserProfile'; // or appropriate user context
+
+---
+
+STEP 2: Render ZoneCards
+
+In both pages:
+- Fetch the user's current rank (e.g., userProfile.rank)
+- Map over the learningZones array
+- Render a ZoneCard for each zone:
+
+Example JSX:
+<ZoneCard
+  key={zone.id}
+  zone={zone}
+  theme="jungle" // or "standard"
+  userRank={userRank}
+  onClick={(zoneId) => router.push(`/zone/${zoneId}?theme=jungle`)} // adjust as needed
+/>
+
+---
+
+STEP 3: Themed Layout
+
+Use responsive grid layout:
+- 2-column grid on desktop
+- Stacked layout on mobile
+
+Add a top header with Fundi or themed copy:
+- Jungle Hub: “Choose your next expedition, explorer!”
+- Standard Hub: “Select a life skill path to continue.”
+
+---
+
+STEP 4: Replace Existing Navigation
+
+In jungle-pathways.tsx and any file using JungleTabs or legacy tabs:
+- Remove or comment out the JungleTabs/tab-based nav
+- Add a button or direct route to /jungle-hub or /learning-hub
+
+Ensure user flow now begins with the new hub pages.
+
+---
+
+STEP 5: Route Integration
+
+Ensure clicking a ZoneCard routes to /zone/:zoneId
+- Pass theme via query param or context (e.g., ?theme=jungle)
+- Do not hardcode logic based on file path
+
+---
+
+PHASE COMPLETE WHEN:
+- Both hub pages are live and working
+- Tab bar has been replaced with ZoneCard-based hub navigation
+- Locked zones display appropriately and block interaction
+- Clicking an unlocked zone correctly routes the user to its module list

@@ -69,6 +69,8 @@ import DesignShowcasePage from "@/pages/design-showcase";
 import LoginPage from "@/pages/login";
 import AuthPage from "@/pages/auth-page";
 import ZoneTestPage from "@/pages/dev/zone-test";
+import JungleHubPage from "@/pages/jungle-hub";
+import LearningHubPage from "@/pages/learning-hub";
 import PrivacyPolicyPage from "@/pages/privacy-policy";
 import { AuthProvider } from "@/lib/auth-context";
 import AdminPage from "@/pages/admin";
@@ -294,6 +296,16 @@ function Router() {
             <Route path="/ui/skeletons" component={SkeletonDemoPage} />
             <Route path="/ui/components" component={ComponentTest} />
             <Route path="/dev/zone-test" component={ZoneTestPage} />
+            <Route path="/jungle-hub">
+              <ProtectedRoute>
+                <JungleHubPage />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/learning-hub">
+              <ProtectedRoute>
+                <LearningHubPage />
+              </ProtectedRoute>
+            </Route>
             {/* User-facing disclaimer hub */}
             <Route path="/disclaimers">
               <ProtectedRoute>

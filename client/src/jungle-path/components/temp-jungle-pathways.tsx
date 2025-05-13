@@ -263,7 +263,15 @@ export default function JunglePathwaysPage() {
           </h1>
           
           {isJungleTheme && (
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-4">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/jungle-hub')}
+                className={jungleStyles.buttonOutline}
+              >
+                <MapPin className="h-4 w-4 mr-2" />
+                New Expedition Hub
+              </Button>
               <RankBadge rank="Explorer" level={2} />
             </div>
           )}
@@ -275,11 +283,24 @@ export default function JunglePathwaysPage() {
               <p className="text-[#94C973]">
                 <span className="font-bold">Professor Hoot says:</span> Welcome to the expedition routes! Each path will lead you through different regions of knowledge in the jungle. Complete quests to unlock new areas and abilities.
               </p>
+              <div className="mt-3 p-3 bg-[#162E26] rounded-md border border-[#E6B933]/30">
+                <p className="text-[#E6B933] font-medium">📢 NEW! Expedition Hub Now Available</p>
+                <p className="text-[#94C973] text-sm mt-1">
+                  Try our new jungle expedition hub for an enhanced navigation experience! 
+                  Click the "New Expedition Hub" button above to explore.
+                </p>
+              </div>
             </CompanionBubble>
           </div>
         )}
         
-        {/* Category tabs using JungleTabs component - mobile optimized */}
+        {/* 
+          Legacy Category tabs using JungleTabs component - mobile optimized
+          NOTE: This tab navigation is being phased out in favor of the new ZoneCard-based hub navigation
+          It's kept here commented out as a fallback
+        */}
+        {/* BEGIN LEGACY TAB NAVIGATION - COMMENTED OUT FOR PHASE 2 REFACTORING */}
+        {/*
         <JungleTabs
           tabs={[
             { label: "All Routes", value: "all" },
@@ -295,6 +316,33 @@ export default function JunglePathwaysPage() {
           stretch={true}
           className="w-full max-w-full"
         />
+        */}
+        {/* END LEGACY TAB NAVIGATION */}
+        
+        {/* Temporary fallback tabs until migration is complete */}
+        <div className="flex overflow-x-auto p-2 bg-[#162E26] border border-[#E6B933]/50 rounded-md gap-2 mb-4">
+          {[
+            { label: "All Routes", value: "all" },
+            { label: "Finance", value: "financial", icon: <Coins className="h-4 w-4" /> },
+            { label: "Wellness", value: "wellness", icon: <Flower className="h-4 w-4" /> },
+            { label: "Career", value: "career", icon: <Briefcase className="h-4 w-4" /> },
+            { label: "Life Skills", value: "life-skills", icon: <BookOpen className="h-4 w-4" /> }
+          ].map(tab => (
+            <Button
+              key={tab.value}
+              variant={activeTab === tab.value ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setActiveTab(tab.value)}
+              className={activeTab === tab.value 
+                ? "bg-[#E6B933] text-[#1E4A3D] hover:bg-[#DCAA14]" 
+                : "text-[#94C973] hover:bg-[#1E4A3D] hover:text-[#E6B933]"
+              }
+            >
+              {tab.icon && <span className="mr-1.5">{tab.icon}</span>}
+              {tab.label}
+            </Button>
+          ))}
+        </div>
           
         {/* Tabs content area - separate from the tabs component - mobile optimized */}
         <div className="mt-4 sm:mt-6">
