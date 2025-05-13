@@ -2,14 +2,14 @@
  * Test page for the ZoneCard component with different theme variations
  */
 import { useState } from "react";
-import { learningZones, ThemeType } from "../../data/zones-config";
-import { ZoneCard } from "../../components/unified/ZoneCard";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
-import { Label } from "../../components/ui/label";
-import { Slider } from "../../components/ui/slider";
-import { Switch } from "../../components/ui/switch";
+import { learningZones, ThemeType } from "@/data/zones-config";
+import { ZoneCard } from "@/components/unified/ZoneCard";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 
 export default function ZoneTestPage() {
   // State for the theme and other settings

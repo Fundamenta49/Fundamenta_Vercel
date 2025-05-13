@@ -3,13 +3,13 @@
  * This component displays a learning zone with appropriate styling based on theme
  */
 
-import { LearningZone, ThemeType } from "../../data/zones-config";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
-import { Progress } from "../ui/progress";
+import { LearningZone, ThemeType } from "@/data/zones-config";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Coins, Heart, Flame, Briefcase, ShieldAlert, LockIcon } from "lucide-react";
-import { cn } from "../../lib/utils";
+import { cn } from "@/lib/utils";
 
 interface ZoneCardProps {
   /** Zone data to display */
@@ -194,7 +194,7 @@ export function ZoneCard({
             variant={isJungleTheme ? "outline" : "default"}
             size="sm"
             className={isJungleTheme ? "border-[#EBCE67] text-[#EBCE67] hover:bg-[#2c5a4a]" : ""}
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               onClick(zone.id);
             }}
