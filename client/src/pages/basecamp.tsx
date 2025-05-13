@@ -8,7 +8,7 @@ import { learningPathways } from "@/pages/learning/pathways-data";
 import { BasecampLayout } from "@/components/layouts/BasecampLayout";
 import { SummaryCard } from "@/components/learning/SummaryCard";
 import { ProgressDisplay } from "@/components/learning/ProgressDisplay";
-import { getZoneById, LearningZone, zones } from "@/data/zones-config";
+import { getZoneById, LearningZone, learningZones } from "@/data/zones-config";
 import { useTheme } from "@/contexts/LearningThemeContext";
 
 // We'll use mock data for now, but this would come from user's profile
@@ -47,7 +47,7 @@ export default function BasecampPage() {
       pathway.modules.forEach(module => {
         if (module.completed) {
           // Find which zone this module belongs to
-          const zoneForModule = zones.find(zone => zone.category === pathway.category);
+          const zoneForModule = learningZones.find(zone => zone.category === pathway.category);
           
           if (zoneForModule) {
             if (!grouped[zoneForModule.id]) {
