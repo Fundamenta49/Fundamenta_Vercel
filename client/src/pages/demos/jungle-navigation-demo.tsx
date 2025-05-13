@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { 
-  Leaf, Flame, Award, BadgeCheck, 
+  Leaf, Flame, Award, BadgeCheck,
   DollarSign, Heart, BookOpen, Briefcase, 
-  ShieldCheck
+  ShieldCheck, Trees, Flower, Gem, 
+  Mountain, LandPlot, GraduationCap,
+  Coins, Flower2, ScrollText, Axe, Map,
+  BriefcaseMedical, TreePine, Tent
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -41,21 +44,58 @@ export default function JungleNavigationDemo() {
     setIsJungleTheme(!isJungleTheme);
   };
   
-  // Tab data for basic tabs demo
+  // Helper function to get icons based on theme
+  const getThemeIcon = (category: string) => {
+    // Return different icons based on the current theme
+    if (isJungleTheme) {
+      switch (category) {
+        case 'finance':
+          return <Coins className="h-4 w-4 text-[#EBCE67]" />; // Gold coins for finance
+        case 'wellness':
+          return <Flower2 className="h-4 w-4 text-[#94C973]" />; // Flower for wellness
+        case 'career':
+          return <ScrollText className="h-4 w-4 text-[#EBCE67]" />; // Ancient scroll for career
+        case 'life-skills':
+          return <Axe className="h-4 w-4 text-[#EBCE67]" />; // Tools for life skills
+        case 'emergency':
+          return <BriefcaseMedical className="h-4 w-4 text-[#FF6B6B]" />; // Medical kit for emergency
+        default:
+          return <Map className="h-4 w-4" />; // Default jungle icon
+      }
+    } else {
+      // Standard theme icons
+      switch (category) {
+        case 'finance':
+          return <DollarSign className="h-4 w-4" />;
+        case 'wellness':
+          return <Heart className="h-4 w-4" />;
+        case 'career':
+          return <Briefcase className="h-4 w-4" />;
+        case 'life-skills':
+          return <BookOpen className="h-4 w-4" />;
+        case 'emergency':
+          return <ShieldCheck className="h-4 w-4" />;
+        default:
+          return <Leaf className="h-4 w-4" />;
+      }
+    }
+  };
+
+  // Tab data for basic tabs demo with dynamic icons
   const basicTabs = [
-    { label: 'Finance', value: 'finance', content: <TabContent title="Finance" />, icon: <DollarSign className="h-4 w-4" /> },
-    { label: 'Wellness', value: 'wellness', content: <TabContent title="Wellness" />, icon: <Heart className="h-4 w-4" /> },
-    { label: 'Career', value: 'career', content: <TabContent title="Career" />, icon: <Briefcase className="h-4 w-4" /> },
-    { label: 'Life Skills', value: 'life-skills', content: <TabContent title="Life Skills" />, icon: <BookOpen className="h-4 w-4" /> },
-    { label: 'Emergency', value: 'emergency', content: <TabContent title="Emergency" />, icon: <ShieldCheck className="h-4 w-4" /> }
+    { label: 'Finance', value: 'finance', content: <TabContent title="Finance" />, icon: getThemeIcon('finance') },
+    { label: 'Wellness', value: 'wellness', content: <TabContent title="Wellness" />, icon: getThemeIcon('wellness') },
+    { label: 'Career', value: 'career', content: <TabContent title="Career" />, icon: getThemeIcon('career') },
+    { label: 'Life Skills', value: 'life-skills', content: <TabContent title="Life Skills" />, icon: getThemeIcon('life-skills') },
+    { label: 'Emergency', value: 'emergency', content: <TabContent title="Emergency" />, icon: getThemeIcon('emergency') }
   ];
   
   // Tab data for navigation tabs demo
   const navTabs = [
-    { label: 'Finance', value: 'finance', path: '#finance', icon: <DollarSign className="h-4 w-4" /> },
-    { label: 'Wellness', value: 'wellness', path: '#wellness', icon: <Heart className="h-4 w-4" /> },
-    { label: 'Career', value: 'career', path: '#career', icon: <Briefcase className="h-4 w-4" /> },
-    { label: 'Life Skills', value: 'life-skills', path: '#life-skills', icon: <BookOpen className="h-4 w-4" /> }
+    { label: 'Finance', value: 'finance', path: '#finance', icon: getThemeIcon('finance') },
+    { label: 'Wellness', value: 'wellness', path: '#wellness', icon: getThemeIcon('wellness') },
+    { label: 'Career', value: 'career', path: '#career', icon: getThemeIcon('career') },
+    { label: 'Life Skills', value: 'life-skills', path: '#life-skills', icon: getThemeIcon('life-skills') }
   ];
   
   return (
@@ -88,14 +128,30 @@ export default function JungleNavigationDemo() {
               <CardTitle>Basic Tabs Example</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className={isJungleTheme ? "bg-[#1E4A3D] p-6 rounded-md" : "bg-card p-6 rounded-md"}>
-                <JungleTabs
-                  tabs={basicTabs}
-                  value={activeBasicTab}
-                  onValueChange={setActiveBasicTab}
-                  variant={isJungleTheme ? 'jungle' : 'standard'}
-                  className="mb-4"
-                />
+              <div className={isJungleTheme 
+                ? "bg-[#1E4A3D] p-6 rounded-md relative overflow-hidden" 
+                : "bg-card p-6 rounded-md"
+              }>
+                {isJungleTheme && (
+                  <>
+                    {/* Jungle decorative elements */}
+                    <div className="absolute top-0 left-0 opacity-10">
+                      <TreePine className="h-16 w-16 text-[#94C973]" />
+                    </div>
+                    <div className="absolute bottom-0 right-0 opacity-10">
+                      <Leaf className="h-12 w-12 text-[#94C973]" />
+                    </div>
+                  </>
+                )}
+                <div className="relative z-10">
+                  <JungleTabs
+                    tabs={basicTabs}
+                    value={activeBasicTab}
+                    onValueChange={setActiveBasicTab}
+                    variant={isJungleTheme ? 'jungle' : 'standard'}
+                    className="mb-4"
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
