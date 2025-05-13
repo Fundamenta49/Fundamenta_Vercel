@@ -451,6 +451,9 @@ function Router() {
             <Route path="/learning/jungle-pathways">
               <JunglePathwaysPage />
             </Route>
+            <Route path="/demos/jungle-navigation">
+              <JungleNavigationDemo />
+            </Route>
             <Route path="/learning/analytics">
               <ProtectedRoute>
                 <LearningAnalyticsDashboard />

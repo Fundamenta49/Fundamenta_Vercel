@@ -1,154 +1,137 @@
-import React from 'react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import React, { useState, useEffect } from 'react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { useJungleTheme } from '../contexts/JungleThemeContext';
 
-export interface TabItem {
+export interface JungleTabItem {
   label: string;
   value: string;
-  content?: React.ReactNode;
   icon?: React.ReactNode;
+  content?: React.ReactNode;
   disabled?: boolean;
 }
 
-interface JungleTabsProps {
-  /** List of tab items */
-  tabs: TabItem[];
+export interface JungleTabsProps {
+  // Array of tab items to display
+  tabs: JungleTabItem[];
   
-  /** Default selected tab */
-  defaultValue?: string;
-  
-  /** Currently active tab */
+  // Currently selected tab value
   value?: string;
   
-  /** Theme variant */
-  variant?: 'jungle' | 'standard';
-  
-  /** Change handler */
+  // Called when a tab is selected
   onValueChange?: (value: string) => void;
   
-  /** Tab list container class name */
-  tabsListClassName?: string;
+  // Visual styling variant - jungle theme or standard
+  variant?: 'jungle' | 'standard';
   
-  /** Tab content container class name */
-  contentClassName?: string;
-  
-  /** Root container class name */
-  className?: string;
-  
-  /** Whether tabs should stretch to fill width */
-  stretch?: boolean;
-  
-  /** Size variant */
+  // Size of the tabs
   size?: 'sm' | 'md' | 'lg';
   
-  /** Whether content should be rendered */
-  renderContent?: boolean;
+  // Whether tabs should stretch to fill available width
+  stretch?: boolean;
+  
+  // Additional className to apply
+  className?: string;
+  
+  // Additional className for the tab list
+  tabsListClassName?: string;
 }
 
-/**
- * Unified Tabs component that supports both jungle and standard themes
- */
 export function JungleTabs({
   tabs,
-  defaultValue,
   value,
-  variant: propVariant,
   onValueChange,
-  tabsListClassName,
-  contentClassName,
-  className,
-  stretch = false,
+  variant: propVariant,
   size = 'md',
-  renderContent = true
+  stretch = true,
+  className,
+  tabsListClassName
 }: JungleTabsProps) {
-  // Get jungle theme context if not explicitly provided
-  const { isJungleTheme: contextIsJungle } = useJungleTheme();
+  // Get jungle theme context
+  const { isJungleTheme } = useJungleTheme();
   
-  // Use prop variant if provided, otherwise use context
-  const isJungleTheme = propVariant ? propVariant === 'jungle' : contextIsJungle;
+  // Determine if we should use jungle theme
+  const variant = propVariant || (isJungleTheme ? 'jungle' : 'standard');
   
-  // Default tab is the first tab if not provided
-  const defaultTab = defaultValue || tabs[0]?.value;
+  // State for controlled component
+  const [selectedTab, setSelectedTab] = useState<string>(value || (tabs.length > 0 ? tabs[0].value : ''));
   
-  // Size mapping
-  const sizeStyles = {
-    sm: 'h-8 min-h-8',
-    md: 'h-10 min-h-10',
-    lg: 'h-12 min-h-12'
-  };
+  // Update selected tab when value prop changes
+  useEffect(() => {
+    if (value !== undefined) {
+      setSelectedTab(value);
+    }
+  }, [value]);
   
-  // Handle value change
-  const handleValueChange = (newValue: string) => {
+  // Handle tab click
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value);
     if (onValueChange) {
-      onValueChange(newValue);
+      onValueChange(value);
     }
   };
   
-  // Custom styles for the jungle theme
-  const jungleStyles = {
-    root: "",
-    list: "bg-[#162E26] border border-[#E6B933]/50 rounded-md overflow-hidden",
-    tab: "data-[state=active]:bg-[#162E26] data-[state=active]:text-[#E6B933] data-[state=active]:border-b-2 data-[state=active]:border-[#E6B933] text-[#94C973] relative"
-  };
+  // Helper function to determine if a tab is active
+  const isTabActive = (tabValue: string) => selectedTab === tabValue;
   
-  // Custom styles for the standard theme
-  const standardStyles = {
-    root: "",
-    list: "bg-secondary/30 rounded-full",
-    tab: "data-[state=active]:bg-white data-[state=active]:text-foreground rounded-full"
-  };
-  
-  // Get the appropriate styles based on theme
-  const themeStyles = isJungleTheme ? jungleStyles : standardStyles;
+  // Generate content for the selected tab
+  const activeTabContent = React.useMemo(() => {
+    const activeTab = tabs.find(tab => tab.value === selectedTab);
+    return activeTab?.content || null;
+  }, [selectedTab, tabs]);
   
   return (
-    <Tabs 
-      defaultValue={defaultTab} 
-      value={value}
-      onValueChange={handleValueChange}
-      className={cn('w-full', className)}
-    >
-      <TabsList 
-        className={cn(
-          themeStyles.list,
-          sizeStyles[size],
-          stretch ? 'w-full' : 'w-auto',
-          'inline-flex',
-          tabsListClassName
-        )}
-      >
-        {tabs.map((tab) => (
-          <TabsTrigger
-            key={tab.value}
-            value={tab.value}
-            disabled={tab.disabled}
-            className={cn(
-              themeStyles.tab,
-              'font-medium transition-all',
-              stretch ? 'flex-1' : '',
-              'min-w-[70px]'
-            )}
-          >
-            {tab.icon && (
-              <span className="mr-1.5">{tab.icon}</span>
-            )}
-            {tab.label}
-          </TabsTrigger>
-        ))}
-      </TabsList>
-      
-      {renderContent && tabs.map((tab) => (
-        <TabsContent 
-          key={tab.value} 
-          value={tab.value}
-          className={cn('mt-4', contentClassName)}
+    <div className={cn("w-full", className)}>
+      <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full">
+        <TabsList
+          className={cn(
+            "w-full h-auto flex flex-wrap gap-1 p-1 rounded-lg",
+            variant === 'jungle' ? "bg-[#163027] border border-[#2A5542]" : "bg-muted",
+            stretch ? "justify-between" : "justify-start",
+            tabsListClassName
+          )}
         >
-          {tab.content}
-        </TabsContent>
-      ))}
-    </Tabs>
+          {tabs.map((tab) => (
+            <TabsTrigger
+              key={tab.value}
+              value={tab.value}
+              disabled={tab.disabled}
+              className={cn(
+                // Base styles
+                "flex items-center gap-2 transition-all relative px-4 rounded",
+                // Size variants
+                size === 'sm' && "text-xs py-1",
+                size === 'md' && "text-sm py-1.5",
+                size === 'lg' && "text-base py-2",
+                // Width based on stretch prop
+                stretch ? "flex-grow text-center justify-center" : "flex-initial",
+                // Jungle theme styles
+                variant === 'jungle' && [
+                  "text-[#94C973]",
+                  "data-[state=active]:bg-[#2A5542]",
+                  "data-[state=active]:text-[#EBCE67]",
+                  "data-[state=active]:shadow-sm",
+                  "hover:bg-[#1E4A3D] hover:text-[#EBCE67]"
+                ],
+                // Standard theme styles
+                variant === 'standard' && [
+                  "data-[state=active]:bg-background",
+                  "data-[state=active]:text-foreground",
+                  "data-[state=active]:shadow-sm"
+                ]
+              )}
+            >
+              {tab.icon && <span className="tab-icon">{tab.icon}</span>}
+              <span>{tab.label}</span>
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
+      
+      {/* Render active tab content if available */}
+      {activeTabContent && (
+        <div className="tab-content mt-4">{activeTabContent}</div>
+      )}
+    </div>
   );
 }
-
-export default JungleTabs;

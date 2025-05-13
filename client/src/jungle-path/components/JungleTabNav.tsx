@@ -1,128 +1,120 @@
 import React from 'react';
 import { useLocation } from 'wouter';
-import { JungleTabs, TabItem } from './JungleTabs';
+import { JungleTabs, JungleTabItem } from './JungleTabs';
 import { useJungleTheme } from '../contexts/JungleThemeContext';
 import { cn } from '@/lib/utils';
 
-export interface NavigationItem extends Omit<TabItem, 'content'> {
-  /** Path to navigate to when tab is clicked */
-  path: string;
-  
-  /** Badge to display (optional) */
-  badge?: React.ReactNode;
+export interface JungleNavItem extends Omit<JungleTabItem, 'content'> {
+  path: string; // URL path for navigation
 }
 
-interface JungleTabNavProps {
-  /** Navigation items */
-  items: NavigationItem[];
+export interface JungleTabNavProps {
+  // Array of navigation items to display
+  items: JungleNavItem[];
   
-  /** Currently active tab */
+  // Currently active item value
   active?: string;
   
-  /** Theme variant */
+  // Called when a tab is selected
+  onTabChange?: (value: string) => void;
+  
+  // Visual styling variant - jungle theme or standard
   variant?: 'jungle' | 'standard';
   
-  /** Orientation of tabs */
-  orientation?: 'horizontal' | 'vertical';
-  
-  /** Size of tabs */
+  // Size of the tabs
   size?: 'sm' | 'md' | 'lg';
   
-  /** Whether tabs should stretch to fill container */
-  stretch?: boolean;
+  // Orientation of the tabs - horizontal or vertical
+  orientation?: 'horizontal' | 'vertical';
   
-  /** CSS class name for the container */
+  // Additional className to apply
   className?: string;
-  
-  /** CSS class name for the tab list */
-  tabsListClassName?: string;
-  
-  /** Callback when a tab is changed */
-  onTabChange?: (value: string) => void;
 }
 
-/**
- * Navigation component that supports both jungle and standard themes
- * Primarily used for section navigation with optional path integration
- */
 export function JungleTabNav({
   items,
   active,
+  onTabChange,
   variant: propVariant,
-  orientation = 'horizontal',
   size = 'md',
-  stretch = true,
-  className,
-  tabsListClassName,
-  onTabChange
+  orientation = 'horizontal',
+  className
 }: JungleTabNavProps) {
   const [location, navigate] = useLocation();
-  const { isJungleTheme: contextIsJungle } = useJungleTheme();
+  const { isJungleTheme } = useJungleTheme();
   
-  // Use prop variant if provided, otherwise use context
-  const isJungleTheme = propVariant ? propVariant === 'jungle' : contextIsJungle;
-  
-  // Determine active tab based on path or prop
-  const currentPath = location.split('?')[0]; // Remove query parameters
-  const determineActive = (): string => {
-    if (active) return active;
-    
-    // Find the item with a matching path, defaulting to the first item
-    const matchingItem = items.find(item => item.path === currentPath);
-    return matchingItem?.value || items[0]?.value;
-  };
+  // Determine if we should use jungle theme
+  const variant = propVariant || (isJungleTheme ? 'jungle' : 'standard');
   
   // Convert navigation items to tab items
-  const tabItems: TabItem[] = items.map(({ path, ...item }) => ({
-    ...item
+  const tabItems: JungleTabItem[] = items.map(item => ({
+    label: item.label,
+    value: item.value,
+    icon: item.icon,
+    disabled: item.disabled
   }));
   
   // Handle tab change
   const handleTabChange = (value: string) => {
-    // Find the corresponding path
     const selectedItem = items.find(item => item.value === value);
     
     if (selectedItem) {
-      // Navigate to the path if it exists
-      if (selectedItem.path) {
+      // If the path is a URL with hash, don't navigate but update the value
+      if (selectedItem.path.startsWith('#')) {
+        onTabChange?.(value);
+      } else {
+        // If it's a full URL path, navigate to it
         navigate(selectedItem.path);
-      }
-      
-      // Call the onTabChange callback if provided
-      if (onTabChange) {
-        onTabChange(value);
+        onTabChange?.(value);
       }
     }
   };
   
-  // Apply jungle theme styling
-  const containerStyles = cn(
-    isJungleTheme ? 'bg-[#1E4A3D] border-[#E6B933]/50' : '',
-    className
-  );
-  
-  // Custom tab list class for jungle theme
-  const tabsListStyles = cn(
-    isJungleTheme ? 'bg-[#162E26] border-[#E6B933]/50 rounded-md' : '',
-    orientation === 'vertical' ? 'flex-col' : '',
-    tabsListClassName
-  );
+  // Determine the active tab value
+  const determineActiveTab = (): string => {
+    if (active) return active;
+    
+    // Try to find a matching tab based on the current location
+    const matchingItem = items.find(item => {
+      if (item.path.startsWith('#')) {
+        // For hash paths, check if the current URL has that hash
+        return location.includes(item.path);
+      } else {
+        // For regular paths, check if the current location matches
+        return location === item.path;
+      }
+    });
+    
+    return matchingItem?.value || (items.length > 0 ? items[0].value : '');
+  };
   
   return (
-    <div className={containerStyles}>
+    <div 
+      className={cn(
+        orientation === 'vertical' && "flex flex-col h-full",
+        className
+      )}
+    >
       <JungleTabs
         tabs={tabItems}
-        value={determineActive()}
-        variant={propVariant || (isJungleTheme ? 'jungle' : 'standard')}
+        value={determineActiveTab()}
         onValueChange={handleTabChange}
-        className={className}
-        tabsListClassName={tabsListStyles}
+        variant={variant}
         size={size}
-        stretch={stretch}
-        renderContent={false}
+        stretch={orientation === 'horizontal'}
+        className={cn(
+          orientation === 'vertical' && [
+            "flex flex-col h-full",
+            "w-auto min-w-[160px]"
+          ]
+        )}
+        tabsListClassName={cn(
+          orientation === 'vertical' && [
+            "flex-col items-stretch", 
+            "!justify-start !gap-2"
+          ]
+        )}
       />
     </div>
   );
 }
-
-export default JungleTabNav;
