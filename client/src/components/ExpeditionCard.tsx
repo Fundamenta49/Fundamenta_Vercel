@@ -4,7 +4,27 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { getZoneColor } from '../jungle-path/utils/zoneUtils.js';
+// We'll define our own zone color function here to avoid import issues
+const getZoneColor = (category: string): string => {
+  // Default colors by general category
+  const categoryColors: Record<string, string> = {
+    'finance': '#E6B933',    // Gold for finance
+    'financial': '#E6B933',
+    'wellness': '#94C973',   // Green for wellness
+    'health': '#94C973',
+    'fitness': '#E67C33',    // Orange for fitness
+    'exercise': '#E67C33',
+    'career': '#5B8BD9',     // Blue for career
+    'work': '#5B8BD9',
+    'emergency': '#D95B5B',  // Red for emergency
+    'safety': '#D95B5B',
+    'general': '#7C5BE7'     // Purple for general/other
+  };
+
+  // Normalize the category and return the matching color or default
+  const normalizedCategory = category.toLowerCase();
+  return categoryColors[normalizedCategory] || categoryColors.general;
+};
 
 /**
  * Unified ExpeditionCard Component that supports both jungle and standard theme variants
@@ -197,7 +217,7 @@ export default function ExpeditionCard({
                 variant="ghost" 
                 size="sm"
                 className="text-xs"
-                onClick={(e) => {
+                onClick={(e: React.MouseEvent) => {
                   e.stopPropagation();
                   onClick();
                 }}

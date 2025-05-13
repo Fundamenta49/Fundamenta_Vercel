@@ -190,3 +190,42 @@ export const isZoneConnected = (zoneId: string, connectedZoneId: string): boolea
 export const getAccessibleZones = (rank: number): JungleZone[] => {
   return JUNGLE_ZONES.filter(zone => zone.requiredRank <= rank);
 };
+
+/**
+ * Gets the color for a category or zone
+ * @param category Category or zone identifier
+ * @returns Color hex code
+ */
+export const getZoneColor = (category: string): string => {
+  // Default colors by general category
+  const categoryColors: Record<string, string> = {
+    'finance': '#E6B933',    // Gold for finance
+    'financial': '#E6B933',
+    'wellness': '#94C973',   // Green for wellness
+    'health': '#94C973',
+    'fitness': '#E67C33',    // Orange for fitness
+    'exercise': '#E67C33',
+    'career': '#5B8BD9',     // Blue for career
+    'work': '#5B8BD9',
+    'emergency': '#D95B5B',  // Red for emergency
+    'safety': '#D95B5B',
+    'general': '#7C5BE7'     // Purple for general/other
+  };
+
+  // Try to find the zone by category or use the category color mapping
+  const normalizedCategory = category.toLowerCase();
+  
+  // First check if we have a direct color match
+  if (normalizedCategory in categoryColors) {
+    return categoryColors[normalizedCategory];
+  }
+  
+  // Try to find a zone by category
+  const zone = getZoneByCategory(normalizedCategory);
+  if (zone) {
+    return zone.color;
+  }
+  
+  // Default color if no match is found
+  return categoryColors.general;
+};
