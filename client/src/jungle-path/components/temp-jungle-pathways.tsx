@@ -279,68 +279,24 @@ export default function JunglePathwaysPage() {
           </div>
         )}
         
-        {/* Category tabs */}
-        <Tabs 
-          defaultValue="all" 
-          value={activeTab} 
+        {/* Category tabs using JungleTabs component */}
+        <JungleTabs
+          tabs={[
+            { label: "All Routes", value: "all" },
+            { label: "Finance", value: "financial", icon: <div className="text-yellow-400"><Coins className="h-4 w-4" /></div> },
+            { label: "Wellness", value: "wellness", icon: <div className="text-green-400"><Flower className="h-4 w-4" /></div> },
+            { label: "Career", value: "career", icon: <div className="text-blue-400"><Briefcase className="h-4 w-4" /></div> },
+            { label: "Life Skills", value: "life-skills", icon: <div className="text-purple-400"><BookOpen className="h-4 w-4" /></div> }
+          ]}
+          value={activeTab}
           onValueChange={setActiveTab}
-          className={isJungleTheme ? jungleStyles.tabs : ""}
-        >
-          <TabsList className={isJungleTheme ? jungleStyles.tabsList : ""}>
-            <TabsTrigger 
-              value="all" 
-              className={isJungleTheme ? jungleStyles.tabsTrigger : ""}
-              style={isJungleTheme && activeTab === "all" ? {
-                color: "#E6B933",
-                borderBottom: "2px solid #E6B933"
-              } : {}}
-            >
-              All Routes
-            </TabsTrigger>
-            <TabsTrigger 
-              value="financial" 
-              className={isJungleTheme ? jungleStyles.tabsTrigger : ""}
-              style={isJungleTheme && activeTab === "financial" ? {
-                color: "#E6B933",
-                borderBottom: "2px solid #E6B933"
-              } : {}}
-            >
-              Finance
-            </TabsTrigger>
-            <TabsTrigger 
-              value="wellness" 
-              className={isJungleTheme ? jungleStyles.tabsTrigger : ""}
-              style={isJungleTheme && activeTab === "wellness" ? {
-                color: "#E6B933",
-                borderBottom: "2px solid #E6B933"
-              } : {}}
-            >
-              Wellness
-            </TabsTrigger>
-            <TabsTrigger 
-              value="career" 
-              className={isJungleTheme ? jungleStyles.tabsTrigger : ""}
-              style={isJungleTheme && activeTab === "career" ? {
-                color: "#E6B933",
-                borderBottom: "2px solid #E6B933"
-              } : {}}
-            >
-              Career
-            </TabsTrigger>
-            <TabsTrigger 
-              value="life-skills" 
-              className={isJungleTheme ? jungleStyles.tabsTrigger : ""}
-              style={isJungleTheme && activeTab === "life-skills" ? {
-                color: "#E6B933",
-                borderBottom: "2px solid #E6B933"
-              } : {}}
-            >
-              Life Skills
-            </TabsTrigger>
-          </TabsList>
+          variant={isJungleTheme ? "jungle" : "standard"}
+          size="md"
+          stretch={true}
+        />
           
-          {/* All tabs content uses the same component with filtering */}
-          <TabsContent value={activeTab} className="mt-6">
+        {/* Tabs content area - separate from the tabs component */}
+        <div className="mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filteredPathways.map(pathway => (
                 <div 
@@ -484,8 +440,7 @@ export default function JunglePathwaysPage() {
                 </p>
               </div>
             )}
-          </TabsContent>
-        </Tabs>
+          </div>
       </div>
     </div>
   );
