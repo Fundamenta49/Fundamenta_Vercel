@@ -5,13 +5,12 @@
 
 import { useCallback } from "react";
 import { useLocation } from "wouter";
-import { learningZones } from "@/data/zones-config";
+import { learningZones, LearningZone } from "@/data/zones-config";
 import { ZoneCard } from "@/components/unified/ZoneCard";
 import { useUserProfile } from "@/hooks/use-user-profile";
 
 // Components
-import { Container } from "@/components/ui/container";
-import { PageHeader } from "@/components/ui/page-header";
+import { HubLayout } from "@/components/layouts/HubLayout";
 
 export default function JungleHubPage() {
   // Get user profile for rank information (to determine unlocked zones)
@@ -28,27 +27,20 @@ export default function JungleHubPage() {
   }, [setLocation]);
   
   return (
-    <Container>
-      <div className="py-8 space-y-8">
-        {/* Page Header */}
-        <PageHeader 
-          title="Choose your next expedition, explorer!" 
-          description="Select a path through the jungle to continue your learning journey."
+    <HubLayout
+      title="Choose your next expedition, explorer!"
+      description="Select a path through the jungle to continue your learning journey."
+      theme="jungle"
+    >
+      {learningZones.map((zone: LearningZone) => (
+        <ZoneCard
+          key={zone.id}
+          zone={zone}
+          theme="jungle"
+          userRank={userRank}
+          onClick={handleZoneClick}
         />
-        
-        {/* Zone Card Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {learningZones.map((zone: LearningZone) => (
-            <ZoneCard
-              key={zone.id}
-              zone={zone}
-              theme="jungle"
-              userRank={userRank}
-              onClick={handleZoneClick}
-            />
-          ))}
-        </div>
-      </div>
-    </Container>
+      ))}
+    </HubLayout>
   );
 }

@@ -198,6 +198,10 @@ export function ZoneCard({
               e.stopPropagation();
               onClick(zone.id);
             }}
+            aria-label={isUnlocked 
+              ? `Explore ${isJungleTheme ? zone.jungleTitle : zone.title} Zone` 
+              : `Unlock ${isJungleTheme ? zone.jungleTitle : zone.title} Zone at Rank ${zone.unlockRank}`
+            }
           >
             {isUnlocked ? "Explore" : "Unlock at Rank " + zone.unlockRank}
           </Button>
