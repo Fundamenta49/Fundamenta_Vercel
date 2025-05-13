@@ -19,7 +19,7 @@ import { getRankTitle, getRankInfo } from '../../jungle-path/utils/rankCalculato
 import ZoneCard from '@/components/ZoneCard';
 import QuestCard from '@/components/QuestCard';
 import JungleHeader from '../../jungle-path/components/JungleHeader';
-import ExpeditionCard from '../../jungle-path/components/expedition-card';
+import ExpeditionCard from '@/components/ExpeditionCard';
 
 // Sample data
 const SAMPLE_QUESTS = [
@@ -388,10 +388,27 @@ const JungleDemoPage: React.FC = () => {
                 </Badge>
               </div>
               
-              <ExpeditionCard 
-                completedQuests={COMPLETED_QUESTS}
-                expeditionTitle="Jungle Beginnings"
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <ExpeditionCard
+                  title="Jungle Beginnings"
+                  description="Your first journey into the wilderness of life skills"
+                  completedAt={new Date().toLocaleDateString()}
+                  xpEarned={150}
+                  category="finance"
+                  variant="jungle"
+                  achievements={COMPLETED_QUESTS.map(quest => quest.jungleTitle || quest.originalTitle)}
+                />
+                
+                <ExpeditionCard
+                  title="Financial Foundations"
+                  description="Understanding key financial principles"
+                  completedAt={new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                  xpEarned={120}
+                  category="finance"
+                  variant="standard"
+                  achievements={COMPLETED_QUESTS.filter(q => q.category === 'finance').map(quest => quest.originalTitle)}
+                />
+              </div>
               
               <Card className="bg-muted/50">
                 <CardContent className="p-6">

@@ -1,0 +1,69 @@
+
+# REPLIT AGENT DIRECTIVE — EXPEDITIONCARD CONSOLIDATION
+
+## Objective:
+Consolidate all versions of `ExpeditionCard` into a single reusable component that supports multiple theme variants (`'jungle'`, `'standard'`, etc.), maintains progress consistency, and ensures scalable styling.
+
+---
+
+## ✅ AUTHORIZED ACTIONS:
+
+### 1. Consolidate Files
+- Merge all instances of `ExpeditionCard` found in:
+  - `client/src/jungle-path/components/ExpeditionCard.tsx`
+  - `client/src/components/standard/expedition-card.tsx` (if it exists)
+- Create a final version at:
+  ```
+  client/src/components/ExpeditionCard.tsx
+  ```
+
+### 2. Add Variant Support
+- Add a required `variant` prop:
+  ```ts
+  variant: 'jungle' | 'standard'
+  ```
+- Use this to determine visual structure (color palette, badges, layout style)
+
+### 3. Support Core Props
+- Each ExpeditionCard must support:
+  - `title: string`
+  - `description: string`
+  - `completedAt: Date | string`
+  - `xpEarned: number`
+  - `category?: string`
+  - `icon?: string`
+  - `variant: 'jungle' | 'standard'`
+  - `className?: string`
+
+### 4. Theme Logic
+- Jungle variant may show decorative elements (leaf icons, jungle badge, vine borders)
+- Standard variant should remain minimal and clean
+- Use Tailwind + `cn()` utility for conditional styling
+
+### 5. Remove All Redundant Copies
+- Delete all other `ExpeditionCard` files after refactor
+- Update all references across the app to point to the new version
+
+---
+
+## ❌ YOU MAY NOT:
+
+- Fork the component for each theme
+- Add state logic (this is a display-only card)
+- Create XP logic here — just render the data
+- Create new assets or icon libraries without permission
+
+---
+
+## ✅ DELIVERABLE:
+One component:
+```ts
+client/src/components/ExpeditionCard.tsx
+```
+
+It must render completed quests (expeditions) in a visually styled card that adapts to the selected theme. This card is strictly for historical display of user accomplishments.
+
+---
+
+## SUMMARY:
+This is a display-only card designed to show completed quests. You’re consolidating it to ensure clean layout, consistent XP visuals, and a future-proofed theme system. The Jungle variant can be styled richly; the standard variant must remain clean and professional.
