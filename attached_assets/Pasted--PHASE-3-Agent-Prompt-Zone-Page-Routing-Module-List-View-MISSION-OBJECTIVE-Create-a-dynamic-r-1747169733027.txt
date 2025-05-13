@@ -1,0 +1,62 @@
+
+PHASE 3: Agent Prompt – Zone Page Routing + Module List View
+
+MISSION OBJECTIVE:
+Create a dynamic route that loads a detailed zone page when the user selects a ZoneCard. This page should render the zone title, description, module list, and progress information. It must support both Jungle and Standard themes, using the context system already implemented in Phase 2 enhancements.
+
+---
+
+STEP 1: Create Dynamic Route Page
+
+Create a new file:
+- client/src/pages/zone/[zoneId].tsx
+
+Use dynamic routing to load based on the zoneId extracted from the URL.
+
+---
+
+STEP 2: Use Zone and Theme Context
+
+In the new zone page:
+- Import and use `learningZones` from zones-config
+- Use `useParams()` from Wouter (or your router) to extract zoneId
+- Find the corresponding zone data from `learningZones`
+- Use `LearningThemeProvider` to wrap the page and inject the correct theme
+  - Infer theme from query param (?theme=jungle) or fallback to "standard"
+
+---
+
+STEP 3: Render Zone Page Layout
+
+Inside the page:
+- Use `HubLayout` or a new layout like `ZoneLayout` (if needed)
+- Display:
+  - Zone title and description (based on theme)
+  - Zone icon and themeColor for visual styling
+  - Progress bar or XP if available (optional for now)
+  - Module list with jungle/standard names
+
+---
+
+STEP 4: List Modules
+
+Each zone should display its modules, using data from `pathways-data.ts`:
+- Filter modules by zone/category
+- Display module title, jungle or standard variant depending on theme
+- Optional: Show status (Not Started / In Progress / Completed)
+
+---
+
+STEP 5: Add Navigation + Fallback Handling
+
+- Add "Back to Hub" button (return to jungle-hub or learning-hub based on theme)
+- Handle case where zoneId is invalid with a 404-style fallback
+
+---
+
+PHASE COMPLETE WHEN:
+- Visiting /zone/finance?theme=jungle loads Golden Temple with jungle modules
+- Visiting /zone/wellness?theme=standard loads Wellness with standard modules
+- Module list shows correct titles based on theme
+- Page is wrapped in proper theme provider
+- Navigation works cleanly and gracefully degrades if zone not found

@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { Coins, Heart, Flame, Briefcase, ShieldAlert, LockIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/LearningThemeContext";
+import { useLocation } from "wouter";
 
 interface ZoneCardProps {
   /** Zone data to display */
@@ -54,9 +55,23 @@ export function ZoneCard({
 }: ZoneCardProps) {
   // Get theme from context, fallback to prop theme if provided
   const { theme: contextTheme } = useTheme();
+  const [, navigate] = useLocation();
   const theme = propTheme || contextTheme;
   const isJungleTheme = theme === 'jungle';
   const isUnlocked = typeof userRank === 'number' ? userRank >= zone.unlockRank : false;
+  
+  // Handler for zone card click that can navigate to dynamic zone page
+  const handleZoneClick = (zoneId: string) => {
+    if (isUnlocked) {
+      // Navigate to the new zone page with id parameter
+      navigate(`/zone?id=${zoneId}`);
+      
+      // Also call the provided onClick handler if it exists
+      if (onClick) {
+        onClick(zoneId);
+      }
+    }
+  };
   
   // Title and description based on theme
   const title = zone.title[theme];
