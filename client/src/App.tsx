@@ -73,6 +73,7 @@ import ZoneTestPage from "@/pages/dev/zone-test";
 import JungleHubPage from "@/pages/jungle-hub";
 import LearningHubPage from "@/pages/learning-hub";
 import ZonePage from "@/pages/zone";
+import BasecampPage from "@/pages/basecamp";
 import PrivacyPolicyPage from "@/pages/privacy-policy";
 import { AuthProvider } from "@/lib/auth-context";
 import AdminPage from "@/pages/admin";
@@ -311,6 +312,11 @@ function Router() {
             <Route path="/zone">
               <ProtectedRoute>
                 <ZonePage />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/basecamp">
+              <ProtectedRoute>
+                <BasecampPage />
               </ProtectedRoute>
             </Route>
             {/* User-facing disclaimer hub */}

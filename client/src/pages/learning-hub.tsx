@@ -9,6 +9,8 @@ import { learningZones, LearningZone } from "@/data/zones-config";
 import { ZoneCard } from "@/components/unified/ZoneCard";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { LearningThemeProvider } from "@/contexts/LearningThemeContext";
+import { Button } from "@/components/ui/button";
+import { BarChart } from "lucide-react";
 
 // Components
 import { HubLayout } from "@/components/layouts/HubLayout";
@@ -27,12 +29,24 @@ export default function LearningHubPage() {
     setLocation(`/zone/${zoneId}?theme=standard`);
   }, [setLocation]);
   
+  // Create a custom header with the Basecamp button
+  const customHeader = (
+    <div className="flex justify-between items-center mb-8">
+      <h1 className="text-3xl font-bold">Learning Hub</h1>
+      <Button onClick={() => setLocation('/basecamp')}>
+        <BarChart className="mr-2 h-4 w-4" />
+        View Progress
+      </Button>
+    </div>
+  );
+
   return (
     <LearningThemeProvider initialTheme="standard">
       <HubLayout
         title="Select a life skill path to continue"
         description="Choose a learning zone to explore and develop essential life skills."
         theme="standard"
+        customHeader={customHeader}
       >
         {learningZones.map((zone: LearningZone) => (
           <ZoneCard
