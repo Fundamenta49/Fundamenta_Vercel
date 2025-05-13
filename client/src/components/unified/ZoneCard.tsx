@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Coins, Heart, Flame, Briefcase, ShieldAlert, LockIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/contexts/LearningThemeContext";
 
 interface ZoneCardProps {
   /** Zone data to display */

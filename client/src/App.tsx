@@ -12,6 +12,7 @@ import PostTourGuide from "@/components/post-tour-guide";
 import { ActivityProfileProvider } from "@/contexts/activity-profile-context";
 import { JungleThemeProvider } from "./jungle-path/contexts/JungleThemeContext";
 import { JungleFundiProvider } from "./jungle-path/contexts/JungleFundiContext";
+import { LearningThemeProvider } from "@/contexts/LearningThemeContext";
 import MyPathPage from "@/pages/mypath";
 import StudentMyPath from "@/pages/mypath/student";
 import AnalyticsDashboard from "@/pages/mypath/analytics";
@@ -509,11 +510,13 @@ function App() {
         <ActivityProfileProvider>
           <JungleThemeProvider defaultEnabled={false}>
             <JungleFundiProvider>
-              <TourProvider>
-                <FeatureFlagsProvider>
-                  <Router />
-                </FeatureFlagsProvider>
-              </TourProvider>
+              <LearningThemeProvider initialTheme="standard">
+                <TourProvider>
+                  <FeatureFlagsProvider>
+                    <Router />
+                  </FeatureFlagsProvider>
+                </TourProvider>
+              </LearningThemeProvider>
             </JungleFundiProvider>
           </JungleThemeProvider>
         </ActivityProfileProvider>
