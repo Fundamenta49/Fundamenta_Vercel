@@ -17,7 +17,7 @@ import { trackModuleProgress } from "@/lib/learning-progress";
 import { useJungleTheme } from "../contexts/JungleThemeContext";
 import { useJungleFundi } from "../contexts/JungleFundiContext";
 import { getAllZones } from "../utils/zoneUtils";
-import ExpeditionCard from "./expedition-card";
+import ExpeditionCard from "@/components/ExpeditionCard";
 
 // Jungle Path styling
 const jungleStyles = {
@@ -350,16 +350,14 @@ export default function JunglePathwaysPage() {
                 >
                   {isJungleTheme ? (
                     <ExpeditionCard
-                      pathway={pathway}
-                      progress={getPathwayProgress(pathway.id)}
-                      zoneColor={getZoneColor(pathway.category)}
-                      completedModulesCount={getCompletedModulesCount(pathway.id)}
-                      isModuleCompleted={(moduleId) => isModuleCompleted(pathway.id, moduleId)}
-                      toggleModuleCompletion={(moduleId, currentState) => 
-                        toggleModuleCompletion(pathway.id, moduleId, currentState)
-                      }
-                      isExpanded={expandedPath === pathway.id}
-                      toggleExpanded={() => setExpandedPath(expandedPath === pathway.id ? null : pathway.id)}
+                      title={pathway.title}
+                      description={pathway.description}
+                      completedAt={new Date().toLocaleDateString()}
+                      xpEarned={getCompletedModulesCount(pathway.id) * 15}
+                      category={pathway.category}
+                      variant="jungle"
+                      achievements={pathway.modules.slice(0, 3).map(m => m.title)}
+                      onClick={() => setExpandedPath(expandedPath === pathway.id ? null : pathway.id)}
                     />
                   ) : (
                     <Card>

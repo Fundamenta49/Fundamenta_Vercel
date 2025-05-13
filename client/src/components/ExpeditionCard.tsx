@@ -1,20 +1,15 @@
 import React from 'react';
-import { useLocation } from 'wouter';
-import { 
-  Calendar, GraduationCap, Award, BookOpen, Sparkles, 
-  CheckCircle, Trophy, MapPin, Clock
-} from 'lucide-react';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { Award, Calendar, Medal, Star, Trophy, Zap } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { getZoneByCategory } from '../jungle-path/utils/zoneUtils';
+import { getZoneColor } from '../jungle-path/utils/zoneUtils.js';
 
 /**
  * Unified ExpeditionCard Component that supports both jungle and standard theme variants
  * This is a display-only card for showing completed quests/expeditions
  */
-
 interface ExpeditionCardProps {
   /** Title of the expedition */
   title: string;
@@ -47,206 +42,172 @@ interface ExpeditionCardProps {
   onClick?: () => void;
 }
 
-const ExpeditionCard: React.FC<ExpeditionCardProps> = ({
+export default function ExpeditionCard({
   title,
   description,
   completedAt,
   xpEarned,
-  category,
+  category = 'general',
   icon,
-  variant,
+  variant = 'standard',
   achievements = [],
   className = '',
   onClick
-}) => {
-  const [, navigate] = useLocation();
+}: ExpeditionCardProps) {
+  // Handle color based on category/zone
+  const zoneColor = category ? getZoneColor(category) : '#4f46e5';
   
-  // Format the completedAt date if it's a Date object
-  const formattedDate = typeof completedAt === 'string' 
-    ? completedAt 
-    : completedAt.toLocaleDateString();
+  // Determine styles based on variant
+  const isJungle = variant === 'jungle';
   
-  // Function to handle clicking the card details button
-  const handleDetailsClick = () => {
-    if (onClick) {
-      onClick();
+  // Card styling based on theme variant
+  const cardClassName = cn(
+    'relative overflow-hidden transition-all duration-300 h-full',
+    {
+      'border-2 hover:shadow-lg hover:-translate-y-1': isJungle,
+      'bg-white dark:bg-gray-800': !isJungle,
+      'bg-gradient-to-br from-stone-100 to-amber-50 dark:from-gray-800 dark:to-gray-900': isJungle
+    },
+    className
+  );
+  
+  // Border styling based on variant
+  const borderStyle = isJungle ? { borderColor: zoneColor } : {};
+  
+  // Render different icon based on variant and category
+  const renderIcon = () => {
+    if (icon) {
+      return <span className="text-2xl">{icon}</span>;
+    }
+    
+    if (isJungle) {
+      // Jungle-themed icons based on category
+      switch(category) {
+        case 'finance':
+          return <Trophy className="h-6 w-6 text-yellow-500" />;
+        case 'wellness':
+          return <Medal className="h-6 w-6 text-teal-500" />;
+        case 'fitness':
+          return <Zap className="h-6 w-6 text-orange-500" />;
+        case 'career':
+          return <Star className="h-6 w-6 text-blue-500" />;
+        case 'emergency':
+          return <Award className="h-6 w-6 text-red-500" />;
+        default:
+          return <Award className="h-6 w-6 text-purple-500" />;
+      }
     } else {
-      // Default navigation to expeditions page
-      navigate('/learning/expeditions');
+      // Standard icons
+      return <Award className="h-6 w-6" />;
     }
   };
-  
-  // Get zone data if category is provided
-  const zone = category ? getZoneByCategory(category) : null;
-  
-  // JUNGLE THEME VARIANT
-  if (variant === 'jungle') {
-    return (
-      <Card className={cn(
-        "border-2 border-[#94C973] bg-gradient-to-br from-[#1E4A3D] to-[#162E26]",
-        "hover:shadow-md hover:shadow-[#94C973]/20",
-        className
-      )}>
-        <CardHeader className="pb-2 border-b border-[#94C973]/30">
-          <div className="flex justify-between items-start">
-            <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-full bg-[#94C973] flex items-center justify-center">
-                <GraduationCap className="h-5 w-5 text-[#1E4A3D]" />
-              </div>
-              
-              <div>
-                <h3 className="text-lg font-medium text-[#94C973]">
-                  {title}
-                </h3>
-                
-                <div className="flex items-center mt-1 text-sm text-[#94C973]/70">
-                  <Calendar className="h-3.5 w-3.5 mr-1.5" />
-                  <span>Completed: {formattedDate}</span>
-                </div>
-              </div>
-            </div>
-            
-            <Badge 
-              className="bg-[#162E26] text-[#94C973] border border-[#94C973]"
+
+  return (
+    <Card 
+      className={cardClassName} 
+      style={borderStyle}
+      onClick={onClick}
+    >
+      {/* Decorative elements for jungle variant */}
+      {isJungle && (
+        <div 
+          className="absolute top-0 right-0 w-16 h-16 bg-cover bg-no-repeat opacity-20"
+          style={{ 
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='${encodeURIComponent(zoneColor)}' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 18v-6a9 9 0 0 1 18 0v6'/%3E%3Cpath d='M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z'/%3E%3C/svg%3E")` 
+          }}
+        />
+      )}
+      
+      <CardHeader>
+        <div className="flex justify-between items-start">
+          <div className="flex items-center space-x-2">
+            <div 
+              className={cn(
+                "rounded-full p-2", 
+                isJungle ? "bg-opacity-20" : "bg-muted"
+              )}
+              style={{ backgroundColor: isJungle ? zoneColor : undefined }}
             >
-              <Award className="h-3.5 w-3.5 mr-1.5" />
-              {xpEarned} XP Earned
-            </Badge>
-          </div>
-        </CardHeader>
-        
-        <CardContent className="p-4">
-          {/* Expedition description */}
-          <p className="text-sm text-white/80 mb-4">
-            {description}
-          </p>
-          
-          {/* Zone category if available */}
-          {category && (
-            <div className="mb-4">
-              <h4 className="text-sm font-medium text-[#94C973] mb-2">Explored Zone</h4>
-              <div className="flex flex-wrap gap-2">
-                <Badge 
-                  className="bg-[#162E26] text-white border-none"
-                  style={{ color: zone?.color || '#94C973' }}
-                >
-                  {zone?.name || category}
-                </Badge>
-              </div>
+              {renderIcon()}
             </div>
-          )}
+            <CardTitle 
+              className={cn(
+                "text-xl", 
+                isJungle ? "font-bold" : "font-semibold"
+              )}
+            >
+              {title}
+            </CardTitle>
+          </div>
           
-          {/* Achievements list */}
-          {achievements.length > 0 && (
-            <div>
-              <h4 className="text-sm font-medium text-[#94C973] mb-2">Achievements</h4>
-              <ul className="space-y-2">
-                {achievements.slice(0, 3).map((achievement, index) => (
-                  <li key={index} className="flex items-start">
-                    <Sparkles className="h-4 w-4 text-[#E6B933] mr-2 mt-0.5" />
-                    <span className="text-sm text-white">
-                      {achievement}
-                    </span>
+          <Badge 
+            variant={isJungle ? "outline" : "secondary"}
+            className={cn(
+              "ml-2",
+              isJungle && "border-2 font-bold"
+            )}
+            style={isJungle ? { borderColor: zoneColor, color: zoneColor } : {}}
+          >
+            +{xpEarned} XP
+          </Badge>
+        </div>
+        
+        <CardDescription className="mt-2">
+          {description}
+        </CardDescription>
+      </CardHeader>
+      
+      <CardContent>
+        <div className="space-y-4">
+          {/* Achievements section */}
+          {achievements && achievements.length > 0 && (
+            <div className="space-y-2">
+              <h4 className={cn(
+                "text-sm font-medium",
+                isJungle ? "text-amber-800 dark:text-amber-400" : "text-muted-foreground"
+              )}>
+                {isJungle ? "Expedition Achievements" : "Completed Lessons"}
+              </h4>
+              <ul className="space-y-1">
+                {achievements.map((achievement, index) => (
+                  <li key={index} className="flex items-center text-sm">
+                    <div 
+                      className="w-4 h-4 mr-2 flex items-center justify-center"
+                      style={{ color: isJungle ? zoneColor : undefined }}
+                    >
+                      {isJungle ? "✓" : "•"}
+                    </div>
+                    {achievement}
                   </li>
                 ))}
-                
-                {achievements.length > 3 && (
-                  <li className="text-sm text-[#94C973]/70 ml-6">
-                    + {achievements.length - 3} more achievements
-                  </li>
-                )}
               </ul>
             </div>
           )}
           
-          {/* View details button */}
-          <Button
-            className="w-full mt-4 bg-[#94C973] hover:bg-[#94C973]/90 text-[#1E4A3D]"
-            onClick={handleDetailsClick}
-          >
-            <BookOpen className="h-4 w-4 mr-2" />
-            Expedition Journal
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
-  
-  // STANDARD THEME VARIANT
-  return (
-    <Card 
-      className={cn(
-        "overflow-hidden hover:shadow-md transition-all duration-200",
-        className
-      )}
-    >
-      <div className="h-1.5 bg-primary" />
-      
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="text-lg font-semibold">
-              {title}
-            </h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              {description}
-            </p>
-          </div>
-          
-          <Badge variant="secondary" className="flex items-center">
-            <Trophy className="h-3.5 w-3.5 mr-1.5 text-amber-500" />
-            {xpEarned} XP
-          </Badge>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="pb-4 pt-2">
-        <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-          <div className="flex items-center">
-            <Clock className="h-4 w-4 mr-1.5" />
-            <span>Completed {formattedDate}</span>
-          </div>
-          
-          {category && (
+          {/* Completion date */}
+          <div className="flex justify-between items-center text-sm text-muted-foreground pt-2 border-t">
             <div className="flex items-center">
-              <MapPin className="h-4 w-4 mr-1.5" />
-              <span>{zone?.name || category}</span>
+              <Calendar className="h-4 w-4 mr-1" />
+              <span>Completed: {typeof completedAt === 'string' ? completedAt : completedAt.toLocaleDateString()}</span>
             </div>
-          )}
-        </div>
-        
-        {/* Achievements list */}
-        {achievements.length > 0 && (
-          <div className="space-y-1 mb-4">
-            <h4 className="text-sm font-medium mb-2">Milestones</h4>
-            {achievements.slice(0, 3).map((achievement, index) => (
-              <div key={index} className="flex items-center text-sm">
-                <CheckCircle className="h-3.5 w-3.5 mr-2 text-green-500" />
-                <span>{achievement}</span>
-              </div>
-            ))}
             
-            {achievements.length > 3 && (
-              <div className="text-xs text-muted-foreground ml-6 mt-1">
-                + {achievements.length - 3} more milestones
-              </div>
+            {/* Optional action button - only for jungle variant */}
+            {isJungle && onClick && (
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="text-xs"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClick();
+                }}
+              >
+                Details
+              </Button>
             )}
           </div>
-        )}
+        </div>
       </CardContent>
-      
-      <CardFooter className="pt-0">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="w-full"
-          onClick={handleDetailsClick}
-        >
-          View Details
-        </Button>
-      </CardFooter>
     </Card>
   );
-};
-
-export default ExpeditionCard;
+}
