@@ -279,7 +279,7 @@ export default function JunglePathwaysPage() {
           </div>
         )}
         
-        {/* Category tabs using JungleTabs component */}
+        {/* Category tabs using JungleTabs component - mobile optimized */}
         <JungleTabs
           tabs={[
             { label: "All Routes", value: "all" },
@@ -293,11 +293,12 @@ export default function JunglePathwaysPage() {
           variant={isJungleTheme ? "jungle" : "standard"}
           size="md"
           stretch={true}
+          className="w-full max-w-full"
         />
           
-        {/* Tabs content area - separate from the tabs component */}
-        <div className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Tabs content area - separate from the tabs component - mobile optimized */}
+        <div className="mt-4 sm:mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               {filteredPathways.map(pathway => (
                 <div 
                   key={pathway.id}

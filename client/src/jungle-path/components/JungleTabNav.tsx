@@ -91,7 +91,7 @@ export function JungleTabNav({
   return (
     <div 
       className={cn(
-        orientation === 'vertical' && "flex flex-col h-full",
+        orientation === 'vertical' ? "flex flex-col h-full" : "w-full max-w-full overflow-hidden",
         className
       )}
     >
@@ -106,13 +106,15 @@ export function JungleTabNav({
           orientation === 'vertical' && [
             "flex flex-col h-full",
             "w-auto min-w-[160px]"
-          ]
+          ],
+          orientation === 'horizontal' && "w-full max-w-full"
         )}
         tabsListClassName={cn(
           orientation === 'vertical' && [
             "flex-col items-stretch", 
             "!justify-start !gap-2"
-          ]
+          ],
+          orientation === 'horizontal' && "flex-wrap !gap-0 sm:!gap-1"
         )}
       />
     </div>

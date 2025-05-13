@@ -81,13 +81,14 @@ export function JungleTabs({
   }, [selectedTab, tabs]);
   
   return (
-    <div className={cn("w-full", className)}>
-      <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full">
+    <div className={cn("w-full max-w-full overflow-hidden", className)}>
+      <Tabs value={selectedTab} onValueChange={handleTabChange} className="w-full max-w-full">
         <TabsList
           className={cn(
             "w-full h-auto flex flex-wrap p-1 rounded-lg",
             variant === 'jungle' ? "bg-[#1E4A3D] border border-[#2A5542]" : "bg-muted",
             stretch ? "justify-between" : "justify-start",
+            "overflow-x-auto max-w-full scrollbar-thin", // Better mobile handling
             tabsListClassName
           )}
         >
@@ -97,12 +98,14 @@ export function JungleTabs({
               value={tab.value}
               disabled={tab.disabled}
               className={cn(
-                // Base styles
-                "flex items-center gap-2 transition-all relative px-4 rounded",
-                // Size variants
+                // Base styles - improved for mobile
+                "flex items-center gap-1 sm:gap-2 transition-all relative rounded",
+                "px-2 sm:px-4", // Different padding for mobile/desktop
+                "min-w-[50px] sm:min-w-fit", // Ensure minimum width on small screens
+                // Size variants - adjusted for mobile
                 size === 'sm' && "text-xs py-1",
-                size === 'md' && "text-sm py-1.5",
-                size === 'lg' && "text-base py-2",
+                size === 'md' && "text-xs sm:text-sm py-1 sm:py-1.5",
+                size === 'lg' && "text-sm sm:text-base py-1.5 sm:py-2",
                 // Width based on stretch prop
                 stretch ? "flex-grow text-center justify-center" : "flex-initial",
                 // Jungle theme styles
@@ -122,8 +125,10 @@ export function JungleTabs({
                 ]
               )}
             >
-              {tab.icon && <span className="tab-icon">{tab.icon}</span>}
+              {tab.icon && <span className="tab-icon hidden sm:inline-block">{tab.icon}</span>}
               <span>{tab.label}</span>
+              {/* Small screen icon-only version for very narrow viewports */}
+              {tab.icon && <span className="tab-icon sm:hidden absolute top-[-18px] left-1/2 transform -translate-x-1/2 opacity-80">{tab.icon}</span>}
             </TabsTrigger>
           ))}
         </TabsList>
@@ -132,7 +137,8 @@ export function JungleTabs({
       {/* Render active tab content if available */}
       {activeTabContent && (
         <div className={cn(
-          "tab-content mt-4 p-4 rounded-md", 
+          "tab-content mt-2 sm:mt-4 p-2 sm:p-4 rounded-md",
+          "overflow-x-auto max-w-full",
           variant === 'jungle' ? "bg-[#8BA89F] bg-opacity-50 text-gray-800" : "bg-background"
         )}>
           {activeTabContent}
