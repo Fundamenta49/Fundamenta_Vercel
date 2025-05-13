@@ -1,0 +1,169 @@
+
+PHASE 1: Agent Prompt – Learning Paths UX Refactor
+
+MISSION OBJECTIVE
+Refactor the learning path system to use a unified LearningZone structure for both Jungle and Standard themes. Update the ZoneCard component to dynamically render any zone, for any theme, with rank-based access logic.
+
+---
+
+STEP 1: Define the Unified Zone Schema
+
+Create a new file:
+client/src/data/zones-config.ts
+
+Add the following:
+export interface LearningZone {
+  id: string;
+  category: 'finance' | 'wellness' | 'fitness' | 'career' | 'emergency';
+  title: {
+    standard: string;
+    jungle: string;
+  };
+  description: {
+    standard: string;
+    jungle: string;
+  };
+  themeColor: string;
+  unlockRank: number;
+  icon: React.ReactNode;
+}
+
+Populate with initial 5 zones:
+Use the following seed data to populate the learningZones array:
+import { Coins, Heart, Flame, Briefcase, ShieldAlert } from 'lucide-react';
+
+export const learningZones: LearningZone[] = [
+  {
+    id: 'finance',
+    category: 'finance',
+    title: {
+      standard: 'Financial Literacy',
+      jungle: 'Golden Temple',
+    },
+    description: {
+      standard: 'Learn how to budget, save, and grow your money.',
+      jungle: 'Track your treasures and unlock the secrets of wealth.',
+    },
+    themeColor: '#E6B933',
+    unlockRank: 0,
+    icon: <Coins />,
+  },
+  {
+    id: 'wellness',
+    category: 'wellness',
+    title: {
+      standard: 'Wellness & Nutrition',
+      jungle: 'Healing Springs',
+    },
+    description: {
+      standard: 'Improve your physical and emotional well-being.',
+      jungle: 'Soak in restorative knowledge from the springs of health.',
+    },
+    themeColor: '#94C973',
+    unlockRank: 1,
+    icon: <Heart />,
+  },
+  {
+    id: 'fitness',
+    category: 'fitness',
+    title: {
+      standard: 'Fitness & Movement',
+      jungle: 'Rugged Peaks',
+    },
+    description: {
+      standard: 'Develop strength, endurance, and body confidence.',
+      jungle: 'Climb higher and conquer physical challenges.',
+    },
+    themeColor: '#D86C70',
+    unlockRank: 2,
+    icon: <Flame />,
+  },
+  {
+    id: 'career',
+    category: 'career',
+    title: {
+      standard: 'Career Development',
+      jungle: 'Ancient Library',
+    },
+    description: {
+      standard: 'Gain skills for the professional world.',
+      jungle: 'Explore the ancient scrolls of opportunity.',
+    },
+    themeColor: '#5B8BD9',
+    unlockRank: 2,
+    icon: <Briefcase />,
+  },
+  {
+    id: 'emergency',
+    category: 'emergency',
+    title: {
+      standard: 'Emergency Preparedness',
+      jungle: 'Storm Shelter',
+    },
+    description: {
+      standard: 'Get ready for real-world emergencies.',
+      jungle: 'Prepare for the chaos beyond the canopy.',
+    },
+    themeColor: '#C077DF',
+    unlockRank: 3,
+    icon: <ShieldAlert />,
+  },
+];
+
+---
+
+STEP 2: Refactor the ZoneCard Component
+
+File:
+client/src/components/ZoneCard.tsx
+
+Update the component to use these props:
+interface ZoneCardProps {
+  zone: LearningZone;
+  theme: 'standard' | 'jungle';
+  userRank: number;
+  onClick: (zoneId: string) => void;
+}
+
+Component Logic:
+1. Determine if the zone is locked:
+const isLocked = userRank < zone.unlockRank;
+
+2. Dynamically render:
+- Title: zone.title[theme]
+- Description: zone.description[theme]
+- Theme color: zone.themeColor
+- Icon: zone.icon
+- Locked state: overlay with lock icon + Unlocks at Rank X
+
+3. Apply appropriate CSS classes for locked/unlocked state (e.g., grayscale or opacity for locked)
+
+4. On click:
+if (!isLocked) onClick(zone.id);
+
+---
+
+STEP 3: Test Coverage (Optional)
+
+Create a test page:
+client/src/pages/dev/zone-test.tsx
+
+Render all zones using:
+{learningZones.map((zone) => (
+  <ZoneCard
+    key={zone.id}
+    zone={zone}
+    theme="jungle" // or "standard"
+    userRank={1}   // for testing lock/unlock visuals
+    onClick={(id) => console.log(`Navigate to ${id}`)}
+  />
+))}
+
+---
+
+PHASE 1 IS COMPLETE WHEN:
+- zones-config.ts contains all LearningZones with both theme variants.
+- ZoneCard renders dynamically based on theme + rank.
+- Locked cards display clearly but minimally.
+- Cards are clickable only when unlocked.
+- Layout + props are ready for /learning-hub and /jungle-hub integration.
