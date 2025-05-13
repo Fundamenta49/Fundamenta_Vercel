@@ -16,8 +16,8 @@ interface ZoneCardProps {
   /** Zone data to display */
   zone: LearningZone;
   
-  /** Theme variant for the card */
-  theme: ThemeType;
+  /** Theme variant for the card (optional with context) */
+  theme?: ThemeType;
   
   /** User's current rank */
   userRank?: number;
