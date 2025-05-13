@@ -68,6 +68,7 @@ import SavedQuizzesPage from "@/pages/learning/saved-quizzes";
 import DesignShowcasePage from "@/pages/design-showcase";
 import LoginPage from "@/pages/login";
 import AuthPage from "@/pages/auth-page";
+import ZoneTestPage from "@/pages/dev/zone-test";
 import PrivacyPolicyPage from "@/pages/privacy-policy";
 import { AuthProvider } from "@/lib/auth-context";
 import AdminPage from "@/pages/admin";
@@ -292,6 +293,7 @@ function Router() {
             <Route path="/design-showcase" component={DesignShowcasePage} />
             <Route path="/ui/skeletons" component={SkeletonDemoPage} />
             <Route path="/ui/components" component={ComponentTest} />
+            <Route path="/dev/zone-test" component={ZoneTestPage} />
             {/* User-facing disclaimer hub */}
             <Route path="/disclaimers">
               <ProtectedRoute>
