@@ -1,0 +1,78 @@
+
+PHASE 4: Agent Prompt – Progress Dashboard Refactor (Basecamp)
+
+MISSION OBJECTIVE:
+Refactor the platform’s progress tracking UX by moving completed module and XP information into a centralized progress dashboard. This new dashboard, called “Basecamp,” will allow users to review their achievements, track learning streaks, and re-enter modules. This page should work for both Jungle and Standard themes using the existing LearningThemeContext.
+
+---
+
+STEP 1: Create the Progress Dashboard Page
+
+Create a new page:
+- client/src/pages/basecamp.tsx
+
+This page should:
+- Display the user’s current XP and rank
+- List all completed modules grouped by zone
+- Include a “Resume Learning” section (optional: show last active module)
+
+---
+
+STEP 2: Create a BasecampLayout Component (Optional)
+
+Create:
+- client/src/components/layouts/BasecampLayout.tsx
+
+Props:
+interface BasecampLayoutProps {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}
+
+Use theme-aware styling via useTheme(), just like HubLayout.
+
+---
+
+STEP 3: Display Completed Modules
+
+Use the existing data from learningPathways and filter:
+- Display only modules where module.completed === true
+- Group by zone.category or zone.title
+- Use ModuleCard or a new, smaller SummaryCard component
+
+Each card should link back to the module or show completion date.
+
+---
+
+STEP 4: Show XP and Rank Progress
+
+At the top of the Basecamp page:
+- Display user XP and rank visually
+- Optional: Add progress bar to next rank
+
+---
+
+STEP 5: Add Navigation Link to Basecamp
+
+In both jungle-hub.tsx and learning-hub.tsx:
+- Add a button in the top right that links to /basecamp
+- Label: “Go to Basecamp” or “View Progress”
+
+---
+
+STEP 6: Theme Integration
+
+Ensure Basecamp uses LearningThemeContext:
+- Jungle: show XP bar in gold, jungle visuals
+- Standard: clean UI with neutral visuals
+- Theme should apply to both progress indicators and module summaries
+
+---
+
+PHASE COMPLETE WHEN:
+- /basecamp is accessible and themed
+- Completed modules are displayed by zone
+- XP and rank are clearly shown
+- Button from hub pages links to the Basecamp
+- The system uses existing context and avoids code duplication
