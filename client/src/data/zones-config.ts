@@ -1,9 +1,13 @@
-import React from 'react';
-import { Coins, Heart, Flame, Briefcase, ShieldAlert } from 'lucide-react';
+/**
+ * Unified Learning Zone Schema for Fundamenta
+ * Supports both standard and jungle themed interfaces
+ */
 
+// Define zone categories and theme types
 export type ZoneCategory = 'finance' | 'wellness' | 'fitness' | 'career' | 'emergency';
 export type ThemeType = 'standard' | 'jungle';
 
+// Define the learning zone interface
 export interface LearningZone {
   id: string;
   category: ZoneCategory;
@@ -17,8 +21,7 @@ export interface LearningZone {
   };
   themeColor: string;
   unlockRank: number;
-  icon: React.ReactNode;
-  // Additional optional properties
+  iconType: 'coins' | 'heart' | 'flame' | 'briefcase' | 'shield';
   connections?: string[]; // IDs of connected zones
   position?: {
     x: number;
@@ -26,6 +29,7 @@ export interface LearningZone {
   };
 }
 
+// Define the learning zones data
 export const learningZones: LearningZone[] = [
   {
     id: 'finance',
@@ -40,7 +44,7 @@ export const learningZones: LearningZone[] = [
     },
     themeColor: '#E6B933',
     unlockRank: 0,
-    icon: <Coins />,
+    iconType: 'coins',
     connections: ['wellness', 'career'],
     position: {
       x: 30,
@@ -60,7 +64,7 @@ export const learningZones: LearningZone[] = [
     },
     themeColor: '#94C973',
     unlockRank: 1,
-    icon: <Heart />,
+    iconType: 'heart',
     connections: ['finance', 'fitness'],
     position: {
       x: 65,
@@ -80,7 +84,7 @@ export const learningZones: LearningZone[] = [
     },
     themeColor: '#D86C70',
     unlockRank: 2,
-    icon: <Flame />,
+    iconType: 'flame',
     connections: ['wellness', 'emergency'],
     position: {
       x: 80,
@@ -100,7 +104,7 @@ export const learningZones: LearningZone[] = [
     },
     themeColor: '#5B8BD9',
     unlockRank: 2,
-    icon: <Briefcase />,
+    iconType: 'briefcase',
     connections: ['finance', 'emergency'],
     position: {
       x: 20,
@@ -120,7 +124,7 @@ export const learningZones: LearningZone[] = [
     },
     themeColor: '#C077DF',
     unlockRank: 3,
-    icon: <ShieldAlert />,
+    iconType: 'shield',
     connections: ['career', 'fitness'],
     position: {
       x: 50,

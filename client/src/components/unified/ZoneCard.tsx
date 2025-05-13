@@ -1,11 +1,15 @@
-import React from 'react';
-import { LearningZone, ThemeType } from '@/data/zones-config';
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Lock, MapPin, Award, ChevronRight, CheckCircle2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+/**
+ * Unified ZoneCard component that works with both standard and jungle themes
+ * This component displays a learning zone with appropriate styling based on theme
+ */
+
+import { LearningZone, ThemeType } from "../../data/zones-config";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { Progress } from "../ui/progress";
+import { Coins, Heart, Flame, Briefcase, ShieldAlert, LockIcon } from "lucide-react";
+import { cn } from "../../lib/utils";
 
 interface ZoneCardProps {
   /** Zone data to display */
@@ -36,253 +40,169 @@ interface ZoneCardProps {
   onClick: (zoneId: string) => void;
 }
 
-/**
- * Unified ZoneCard component that works with both standard and jungle themes
- */
-const ZoneCard: React.FC<ZoneCardProps> = ({
+export function ZoneCard({
   zone,
   theme,
-  userRank = 0,
+  userRank,
   progress = 0,
   questCount = 0,
   completedQuests = 0,
-  className = '',
+  className,
   compact = false,
   onClick
-}) => {
-  // Determine if the zone is locked based on user rank
-  const isLocked = userRank < zone.unlockRank;
+}: ZoneCardProps) {
+  const isJungleTheme = theme === 'jungle';
+  const isUnlocked = typeof userRank === 'number' ? userRank >= zone.unlockRank : false;
   
-  // Check if zone is fully completed
-  const isCompleted = questCount > 0 && completedQuests === questCount;
-  
-  // Get the appropriate title and description based on theme
+  // Title and description based on theme
   const title = zone.title[theme];
   const description = zone.description[theme];
   
-  // Function to handle zone selection
-  const handleZoneClick = () => {
-    if (!isLocked) {
-      onClick(zone.id);
+  // Get the appropriate icon based on the zone's iconType
+  const renderIcon = () => {
+    const iconSize = compact ? 16 : 20;
+    
+    switch (zone.iconType) {
+      case 'coins':
+        return <Coins size={iconSize} />;
+      case 'heart':
+        return <Heart size={iconSize} />;
+      case 'flame':
+        return <Flame size={iconSize} />;
+      case 'briefcase':
+        return <Briefcase size={iconSize} />;
+      case 'shield':
+        return <ShieldAlert size={iconSize} />;
+      default:
+        return null;
     }
   };
   
-  // Get rank title for display
-  const getRankTitle = (rank: number): string => {
-    const titles = ['Novice', 'Explorer', 'Pathfinder', 'Guardian', 'Master'];
-    return titles[rank] || `Rank ${rank}`;
-  };
+  // Card styling based on theme, locked status, and category
+  const cardClasses = cn(
+    "transition-all duration-300 relative overflow-hidden",
+    {
+      // Jungle theme styling
+      "bg-[#1E4A3D] border-[#EBCE67] text-[#EBCE67]": isJungleTheme,
+      "border-2": isJungleTheme,
+      
+      // Standard theme styling - use the zone's theme color with reduced opacity
+      [`border-[${zone.themeColor}] hover:border-[${zone.themeColor}]`]: !isJungleTheme,
+      "bg-white dark:bg-gray-800": !isJungleTheme,
+      
+      // Locked styles
+      "opacity-70": !isUnlocked,
+      
+      // Compact mode
+      "h-[140px]": compact,
+      "h-auto": !compact,
+    },
+    className
+  );
   
-  // JUNGLE THEME VARIANT
-  if (theme === 'jungle') {
-    return (
-      <Card className={cn(
-        "border-2 overflow-hidden transition-all duration-300",
-        isLocked 
-          ? 'border-gray-500 opacity-75' 
-          : 'hover:shadow-md',
-        isCompleted ? 'bg-[#1E4A3D]' : 'bg-[#162E26]',
-        className
-      )}
-      onClick={handleZoneClick}
-      style={{ 
-        borderColor: isLocked ? undefined : zone.themeColor,
-        cursor: isLocked ? 'default' : 'pointer' 
-      }}>
-        <CardHeader className={cn(
-          "pb-2",
-          compact ? 'px-3 pt-3' : 'px-4 pt-4',
-          isCompleted ? 'border-b border-[#94C973]/30' : 'border-b border-gray-700'
-        )}>
-          <div className="flex justify-between items-start">
-            <div className="flex items-center space-x-2">
-              <div 
-                className="w-8 h-8 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: isLocked ? '#374151' : zone.themeColor }}
-              >
-                {isLocked ? (
-                  <Lock className="h-4 w-4 text-gray-300" />
-                ) : (
-                  <div className="h-4 w-4 text-[#1E4A3D]">
-                    {zone.icon}
-                  </div>
-                )}
-              </div>
-              
-              <div>
-                <h3 className={cn(
-                  "font-medium",
-                  compact ? 'text-base' : 'text-lg',
-                  isLocked ? 'text-gray-400' : 'text-[#EBCE67]'
-                )}>
-                  {title}
-                </h3>
-                
-                {!compact && (
-                  <p className="text-sm text-[#94C973]/80 mt-0.5">
-                    {description}
-                  </p>
-                )}
-              </div>
-            </div>
-            
-            {/* Required rank badge */}
-            {zone.unlockRank > 0 && (
-              <Badge 
-                variant="outline" 
-                className={cn(
-                  isLocked 
-                    ? 'border-gray-600 text-gray-400' 
-                    : 'border-[#94C973]/50 text-[#94C973]'
-                )}
-              >
-                <Award className="h-3 w-3 mr-1" />
-                {getRankTitle(zone.unlockRank)}
-              </Badge>
-            )}
-          </div>
-        </CardHeader>
-        
-        <CardContent className={compact ? 'p-3 pt-2' : 'p-4 pt-3'}>
-          {/* Zone progress */}
-          <div className="mb-2">
-            <div className="flex justify-between text-xs mb-1">
-              <span className="text-[#94C973]">Zone Progress</span>
-              <span className="text-[#94C973]">
-                {completedQuests}/{questCount} quests
-              </span>
-            </div>
-            
-            <Progress 
-              value={progress} 
-              className="h-2 bg-[#0F1C18]"
-              style={{
-                "--progress-foreground": isLocked ? '#4B5563' : zone.themeColor
-              } as React.CSSProperties} 
-            />
-          </div>
-          
-          {/* XP requirement warning if needed */}
-          {isLocked && zone.unlockRank > userRank && (
-            <div className="text-xs text-amber-300/80 mt-2 flex items-center">
-              <Award className="h-3 w-3 mr-1" />
-              <span>
-                Requires {getRankTitle(zone.unlockRank)} Rank ({zone.unlockRank * 100} XP)
-              </span>
-            </div>
-          )}
-          
-          {/* Completion indicator */}
-          {isCompleted && (
-            <div className="text-xs text-[#94C973] flex items-center mt-1">
-              <CheckCircle2 className="h-3 w-3 mr-1" />
-              <span>Zone Complete</span>
-            </div>
-          )}
-        </CardContent>
-        
-        {!compact && (
-          <CardFooter className="px-4 py-3 bg-[#0F1C18]/30 flex justify-end">
-            <Button 
-              size="sm"
-              disabled={isLocked}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleZoneClick();
-              }}
-              className={cn(
-                isLocked 
-                  ? 'bg-gray-600 text-gray-300' 
-                  : 'text-[#1E4A3D]'
-              )}
-              style={isLocked ? {} : { backgroundColor: zone.themeColor }}
-            >
-              {isLocked ? (
-                <>
-                  Locked
-                  <Lock className="h-4 w-4 ml-1" />
-                </>
-              ) : (
-                <>
-                  Explore Zone
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </>
-              )}
-            </Button>
-          </CardFooter>
-        )}
-      </Card>
-    );
-  }
+  // Progress styling based on theme
+  const progressClasses = cn(
+    "h-2 mt-2",
+    {
+      "bg-opacity-20 bg-[#EBCE67]": isJungleTheme,
+      "bg-gray-200 dark:bg-gray-700": !isJungleTheme,
+    }
+  );
   
-  // STANDARD THEME VARIANT
+  const progressValueClasses = cn({
+    "bg-[#EBCE67]": isJungleTheme,
+    [`bg-[${zone.themeColor}]`]: !isJungleTheme,
+  });
+  
+  // Title styling based on theme
+  const titleClasses = cn("flex items-center gap-2", {
+    "text-[#EBCE67] font-bold": isJungleTheme,
+    [`text-[${zone.themeColor}]`]: !isJungleTheme,
+  });
+  
+  // Description styling based on theme
+  const descClasses = cn({
+    "text-gray-200": isJungleTheme,
+    "text-gray-600 dark:text-gray-300": !isJungleTheme,
+  });
+  
+  // Badge styling based on theme
+  const badgeClasses = cn("mt-2", {
+    "bg-[#EBCE67] text-[#1E4A3D]": isJungleTheme,
+    [`bg-[${zone.themeColor}] text-white`]: !isJungleTheme,
+  });
+  
   return (
     <Card 
-      className={cn(
-        "overflow-hidden transition-all",
-        isLocked ? 'opacity-80' : 'hover:shadow-md cursor-pointer',
-        className
-      )}
-      onClick={() => !isLocked && handleZoneClick()}
+      className={cardClasses}
+      onClick={() => onClick(zone.id)}
     >
-      <div className="h-2" style={{ backgroundColor: isLocked ? '#CBD5E1' : zone.themeColor }}></div>
-      
-      <CardContent className="pt-4">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-bold text-lg">{title}</h3>
-          
-          {isLocked && (
-            <Lock size={18} className="text-muted-foreground" />
-          )}
+      {/* Locked overlay */}
+      {!isUnlocked && (
+        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center z-10">
+          <LockIcon 
+            className={cn("text-white opacity-80", {
+              "text-[#EBCE67]": isJungleTheme
+            })} 
+            size={compact ? 32 : 48} 
+          />
         </div>
-        
-        <p className="text-sm text-muted-foreground mb-3">
-          {description}
-        </p>
-        
-        {isLocked ? (
-          <div className="flex items-center text-sm text-muted-foreground mb-2">
-            <MapPin size={14} className="mr-1" />
-            <span>Requires {getRankTitle(zone.unlockRank)}</span>
-          </div>
-        ) : (
-          <div className="mb-1">
-            <div className="flex justify-between text-sm mb-1">
-              <span>Zone Progress</span>
-              <span>{progress}%</span>
-            </div>
-            <Progress 
-              value={progress} 
-              className="h-1.5"
-              style={{
-                '--progress-foreground': zone.themeColor
-              } as React.CSSProperties} 
-            />
-            <div className="text-xs text-muted-foreground mt-1">
-              {completedQuests} of {questCount} quests completed
-            </div>
-          </div>
-        )}
-      </CardContent>
+      )}
       
-      <CardFooter className="pt-0">
-        <Button 
-          variant={isLocked ? "outline" : "default"}
-          size="sm"
-          className="w-full"
-          disabled={isLocked}
-          style={!isLocked ? { backgroundColor: zone.themeColor } : {}}
-        >
-          {isLocked 
-            ? 'Zone Locked'
-            : isCompleted
-              ? 'Zone Completed'
-              : 'Explore Zone'
-          }
-        </Button>
-      </CardFooter>
+      <CardHeader className={compact ? "py-3 px-4" : "py-4 px-6"}>
+        <CardTitle className={titleClasses}>
+          {renderIcon()}
+          <span>{title}</span>
+        </CardTitle>
+        {!compact && (
+          <CardDescription className={descClasses}>
+            {description}
+          </CardDescription>
+        )}
+      </CardHeader>
+      
+      {!compact && (
+        <CardContent>
+          {questCount > 0 && (
+            <>
+              <div className="flex justify-between text-sm mb-1">
+                <span className={isJungleTheme ? "text-gray-200" : "text-gray-600 dark:text-gray-300"}>
+                  Progress
+                </span>
+                <span className={isJungleTheme ? "text-[#EBCE67]" : "text-gray-700 dark:text-gray-200"}>
+                  {completedQuests}/{questCount} quests
+                </span>
+              </div>
+              <Progress 
+                value={progress} 
+                max={100} 
+                className={progressClasses}
+                indicator={progressValueClasses}
+              />
+            </>
+          )}
+          
+          <Badge className={badgeClasses}>
+            {zone.category.charAt(0).toUpperCase() + zone.category.slice(1)}
+          </Badge>
+        </CardContent>
+      )}
+      
+      {!compact && (
+        <CardFooter className="flex justify-end">
+          <Button 
+            variant={isJungleTheme ? "outline" : "default"}
+            size="sm"
+            className={isJungleTheme ? "border-[#EBCE67] text-[#EBCE67] hover:bg-[#2c5a4a]" : ""}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClick(zone.id);
+            }}
+          >
+            {isUnlocked ? "Explore" : "Unlock at Rank " + zone.unlockRank}
+          </Button>
+        </CardFooter>
+      )}
     </Card>
   );
-};
-
-export default ZoneCard;
+}
