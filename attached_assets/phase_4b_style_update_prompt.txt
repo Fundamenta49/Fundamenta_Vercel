@@ -1,0 +1,90 @@
+
+PHASE 4B – Expedition Hub Style Update Prompt
+
+MISSION OBJECTIVE:
+Update the visual design of the jungle-themed Expedition Hub (/jungle-hub) to match the polished interface shown in the approved image. This involves applying new Tailwind-based styling to the ZoneCard component, iconography, and button treatments while preserving theme logic and dynamic rank-based behavior.
+
+---
+
+TARGET COMPONENT:
+- ZoneCard (client/src/components/unified/ZoneCard.tsx)
+
+---
+
+STEP 1: CARD CONTAINER STYLING
+
+If `theme === 'jungle'`, apply the following classes to the root Card:
+- Rounded corners
+- Solid border with gold tone (#E6B933)
+- Background: dark jungle green (`bg-[#16382F]`)
+- Padding: medium with vertical breathing room
+
+Example class set:
+`"rounded-lg border border-[#E6B933] bg-[#16382F] text-white shadow-md hover:shadow-lg transition-all"`
+
+---
+
+STEP 2: ICON ENHANCEMENT PER ZONE
+
+For each zone, replace the default icon with a visual-themed alternative. These can be SVG or Lucide-based. Add a large icon above the title or alongside it, depending on layout.
+
+Suggestions:
+- Golden Temple → `MountainIcon`
+- Healing Springs → `DropletIcon` or `SpringIcon`
+- Rugged Peaks → `TriangleIcon` or `ClimbIcon`
+- Ancient Library → `BookOpenIcon`
+
+Use inline icons with consistent sizing: `className="h-6 w-6 text-amber-400"`
+
+---
+
+STEP 3: TITLE AND TEXT TYPOGRAPHY
+
+For jungle theme:
+- Use `text-xl font-semibold` for the zone title
+- Use `text-slate-300` or `text-white/80` for the description
+- Add `tracking-wide` to title for jungle flavor
+
+---
+
+STEP 4: CATEGORY BADGE STYLING
+
+Update the Finance / Wellness / etc. badges to have:
+- Rounded-full badge with custom jungle tones
+- Tailwind class example:
+`"bg-amber-900 text-amber-200 px-3 py-0.5 text-sm font-medium rounded-full"`
+
+Make sure the color shifts depending on the zone (optional: create a mapping of category => color).
+
+---
+
+STEP 5: BUTTON STYLE FOR “Explore” and “Unlock at Rank X”
+
+- “Explore” button:
+  - White text on gold outline: `text-[#E6B933] border border-[#E6B933] rounded-md px-4 py-1 font-semibold hover:bg-[#E6B933]/10`
+
+- “Unlock” state:
+  - Grayed out with lock icon
+  - Use `opacity-50 pointer-events-none`
+  - Optional: add tooltip or hint for how to unlock
+
+---
+
+STEP 6: GLOBAL CLEANUP
+
+Ensure:
+- No legacy card classes bleed into jungle mode
+- Theme fallback to standard remains intact
+- Only apply new styles if `theme === 'jungle'`
+
+---
+
+PHASE COMPLETE WHEN:
+- `/jungle-hub` fully reflects the new jungle expedition design
+- ZoneCards show bold icons, jungle badges, and explore buttons
+- Locked cards are visually distinct
+- UX matches the mockup screenshot
+
+---
+
+This is a style refactor only—do not change functional routing or behavior logic.

@@ -8,7 +8,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Coins, Heart, Flame, Briefcase, ShieldAlert, LockIcon } from "lucide-react";
+import { 
+  Coins, Heart, Flame, Briefcase, ShieldAlert, LockIcon,
+  Mountain, Droplet, Mountain as TriangleIcon, BookOpen, Shield
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/contexts/LearningThemeContext";
 import { useLocation } from "wouter";
@@ -77,10 +80,32 @@ export function ZoneCard({
   const title = zone.title[theme];
   const description = zone.description[theme];
   
-  // Get the appropriate icon based on the zone's iconType
+  // Get the appropriate icon based on the zone's iconType and theme
   const renderIcon = () => {
-    const iconSize = compact ? 16 : 20;
+    // Larger icons for jungle theme
+    const iconSize = isJungleTheme ? (compact ? 20 : 24) : (compact ? 16 : 20);
     
+    // For jungle theme, use the enhanced themed icons
+    if (isJungleTheme) {
+      const iconClass = "text-amber-400";
+      
+      switch (zone.iconType) {
+        case 'coins':
+          return <Mountain size={iconSize} className={iconClass} />;
+        case 'heart':
+          return <Droplet size={iconSize} className={iconClass} />;
+        case 'flame':
+          return <TriangleIcon size={iconSize} className={iconClass} />;
+        case 'briefcase':
+          return <BookOpen size={iconSize} className={iconClass} />;
+        case 'shield':
+          return <Shield size={iconSize} className={iconClass} />;
+        default:
+          return null;
+      }
+    }
+    
+    // Standard theme icons
     switch (zone.iconType) {
       case 'coins':
         return <Coins size={iconSize} />;
@@ -99,18 +124,18 @@ export function ZoneCard({
   
   // Card styling based on theme, locked status, and category
   const cardClasses = cn(
-    "transition-all duration-300 relative overflow-hidden",
+    "transition-all duration-300 relative overflow-hidden shadow-md hover:shadow-lg",
     {
-      // Jungle theme styling
-      "bg-[#1E4A3D] border-[#EBCE67] text-[#EBCE67]": isJungleTheme,
-      "border-2": isJungleTheme,
+      // Jungle theme styling - match the mockup exactly
+      "rounded-lg border border-[#E6B933] bg-[#16382F] text-white": isJungleTheme,
       
       // Standard theme styling - use the zone's theme color with reduced opacity
       [`border-[${zone.themeColor}] hover:border-[${zone.themeColor}]`]: !isJungleTheme,
       "bg-white dark:bg-gray-800": !isJungleTheme,
       
-      // Locked styles
-      "opacity-70": !isUnlocked,
+      // Locked styles - instead of full opacity change, we'll handle this with overlay
+      "cursor-pointer": isUnlocked,
+      "cursor-default": !isUnlocked,
       
       // Compact mode
       "h-[140px]": compact,
@@ -135,19 +160,27 @@ export function ZoneCard({
   
   // Title styling based on theme
   const titleClasses = cn("flex items-center gap-2", {
-    "text-[#EBCE67] font-bold": isJungleTheme,
+    "text-xl font-semibold text-white tracking-wide": isJungleTheme,
     [`text-[${zone.themeColor}]`]: !isJungleTheme,
   });
   
   // Description styling based on theme
   const descClasses = cn({
-    "text-gray-200": isJungleTheme,
+    "text-slate-300": isJungleTheme,
     "text-gray-600 dark:text-gray-300": !isJungleTheme,
   });
   
   // Badge styling based on theme
   const badgeClasses = cn("mt-2", {
-    "bg-[#EBCE67] text-[#1E4A3D]": isJungleTheme,
+    // Customize badges for jungle theme by zone category
+    "rounded-full px-3 py-0.5 text-sm font-medium": isJungleTheme,
+    "bg-amber-900 text-amber-200": isJungleTheme && zone.category === 'finance',
+    "bg-green-900 text-green-200": isJungleTheme && zone.category === 'wellness',
+    "bg-red-900 text-red-200": isJungleTheme && zone.category === 'fitness',
+    "bg-blue-900 text-blue-200": isJungleTheme && zone.category === 'career',
+    "bg-purple-900 text-purple-200": isJungleTheme && zone.category === 'emergency',
+    
+    // Standard theme
     [`bg-[${zone.themeColor}] text-white`]: !isJungleTheme,
   });
   
@@ -212,14 +245,26 @@ export function ZoneCard({
           <Button 
             variant={isJungleTheme ? "outline" : "default"}
             size="sm"
-            className={isJungleTheme ? "border-[#EBCE67] text-[#EBCE67] hover:bg-[#2c5a4a]" : ""}
+            className={cn({
+              // Explore button styling for jungle theme
+              "text-[#E6B933] border border-[#E6B933] rounded-md px-4 py-1 font-semibold hover:bg-[#E6B933]/10": 
+                isJungleTheme && isUnlocked,
+              
+              // Unlock button styling for jungle theme
+              "opacity-50 pointer-events-none text-gray-300 border border-gray-500 rounded-md px-4 py-1": 
+                isJungleTheme && !isUnlocked,
+                
+              // Standard theme uses default styling from Button component
+            })}
             onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
-              onClick(zone.id);
+              if (isUnlocked) {
+                onClick(zone.id);
+              }
             }}
             aria-label={isUnlocked 
-              ? `Explore ${isJungleTheme ? zone.jungleTitle : zone.title} Zone` 
-              : `Unlock ${isJungleTheme ? zone.jungleTitle : zone.title} Zone at Rank ${zone.unlockRank}`
+              ? `Explore ${title} Zone` 
+              : `Unlock ${title} Zone at Rank ${zone.unlockRank}`
             }
           >
             {isUnlocked ? "Explore" : "Unlock at Rank " + zone.unlockRank}
