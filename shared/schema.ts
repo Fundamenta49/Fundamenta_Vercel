@@ -1,4 +1,5 @@
 import { pgTable, serial, text, timestamp, boolean, integer, real, jsonb, varchar, json } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { and, eq, desc } from "drizzle-orm";
@@ -196,6 +197,49 @@ export const assignedPathways = pgTable("assigned_pathways", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+// Define relations
+export const userConnectionsRelations = relations(userConnections, ({ one }) => ({
+  mentor: one(users, {
+    fields: [userConnections.mentorId],
+    references: [users.id],
+  }),
+  student: one(users, {
+    fields: [userConnections.studentId],
+    references: [users.id],
+  }),
+}));
+
+export const customPathwaysRelations = relations(customPathways, ({ one, many }) => ({
+  creator: one(users, {
+    fields: [customPathways.creatorId],
+    references: [users.id],
+  }),
+  modules: many(customPathwayModules),
+}));
+
+export const customPathwayModulesRelations = relations(customPathwayModules, ({ one }) => ({
+  pathway: one(customPathways, {
+    fields: [customPathwayModules.pathwayId],
+    references: [customPathways.id],
+  }),
+}));
+
+export const assignedPathwaysRelations = relations(assignedPathways, ({ one }) => ({
+  pathway: one(customPathways, {
+    fields: [assignedPathways.pathwayId],
+    references: [customPathways.id],
+  }),
+  student: one(users, {
+    fields: [assignedPathways.studentId],
+    references: [users.id],
+  }),
+  assignedByUser: one(users, {
+    fields: [assignedPathways.assignedBy],
+    references: [users.id],
+    relationName: "assignmentCreator",
+  }),
+}));
 
 // Progress Notes Table
 export const progressNotes = pgTable("progress_notes", {
