@@ -90,7 +90,7 @@ export default function LearningPathwaysPage() {
     if (module && module.href) {
       navigate(module.href);
     } else {
-      // If no href is available, go to the jungle-themed page
+      // If no href is available, go to the jungle hub
       navigate('/jungle-hub');
       toast({
         title: "Module Navigation",
@@ -149,10 +149,10 @@ export default function LearningPathwaysPage() {
           <Button 
             variant={isJungleTheme ? "default" : "outline"}
             onClick={() => {
-              // If not in adventure mode, toggle it on and navigate to jungle pathways
+              // If not in adventure mode, toggle it on and navigate to jungle hub
               if (!isJungleTheme) {
                 toggleJungleTheme();
-                navigate('/learning/jungle-pathways');
+                navigate('/jungle-hub');
               } else {
                 // If already in adventure mode, toggle it off
                 toggleJungleTheme();
