@@ -41,12 +41,12 @@ interface SalaryInsight {
 const FundamentaConnects: React.FC = () => {
   const [jobTitle, setJobTitle] = useState('');
   const [location, setLocation] = useState('');
-  const [industry, setIndustry] = useState('');
+  const [industry, setIndustry] = useState('technology');
   const [activeTab, setActiveTab] = useState('find-jobs');
   const [isLoading, setIsLoading] = useState(false);
   const [jobResults, setJobResults] = useState<JobListing[]>([]);
   const [salaryResults, setSalaryResults] = useState<SalaryInsight | null>(null);
-  const [experienceLevel, setExperienceLevel] = useState('');
+  const [experienceLevel, setExperienceLevel] = useState('mid');
   const [salaryJobTitle, setSalaryJobTitle] = useState('');
   const [salaryLocation, setSalaryLocation] = useState('');
   const { toast } = useToast();
