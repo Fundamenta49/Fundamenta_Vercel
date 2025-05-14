@@ -14,9 +14,10 @@ const router = Router();
 
 // Create assignment validation schema
 const createAssignmentSchema = insertAssignedPathwaySchema.extend({
-  studentId: z.number().int().positive(),
-  pathwayId: z.number().int().positive(),
-  dueDate: z.string().datetime().optional(),
+  connectionId: z.string().min(1),  // Connection ID from the frontend
+  pathwayId: z.string().min(1),     // Pathway ID from the frontend
+  deadline: z.string().optional(),  // Renamed from dueDate to match frontend
+  messageToStudent: z.string().optional(), // Additional field from frontend
 });
 
 /**
@@ -30,9 +31,17 @@ router.post('/', authenticateJWT, requireUser, async (req: AuthenticatedRequest,
     // Validate request body
     const validatedData = createAssignmentSchema.parse(req.body);
     
+    // Parse IDs from strings to numbers
+    const pathwayId = parseInt(validatedData.pathwayId);
+    const connectionId = parseInt(validatedData.connectionId);
+    
+    if (isNaN(pathwayId) || isNaN(connectionId)) {
+      return res.status(400).json({ error: 'Invalid pathway ID or connection ID' });
+    }
+    
     // Check if the pathway exists and belongs to the current user
     const pathway = await db.query.customPathways.findFirst({
-      where: eq(customPathways.id, validatedData.pathwayId)
+      where: eq(customPathways.id, pathwayId)
     });
     
     if (!pathway) {
@@ -44,21 +53,27 @@ router.post('/', authenticateJWT, requireUser, async (req: AuthenticatedRequest,
       return res.status(403).json({ error: 'You do not have permission to assign this pathway' });
     }
     
-    // Check if the student exists
-    const student = await db.query.users.findFirst({
-      where: eq(users.id, validatedData.studentId)
+    // Get the connection to find the student ID
+    // Assuming a connection table exists with fields mentorId, studentId, etc.
+    const connection = await db.query.userConnections.findFirst({
+      where: eq(userConnections.id, connectionId)
     });
     
-    if (!student) {
-      return res.status(404).json({ error: 'Student not found' });
+    if (!connection) {
+      return res.status(404).json({ error: 'Connection not found' });
+    }
+    
+    // Verify the current user is the mentor in this connection
+    if (connection.mentorId !== userId) {
+      return res.status(403).json({ error: 'You are not authorized to assign content to this student' });
     }
     
     // Create the assignment
     const newAssignment = await db.insert(assignedPathways).values({
-      pathwayId: validatedData.pathwayId,
-      studentId: validatedData.studentId,
+      pathwayId,
+      studentId: connection.studentId,
       assignedBy: userId,
-      dueDate: validatedData.dueDate ? new Date(validatedData.dueDate) : null,
+      dueDate: validatedData.deadline ? new Date(validatedData.deadline) : null,
       status: 'assigned',
       progress: 0,
       createdAt: new Date(),
