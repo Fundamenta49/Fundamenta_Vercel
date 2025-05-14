@@ -153,6 +153,102 @@ router.get('/', authenticateJWT, requireUser, async (req: AuthenticatedRequest, 
 });
 
 /**
+ * Get metrics and overview of assignments for all students under this mentor
+ * @route GET /api/assignments/metrics
+ */
+router.get('/metrics', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user.id;
+    
+    // Get all connections where the user is a mentor
+    const connections = await db.query.userConnections.findMany({
+      where: and(
+        eq(userConnections.mentorId, userId),
+        eq(userConnections.status, 'active')
+      ),
+      with: {
+        student: true
+      }
+    });
+    
+    if (connections.length === 0) {
+      return res.json({
+        totalAssignments: 0,
+        activeAssignments: 0,
+        completedAssignments: 0,
+        studentMetrics: []
+      });
+    }
+    
+    // Get student IDs from connections, filtering out any null studentIds
+    const studentIds = connections
+      .filter(conn => conn.studentId !== null)
+      .map(conn => conn.studentId);
+    
+    if (studentIds.length === 0) {
+      return res.json({
+        totalAssignments: 0,
+        activeAssignments: 0,
+        completedAssignments: 0,
+        studentMetrics: []
+      });
+    }
+    
+    // Get aggregate assignment data
+    const assignmentCounts = await db.query.assignedPathways.findMany({
+      where: and(
+        eq(assignedPathways.assignedBy, userId),
+        inArray(assignedPathways.studentId, studentIds as number[])
+      )
+    });
+    
+    // Generate per-student metrics
+    const studentMetrics = await Promise.all(connections
+      .filter(connection => connection.studentId !== null)
+      .map(async (connection) => {
+        const studentAssignments = assignmentCounts.filter(
+          assignment => assignment.studentId === connection.studentId
+        );
+        
+        const activeCount = studentAssignments.filter(
+          assignment => assignment.status === 'assigned' || assignment.status === 'in_progress'
+        ).length;
+        
+        const completedCount = studentAssignments.filter(
+          assignment => assignment.status === 'completed'
+        ).length;
+        
+        return {
+          connectionId: connection.id,
+          student: connection.student,
+          totalAssignments: studentAssignments.length,
+          activeAssignments: activeCount,
+          completedAssignments: completedCount
+        };
+    }));
+    
+    // Calculate overall metrics
+    const totalAssignments = assignmentCounts.length;
+    const activeAssignments = assignmentCounts.filter(
+      assignment => assignment.status === 'assigned' || assignment.status === 'in_progress'
+    ).length;
+    const completedAssignments = assignmentCounts.filter(
+      assignment => assignment.status === 'completed'
+    ).length;
+    
+    res.json({
+      totalAssignments,
+      activeAssignments,
+      completedAssignments,
+      studentMetrics
+    });
+  } catch (error) {
+    console.error('Error fetching assignment metrics:', error);
+    res.status(500).json({ error: 'Failed to fetch assignment metrics' });
+  }
+});
+
+/**
  * Get a specific assignment by ID
  * @route GET /api/assignments/:id
  */
@@ -381,47 +477,60 @@ router.get('/metrics', authenticateJWT, requireUser, async (req: AuthenticatedRe
       });
     }
     
-    // Get student IDs from connections
-    const studentIds = connections.map((conn: typeof userConnections.$inferSelect & { student: typeof users.$inferSelect }) => conn.studentId);
+    // Get student IDs from connections, filtering out any null studentIds
+    const studentIds = connections
+      .filter(conn => conn.studentId !== null)
+      .map(conn => conn.studentId);
+    
+    if (studentIds.length === 0) {
+      return res.json({
+        totalAssignments: 0,
+        activeAssignments: 0,
+        completedAssignments: 0,
+        studentMetrics: []
+      });
+    }
     
     // Get aggregate assignment data
     const assignmentCounts = await db.query.assignedPathways.findMany({
       where: and(
         eq(assignedPathways.assignedBy, userId),
-        inArray(assignedPathways.studentId, studentIds)
+        inArray(assignedPathways.studentId, studentIds as number[])
       )
     });
     
     // Generate per-student metrics
-    const studentMetrics = await Promise.all(connections.map(async (connection: typeof userConnections.$inferSelect & { student: typeof users.$inferSelect }) => {
-      const studentAssignments = assignmentCounts.filter(
-        (assignment: typeof assignedPathways.$inferSelect) => assignment.studentId === connection.studentId
-      );
-      
-      const activeCount = studentAssignments.filter(
-        (assignment: typeof assignedPathways.$inferSelect) => assignment.status === 'assigned' || assignment.status === 'in_progress'
-      ).length;
-      
-      const completedCount = studentAssignments.filter(
-        (assignment: typeof assignedPathways.$inferSelect) => assignment.status === 'completed'
-      ).length;
-      
-      return {
-        connectionId: connection.id,
-        student: connection.student,
-        totalAssignments: studentAssignments.length,
-        activeAssignments: activeCount,
-        completedAssignments: completedCount
-      };
+    const studentMetrics = await Promise.all(connections
+      .filter(connection => connection.studentId !== null)
+      .map(async (connection) => {
+        const studentAssignments = assignmentCounts.filter(
+          assignment => assignment.studentId === connection.studentId
+        );
+        
+        const activeCount = studentAssignments.filter(
+          assignment => assignment.status === 'assigned' || assignment.status === 'in_progress'
+        ).length;
+        
+        const completedCount = studentAssignments.filter(
+          assignment => assignment.status === 'completed'
+        ).length;
+        
+        return {
+          connectionId: connection.id,
+          student: connection.student,
+          totalAssignments: studentAssignments.length,
+          activeAssignments: activeCount,
+          completedAssignments: completedCount
+        };
     }));
     
     // Calculate overall metrics
     const totalAssignments = assignmentCounts.length;
     const activeAssignments = assignmentCounts.filter(
-      (assignment: typeof assignedPathways.$inferSelect) => assignment.status === 'assigned' || assignment.status === 'in_progress'
+      assignment => assignment.status === 'assigned' || assignment.status === 'in_progress'
     ).length;
     const completedAssignments = assignmentCounts.filter(
-      (assignment: typeof assignedPathways.$inferSelect) => assignment.status === 'completed'
+      assignment => assignment.status === 'completed'
     ).length;
     
     res.json({
