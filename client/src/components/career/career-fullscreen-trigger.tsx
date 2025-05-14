@@ -66,7 +66,7 @@ export default function CareerFullscreenTrigger({
       case 'resume':
         return <ResumeBuilderFullscreen onClose={handleClose} />;
       case 'job-search':
-        return <FundamentaConnects />;
+        return <FundamentaConnects onClose={handleClose} />;
       case 'interview':
         return <InterviewPracticeFullscreen onClose={handleClose} />;
       case 'assessment':

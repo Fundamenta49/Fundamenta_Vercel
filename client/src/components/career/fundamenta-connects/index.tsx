@@ -10,7 +10,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Info, Network, DollarSign, Search, Building, MapPin, Calendar, ExternalLink } from "lucide-react";
+import { Info, Network, DollarSign, Search, Building, MapPin, Calendar, ExternalLink, X } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 
@@ -42,7 +42,7 @@ interface SalaryInsight {
   certifications?: string[];
 }
 
-const FundamentaConnects: React.FC = () => {
+const FundamentaConnects: React.FC<FundamentaConnectsProps> = ({ onClose }) => {
   const [jobTitle, setJobTitle] = useState('');
   const [location, setLocation] = useState('');
   const [industry, setIndustry] = useState('technology');
@@ -160,9 +160,16 @@ const FundamentaConnects: React.FC = () => {
     <div className="w-full h-full flex flex-col overflow-auto bg-background">
       {/* Header */}
       <div className="px-6 py-4 border-b">
-        <div className="flex items-center space-x-2">
-          <Network className="h-6 w-6 text-primary" />
-          <h1 className="text-2xl font-bold text-primary">Fundamenta Connects</h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Network className="h-6 w-6 text-primary" />
+            <h1 className="text-2xl font-bold text-primary">Fundamenta Connects</h1>
+          </div>
+          {onClose && (
+            <Button variant="ghost" size="icon" onClick={onClose} className="ml-auto" aria-label="Close">
+              <X className="h-5 w-5" />
+            </Button>
+          )}
         </div>
         <p className="text-muted-foreground mt-1">
           Find opportunities and research salary insights - all in one place
