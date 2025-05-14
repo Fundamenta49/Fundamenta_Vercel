@@ -26,6 +26,10 @@ interface JobListing {
   postedDate: string;
 }
 
+interface FundamentaConnectsProps {
+  onClose?: () => void;
+}
+
 interface SalaryInsight {
   median: number;
   range: [number, number];

@@ -366,7 +366,7 @@ export default function JobSearchFullscreen({ onClose }: { onClose: () => void }
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">Any job type</SelectItem>
+                          <SelectItem value="any">Any job type</SelectItem>
                           <SelectItem value="Full-time">Full-time</SelectItem>
                           <SelectItem value="Part-time">Part-time</SelectItem>
                           <SelectItem value="Contract">Contract</SelectItem>
@@ -395,7 +395,7 @@ export default function JobSearchFullscreen({ onClose }: { onClose: () => void }
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">Any experience level</SelectItem>
+                          <SelectItem value="any">Any experience level</SelectItem>
                           <SelectItem value="Entry-level">Entry-level</SelectItem>
                           <SelectItem value="Mid-level">Mid-level</SelectItem>
                           <SelectItem value="Senior">Senior</SelectItem>
@@ -423,7 +423,7 @@ export default function JobSearchFullscreen({ onClose }: { onClose: () => void }
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">Anytime</SelectItem>
+                          <SelectItem value="anytime">Anytime</SelectItem>
                           <SelectItem value="today">Today</SelectItem>
                           <SelectItem value="3days">Last 3 days</SelectItem>
                           <SelectItem value="week">Last week</SelectItem>

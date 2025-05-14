@@ -6,6 +6,7 @@ import { Maximize2 } from 'lucide-react';
 // Import the fullscreen components
 import ResumeBuilderFullscreen from '@/components/resume-builder-fullscreen';
 import JobSearchFullscreen from '@/components/career/job-search-fullscreen';
+import FundamentaConnects from '@/components/career/fundamenta-connects';
 import InterviewPracticeFullscreen from '@/components/career/interview-practice-fullscreen';
 
 export type CareerToolType = 'resume' | 'job-search' | 'interview' | 'assessment' | 'resilience' | 'rights';
@@ -65,7 +66,7 @@ export default function CareerFullscreenTrigger({
       case 'resume':
         return <ResumeBuilderFullscreen onClose={handleClose} />;
       case 'job-search':
-        return <JobSearchFullscreen onClose={handleClose} />;
+        return <FundamentaConnects />;
       case 'interview':
         return <InterviewPracticeFullscreen onClose={handleClose} />;
       case 'assessment':
