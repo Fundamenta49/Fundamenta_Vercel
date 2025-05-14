@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 
 // Types for the assignments
 export interface Connection {
@@ -71,13 +70,7 @@ export interface Assignment {
 export function useAssignments() {
   return useQuery<Assignment[]>({
     queryKey: ["/api/assignments"],
-    queryFn: async () => {
-      const response = await apiRequest<Assignment[]>({
-        url: "/api/assignments",
-        method: "GET",
-      });
-      return response;
-    },
+    // The default queryFn will handle this request using the queryKey
   });
 }
 
@@ -87,13 +80,15 @@ export function useAssignments() {
 export function useAssignment(id: number | null) {
   return useQuery<Assignment>({
     queryKey: ["/api/assignments", id],
-    queryFn: async () => {
+    queryFn: async ({ queryKey }) => {
       if (!id) throw new Error("Assignment ID is required");
-      const response = await apiRequest<Assignment>({
-        url: `/api/assignments/${id}`,
-        method: "GET",
+      const response = await fetch(`${queryKey[0]}/${queryKey[1]}`, {
+        credentials: "include",
       });
-      return response;
+      if (!response.ok) {
+        throw new Error(`Error fetching assignment: ${response.statusText}`);
+      }
+      return response.json();
     },
     enabled: id !== null,
   });
@@ -118,12 +113,6 @@ export interface AssignmentMetrics {
 export function useAssignmentMetrics() {
   return useQuery<AssignmentMetrics>({
     queryKey: ["/api/assignments/metrics"],
-    queryFn: async () => {
-      const response = await apiRequest<AssignmentMetrics>({
-        url: "/api/assignments/metrics",
-        method: "GET",
-      });
-      return response;
-    },
+    // The default queryFn will handle this request using the queryKey
   });
 }
