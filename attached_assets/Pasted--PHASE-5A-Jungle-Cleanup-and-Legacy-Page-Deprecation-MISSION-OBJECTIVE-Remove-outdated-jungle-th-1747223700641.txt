@@ -1,0 +1,69 @@
+
+PHASE 5A – Jungle Cleanup and Legacy Page Deprecation
+
+MISSION OBJECTIVE:
+Remove outdated jungle-themed pages and finalize /jungle-hub as the sole user entry point for the expedition experience. Clean up any routing conflicts, duplicate UI elements, or legacy components that could confuse users or introduce styling regressions.
+
+---
+
+TARGET PAGES TO REMOVE:
+1. /learning/jungle-pathways.tsx
+2. /learning/jungle-demo.tsx (if it exists)
+3. Any jungle-themed tab or navigation legacy component that duplicates /jungle-hub functionality
+
+---
+
+STEP 1: REMOVE FILES
+
+- Delete or archive the following:
+  - `client/src/pages/learning/jungle-pathways.tsx`
+  - `client/src/pages/learning/jungle-demo.tsx` (if still present)
+  - Any old `JungleTabs` code if not in use anywhere else
+
+---
+
+STEP 2: REDIRECT BROKEN ROUTES
+
+- In your `App.tsx` or equivalent routing file:
+  - Add a redirect from `/learning/jungle-pathways` → `/jungle-hub`
+  - Use `<Redirect>` or `<Navigate>` depending on your routing system
+
+---
+
+STEP 3: REMOVE "New Expedition Hub" BUTTON
+
+- Go to the old jungle pathway page if it's still being rendered
+- Remove any button pointing to `/jungle-hub` like:
+  - “New Expedition Hub”
+  - “Try the new experience”
+- This is no longer needed once the legacy page is removed
+
+---
+
+STEP 4: VALIDATE `/JUNGLE-HUB` ROUTE
+
+- Ensure all internal navigation now points only to `/jungle-hub`
+- Remove any hardcoded navigation from other routes that reference deprecated pages
+
+---
+
+STEP 5: QA CHECK
+
+- Test routes: `/jungle-hub`, `/zone/:id`, `/basecamp`, `/learning-hub`
+- Confirm all jungle interactions now begin from `/jungle-hub`
+- No duplicate jungle Fundi instances should be present
+
+---
+
+PHASE COMPLETE WHEN:
+- Legacy pages are fully removed
+- `/jungle-hub` is the default and only expedition entry point
+- All links to old jungle routes redirect or are scrubbed
+- Navigation is clean and scoped
+
+---
+
+DO NOT:
+- Delete `/jungle-hub`
+- Alter Fundi logic yet (this happens in Phase 5C)
+- Remove zone-related data
