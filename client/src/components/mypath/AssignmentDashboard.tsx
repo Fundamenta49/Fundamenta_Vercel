@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -18,6 +18,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ProgressTracker } from "./ProgressTracker";
 import { NoteSystem } from "./NoteSystem";
+import { useAssignments, Assignment } from "@/hooks/useAssignments";
+import { useQuery } from "@tanstack/react-query";
 
 const assignmentSchema = z.object({
   pathwayId: z.string().min(1, { message: "You must select a pathway" }),
@@ -33,12 +35,10 @@ export function AssignmentDashboard() {
   const [selectedAssignment, setSelectedAssignment] = useState<number | null>(null);
   const [viewType, setViewType] = useState<"progress" | "notes">("progress");
   const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   
-  // Fetch assignments
-  const { data: assignments, isLoading: isLoadingAssignments } = useQuery({
-    queryKey: ["/api/assignments"],
-    retry: false,
-  });
+  // Fetch assignments using our custom hook
+  const { data: assignments, isLoading: isLoadingAssignments, isError: isAssignmentsError } = useAssignments();
 
   // Fetch user's pathways
   const { data: pathways, isLoading: isLoadingPathways } = useQuery({
@@ -48,7 +48,7 @@ export function AssignmentDashboard() {
 
   // Fetch user's connections
   const { data: connections, isLoading: isLoadingConnections } = useQuery({
-    queryKey: ["/api/connections"],
+    queryKey: ["/api/mentorship/connections"],
     retry: false,
   });
 
@@ -66,8 +66,11 @@ export function AssignmentDashboard() {
   // Create a new assignment
   const createAssignmentMutation = useMutation({
     mutationFn: async (values: AssignmentFormValues) => {
-      const response = await apiRequest("POST", "/api/assignments", values);
-      return response.json();
+      return await apiRequest({
+        url: "/api/assignments", 
+        method: "POST", 
+        data: values
+      });
     },
     onSuccess: () => {
       toast({
@@ -85,6 +88,31 @@ export function AssignmentDashboard() {
         variant: "destructive",
       });
     },
+  });
+  
+  // Update assignment status
+  const updateAssignmentMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: number, status: string }) => {
+      return await apiRequest({
+        url: `/api/assignments/${id}`,
+        method: "PATCH",
+        data: { status }
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Status Updated",
+        description: "The assignment status has been updated."
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/assignments"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update assignment status.",
+        variant: "destructive"
+      });
+    }
   });
 
   const onSubmit = (values: AssignmentFormValues) => {
