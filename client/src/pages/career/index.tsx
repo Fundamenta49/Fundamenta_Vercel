@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'wouter';
-import { Briefcase, FileText, GraduationCap, Target, ArrowRight } from 'lucide-react';
+import { Briefcase, FileText, GraduationCap, Target, ArrowRight, Network } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Section, Container, H1, H2, Paragraph } from '@/components/ui/content';
