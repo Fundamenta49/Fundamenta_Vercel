@@ -1,0 +1,77 @@
+Here are your refined, agent-ready prompts for Phase 1 of the MyPath API implementation. Each one is scoped and phrased clearly for a Replit agent to execute efficiently.
+
+⸻
+
+REPLIT AGENT PROMPT 1: Create POST /api/pathways Endpoint
+
+Please create a backend API route at POST /api/pathways.
+This route should:
+
+	•	Accept the following in the request body: title, description, category, and isPublic
+	•	Use session or JWT to extract createdBy (user ID)
+	•	Validate the inputs using Zod
+	•	Store the data in the custom_pathways table
+	•	Return the saved pathway as JSON
+
+Ensure the route is protected and returns appropriate error messages for invalid input or unauthenticated users.
+
+⸻
+
+REPLIT AGENT PROMPT 2: Create GET /api/pathways Endpoint
+
+Add a GET /api/pathways route to return all custom pathways created by the current user.
+Use the session or JWT to determine the user ID.
+Query the database for all pathways where createdBy matches the current user.
+Sort the results by creation date (most recent first).
+Return the list of pathways as JSON.
+
+Add basic error handling and ensure only the logged-in user’s pathways are returned.
+
+⸻
+
+REPLIT AGENT PROMPT 3: Create POST /api/modules Endpoint
+
+Create a route at POST /api/modules for creating new learning modules.
+It should:
+
+	•	Accept pathwayId, title, content, and order in the request body
+	•	Validate these fields using Zod
+	•	Ensure the current user owns the pathway (check createdBy)
+	•	Save the module to a custom_modules table
+	•	Return the saved module as JSON
+
+Only allow module creation for pathways the user owns. Return errors for missing or invalid fields.
+
+⸻
+
+REPLIT AGENT PROMPT 4: Create GET /api/modules/:pathwayId Endpoint
+
+Create a GET /api/modules/:pathwayId route to fetch all modules for a specific pathway.
+This route should:
+
+	•	Validate the pathwayId parameter
+	•	Check that the current user owns the pathway
+	•	Query all modules where pathwayId matches
+	•	Sort modules by the order field (ascending)
+	•	Return them as a list of id, title, and content
+
+Add error handling for unauthorized access or invalid IDs.
+
+⸻
+
+REPLIT AGENT PROMPT 5: Connect Frontend to Pathway & Module APIs
+
+Please update the PathwayBuilder component to use the new backend APIs:
+
+	1.	Use POST /api/pathways to create pathways
+	2.	Use GET /api/pathways to list user pathways
+	3.	Use POST /api/modules to add modules
+	4.	Use GET /api/modules/:pathwayId to display modules
+
+Use React Query or simple fetch() as needed.
+Add loading spinners and error messages in the UI.
+Replace any placeholder data with real data from the API.
+
+⸻
+
+Let me know if you want a progress tracker or checklist format to keep track of each prompt as they’re completed.

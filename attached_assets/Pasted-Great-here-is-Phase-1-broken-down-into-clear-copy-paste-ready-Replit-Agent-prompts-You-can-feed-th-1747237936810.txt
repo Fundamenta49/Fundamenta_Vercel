@@ -1,0 +1,73 @@
+Great—here is Phase 1 broken down into clear, copy/paste-ready Replit Agent prompts. You can feed them one by one or as a set, depending on how responsive the agent is.
+
+⸻
+
+REPLIT AGENT PROMPT 1: Create Pathway API - POST /api/pathways
+
+Prompt:
+Create a backend API route POST /api/pathways.
+It should accept a request body with the following fields:
+
+	•	title (string)
+	•	description (string)
+	•	category (string)
+	•	isPublic (boolean)
+	•	createdBy (userId pulled from session/JWT)
+
+Save the new pathway to the custom_pathways table and return the created object.
+Ensure the route is protected and validates input types.
+
+⸻
+
+REPLIT AGENT PROMPT 2: Get Pathways for User - GET /api/pathways
+
+Prompt:
+Create a route GET /api/pathways that returns all custom pathways where createdBy matches the current logged-in user.
+Use session or JWT to get the user ID.
+Sort the results by most recent.
+Optional: Add simple pagination (?page=1&limit=10), but it’s not required for now.
+
+⸻
+
+REPLIT AGENT PROMPT 3: Create Module API - POST /api/modules
+
+Prompt:
+Create a route POST /api/modules.
+This route should accept the following fields in the request body:
+
+	•	pathwayId (string, foreign key)
+	•	title (string)
+	•	content (string or markdown)
+	•	order (integer, for sequencing)
+
+Store this in a custom_modules table.
+Ensure the module is linked to the correct pathway and the order field is respected.
+
+⸻
+
+REPLIT AGENT PROMPT 4: Get Modules for a Pathway - GET /api/modules/:pathwayId
+
+Prompt:
+Create a backend route GET /api/modules/:pathwayId.
+It should return all modules that belong to the specified pathwayId.
+Sort the modules by the order field (ascending).
+Return them as a list with id, title, and content.
+
+⸻
+
+REPLIT AGENT PROMPT 5: Connect Frontend to Pathway & Module APIs
+
+Prompt:
+Update the custom pathway builder UI to:
+
+	1.	Use POST /api/pathways to create new pathways
+	2.	Use GET /api/pathways to display the user’s saved pathways
+	3.	Use POST /api/modules to add modules to a pathway
+	4.	Use GET /api/modules/:pathwayId to load and display the modules
+
+Use React Query (preferred) or simple fetch() for these requests.
+Add loading and error handling states where appropriate.
+
+⸻
+
+Let me know once the agent completes Phase 1 or if you want a checklist version to track tasks as you go.
