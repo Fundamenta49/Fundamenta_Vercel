@@ -5,7 +5,8 @@ import {
   assignedPathways, 
   customPathways,
   insertAssignedPathwaySchema,
-  users
+  users,
+  userConnections
 } from '../../shared/schema';
 import { and, eq, desc, ne } from 'drizzle-orm';
 import { z } from 'zod';
@@ -104,17 +105,44 @@ router.get('/', authenticateJWT, requireUser, async (req: AuthenticatedRequest, 
   try {
     const userId = req.user.id;
     
-    // Get all assignments created by this user
+    // Get all assignments created by this user with related data
     const assignments = await db.query.assignedPathways.findMany({
       where: eq(assignedPathways.assignedBy, userId),
       orderBy: [desc(assignedPathways.createdAt)],
       with: {
-        pathway: true,
+        pathway: {
+          with: {
+            modules: true
+          }
+        },
         student: true
       }
     });
     
-    res.json(assignments);
+    // For each assignment, look up the connection information
+    const enhancedAssignments = await Promise.all(assignments.map(async assignment => {
+      // Find the connection for this mentor-student pair
+      const connection = await db.query.userConnections.findFirst({
+        where: and(
+          eq(userConnections.mentorId, userId),
+          eq(userConnections.studentId, assignment.studentId)
+        )
+      });
+      
+      // Return enhanced assignment with connection data
+      return {
+        ...assignment,
+        connection: connection ? {
+          id: connection.id,
+          type: connection.connectionType,
+          status: connection.status,
+          accessLevel: connection.accessLevel,
+          targetUser: assignment.student
+        } : null
+      };
+    }));
+    
+    res.json(enhancedAssignments);
   } catch (error) {
     console.error('Error fetching assignments:', error);
     res.status(500).json({ error: 'Failed to fetch assignments' });
