@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConnectionManager } from "@/components/mypath/ConnectionManager";
 import { PathwayBuilder } from "@/components/mypath/PathwayBuilder";
-import { AssignmentDashboard } from "@/components/mypath/AssignmentDashboard";
+import { MentorAssignmentDashboard } from "@/components/mypath/MentorAssignmentDashboard";
 import { 
   BookOpen, 
   GraduationCap, 
@@ -159,7 +159,7 @@ export default function MyPathPage() {
           )}
           
           {activeTab === "assignments" && (
-            <AssignmentDashboard />
+            <MentorAssignmentDashboard />
           )}
           
           {activeTab === "analytics" && (
