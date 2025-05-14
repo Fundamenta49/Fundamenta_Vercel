@@ -61,11 +61,9 @@ import LifeSkillsPage from "@/pages/learning/life-skills";
 import IdentityDocumentsPage from "@/pages/learning/identity-documents";
 import CompletedCoursesPage from "@/pages/learning/completed";
 import LearningPathwaysPage from "@/pages/learning/pathways";
-import JunglePathwaysPage from "@/pages/learning/jungle-pathways";
-import JungleDemoPage from "@/pages/learning/jungle-demo";
 import LearningAnalyticsDashboard from "@/pages/learning/analytics";
 import SavedQuizzesPage from "@/pages/learning/saved-quizzes";
-// Jungle navigation demo removed and integrated into main application
+// Legacy jungle components removed in Phase 5A
 import DesignShowcasePage from "@/pages/design-showcase";
 import LoginPage from "@/pages/login";
 import AuthPage from "@/pages/auth-page";
@@ -149,6 +147,18 @@ function FitnessRedirect() {
       navigate('/active');
     }
   }, [navigate, section]);
+  
+  return null;
+}
+
+// Component to handle redirects from legacy jungle pages to the new jungle hub
+function JungleHubRedirect() {
+  const [, navigate] = useLocation();
+  
+  useEffect(() => {
+    // Redirect to the new jungle hub
+    navigate('/jungle-hub');
+  }, [navigate]);
   
   return null;
 }
@@ -481,10 +491,11 @@ function Router() {
                 <LearningPathwaysPage />
               </ProtectedRoute>
             </Route>
+            {/* Redirect legacy jungle pathways to the new jungle hub */}
             <Route path="/learning/jungle-pathways">
-              <JunglePathwaysPage />
+              <JungleHubRedirect />
             </Route>
-            {/* Jungle navigation demo route removed and integrated into main application */}
+            {/* Jungle demo page removed in Phase 5A cleanup */}
             <Route path="/learning/analytics">
               <ProtectedRoute>
                 <LearningAnalyticsDashboard />

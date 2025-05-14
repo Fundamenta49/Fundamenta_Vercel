@@ -91,7 +91,7 @@ export default function LearningPathwaysPage() {
       navigate(module.href);
     } else {
       // If no href is available, go to the jungle-themed page
-      navigate('/learning/jungle-pathways');
+      navigate('/jungle-hub');
       toast({
         title: "Module Navigation",
         description: "This module is available in adventure mode. Enabling jungle theme.",
