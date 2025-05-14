@@ -91,6 +91,7 @@ import FindingFinancialAdvisors from "@/pages/resources/finding-financial-adviso
 import FinancialCredentials from "@/pages/resources/financial-credentials";
 import FindingTherapist from "@/pages/resources/finding-therapist";
 import MentalHealthProviders from "@/pages/resources/mental-health-providers";
+import ConnectsPage from "@/pages/career/connects";
 
 // Component to handle redirects from /wellness/* to /wellness?section=*
 function WellnessRedirect() {
@@ -210,6 +211,11 @@ function Router() {
             <Route path="/career">
               <ProtectedRoute>
                 <Career />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/career/connects">
+              <ProtectedRoute>
+                <ConnectsPage />
               </ProtectedRoute>
             </Route>
 {/* Career-new route removed as it's replaced by the updated Career component */}

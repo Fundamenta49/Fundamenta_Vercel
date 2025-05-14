@@ -24,6 +24,14 @@ export default function CareerLanding() {
       buttonText: "Explore Careers"
     },
     {
+      title: "Fundamenta Connects",
+      description: "Find opportunities and research salary insights all in one place with our job search and networking platform.",
+      icon: <Network className="h-12 w-12 text-teal-500" />,
+      link: "/career/connects",
+      color: "from-teal-50 to-teal-100 dark:from-teal-950 dark:to-teal-900",
+      buttonText: "Find Opportunities"
+    },
+    {
       title: "Skills Development",
       description: "Identify key skills needed for your target career and find resources to help you develop those competencies.",
       icon: <GraduationCap className="h-12 w-12 text-green-500" />,
