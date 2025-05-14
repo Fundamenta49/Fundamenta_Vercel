@@ -31,10 +31,6 @@ export default function MyPathPage() {
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="hidden md:flex items-center gap-2">
-            <School className="h-4 w-4" />
-            Educator Resources
-          </Button>
           <Link href="/mypath/analytics">
             <Button variant="outline" className="hidden md:flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
