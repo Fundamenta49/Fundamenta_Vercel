@@ -239,9 +239,9 @@ const FundamentaConnects: React.FC = () => {
                       <label htmlFor="industry" className="block text-sm font-medium mb-2">
                         Industry (Optional)
                       </label>
-                      <Select value={industry || "technology"} onValueChange={setIndustry} defaultValue="technology">
+                      <Select value={industry || "technology"} onValueChange={setIndustry}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select an industry (optional)" />
+                          <SelectValue placeholder="Select an industry" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="technology">Technology</SelectItem>
@@ -362,7 +362,7 @@ const FundamentaConnects: React.FC = () => {
                     <label htmlFor="experience-level" className="block text-sm font-medium mb-2">
                       Experience Level
                     </label>
-                    <Select value={experienceLevel || "mid"} onValueChange={setExperienceLevel} defaultValue="mid">
+                    <Select value={experienceLevel || "mid"} onValueChange={setExperienceLevel}>
                       <SelectTrigger id="experience-level">
                         <SelectValue placeholder="Select experience level" />
                       </SelectTrigger>
