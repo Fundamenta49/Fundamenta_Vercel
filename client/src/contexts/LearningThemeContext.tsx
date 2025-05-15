@@ -1,88 +1,73 @@
-/**
- * Learning Theme Context
- * 
- * Provides theming context for the learning experience
- * Allows theme information to be accessed throughout the component tree
- * without explicit prop drilling
- */
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { useJungleTheme } from "@/jungle-path/contexts/JungleThemeContext";
 
-import * as React from "react";
-import { createContext, useContext, useState } from "react";
-import { ThemeType } from "@/data/zones-config";
+// Define available learning themes
+type ThemeType = 'standard' | 'jungle';
 
-// Define the shape of the context
-interface LearningThemeContextType {
-  /** Current theme ("jungle" or "standard") */
+// Context interface
+interface LearningThemeContextValue {
   theme: ThemeType;
-  /** Function to change the current theme */
   setTheme: (theme: ThemeType) => void;
+  isJungleTheme: boolean;
 }
 
 // Create context with default values
-const LearningThemeContext = createContext<LearningThemeContextType>({
-  theme: "standard",
+const LearningThemeContext = createContext<LearningThemeContextValue>({
+  theme: 'standard',
   setTheme: () => {},
+  isJungleTheme: false,
 });
 
+// Props for the provider component
 interface LearningThemeProviderProps {
-  /** Initial theme value */
+  children: ReactNode;
   initialTheme?: ThemeType;
-  /** Child components */
-  children: React.ReactNode;
 }
 
 /**
- * Theme Provider Component
- * Wraps application or section that needs theme awareness
+ * Provider for the learning theme context
+ * This is a lightweight wrapper around the JungleThemeContext
+ * that specifically handles learning content presentation
  */
-export function LearningThemeProvider({
-  initialTheme = "standard",
-  children,
-}: LearningThemeProviderProps) {
+export const LearningThemeProvider: React.FC<LearningThemeProviderProps> = ({ 
+  children, 
+  initialTheme = 'standard' 
+}) => {
   const [theme, setTheme] = useState<ThemeType>(initialTheme);
-
+  const { enableJungleTheme, disableJungleTheme } = useJungleTheme();
+  
+  // Effect to synchronize with JungleTheme
+  React.useEffect(() => {
+    if (theme === 'jungle') {
+      enableJungleTheme();
+    } else {
+      disableJungleTheme();
+    }
+  }, [theme, enableJungleTheme, disableJungleTheme]);
+  
+  // Create context value
+  const contextValue: LearningThemeContextValue = {
+    theme,
+    setTheme,
+    isJungleTheme: theme === 'jungle',
+  };
+  
   return (
-    <LearningThemeContext.Provider value={{ theme, setTheme }}>
+    <LearningThemeContext.Provider value={contextValue}>
       {children}
     </LearningThemeContext.Provider>
   );
-}
+};
 
 /**
- * Hook to access the theme context from any component
- * @returns Theme context with current theme and setTheme function
+ * Hook to use the learning theme context
  */
-export function useTheme(): LearningThemeContextType {
+export const useLearningTheme = (): LearningThemeContextValue => {
   const context = useContext(LearningThemeContext);
   
   if (context === undefined) {
-    throw new Error("useTheme must be used within a LearningThemeProvider");
+    throw new Error('useLearningTheme must be used within a LearningThemeProvider');
   }
   
   return context;
-}
-
-/**
- * Component that provides a theme-specific wrapper
- * Useful for theme-specific styling without explicit conditional rendering
- */
-interface ThemedWrapperProps {
-  /** Content to be wrapped */
-  children: React.ReactNode;
-  /** Additional CSS classes */
-  className?: string;
-}
-
-export function ThemedWrapper({ children, className = "" }: ThemedWrapperProps) {
-  const { theme } = useTheme();
-  
-  const themeClasses = theme === "jungle"
-    ? "bg-[#1E4A3D] text-white" 
-    : "bg-white text-slate-900";
-  
-  return (
-    <div className={`${themeClasses} ${className}`}>
-      {children}
-    </div>
-  );
-}
+};

@@ -1,102 +1,135 @@
-import { Router, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { db } from '../db';
 import { authenticateJWT, requireUser, AuthenticatedRequest } from '../auth/auth-middleware';
-import { customPathways, customPathwayModules, users } from '../../shared/schema';
-import { and, eq, asc, desc, isNull, isNotNull, sql } from 'drizzle-orm';
+import { eq, and, desc } from 'drizzle-orm';
+import { customPathways as pathways, assignedPathways as userPathways } from '../../shared/schema';
 
-const router = Router();
+const router = express.Router();
 
-// Get public pathways
+// Get all public pathways
 router.get('/api/pathways/public', authenticateJWT, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    // Filter for public pathways only
-    const publicPathways = await db.select({
-      id: customPathways.id,
-      title: customPathways.title,
-      description: customPathways.description,
-      category: customPathways.category,
-      isTemplate: customPathways.isTemplate,
-      creatorId: customPathways.creatorId,
-      creatorName: users.name,
-      createdAt: customPathways.createdAt,
-      updatedAt: customPathways.updatedAt,
-    })
-    .from(customPathways)
-    .leftJoin(users, eq(customPathways.creatorId, users.id))
-    .where(eq(customPathways.isPublic, true))
-    .orderBy(desc(customPathways.createdAt));
+    // Fetch public pathways
+    const publicPathways = await db
+      .select()
+      .from(pathways)
+      .where(eq(pathways.isPublic, true))
+      .orderBy(desc(pathways.createdAt));
 
-    // Get all modules for these pathways
-    const pathwayIds = publicPathways.map(p => p.id);
-    
-    if (pathwayIds.length === 0) {
-      return res.json([]);
-    }
-    
-    const modules = await db.select()
-      .from(customPathwayModules)
-      .where(sql`${customPathwayModules.pathwayId} IN ${pathwayIds}`)
-      .orderBy(asc(customPathwayModules.order));
-      
-    // Group modules by pathway ID
-    const modulesByPathway: Record<number, any[]> = {};
-    modules.forEach(module => {
-      if (!modulesByPathway[module.pathwayId]) {
-        modulesByPathway[module.pathwayId] = [];
-      }
-      modulesByPathway[module.pathwayId].push(module);
-    });
-    
-    // Attach modules to their respective pathways
-    const pathwaysWithModules = publicPathways.map(pathway => ({
-      ...pathway,
-      modules: modulesByPathway[pathway.id] || [],
-    }));
-    
-    res.json(pathwaysWithModules);
+    // Include sample modules for each pathway
+    const enhancedPathways = await Promise.all(
+      publicPathways.map(async (pathway) => {
+        // Get pathway modules
+        const modules = await db
+          .execute(
+            `SELECT id, title FROM modules WHERE pathway_id = $1 ORDER BY position LIMIT 10`,
+            [pathway.id]
+          );
+
+        // Get enrollment count
+        const [enrollmentCount] = await db
+          .execute(
+            `SELECT COUNT(*) as count FROM user_pathways WHERE pathway_id = $1`,
+            [pathway.id]
+          );
+
+        // Calculate completion rate (simplified example)
+        const [completionData] = await db
+          .execute(
+            `SELECT AVG(progress) as avg_completion FROM user_pathways WHERE pathway_id = $1 AND progress > 0`,
+            [pathway.id]
+          );
+
+        // Extract tags from metadata or provide defaults
+        const tags = pathway.metadata?.tags || 
+          pathway.keywords?.split(',').map(p => p.trim()) || 
+          [pathway.category];
+
+        // Convert module data to TypeScript friendly format
+        const moduleList = modules.map(module => ({
+          id: module.id,
+          title: module.title
+        }));
+
+        // Author information (defaults to "Fundamenta Team" if not specified)
+        const authorId = pathway.createdBy || 'system';
+        const authorName = pathway.creatorName || 'Fundamenta Team';
+        const authorRole = pathway.metadata?.authorRole || 'Instructor';
+
+        return {
+          ...pathway,
+          modules: moduleList,
+          enrollmentCount: parseInt(enrollmentCount?.count || '0'),
+          completionRate: Math.round(parseFloat(completionData?.avg_completion || '0')),
+          estimatedHours: pathway.metadata?.estimatedHours || 
+            (pathway.difficulty === 'beginner' ? 2 : pathway.difficulty === 'intermediate' ? 4 : 6),
+          tags: Array.isArray(tags) ? tags : [tags],
+          rating: pathway.metadata?.rating || 4.5,
+          author: {
+            id: authorId,
+            name: authorName,
+            role: authorRole
+          }
+        };
+      })
+    );
+
+    res.json(enhancedPathways);
   } catch (error) {
     console.error('Error fetching public pathways:', error);
-    res.status(500).json({ message: 'Failed to fetch public pathways' });
+    res.status(500).json({ error: 'Failed to fetch public pathways' });
   }
 });
 
-// Save public pathway to my path
+// Save a public pathway to user's collection
 router.post('/api/pathways/save', requireUser, async (req: AuthenticatedRequest, res: Response) => {
+  const { pathwayId } = req.body;
+  const userId = req.user?.id;
+
+  if (!pathwayId) {
+    return res.status(400).json({ error: 'Pathway ID is required' });
+  }
+
   try {
-    const { pathwayId } = req.body;
-    const userId = req.user!.id;
-    
-    // Verify the pathway exists and is public
-    const [pathway] = await db.select()
-      .from(customPathways)
+    // Check if the pathway exists and is public
+    const [pathway] = await db
+      .select()
+      .from(pathways)
       .where(and(
-        eq(customPathways.id, pathwayId),
-        eq(customPathways.isPublic, true)
+        eq(pathways.id, pathwayId),
+        eq(pathways.isPublic, true)
       ));
-    
+
     if (!pathway) {
-      return res.status(404).json({ message: 'Pathway not found or not public' });
+      return res.status(404).json({ error: 'Public pathway not found' });
     }
-    
-    // Create a new assignment for the current user
-    const [assignment] = await db.insert({
-      pathwayId: pathwayId,
-      studentId: userId,
-      assignedBy: userId, // Self-assigned
-      status: 'assigned',
+
+    // Check if user already has this pathway
+    const [existingUserPathway] = await db
+      .select()
+      .from(userPathways)
+      .where(and(
+        eq(userPathways.userId, userId),
+        eq(userPathways.pathwayId, pathwayId)
+      ));
+
+    if (existingUserPathway) {
+      return res.status(200).json({ message: 'Pathway already in your collection' });
+    }
+
+    // Add pathway to user's collection
+    await db.insert(userPathways).values({
+      userId,
+      pathwayId,
       progress: 0,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
-    .returning();
-    
-    res.status(200).json({ 
-      message: 'Pathway saved successfully',
-      assignment 
+      lastAccessedAt: new Date(),
+      status: 'active'
     });
+
+    res.status(201).json({ message: 'Pathway added to your collection' });
   } catch (error) {
     console.error('Error saving pathway:', error);
-    res.status(500).json({ message: 'Failed to save pathway' });
+    res.status(500).json({ error: 'Failed to save pathway' });
   }
 });
 

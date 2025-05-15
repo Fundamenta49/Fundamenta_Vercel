@@ -39,6 +39,7 @@ import financeRoutes from './routes/finance';
 import poseImagesRoutes from './routes/pose-images';
 import workoutRoutes from './routes/workout';
 import pathwaysRoutes from './routes/pathways';
+import publicPathwaysRoutes from './routes/public-pathways';
 import studentRoutes from './routes/student';
 import assignmentsRoutes from './routes/assignments';
 import authRoutes from './auth/auth-routes';
@@ -1179,6 +1180,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register pathways routes for custom learning pathways
   app.use('/api/pathways', pathwaysRoutes);
+  
+  // Mount public pathways routes (direct mount as they have full paths)
+  app.use('/', publicPathwaysRoutes);
   
   // Register student routes for MyPath student interface
   app.use('/api/student', studentRoutes);
