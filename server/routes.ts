@@ -21,11 +21,14 @@ import cors from 'cors';
 import { errorHandler, notFoundHandler, rateLimitHandler } from './middleware/error-handler.js';
 import { ipRateLimiter, userRateLimiter, strictRateLimiter } from './utils/rate-limiter.js';
 
-// Bundle 5B Performance Imports
+// Comment out the Bundle 5B Performance Imports for now to let server start
+/*
+// Bundle 5B Performance Imports - these will be enabled after fixing mixed module issues
 import { cacheManager, CACHE_NAMESPACES } from './utils/cache-manager.js';
 import { cacheApiResponse, cacheUserApiResponse, cacheLearningPathResponse, cacheContentResponse, setBrowserCache } from './middleware/cache-middleware.js';
 import { performanceMonitorMiddleware, configurePerformanceMonitor, recordBootstrapComplete, recordFullyLoaded } from './utils/performance-monitor.js';
 import { initDatabaseOptimizations } from './db/optimizations.js';
+*/
 
 import resumeRoutes from './routes/resume';
 import learningRoutes from './routes/learning';
@@ -124,6 +127,8 @@ const messageSchema = z.object({
 import apiHealthMonitor from './services/api-health-monitor';
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Comment out performance optimizations for now
+  /*
   // Initialize performance monitoring
   console.log('[Performance] Initializing Bundle 5B performance optimizations...');
   configurePerformanceMonitor();
@@ -133,12 +138,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Record bootstrap completion
   recordBootstrapComplete();
+  */
   
-  // Setup middleware for security and performance
+  // Setup middleware for security
   app.use(cookieParser()); // For JWT cookies
   
+  /*
   // Bundle 5B: Apply performance monitoring middleware
   app.use(performanceMonitorMiddleware);
+  */
   
   // Register API health monitoring routes
   apiHealthMonitor.registerHealthRoutes(app);
@@ -196,16 +204,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Mount legal compliance routes (no caching for legal content)
   app.use('/api/legal', legalRoutes);
   
-  // Mount engagement engine routes (with short-lived user-specific caching)
-  app.use('/api/engagement', cacheUserApiResponse({ ttl: 60 }), engagementRoutes);
+  // Mount engagement engine routes
+  app.use('/api/engagement', engagementRoutes);
   
-  // Bundle 5B: Apply caching middleware to static content routes
-  app.use('/api/pathways', cacheLearningPathResponse(), pathwaysRoutes);
-  app.use('/api/learning', cacheLearningPathResponse(), learningRoutes);
-  app.use('/api/public-pathways', cacheApiResponse({
-    namespace: CACHE_NAMESPACES.CONTENT,
-    ttl: 30 * 60 // 30 minutes
-  }), publicPathwaysRoutes);
+  // Bundle 5B: Static content routes (caching temporarily disabled)
+  app.use('/api/pathways', pathwaysRoutes);
+  app.use('/api/learning', learningRoutes);
+  app.use('/api/public-pathways', publicPathwaysRoutes);
   app.post("/api/chat", async (req, res) => {
     try {
       // Enhanced debug logging to understand the incoming request better
@@ -1482,12 +1487,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Global error handler middleware
   app.use(errorHandler);
 
+  // Bundle 5B: Performance optimizations temporarily disabled
+  /* 
   // Apply browser cache headers to static assets
   app.use('/assets', setBrowserCache(24 * 60 * 60)); // 24 hours cache for static assets
   
   // Record full application load
   recordFullyLoaded();
-  console.log('[Performance] Server fully initialized with Bundle 5B performance optimizations');
+  */
+  console.log('[Server] Initialized successfully');
 
   // Return an HTTP server
   return createServer(app);
