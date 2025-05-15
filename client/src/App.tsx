@@ -19,6 +19,7 @@ import AnalyticsDashboard from "@/pages/mypath/analytics";
 import JungleHubView from "@/pages/mypath/jungle-hub";
 import ModulePage from "@/pages/mypath/pathway/module";
 import PublicPathwaysExplore from "@/pages/explore/pathways";
+import TestPage from "./pages/test-page";
 
 // Import cooking pages
 import CookingPage from "@/pages/cooking";
@@ -383,6 +384,9 @@ function Router() {
               <ProtectedRoute>
                 <MentalHealthProviders />
               </ProtectedRoute>
+            </Route>
+            <Route path="/test-page">
+              <TestPage />
             </Route>
             <Route path="/learning">
               <ProtectedRoute>
