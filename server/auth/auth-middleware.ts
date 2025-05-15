@@ -33,7 +33,7 @@ type User = {
 export interface AuthenticatedRequest extends Request {
   user?: User;
   userId?: number;
-  userRole?: string;
+  userRole?: string | null;
 }
 
 /**
@@ -120,7 +120,7 @@ export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, 
     
     // Set user object and role on the request
     req.user = user as User;
-    req.userRole = user.role;
+    req.userRole = user.role || '';
     
     next();
   } catch (error: any) {
@@ -143,10 +143,14 @@ export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, 
         req.userId = refreshDecoded.userId;
         
         // Fetch minimal user data
-        const user = await db.query.users.findFirst({
-          where: eq(users.id, refreshDecoded.userId),
-          columns: { id: true, role: true }
-        });
+        const user = await db.select({
+          id: schema.users.id,
+          role: schema.users.role
+        })
+        .from(schema.users)
+        .where(eq(schema.users.id, refreshDecoded.userId))
+        .limit(1)
+        .then(results => results[0]);
         
         if (!user) {
           throw new Error('User not found');
@@ -154,7 +158,7 @@ export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, 
         
         // Set user object and role on the request
         req.user = user as User;
-        req.userRole = user.role;
+        req.userRole = user.role || '';
         
         next();
       } catch (refreshError: any) {
