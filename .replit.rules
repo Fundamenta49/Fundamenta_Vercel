@@ -1,0 +1,68 @@
+# Fundamenta Coding Standards and Guidelines
+
+## Database Access Rules
+
+1. All database operations MUST be wrapped in try/catch blocks
+2. Input parameters MUST be validated before database operations
+3. Entity existence MUST be verified before establishing relationships
+4. Multi-step database operations MUST use transactions
+5. All queries returning multiple records MUST include a reasonable limit (max 100)
+6. Error messages MUST be descriptive and include operation context
+7. Custom error classes MUST be used for domain-specific errors
+
+## Type Safety Rules
+
+1. All function parameters MUST have explicit type annotations
+2. Parameters that can be undefined MUST be handled with null checks or optional chaining
+3. Database query results MUST be properly typed
+4. Type assertions MUST be avoided unless absolutely necessary
+5. Generic types MUST be used where appropriate for reusable components
+
+## Frontend Guidelines
+
+1. Forms MUST validate inputs using schema validation
+2. Asynchronous operations MUST display loading states
+3. All errors MUST be displayed to users with actionable guidance
+4. API responses MUST be properly typed using shared schema definitions
+
+## Security Rules
+
+1. User input MUST be validated before processing
+2. Sensitive data MUST never be logged or exposed in client-side code
+3. Authentication MUST be verified on all protected routes
+4. Database queries MUST use parameterized statements (no string concatenation)
+
+## Performance Rules
+
+1. Queries MUST be optimized to limit the amount of data retrieved
+2. Pagination MUST be implemented for lists with potentially large result sets
+3. Expensive operations SHOULD be cached where appropriate
+4. Component re-renders SHOULD be minimized using memoization techniques
+
+## Error Handling Pattern
+
+```
+try {
+  // Validate inputs
+  if (!isValid(input)) {
+    throw new ValidationError("Invalid input: " + input);
+  }
+  
+  // Verify entities exist
+  const entityExists = await getEntity(entityId);
+  if (!entityExists) {
+    throw new NotFoundError("Entity not found: " + entityId);
+  }
+  
+  // Perform operation
+  const result = await performOperation();
+  return result;
+} catch (error) {
+  // Re-throw domain errors
+  if (error instanceof ValidationError || error instanceof NotFoundError) {
+    throw error;
+  }
+  // Wrap generic errors
+  throw new Error(`Failed to complete operation: ${error.message}`);
+}
+```
