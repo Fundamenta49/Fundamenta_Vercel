@@ -1,27 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation } from 'wouter';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { 
   Calendar, 
   BookOpen, 
-  Award, 
   BarChart2, 
-  Clock, 
-  ArrowRight, 
-  CheckCircle2, 
-  AlertCircle, 
-  FileText,
-  ChevronRight
+  FileText
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
+import StudentAssignmentDashboard from '@/components/mypath/StudentAssignmentDashboard';
 
 // Type definitions
 interface PathwayModule {
@@ -91,7 +80,6 @@ interface Statistics {
 const StudentMyPath: React.FC = () => {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('assigned');
 
   // Fetch assigned pathways
   const assignedQuery = useQuery<Assignment[]>({
@@ -141,61 +129,6 @@ const StudentMyPath: React.FC = () => {
     }
   }, [assignedQuery.error, completedQuery.error, statisticsQuery.error, toast]);
 
-  // Format date string
-  const formatDate = (dateString: string | Date | null | undefined) => {
-    if (!dateString) return 'N/A';
-    return format(new Date(dateString), 'MMM d, yyyy');
-  };
-
-  // Get status badge
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'COMPLETED':
-        return <Badge className="bg-green-500">Completed</Badge>;
-      case 'IN_PROGRESS':
-        return <Badge className="bg-blue-500">In Progress</Badge>;
-      case 'NOT_STARTED':
-        return <Badge className="bg-gray-500">Not Started</Badge>;
-      case 'OVERDUE':
-        return <Badge className="bg-red-500">Overdue</Badge>;
-      default:
-        return <Badge>{status}</Badge>;
-    }
-  };
-
-  // Calculate days remaining if a deadline exists
-  const getDaysRemaining = (deadlineString: string | Date | null | undefined) => {
-    if (!deadlineString) return null;
-    
-    const deadline = new Date(deadlineString);
-    const today = new Date();
-    const diffTime = deadline.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    return diffDays;
-  };
-
-  // Get assignment status message
-  const getStatusMessage = (assignment: Assignment) => {
-    const daysRemaining = getDaysRemaining(assignment.deadline);
-    
-    if (assignment.status === 'COMPLETED') {
-      return `Completed on ${formatDate(assignment.completedAt)}`;
-    } else if (assignment.status === 'IN_PROGRESS') {
-      return daysRemaining && daysRemaining > 0
-        ? `${daysRemaining} days remaining`
-        : daysRemaining === 0
-        ? 'Due today'
-        : 'Overdue';
-    } else {
-      return daysRemaining && daysRemaining > 0
-        ? `Start by ${formatDate(assignment.deadline)}`
-        : daysRemaining === 0
-        ? 'Due today'
-        : 'Overdue';
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-center mb-8">
@@ -227,37 +160,16 @@ const StudentMyPath: React.FC = () => {
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="assigned">Assigned</TabsTrigger>
-          <TabsTrigger value="completed">Completed</TabsTrigger>
-          <TabsTrigger value="progress">My Progress</TabsTrigger>
-        </TabsList>
-
-        {/* Assigned Pathways Tab */}
-        <TabsContent value="assigned" className="mt-6">
-          <h2 className="text-xl font-semibold mb-4">Assigned Learning Paths</h2>
-          
-          {assignedQuery.isLoading && (
-            <>
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="mb-4">
-                  <CardHeader>
-                    <Skeleton className="h-6 w-48 mb-2" />
-                    <Skeleton className="h-4 w-24" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-4 w-full mb-4" />
-                    <Skeleton className="h-4 w-3/4 mb-4" />
-                    <Skeleton className="h-6 w-full mb-2" />
-                  </CardContent>
-                  <CardFooter>
-                    <Skeleton className="h-10 w-32" />
-                  </CardFooter>
-                </Card>
-              ))}
-            </>
-          )}
+      {/* Student Assignment Dashboard */}
+      <StudentAssignmentDashboard
+        assignedAssignments={assignedQuery.data}
+        completedAssignments={completedQuery.data}
+        isLoading={assignedQuery.isLoading || completedQuery.isLoading}
+        isError={!!assignedQuery.error || !!completedQuery.error}
+      />
+      
+      {/* Learning Statistics Section */}
+      {statisticsQuery.data && !statisticsQuery.isLoading && (
 
           {!assignedQuery.isLoading && assignedQuery.data && assignedQuery.data.length === 0 && (
             <Card>

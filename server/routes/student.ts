@@ -23,7 +23,7 @@ router.get('/assignments', authenticateJWT, requireUser, async (req: Authenticat
     const assignments = await db.query.assignedPathways.findMany({
       where: and(
         eq(assignedPathways.studentId, userId),
-        ne(assignedPathways.status, 'COMPLETED')
+        ne(assignedPathways.status, 'completed')
       ),
       orderBy: [
         desc(assignedPathways.createdAt),
@@ -40,7 +40,43 @@ router.get('/assignments', authenticateJWT, requireUser, async (req: Authenticat
       }
     });
     
-    res.json(assignments);
+    // Fetch module completion status for each assignment
+    const enhancedAssignments = await Promise.all(assignments.map(async (assignment) => {
+      // Get progress for each module
+      const moduleProgress = await db.query.learningProgress.findMany({
+        where: and(
+          eq(learningProgress.userId, userId),
+          eq(learningProgress.pathwayId, assignment.pathwayId.toString())
+        )
+      });
+      
+      // Add progress data to each module
+      const enhancedModules = assignment.pathway.modules.map(module => {
+        const progress = moduleProgress.find(p => p.moduleId === module.id.toString());
+        return {
+          ...module,
+          completed: progress?.completed || false,
+          lastAccessed: progress?.lastAccessedAt || null
+        };
+      });
+      
+      // Calculate overall progress based on completed modules
+      const totalModules = enhancedModules.length;
+      const completedModules = enhancedModules.filter(m => m.completed).length;
+      const progress = totalModules > 0 ? Math.round((completedModules / totalModules) * 100) : 0;
+      
+      // Update the assignment with the calculated progress
+      return {
+        ...assignment,
+        pathway: {
+          ...assignment.pathway,
+          modules: enhancedModules
+        },
+        progress
+      };
+    }));
+    
+    res.json(enhancedAssignments);
   } catch (error) {
     console.error('Error fetching student assignments:', error);
     res.status(500).json({ error: 'Failed to fetch assignments' });
@@ -58,7 +94,7 @@ router.get('/assignments/completed', authenticateJWT, requireUser, async (req: A
     const assignments = await db.query.assignedPathways.findMany({
       where: and(
         eq(assignedPathways.studentId, userId),
-        eq(assignedPathways.status, 'COMPLETED')
+        eq(assignedPathways.status, 'completed')
       ),
       orderBy: [
         desc(assignedPathways.completedAt),
@@ -75,7 +111,37 @@ router.get('/assignments/completed', authenticateJWT, requireUser, async (req: A
       }
     });
     
-    res.json(assignments);
+    // Fetch module completion status for each assignment
+    const enhancedAssignments = await Promise.all(assignments.map(async (assignment) => {
+      // Get progress for each module
+      const moduleProgress = await db.query.learningProgress.findMany({
+        where: and(
+          eq(learningProgress.userId, userId),
+          eq(learningProgress.pathwayId, assignment.pathwayId.toString())
+        )
+      });
+      
+      // Add progress data to each module
+      const enhancedModules = assignment.pathway.modules.map(module => {
+        const progress = moduleProgress.find(p => p.moduleId === module.id.toString());
+        return {
+          ...module,
+          completed: progress?.completed || false,
+          lastAccessed: progress?.lastAccessedAt || null
+        };
+      });
+      
+      return {
+        ...assignment,
+        pathway: {
+          ...assignment.pathway,
+          modules: enhancedModules
+        },
+        progress: 100 // Completed assignments are 100% by definition
+      };
+    }));
+    
+    res.json(enhancedAssignments);
   } catch (error) {
     console.error('Error fetching completed assignments:', error);
     res.status(500).json({ error: 'Failed to fetch completed assignments' });
@@ -391,7 +457,7 @@ router.post('/assignments/:id/rate', authenticateJWT, requireUser, async (req: A
       where: and(
         eq(assignedPathways.id, assignmentId),
         eq(assignedPathways.studentId, userId),
-        eq(assignedPathways.status, 'COMPLETED')
+        eq(assignedPathways.status, 'completed')
       )
     });
     
@@ -412,6 +478,177 @@ router.post('/assignments/:id/rate', authenticateJWT, requireUser, async (req: A
   } catch (error) {
     console.error('Error rating assignment:', error);
     res.status(500).json({ error: 'Failed to rate assignment' });
+  }
+});
+
+/**
+ * Update module completion status
+ */
+router.patch('/assignments/:assignmentId/modules/:moduleId', authenticateJWT, requireUser, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const assignmentId = parseInt(req.params.assignmentId);
+    const moduleId = parseInt(req.params.moduleId);
+    const userId = req.user.id;
+    const { completed } = req.body;
+    
+    if (isNaN(assignmentId) || isNaN(moduleId)) {
+      return res.status(400).json({ error: 'Invalid assignment ID or module ID' });
+    }
+    
+    if (typeof completed !== 'boolean') {
+      return res.status(400).json({ error: 'Completed status must be a boolean' });
+    }
+    
+    // Verify the assignment exists and belongs to this user
+    const assignment = await db.query.assignedPathways.findFirst({
+      where: and(
+        eq(assignedPathways.id, assignmentId),
+        eq(assignedPathways.studentId, userId)
+      ),
+      with: {
+        pathway: true
+      }
+    });
+    
+    if (!assignment) {
+      return res.status(404).json({ error: 'Assignment not found' });
+    }
+    
+    // Verify the module belongs to the pathway
+    const module = await db.query.customPathwayModules.findFirst({
+      where: and(
+        eq(customPathwayModules.id, moduleId),
+        eq(customPathwayModules.pathwayId, assignment.pathwayId)
+      )
+    });
+    
+    if (!module) {
+      return res.status(404).json({ error: 'Module not found in this pathway' });
+    }
+    
+    // Update or create progress record
+    const existingProgress = await db.query.learningProgress.findFirst({
+      where: and(
+        eq(learningProgress.userId, userId),
+        eq(learningProgress.pathwayId, assignment.pathwayId.toString()),
+        eq(learningProgress.moduleId, moduleId.toString())
+      )
+    });
+    
+    if (existingProgress) {
+      // Update existing record
+      await db
+        .update(learningProgress)
+        .set({
+          completed,
+          completedAt: completed ? new Date() : null,
+          lastAccessedAt: new Date(),
+          updatedAt: new Date()
+        })
+        .where(and(
+          eq(learningProgress.userId, userId),
+          eq(learningProgress.pathwayId, assignment.pathwayId.toString()),
+          eq(learningProgress.moduleId, moduleId.toString())
+        ));
+    } else {
+      // Create new progress record
+      await db.insert(learningProgress).values({
+        userId,
+        pathwayId: assignment.pathwayId.toString(),
+        moduleId: moduleId.toString(),
+        completed,
+        completedAt: completed ? new Date() : null,
+        lastAccessedAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+    }
+    
+    // Get all modules for this pathway
+    const allModules = await db.query.customPathwayModules.findMany({
+      where: eq(customPathwayModules.pathwayId, assignment.pathwayId)
+    });
+    
+    // Get all progress records for this pathway
+    const allProgress = await db.query.learningProgress.findMany({
+      where: and(
+        eq(learningProgress.userId, userId),
+        eq(learningProgress.pathwayId, assignment.pathwayId.toString())
+      )
+    });
+    
+    // Calculate progress percentage
+    const totalModules = allModules.length;
+    const completedModules = allProgress.filter(p => p.completed).length;
+    const progressPercentage = totalModules > 0 ? Math.round((completedModules / totalModules) * 100) : 0;
+    
+    // Update assignment status and progress
+    let status = assignment.status;
+    
+    // If this is the first completed module, update status to in_progress
+    if (completed && status === 'assigned' && completedModules > 0) {
+      status = 'in_progress';
+    }
+    
+    // If all modules are completed, update status to completed
+    if (completed && completedModules === totalModules) {
+      status = 'completed';
+    }
+    
+    await db
+      .update(assignedPathways)
+      .set({
+        status,
+        progress: progressPercentage,
+        startedAt: status !== 'assigned' && !assignment.startedAt ? new Date() : assignment.startedAt,
+        completedAt: status === 'completed' && !assignment.completedAt ? new Date() : assignment.completedAt,
+        updatedAt: new Date()
+      })
+      .where(eq(assignedPathways.id, assignmentId));
+    
+    // Return updated assignment data
+    const updatedAssignment = await db.query.assignedPathways.findFirst({
+      where: eq(assignedPathways.id, assignmentId),
+      with: {
+        pathway: {
+          with: {
+            modules: {
+              orderBy: [asc(customPathwayModules.order)]
+            }
+          }
+        }
+      }
+    });
+    
+    // Add module completion information
+    const moduleProgress = await db.query.learningProgress.findMany({
+      where: and(
+        eq(learningProgress.userId, userId),
+        eq(learningProgress.pathwayId, assignment.pathwayId.toString())
+      )
+    });
+    
+    const enhancedModules = updatedAssignment.pathway.modules.map(module => {
+      const progress = moduleProgress.find(p => p.moduleId === module.id.toString());
+      return {
+        ...module,
+        completed: progress?.completed || false,
+        lastAccessed: progress?.lastAccessedAt || null
+      };
+    });
+    
+    const result = {
+      ...updatedAssignment,
+      pathway: {
+        ...updatedAssignment.pathway,
+        modules: enhancedModules
+      }
+    };
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Error updating module completion:', error);
+    res.status(500).json({ error: 'Failed to update module completion' });
   }
 });
 
