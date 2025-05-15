@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useLocation } from 'wouter';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
+import { Button } from '@/components/ui/button';
+import { useQuery } from '@tanstack/react-query';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { queryClient } from '@/lib/queryClient';
 import { cn } from '@/lib/utils';
 import { useJungleTheme } from '@/jungle-path/contexts/JungleThemeContext';
 import { useToast } from '@/hooks/use-toast';
@@ -15,197 +15,294 @@ interface ModuleTransitionProps {
   children: React.ReactNode;
 }
 
+/**
+ * ModuleTransition provides navigation between modules with animated transitions.
+ * It fetches the pathway data to determine next/previous modules and handles
+ * the animation and navigation logic.
+ */
 export function ModuleTransition({ 
+  pathwayId,
+  currentModuleId,
+  children 
+}: ModuleTransitionProps) {
+  const [, navigate] = useLocation();
+  const { isJungleTheme } = useJungleTheme();
+  const { toast } = useToast();
+  const [direction, setDirection] = useState<'left' | 'right' | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
+  
+  // Fetch pathway data to get all modules
+  const { data: pathway } = useQuery({
+    queryKey: ['/api/pathways', pathwayId],
+    enabled: !!pathwayId,
+  });
+  
+  // Reset animation state when module changes
+  useEffect(() => {
+    setDirection(null);
+    setIsAnimating(false);
+  }, [currentModuleId]);
+  
+  // Helper to get next/previous module id
+  const getAdjacentModule = (direction: 'next' | 'prev'): string | null => {
+    if (!pathway?.modules || pathway.modules.length === 0) {
+      return null;
+    }
+    
+    // Find current module index
+    const currentIndex = pathway.modules.findIndex(m => m.id === currentModuleId);
+    if (currentIndex === -1) return null;
+    
+    // Return adjacent module id or null if at boundary
+    if (direction === 'next' && currentIndex < pathway.modules.length - 1) {
+      return pathway.modules[currentIndex + 1].id;
+    } else if (direction === 'prev' && currentIndex > 0) {
+      return pathway.modules[currentIndex - 1].id;
+    }
+    
+    return null;
+  };
+  
+  // Navigation handlers
+  const handleNextModule = () => {
+    const nextModuleId = getAdjacentModule('next');
+    if (!nextModuleId) {
+      toast({
+        title: "End of pathway",
+        description: "You've reached the last module in this pathway.",
+        variant: "default"
+      });
+      return;
+    }
+    
+    // Prefetch next module data
+    queryClient.prefetchQuery({
+      queryKey: ['/api/pathways/modules', pathwayId, nextModuleId],
+    });
+    
+    // Set animation direction and state
+    setDirection('left');
+    setIsAnimating(true);
+    
+    // Navigate after short delay to allow animation
+    setTimeout(() => {
+      navigate(`/mypath/pathway/${pathwayId}/module/${nextModuleId}`);
+    }, 300);
+  };
+  
+  const handlePrevModule = () => {
+    const prevModuleId = getAdjacentModule('prev');
+    if (!prevModuleId) {
+      toast({
+        title: "Start of pathway",
+        description: "You're at the first module in this pathway.",
+        variant: "default"
+      });
+      return;
+    }
+    
+    // Prefetch previous module data
+    queryClient.prefetchQuery({
+      queryKey: ['/api/pathways/modules', pathwayId, prevModuleId],
+    });
+    
+    // Set animation direction and state
+    setDirection('right');
+    setIsAnimating(true);
+    
+    // Navigate after short delay to allow animation
+    setTimeout(() => {
+      navigate(`/mypath/pathway/${pathwayId}/module/${prevModuleId}`);
+    }, 300);
+  };
+  
+  // Calculate if next/prev are available
+  const hasPrevious = !!getAdjacentModule('prev');
+  const hasNext = !!getAdjacentModule('next');
+  
+  // Animation variants
+  const variants = {
+    initial: (direction: 'left' | 'right' | null) => {
+      return {
+        x: direction === 'left' ? '100%' : direction === 'right' ? '-100%' : 0,
+        opacity: direction ? 0 : 1
+      };
+    },
+    animate: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        x: { type: 'spring', stiffness: 300, damping: 30 },
+        opacity: { duration: 0.2 }
+      }
+    },
+    exit: (direction: 'left' | 'right' | null) => {
+      return {
+        x: direction === 'left' ? '-100%' : direction === 'right' ? '100%' : 0,
+        opacity: 0,
+        transition: {
+          x: { type: 'spring', stiffness: 300, damping: 30 },
+          opacity: { duration: 0.2 }
+        }
+      };
+    }
+  };
+  
+  return (
+    <div className="relative overflow-hidden">
+      {/* Navigation controls */}
+      <div className={cn(
+        "flex justify-between mb-4",
+        isJungleTheme ? "text-green-300" : ""
+      )}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handlePrevModule}
+          disabled={!hasPrevious || isAnimating}
+          className={cn(
+            "flex items-center px-2", 
+            !hasPrevious && "opacity-50 cursor-not-allowed",
+            isJungleTheme ? "text-green-400 hover:text-green-300 hover:bg-green-900/30 disabled:text-green-900" : ""
+          )}
+        >
+          <ChevronLeft className="h-4 w-4 mr-1" />
+          Previous Module
+        </Button>
+        
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleNextModule}
+          disabled={!hasNext || isAnimating}
+          className={cn(
+            "flex items-center px-2",
+            !hasNext && "opacity-50 cursor-not-allowed",
+            isJungleTheme ? "text-green-400 hover:text-green-300 hover:bg-green-900/30 disabled:text-green-900" : ""
+          )}
+        >
+          Next Module
+          <ChevronRight className="h-4 w-4 ml-1" />
+        </Button>
+      </div>
+      
+      {/* Animated content */}
+      <AnimatePresence initial={false} custom={direction} mode="wait">
+        <motion.div
+          key={currentModuleId}
+          custom={direction}
+          variants={variants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          className="relative w-full"
+        >
+          {children}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/**
+ * SimpleModuleTransition offers a minimal module transition without animation,
+ * suitable for less complex layouts or where performance might be a concern.
+ */
+export function SimpleModuleTransition({ 
   pathwayId, 
   currentModuleId, 
   children 
 }: ModuleTransitionProps) {
   const [, navigate] = useLocation();
   const { isJungleTheme } = useJungleTheme();
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
   
-  // Get pathway data
+  // Fetch pathway data to get all modules
   const { data: pathway } = useQuery({
     queryKey: ['/api/pathways', pathwayId],
-    enabled: !!pathwayId
+    enabled: !!pathwayId,
   });
   
-  // Get user progress data
-  const { data: progressData } = useQuery({
-    queryKey: ['/api/pathways/progress', pathwayId],
-    enabled: !!pathwayId
-  });
-  
-  // Update progress mutation
-  const updateProgressMutation = useMutation({
-    mutationFn: (data: { pathwayId: string; moduleId: string; completed: boolean }) => {
-      return apiRequest('/api/pathways/progress', {
-        method: 'POST',
-        body: JSON.stringify(data)
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/pathways/progress'] });
-      toast({
-        title: "Progress saved",
-        description: "Your learning progress has been updated.",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Error saving progress",
-        description: "There was a problem updating your progress. Please try again.",
-        variant: "destructive"
-      });
-    }
-  });
-  
-  // Find current module index
-  const currentModuleIndex = React.useMemo(() => {
-    if (!pathway?.modules) return -1;
-    return pathway.modules.findIndex(m => m.id === currentModuleId);
-  }, [pathway, currentModuleId]);
-  
-  // Determine if current module is completed
-  const isCurrentModuleCompleted = React.useMemo(() => {
-    if (!progressData) return false;
-    return progressData.some(p => p.moduleId === currentModuleId && p.completed);
-  }, [progressData, currentModuleId]);
-  
-  // Get previous and next modules
-  const previousModule = React.useMemo(() => {
-    if (currentModuleIndex <= 0 || !pathway?.modules) return null;
-    return pathway.modules[currentModuleIndex - 1];
-  }, [pathway, currentModuleIndex]);
-  
-  const nextModule = React.useMemo(() => {
-    if (currentModuleIndex === -1 || !pathway?.modules || currentModuleIndex >= pathway.modules.length - 1) {
+  // Helper to get next/previous module id
+  const getAdjacentModule = (direction: 'next' | 'prev'): string | null => {
+    if (!pathway?.modules || pathway.modules.length === 0) {
       return null;
     }
-    return pathway.modules[currentModuleIndex + 1];
-  }, [pathway, currentModuleIndex]);
-  
-  // Handle marking the module as complete
-  const handleCompleteModule = () => {
-    updateProgressMutation.mutate({
-      pathwayId,
-      moduleId: currentModuleId,
-      completed: true
-    });
+    
+    // Find current module index
+    const currentIndex = pathway.modules.findIndex(m => m.id === currentModuleId);
+    if (currentIndex === -1) return null;
+    
+    // Return adjacent module id or null if at boundary
+    if (direction === 'next' && currentIndex < pathway.modules.length - 1) {
+      return pathway.modules[currentIndex + 1].id;
+    } else if (direction === 'prev' && currentIndex > 0) {
+      return pathway.modules[currentIndex - 1].id;
+    }
+    
+    return null;
   };
   
-  // Navigate to next or previous module
-  const navigateToModule = (moduleId: string) => {
-    navigate(`/mypath/pathway/${pathwayId}/module/${moduleId}`);
+  // Navigation handlers
+  const handleNextModule = () => {
+    const nextModuleId = getAdjacentModule('next');
+    if (nextModuleId) {
+      navigate(`/mypath/pathway/${pathwayId}/module/${nextModuleId}`);
+    }
   };
+  
+  const handlePrevModule = () => {
+    const prevModuleId = getAdjacentModule('prev');
+    if (prevModuleId) {
+      navigate(`/mypath/pathway/${pathwayId}/module/${prevModuleId}`);
+    }
+  };
+  
+  // Calculate if next/prev are available
+  const hasPrevious = !!getAdjacentModule('prev');
+  const hasNext = !!getAdjacentModule('next');
   
   return (
-    <div className="relative">
-      {/* Main content with animation */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentModuleId}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          {children}
-        </motion.div>
-      </AnimatePresence>
-      
-      {/* Navigation footer */}
+    <div>
+      {/* Navigation controls */}
       <div className={cn(
-        "mt-8 py-4 border-t flex justify-between items-center",
-        isJungleTheme ? "border-[#3A5A4E]" : "border-gray-200"
+        "flex justify-between mb-4",
+        isJungleTheme ? "text-green-300" : ""
       )}>
-        {/* Previous button */}
-        <div>
-          {previousModule && (
-            <Button
-              variant="outline"
-              size="sm"
-              className={cn(
-                "flex items-center gap-2",
-                isJungleTheme ? "border-[#3A5A4E] text-[#94C973]" : ""
-              )}
-              onClick={() => navigateToModule(previousModule.id)}
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Previous Module
-            </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handlePrevModule}
+          disabled={!hasPrevious}
+          className={cn(
+            "flex items-center px-2", 
+            !hasPrevious && "opacity-50 cursor-not-allowed",
+            isJungleTheme ? "text-green-400 hover:text-green-300 hover:bg-green-900/30 disabled:text-green-900" : ""
           )}
-        </div>
+        >
+          <ChevronLeft className="h-4 w-4 mr-1" />
+          Previous
+        </Button>
         
-        {/* Center - Complete button */}
-        <div>
-          {!isCurrentModuleCompleted ? (
-            <Button
-              variant="default"
-              className={cn(
-                "flex items-center gap-2",
-                updateProgressMutation.isPending ? "opacity-70 cursor-not-allowed" : "",
-                isJungleTheme ? "bg-[#5BAD5B] text-white hover:bg-[#4A9C4A]" : ""
-              )}
-              onClick={handleCompleteModule}
-              disabled={updateProgressMutation.isPending}
-            >
-              <CheckCircle className="h-4 w-4" />
-              {updateProgressMutation.isPending ? "Saving..." : "Mark Complete"}
-            </Button>
-          ) : (
-            <div className={cn(
-              "flex items-center px-3 py-1.5 rounded-md text-sm",
-              isJungleTheme ? "bg-[#1E3A29] text-[#94C973]" : "bg-green-50 text-green-700"
-            )}>
-              <CheckCircle className="h-4 w-4 mr-2" />
-              Completed
-            </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleNextModule}
+          disabled={!hasNext}
+          className={cn(
+            "flex items-center px-2",
+            !hasNext && "opacity-50 cursor-not-allowed",
+            isJungleTheme ? "text-green-400 hover:text-green-300 hover:bg-green-900/30 disabled:text-green-900" : ""
           )}
-        </div>
-        
-        {/* Next button */}
-        <div>
-          {nextModule && (
-            <Button
-              variant={isCurrentModuleCompleted ? "default" : "outline"}
-              size="sm"
-              className={cn(
-                "flex items-center gap-2",
-                !isCurrentModuleCompleted && isJungleTheme ? "border-[#3A5A4E] text-[#94C973]" : ""
-              )}
-              onClick={() => navigateToModule(nextModule.id)}
-            >
-              Next Module
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
+        >
+          Next
+          <ChevronRight className="h-4 w-4 ml-1" />
+        </Button>
+      </div>
+      
+      {/* Content */}
+      <div>
+        {children}
       </div>
     </div>
-  );
-}
-
-// Simplified version for when we just need transitions without the navigation controls
-export function SimpleModuleTransition({ 
-  children, 
-  transitionKey 
-}: { 
-  children: React.ReactNode; 
-  transitionKey: string;
-}) {
-  return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={transitionKey}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.2 }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
   );
 }

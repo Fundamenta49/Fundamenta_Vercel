@@ -529,6 +529,11 @@ function Router() {
                 <JungleHubView />
               </ProtectedRoute>
             </Route>
+            <Route path="/mypath/pathway/:pathwayId/module/:moduleId">
+              <ProtectedRoute>
+                <ModulePage />
+              </ProtectedRoute>
+            </Route>
             <Route path="/explore/pathways">
               <ProtectedRoute>
                 <PublicPathwaysExplore />

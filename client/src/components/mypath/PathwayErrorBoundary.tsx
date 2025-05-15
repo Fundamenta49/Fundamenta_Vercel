@@ -1,8 +1,7 @@
 import React, { Component, ErrorInfo, PropsWithChildren } from 'react';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { AlertCircle, RefreshCcw, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useLocation } from 'wouter';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -18,11 +17,17 @@ interface ErrorBoundaryProps extends PropsWithChildren {
   errorType?: 'load' | 'navigation' | 'data' | 'unknown';
 }
 
-// This component will catch errors in the component tree
+/**
+ * PathwayErrorBoundary is a class component that catches JavaScript errors anywhere in its child component tree,
+ * logs those errors, and displays a fallback UI instead of the component tree that crashed.
+ * 
+ * This implementation is designed specifically for the Pathway feature to provide contextual error handling
+ * with appropriate recovery options based on the error type.
+ */
 class PathwayErrorBoundaryClass extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { 
+    this.state = {
       hasError: false,
       errorType: props.errorType || 'unknown'
     };
@@ -39,137 +44,166 @@ class PathwayErrorBoundaryClass extends Component<ErrorBoundaryProps, ErrorBound
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // Log the error to an error reporting service
-    console.error("Pathway component error:", error, errorInfo);
+    console.error('Pathway error boundary caught an error:', error, errorInfo);
     
     // Call the onError callback if provided
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
     
-    // Update state with error details
     this.setState({
-      error,
       errorInfo,
+      errorType: this.props.errorType || 'unknown'
     });
   }
 
   resetError = (): void => {
-    // Reset the error state
-    this.setState({ 
+    // Reset error state
+    this.setState({
       hasError: false,
       error: undefined,
       errorInfo: undefined
     });
     
-    // Call resetQuery if provided (for React Query errors)
+    // Reset query if callback provided
     if (this.props.resetQuery) {
       this.props.resetQuery();
     }
-  }
+  };
 
   render() {
-    // If there's an error, render the error UI
     if (this.state.hasError) {
-      // If a custom fallback is provided, use it
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
-      
-      // Otherwise, use our default error UI
-      return <PathwayErrorFallback 
-        error={this.state.error} 
-        resetError={this.resetError}
-        errorType={this.state.errorType}
-      />;
+      // Render custom fallback UI
+      return this.props.fallback || (
+        <PathwayErrorFallback 
+          error={this.state.error} 
+          resetError={this.resetError} 
+          errorType={this.state.errorType}
+        />
+      );
     }
 
-    // If there's no error, render the children
+    // When there's no error, render children normally
     return this.props.children;
   }
 }
 
-// Props for the error fallback component
 interface ErrorFallbackProps {
   error?: Error;
   resetError: () => void;
   errorType: 'load' | 'navigation' | 'data' | 'unknown';
 }
 
-// The fallback UI component that displays when an error occurs
+/**
+ * Provides a contextual error display with appropriate recovery options based on the error type.
+ */
 function PathwayErrorFallback({ error, resetError, errorType }: ErrorFallbackProps) {
-  const [, navigate] = useLocation();
-  
-  const getErrorMessage = (): string => {
+  const getErrorMessage = () => {
     switch (errorType) {
       case 'load':
-        return "We couldn't load your pathway content. This might be due to network issues or the content is temporarily unavailable.";
+        return {
+          title: 'Failed to load pathway content',
+          description: 'We could not load the learning pathway. This might be due to a network issue or the content may be temporarily unavailable.',
+          primaryAction: { label: 'Try Again', icon: <RefreshCcw className="h-4 w-4 mr-2" /> },
+          secondaryAction: { label: 'Go Back', icon: <ArrowLeft className="h-4 w-4 mr-2" /> }
+        };
       case 'navigation':
-        return "We encountered a problem while navigating between modules. Your progress has been saved.";
+        return {
+          title: 'Navigation Error',
+          description: 'We encountered a problem while trying to navigate to the requested content. The page or content may not exist or you may not have access to it.',
+          primaryAction: { label: 'Go to Dashboard', icon: <ArrowLeft className="h-4 w-4 mr-2" /> },
+          secondaryAction: { label: 'Try Again', icon: <RefreshCcw className="h-4 w-4 mr-2" /> }
+        };
       case 'data':
-        return "There was an issue with the pathway data. Your progress has been saved and we're working to resolve this.";
-      case 'unknown':
+        return {
+          title: 'Data Loading Error',
+          description: 'There was a problem loading the data for this pathway. This could be due to a network issue or a problem with the data source.',
+          primaryAction: { label: 'Refresh Data', icon: <RefreshCcw className="h-4 w-4 mr-2" /> },
+          secondaryAction: { label: 'Go Back', icon: <ArrowLeft className="h-4 w-4 mr-2" /> }
+        };
       default:
-        return "Something unexpected happened while using the learning pathway. Your progress has been saved.";
+        return {
+          title: 'Something went wrong',
+          description: 'We encountered an unexpected error. Our team has been notified and is working on a fix.',
+          primaryAction: { label: 'Try Again', icon: <RefreshCcw className="h-4 w-4 mr-2" /> },
+          secondaryAction: { label: 'Go Back', icon: <ArrowLeft className="h-4 w-4 mr-2" /> }
+        };
     }
   };
+
+  const errorContent = getErrorMessage();
   
   return (
-    <Card className="w-full max-w-md mx-auto shadow-lg border-red-100">
-      <CardHeader className="bg-red-50 text-red-800">
-        <div className="flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5" />
-          <CardTitle className="text-lg">Pathway Error</CardTitle>
-        </div>
-      </CardHeader>
+    <Card className="border-red-200 bg-red-50 shadow-sm">
       <CardContent className="pt-6">
-        <p className="mb-4">{getErrorMessage()}</p>
-        
-        {error && (
-          <div className="text-sm bg-gray-50 p-3 rounded border border-gray-200 mb-4 overflow-auto">
-            <p className="font-mono text-red-600">{error.message}</p>
+        <div className="flex flex-col items-center text-center p-4">
+          <div className="bg-red-100 p-3 rounded-full mb-4">
+            <AlertCircle className="h-6 w-6 text-red-600" />
           </div>
-        )}
-        
-        <p className="text-sm text-gray-600">
-          If this problem persists, please contact support for assistance.
-        </p>
+          <h3 className="text-lg font-medium text-red-800 mb-2">
+            {errorContent.title}
+          </h3>
+          <p className="text-red-600 mb-4 max-w-md">
+            {errorContent.description}
+          </p>
+          
+          {error && (
+            <div className="bg-white p-3 rounded border border-red-100 mb-4 w-full overflow-auto max-h-24 text-left">
+              <p className="text-xs text-gray-700 font-mono">
+                {error.toString()}
+              </p>
+            </div>
+          )}
+          
+          <div className="flex gap-3 mt-2">
+            <Button 
+              onClick={resetError} 
+              variant="default" 
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {errorContent.primaryAction.icon}
+              {errorContent.primaryAction.label}
+            </Button>
+            <Button 
+              onClick={() => window.history.back()} 
+              variant="outline" 
+              className="border-red-200 text-red-700 hover:bg-red-50"
+            >
+              {errorContent.secondaryAction.icon}
+              {errorContent.secondaryAction.label}
+            </Button>
+          </div>
+        </div>
       </CardContent>
-      <CardFooter className="flex justify-between bg-gray-50">
-        <Button 
-          variant="outline" 
-          onClick={() => navigate('/mypath')}
-          className="flex items-center gap-2"
-        >
-          <Home className="h-4 w-4" />
-          Return to MyPath
-        </Button>
-        
-        <Button 
-          onClick={resetError}
-          className="flex items-center gap-2"
-        >
-          <RefreshCw className="h-4 w-4" />
-          Try Again
-        </Button>
-      </CardFooter>
     </Card>
   );
 }
 
-// High-level component that combines the class component with React hooks
+/**
+ * Main export - A functional component wrapper around the class component.
+ * This makes it easier to use and more consistent with modern React patterns.
+ */
 export function PathwayErrorBoundary(props: ErrorBoundaryProps) {
   return <PathwayErrorBoundaryClass {...props} />;
 }
 
-// Specialized error components for different error types
+/**
+ * Specialized error boundary for content loading errors.
+ */
 export function PathwayLoadErrorBoundary(props: Omit<ErrorBoundaryProps, 'errorType'>) {
   return <PathwayErrorBoundary {...props} errorType="load" />;
 }
 
+/**
+ * Specialized error boundary for navigation errors.
+ */
 export function PathwayNavigationErrorBoundary(props: Omit<ErrorBoundaryProps, 'errorType'>) {
   return <PathwayErrorBoundary {...props} errorType="navigation" />;
 }
 
+/**
+ * Specialized error boundary for data loading errors.
+ */
 export function PathwayDataErrorBoundary(props: Omit<ErrorBoundaryProps, 'errorType'>) {
   return <PathwayErrorBoundary {...props} errorType="data" />;
 }

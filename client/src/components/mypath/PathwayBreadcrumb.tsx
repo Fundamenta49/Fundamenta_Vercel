@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
-import { ChevronRight, Home, FileText, Folder, BookOpen } from 'lucide-react';
-import { Link, useLocation } from 'wouter';
+import React from 'react';
+import { useLocation } from 'wouter';
+import { ChevronRight, Home, BookOpen, FileText, Hash } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -14,156 +14,174 @@ interface PathwayBreadcrumbProps {
   className?: string;
 }
 
+/**
+ * PathwayBreadcrumb provides hierarchical navigation for the learning pathways.
+ * It displays the current location within the learning path hierarchy and allows
+ * users to navigate back to previous levels.
+ */
 export function PathwayBreadcrumb({
   pathwayId,
   moduleId,
   lessonId,
   showIcons = true,
-  className
+  className,
 }: PathwayBreadcrumbProps) {
-  const [location] = useLocation();
+  const [, navigate] = useLocation();
   const { isJungleTheme } = useJungleTheme();
   
-  // Fetch pathway data for the breadcrumb
-  const { data: pathway, isLoading } = useQuery({
+  // Fetch pathway data
+  const { data: pathway, isLoading: isPathwayLoading } = useQuery({
     queryKey: ['/api/pathways', pathwayId],
-    enabled: !!pathwayId
+    enabled: !!pathwayId,
   });
   
-  // Fetch module data if needed
-  const { data: module } = useQuery({
+  // Fetch module data if moduleId is provided
+  const { data: module, isLoading: isModuleLoading } = useQuery({
     queryKey: ['/api/pathways/modules', pathwayId, moduleId],
-    enabled: !!moduleId
+    enabled: !!pathwayId && !!moduleId,
   });
   
-  // Only show breadcrumb if we're on a pathway page
-  const showBreadcrumb = useMemo(() => {
-    return location.includes('/mypath') || 
-           location.includes('/learning') || 
-           location.includes('/pathways');
-  }, [location]);
-  
-  // If we're not on a relevant page, don't show the breadcrumb
-  if (!showBreadcrumb) return null;
-  
-  // If we're loading pathway data, show a simplified breadcrumb
-  if (isLoading) {
-    return (
-      <nav className={cn(
-        "flex items-center mb-4 text-sm px-1 py-2 bg-gray-50 rounded",
-        isJungleTheme ? "bg-[#0D1D18] text-[#94C973]" : "", 
-        className
-      )}>
-        <Link href="/mypath">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 flex items-center gap-1 hover:bg-gray-200"
-          >
-            <Home className="h-3.5 w-3.5" />
-            <span>MyPath</span>
-          </Button>
-        </Link>
-        <ChevronRight className="h-4 w-4 mx-1 text-gray-400" />
-        <span className="animate-pulse bg-gray-200 rounded h-4 w-20"></span>
-      </nav>
-    );
-  }
-  
-  // Construct breadcrumb items
-  const breadcrumbItems = [];
-  
-  // Always add the MyPath home
-  breadcrumbItems.push({
-    label: 'MyPath',
-    href: '/mypath',
-    icon: <Home className={cn("h-3.5 w-3.5", showIcons ? "" : "hidden")} />
+  // Fetch lesson data if lessonId is provided
+  const { data: lesson, isLoading: isLessonLoading } = useQuery({
+    queryKey: ['/api/pathways/lessons', pathwayId, moduleId, lessonId],
+    enabled: !!pathwayId && !!moduleId && !!lessonId,
   });
   
-  // Add pathway if available
-  if (pathway) {
-    breadcrumbItems.push({
-      label: pathway.title,
-      href: `/mypath/pathway/${pathwayId}`,
-      icon: <Folder className={cn("h-3.5 w-3.5", showIcons ? "" : "hidden")} />
-    });
-  }
+  // Navigation handlers
+  const handlePathwayClick = () => {
+    navigate(`/mypath/pathway/${pathwayId}`);
+  };
   
-  // Add module if available
-  if (module && moduleId) {
-    breadcrumbItems.push({
-      label: module.title,
-      href: `/mypath/pathway/${pathwayId}/module/${moduleId}`,
-      icon: <FileText className={cn("h-3.5 w-3.5", showIcons ? "" : "hidden")} />
-    });
-  }
-  
-  // Add lesson if available
-  if (lessonId && module) {
-    const lesson = module.lessons?.find(l => l.id === lessonId);
-    if (lesson) {
-      breadcrumbItems.push({
-        label: lesson.title,
-        href: `/mypath/pathway/${pathwayId}/module/${moduleId}/lesson/${lessonId}`,
-        icon: <BookOpen className={cn("h-3.5 w-3.5", showIcons ? "" : "hidden")} />
-      });
+  const handleModuleClick = () => {
+    if (moduleId) {
+      navigate(`/mypath/pathway/${pathwayId}/module/${moduleId}`);
     }
-  }
+  };
+  
+  const handleDashboardClick = () => {
+    navigate('/mypath');
+  };
+  
+  // Style classes
+  const breadcrumbClass = cn(
+    "flex items-center text-sm overflow-x-auto scrollbar-hide py-2",
+    isJungleTheme ? "text-green-200" : "text-slate-600",
+    className
+  );
+  
+  const chevronClass = cn(
+    "mx-1 h-3 w-3 flex-shrink-0",
+    isJungleTheme ? "text-green-700" : "text-slate-400"
+  );
+  
+  const linkClass = cn(
+    "hover:underline cursor-pointer flex-shrink-0 flex items-center",
+    isJungleTheme ? "hover:text-green-100" : "hover:text-slate-900"
+  );
+  
+  const currentItemClass = cn(
+    "font-semibold truncate max-w-[200px] sm:max-w-xs",
+    isJungleTheme ? "text-white" : "text-slate-900"
+  );
+  
+  const iconClass = cn(
+    "mr-1 h-3.5 w-3.5",
+    isJungleTheme ? "text-green-500" : "text-slate-500"
+  );
   
   return (
-    <nav 
-      className={cn(
-        "flex items-center flex-wrap mb-4 text-sm px-1 py-2 bg-gray-50 rounded",
-        isJungleTheme ? "bg-[#0D1D18] text-[#94C973]" : "",
-        className
+    <nav aria-label="Breadcrumb" className={breadcrumbClass}>
+      {/* Dashboard link */}
+      <span className={linkClass} onClick={handleDashboardClick}>
+        {showIcons && <Home className={iconClass} />}
+        Pathways
+      </span>
+      
+      <ChevronRight className={chevronClass} />
+      
+      {/* Pathway link/current */}
+      {moduleId ? (
+        <span className={linkClass} onClick={handlePathwayClick}>
+          {showIcons && <BookOpen className={iconClass} />}
+          {isPathwayLoading ? "Loading..." : pathway?.title || "Pathway"}
+        </span>
+      ) : (
+        <span className={currentItemClass}>
+          {showIcons && <BookOpen className={iconClass} />}
+          {isPathwayLoading ? "Loading..." : pathway?.title || "Pathway"}
+        </span>
       )}
-      aria-label="Breadcrumb"
-    >
-      {breadcrumbItems.map((item, index) => (
-        <React.Fragment key={item.href}>
-          {index > 0 && (
-            <ChevronRight 
-              className={cn(
-                "h-4 w-4 mx-1", 
-                isJungleTheme ? "text-[#3A5A4E]" : "text-gray-400"
-              )} 
-            />
-          )}
-          
-          {index === breadcrumbItems.length - 1 ? (
-            // Current item (not clickable)
-            <div className={cn(
-              "flex items-center gap-1 px-2 py-1 rounded font-medium",
-              isJungleTheme ? "bg-[#1E2F28] text-white" : "bg-gray-100"
-            )}>
-              {item.icon}
-              <span className="truncate max-w-[200px]">{item.label}</span>
-            </div>
+      
+      {/* Module link/current (if applicable) */}
+      {moduleId && (
+        <>
+          <ChevronRight className={chevronClass} />
+          {lessonId ? (
+            <span className={linkClass} onClick={handleModuleClick}>
+              {showIcons && <Hash className={iconClass} />}
+              {isModuleLoading ? "Loading..." : module?.title || "Module"}
+            </span>
           ) : (
-            // Navigate items
-            <Link href={item.href}>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className={cn(
-                  "h-8 flex items-center gap-1",
-                  isJungleTheme 
-                    ? "hover:bg-[#1E2F28] text-[#94C973]" 
-                    : "hover:bg-gray-200"
-                )}
-              >
-                {item.icon}
-                <span className="truncate max-w-[150px]">{item.label}</span>
-              </Button>
-            </Link>
+            <span className={currentItemClass}>
+              {showIcons && <Hash className={iconClass} />}
+              {isModuleLoading ? "Loading..." : module?.title || "Module"}
+            </span>
           )}
-        </React.Fragment>
-      ))}
+        </>
+      )}
+      
+      {/* Lesson current (if applicable) */}
+      {lessonId && (
+        <>
+          <ChevronRight className={chevronClass} />
+          <span className={currentItemClass}>
+            {showIcons && <FileText className={iconClass} />}
+            {isLessonLoading ? "Loading..." : lesson?.title || "Lesson"}
+          </span>
+        </>
+      )}
     </nav>
   );
 }
 
-// Helper component for simplified usage with just a pathway ID
+/**
+ * SimplePathwayBreadcrumb is a minimalistic version of the breadcrumb
+ * showing only the pathway name with a back button.
+ */
 export function SimplePathwayBreadcrumb({ pathwayId }: { pathwayId: string }) {
-  return <PathwayBreadcrumb pathwayId={pathwayId} showIcons={false} />;
+  const [, navigate] = useLocation();
+  const { isJungleTheme } = useJungleTheme();
+  
+  // Fetch pathway data
+  const { data: pathway } = useQuery({
+    queryKey: ['/api/pathways', pathwayId],
+    enabled: !!pathwayId,
+  });
+  
+  return (
+    <div className={cn(
+      "flex items-center mb-4",
+      isJungleTheme ? "text-green-200" : "text-slate-700"
+    )}>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => navigate('/mypath')}
+        className={cn(
+          "mr-2 px-2",
+          isJungleTheme ? "text-green-400 hover:text-green-300 hover:bg-green-900/30" : ""
+        )}
+      >
+        <ChevronRight className="h-4 w-4 rotate-180" />
+        <span className="ml-1">Back</span>
+      </Button>
+      
+      <h2 className={cn(
+        "text-lg font-medium truncate",
+        isJungleTheme ? "text-white" : ""
+      )}>
+        {pathway?.title || "Learning Pathway"}
+      </h2>
+    </div>
+  );
 }
