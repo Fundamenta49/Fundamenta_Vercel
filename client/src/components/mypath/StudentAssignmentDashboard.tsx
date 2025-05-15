@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/hooks/use-toast';
-import { queryClient } from '@/lib/queryClient';
-import { apiRequest } from '@/lib/queryClient';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../ui/card';
+import { Button } from '../ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Progress } from '../ui/progress';
+import { Badge } from '../ui/badge';
+import { Checkbox } from '../ui/checkbox';
+import { Skeleton } from '../ui/skeleton';
+import { Separator } from '../ui/separator';
+import { useToast } from '../../hooks/use-toast';
+import { queryClient } from '../../lib/queryClient';
+import { apiRequest } from '../../lib/queryClient';
 import { 
   ArrowRight, 
   Clock, 

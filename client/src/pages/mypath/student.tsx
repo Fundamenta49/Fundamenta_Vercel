@@ -1,16 +1,16 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation } from 'wouter';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
 import { 
   Calendar, 
   BookOpen, 
   BarChart2, 
   FileText
 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import StudentAssignmentDashboard from '@/components/mypath/StudentAssignmentDashboard';
+import { useToast } from '../../hooks/use-toast';
+import StudentAssignmentDashboard from '../../components/mypath/StudentAssignmentDashboard';
 
 // Type definitions
 interface PathwayModule {
