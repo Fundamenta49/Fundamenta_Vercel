@@ -69,6 +69,37 @@ export interface IStorage {
   getUserAchievements(userId: number): Promise<UserAchievement[]>;
   addUserAchievement(achievement: InsertUserAchievement): Promise<UserAchievement>;
   getStreak(userId: number): Promise<number>;
+  
+  // Analytics methods
+  getMentorAnalytics(mentorId: number): Promise<{
+    totalStudents: number;
+    totalPathways: number;
+    pathwayCompletionRate: number;
+    studentEngagementStats: {
+      activeStudents: number;
+      inactiveStudents: number; 
+      averageStudentStreak: number;
+    };
+    recentAssignments: AssignedPathway[];
+  }>;
+  
+  getStudentAnalytics(studentId: number): Promise<{
+    totalAssignments: number;
+    completedAssignments: number;
+    inProgressAssignments: number;
+    totalPoints: number;
+    currentStreak: number;
+    completionRate: number;
+    activityTimeline: UserActivity[];
+  }>;
+  
+  getPathwayAnalytics(pathwayId: number): Promise<{
+    totalAssigned: number;
+    totalCompleted: number;
+    totalInProgress: number;
+    averageCompletionTime: number; // in days
+    completionRate: number;
+  }>;
 }
 
 // Import from the DatabaseStorage implementation
