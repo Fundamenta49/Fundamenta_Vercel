@@ -19,7 +19,8 @@ import {
   User,
   Edit,
   SunMoon,
-  Palette
+  Palette,
+  Palmtree
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -35,6 +36,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Slider } from "@/components/ui/slider";
+import JungleModeToggle from "@/components/settings/JungleModeToggle";
 
 // Add CSS to fix any dropdown menu issues
 import '@/components/account-settings-fixes.css';
@@ -558,6 +560,13 @@ export function AccountSettings() {
                 </TabsContent>
                 
                 <TabsContent value="display" className="space-y-4">
+                  {/* Jungle Mode Toggle Card */}
+                  <JungleModeToggle 
+                    className={cn(
+                      isJungleTheme && "bg-[#162E26] border-[#94C973] text-white"
+                    )}
+                  />
+                  
                   <Card className={cn(
                     "border",
                     isJungleTheme && "bg-[#162E26] border-[#94C973]"

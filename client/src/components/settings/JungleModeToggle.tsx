@@ -1,70 +1,73 @@
-import React, { useEffect, useState } from 'react';
-import { Switch } from '@/components/ui/switch';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Palmtree } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import React, { useState, useEffect } from 'react';
+import { Switch } from "@/components/ui/switch";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Palmtree } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useJungleTheme } from "@/jungle-path/contexts/JungleThemeContext";
+import { cn } from "@/lib/utils";
 
 interface JungleModeToggleProps {
   className?: string;
 }
 
 export default function JungleModeToggle({ className }: JungleModeToggleProps) {
-  // Get jungle mode state from localStorage, default to false
-  const [enabled, setEnabled] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      const savedPreference = localStorage.getItem('jungleMode');
-      return savedPreference === 'true';
-    }
-    return false;
-  });
-  
+  const { isJungleTheme, toggleJungleTheme } = useJungleTheme();
   const { toast } = useToast();
-
-  // Update localStorage when toggle changes
-  useEffect(() => {
-    localStorage.setItem('jungleMode', enabled.toString());
-  }, [enabled]);
 
   // Handle toggle change
   const handleToggleChange = (checked: boolean) => {
-    setEnabled(checked);
+    toggleJungleTheme();
     
-    // Show toast notification
     toast({
-      title: checked ? "Jungle Mode Activated!" : "Jungle Mode Deactivated",
+      title: checked ? "Jungle Mode Activated! 🌴" : "Jungle Mode Deactivated",
       description: checked 
-        ? "Your learning experience is now jungle-themed. Explore your jungle expedition!" 
-        : "Reverted to standard view. You can enable Jungle Mode again at any time.",
-      duration: 3000,
+        ? "Get ready for an immersive jungle learning adventure!" 
+        : "Returning to standard learning experience.",
+      variant: checked ? "default" : "destructive",
     });
+    
+    // Save preference to localStorage
+    localStorage.setItem('jungle_mode_enabled', String(checked));
   };
 
+  // Load saved preference on initial render
+  useEffect(() => {
+    const savedPreference = localStorage.getItem('jungle_mode_enabled') === 'true';
+    if (savedPreference !== isJungleTheme) {
+      toggleJungleTheme();
+    }
+  }, []);
+
   return (
-    <Card className={className}>
-      <CardHeader className="pb-3">
+    <Card className={cn("border", className)}>
+      <CardContent className="pt-6 pb-4">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">Jungle Mode</CardTitle>
-          <Palmtree className={`h-5 w-5 ${enabled ? 'text-green-600' : 'text-muted-foreground'}`} />
-        </div>
-        <CardDescription>
-          Transform your learning experience into a jungle-themed adventure.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center justify-between space-x-2">
-          <Label htmlFor="jungle-mode" className="flex flex-col space-y-1">
-            <span>{enabled ? 'Jungle Mode Enabled' : 'Regular Mode'}</span>
-            <span className="text-xs text-muted-foreground">
-              {enabled 
-                ? 'Explore learning pathways as jungle expeditions' 
-                : 'Switch to enable the immersive jungle theme'}
-            </span>
-          </Label>
+          <div className="flex items-center space-x-3">
+            <Palmtree className={cn(
+              "h-5 w-5",
+              isJungleTheme ? "text-[#94C973]" : "text-gray-500"
+            )} />
+            <div className="space-y-1">
+              <Label 
+                htmlFor="jungle-mode-toggle"
+                className={isJungleTheme ? "text-[#E6B933]" : ""}
+              >
+                Jungle Mode
+              </Label>
+              <p className={cn(
+                "text-xs text-muted-foreground",
+                isJungleTheme && "text-[#94C973]"
+              )}>
+                Transform your learning experience into a jungle adventure
+              </p>
+            </div>
+          </div>
           <Switch
-            id="jungle-mode"
-            checked={enabled}
+            id="jungle-mode-toggle"
+            checked={isJungleTheme}
             onCheckedChange={handleToggleChange}
+            className={isJungleTheme ? "data-[state=checked]:bg-[#94C973]" : ""}
           />
         </div>
       </CardContent>
