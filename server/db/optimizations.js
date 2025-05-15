@@ -1,62 +1,77 @@
 /**
- * Database Optimization Functions
+ * Database Optimizations
+ * Part of Bundle 5B: Performance & Quality Optimization
  * 
- * This module provides utilities for improving database performance:
- * 1. Adding database indexes for frequently queried fields
- * 2. Optimizing common query patterns
- * 3. Implementing query batching for bulk operations
+ * This module provides tools for optimizing database performance
+ * through indexing, query optimization, and connection pool management.
  */
 
-import { db, pool } from '../db.js';
-import { sql } from 'drizzle-orm';
-import * as schema from '../../shared/schema.js';
+const { pool } = require('./pool.js');
 
 /**
- * Create needed database indexes for performance optimization
- * Indexes improve query speed but add overhead to write operations
+ * Initialize database optimizations including:
+ * - Create performance-optimizing indexes
+ * - Configure connection pool
+ * - Setup query monitoring
  */
-export async function createDatabaseIndexes() {
-  console.log('Creating performance-optimizing database indexes...');
-  
+async function initDatabaseOptimizations() {
   try {
-    // Create indexes for user search performance
-    await db.execute(sql`
-      CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);
-      CREATE INDEX IF NOT EXISTS idx_users_role ON users (role);
-    `);
+    console.log('Creating performance-optimizing database indexes...');
     
-    // Create indexes for learning progress queries
-    await db.execute(sql`
-      CREATE INDEX IF NOT EXISTS idx_learning_progress_user ON learning_progress (user_id);
-      CREATE INDEX IF NOT EXISTS idx_learning_progress_pathway ON learning_progress (pathway_id);
-      CREATE INDEX IF NOT EXISTS idx_learning_progress_module ON learning_progress (module_id);
-      CREATE INDEX IF NOT EXISTS idx_learning_progress_completed ON learning_progress (completed);
-    `);
-    
-    // Create indexes for session query performance
-    await db.execute(sql`
-      CREATE INDEX IF NOT EXISTS idx_sessions_expire ON sessions (expire);
-    `);
-    
-    // Create indexes for user connections
-    await db.execute(sql`
-      CREATE INDEX IF NOT EXISTS idx_user_connections_mentor ON user_connections (mentor_id);
-      CREATE INDEX IF NOT EXISTS idx_user_connections_student ON user_connections (student_id);
-    `);
-    
-    // Create indexes for conversations
-    await db.execute(sql`
-      CREATE INDEX IF NOT EXISTS idx_conversations_user ON conversations (user_id);
-      CREATE INDEX IF NOT EXISTS idx_conversations_last_message ON conversations (last_message_at);
-    `);
-    
-    // Create indexes for messages
-    await db.execute(sql`
-      CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages (conversation_id);
-      CREATE INDEX IF NOT EXISTS idx_messages_category ON messages (category);
-    `);
+    // Create indexes on frequently queried tables
+    await createOptimizingIndexes();
     
     console.log('Database indexes created successfully');
+    
+    // Optimize connection pool if supported by driver
+    await optimizeConnectionPool();
+    
+    console.log('Database optimizations initialized successfully');
+    return true;
+  } catch (error) {
+    console.error('Failed to initialize database optimizations:', error);
+    // Non-fatal error - continue application startup
+    return false;
+  }
+}
+
+/**
+ * Create database indexes to optimize query performance
+ */
+async function createOptimizingIndexes() {
+  // Only create if they don't exist already
+  try {
+    // Primary indexes for frequently accessed tables
+    // These will be skipped if they already exist (IF NOT EXISTS)
+
+    // Users table indexes
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+      CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+    `);
+
+    // Messages/conversations indexes
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_messages_conversation_id ON messages(conversation_id);
+      CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at);
+      CREATE INDEX IF NOT EXISTS idx_conversations_user_id ON conversations(user_id);
+    `);
+
+    // Learning path indexes
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_learning_paths_status ON learning_paths(status);
+      CREATE INDEX IF NOT EXISTS idx_learning_paths_user_id ON learning_paths(user_id);
+      CREATE INDEX IF NOT EXISTS idx_learning_progress_user_id ON learning_progress(user_id);
+      CREATE INDEX IF NOT EXISTS idx_learning_progress_path_id ON learning_progress(path_id);
+    `);
+    
+    // Engagement system indexes
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_user_activity_user_id ON user_activity(user_id);
+      CREATE INDEX IF NOT EXISTS idx_user_activity_activity_type ON user_activity(activity_type);
+      CREATE INDEX IF NOT EXISTS idx_user_activity_created_at ON user_activity(created_at);
+    `);
+
     return true;
   } catch (error) {
     console.error('Error creating database indexes:', error);
@@ -66,162 +81,101 @@ export async function createDatabaseIndexes() {
 
 /**
  * Optimize database connection pool settings
- * @param {Object} options - Configuration options
  */
-export function optimizeConnectionPool(options = {}) {
-  const defaultOptions = {
-    min: 2,           // Minimum connections in pool
-    max: 10,          // Maximum connections in pool
-    idleTimeout: 60000, // Close idle connections after 1 minute
-    connectionTimeout: 10000 // Wait max 10 seconds for connection
-  };
-  
-  const poolOptions = { ...defaultOptions, ...options };
-  
-  console.log('Optimizing database connection pool:', poolOptions);
-  
-  // Configure connection pool if supported by adapter
-  if (pool && typeof pool.configure === 'function') {
-    pool.configure(poolOptions);
-    console.log('Database connection pool optimized');
-  } else {
-    console.log('Connection pool optimization not supported by current database driver');
-  }
-}
-
-/**
- * Fast retrieval of user with minimal fields
- * Optimized for authentication and permission checks
- * @param {number} userId - User ID to retrieve
- * @returns {Object|null} User object or null
- */
-export async function fastUserLookup(userId) {
+async function optimizeConnectionPool() {
   try {
-    const [user] = await db
-      .select({
-        id: schema.users.id,
-        role: schema.users.role,
-        emailVerified: schema.users.emailVerified
-      })
-      .from(schema.users)
-      .where(sql`${schema.users.id} = ${userId}`)
-      .limit(1);
-    
-    return user || null;
-  } catch (error) {
-    console.error('Fast user lookup failed:', error);
-    return null;
-  }
-}
-
-/**
- * Batch insert multiple records efficiently
- * @param {string} table - Table name
- * @param {Array} records - Array of records to insert
- * @returns {Array} Inserted records
- */
-export async function batchInsert(table, records) {
-  if (!records || !records.length) {
-    return [];
-  }
-  
-  try {
-    // Use the appropriate table schema
-    const tableSchema = schema[table];
-    if (!tableSchema) {
-      throw new Error(`Table schema not found for: ${table}`);
-    }
-    
-    // Insert all records in a single operation
-    const inserted = await db.insert(tableSchema).values(records).returning();
-    return inserted;
-  } catch (error) {
-    console.error(`Batch insert failed for ${table}:`, error);
-    throw error;
-  }
-}
-
-/**
- * Efficiently retrieve user learning progress across all pathways
- * @param {number} userId - User ID
- * @returns {Object} User learning progress data
- */
-export async function getUserLearningDashboard(userId) {
-  try {
-    // Efficiently query all needed data in a single operation
-    const progress = await db
-      .select({
-        pathwayId: schema.learningProgress.pathwayId,
-        moduleId: schema.learningProgress.moduleId,
-        completed: schema.learningProgress.completed,
-        completedAt: schema.learningProgress.completedAt,
-        lastAccessedAt: schema.learningProgress.lastAccessedAt
-      })
-      .from(schema.learningProgress)
-      .where(sql`${schema.learningProgress.userId} = ${userId}`)
-      .orderBy(schema.learningProgress.lastAccessedAt);
-    
-    // Process results into a more usable format
-    const byPathway = {};
-    let totalCompleted = 0;
-    let totalModules = 0;
-    
-    for (const item of progress) {
-      if (!byPathway[item.pathwayId]) {
-        byPathway[item.pathwayId] = {
-          modules: {},
-          completedCount: 0,
-          totalCount: 0,
-          lastAccessed: null
-        };
-      }
-      
-      const pathway = byPathway[item.pathwayId];
-      pathway.modules[item.moduleId] = item;
-      pathway.totalCount++;
-      totalModules++;
-      
-      if (item.completed) {
-        pathway.completedCount++;
-        totalCompleted++;
-      }
-      
-      // Track most recent activity
-      const accessDate = new Date(item.lastAccessedAt);
-      if (!pathway.lastAccessed || accessDate > pathway.lastAccessed) {
-        pathway.lastAccessed = accessDate;
-      }
-    }
-    
-    return {
-      pathways: byPathway,
-      stats: {
-        totalCompleted,
-        totalModules,
-        completionRate: totalModules > 0 ? (totalCompleted / totalModules) : 0
-      }
+    // Optimal connection pool configuration
+    const poolConfig = {
+      min: 2,            // Minimum connections in pool
+      max: 10,           // Maximum connections in pool
+      idleTimeout: 60000, // How long a connection can be idle before being closed (1 min)
+      connectionTimeout: 10000  // How long to wait for a connection (10 sec)
     };
-  } catch (error) {
-    console.error('Error retrieving user learning dashboard:', error);
-    throw error;
-  }
-}
-
-/**
- * Initialize all database optimizations
- */
-export async function initDatabaseOptimizations() {
-  try {
-    // Create performance indexes
-    await createDatabaseIndexes();
     
-    // Optimize connection pool
-    optimizeConnectionPool();
+    console.log('Optimizing database connection pool:', poolConfig);
     
-    console.log('Database optimizations initialized successfully');
-    return true;
+    // Check if pool supports configuration
+    if (pool.options && typeof pool.options === 'object') {
+      pool.options = {
+        ...pool.options,
+        ...poolConfig
+      };
+      return true;
+    } else {
+      console.log('Connection pool optimization not supported by current database driver');
+      return false;
+    }
   } catch (error) {
-    console.error('Failed to initialize database optimizations:', error);
+    console.error('Error optimizing connection pool:', error);
     return false;
   }
 }
+
+/**
+ * Get database optimization statistics
+ */
+async function getDatabaseOptimizationStats() {
+  try {
+    // Get index statistics
+    const indexStatsQuery = `
+      SELECT
+        schemaname,
+        relname as table_name,
+        indexrelname as index_name,
+        idx_scan as index_scans,
+        idx_tup_read as tuples_read,
+        idx_tup_fetch as tuples_fetched
+      FROM pg_stat_user_indexes
+      ORDER BY idx_scan DESC;
+    `;
+    
+    const { rows: indexStats } = await pool.query(indexStatsQuery);
+    
+    // Get table statistics
+    const tableStatsQuery = `
+      SELECT
+        relname as table_name,
+        n_tup_ins as inserts,
+        n_tup_upd as updates,
+        n_tup_del as deletes,
+        n_live_tup as live_tuples,
+        n_dead_tup as dead_tuples
+      FROM pg_stat_user_tables
+      ORDER BY n_live_tup DESC;
+    `;
+    
+    const { rows: tableStats } = await pool.query(tableStatsQuery);
+    
+    // Get connection statistics
+    const connectionStatsQuery = `
+      SELECT 
+        count(*) as total_connections,
+        count(*) FILTER (WHERE state = 'active') as active_connections,
+        count(*) FILTER (WHERE state = 'idle') as idle_connections,
+        max(extract(epoch from (now() - backend_start))) as longest_session_seconds
+      FROM pg_stat_activity;
+    `;
+    
+    const { rows: connectionStats } = await pool.query(connectionStatsQuery);
+    
+    return {
+      indexStats,
+      tableStats,
+      connectionStats: connectionStats[0] || {}
+    };
+  } catch (error) {
+    console.error('Error getting database optimization stats:', error);
+    return {
+      indexStats: [],
+      tableStats: [],
+      connectionStats: {}
+    };
+  }
+}
+
+module.exports = {
+  initDatabaseOptimizations,
+  createOptimizingIndexes,
+  optimizeConnectionPool,
+  getDatabaseOptimizationStats
+};

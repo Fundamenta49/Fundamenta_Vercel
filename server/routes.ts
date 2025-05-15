@@ -1482,6 +1482,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Global error handler middleware
   app.use(errorHandler);
 
+  // Apply browser cache headers to static assets
+  app.use('/assets', setBrowserCache(24 * 60 * 60)); // 24 hours cache for static assets
+  
+  // Record full application load
+  recordFullyLoaded();
+  console.log('[Performance] Server fully initialized with Bundle 5B performance optimizations');
+
   // Return an HTTP server
   return createServer(app);
 }

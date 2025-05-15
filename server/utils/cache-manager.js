@@ -1,226 +1,225 @@
 /**
  * Cache Manager
+ * Part of Bundle 5B: Performance & Quality Optimization
  * 
- * Provides a flexible caching system with multiple strategies:
- * 1. In-memory cache for quick access (default)
- * 2. Redis-compatible cache for distributed environments (optional)
- * 3. Supports time-based and manual cache invalidation
+ * This module provides a centralized cache management system for the application.
+ * It supports different cache namespaces and TTL values for different types of content.
  */
 
-import NodeCache from 'node-cache';
+const NodeCache = require('node-cache');
 
-// Default cache TTL in seconds
-const DEFAULT_TTL = 5 * 60; // 5 minutes
-
-// Cache namespaces for better organization and selective clearing
+// Define cache namespaces for different types of data
 const CACHE_NAMESPACES = {
-  USER: 'user',
-  LEARNING_PATH: 'learning_path',
-  CONTENT: 'content',
-  COACHING: 'coaching',
-  ANALYTICS: 'analytics',
-  SYSTEM: 'system'
+  DEFAULT: 'default',     // Default cache namespace
+  USER: 'user',           // User-specific data
+  CONTENT: 'content',     // Content data (learning paths, etc.)
+  API: 'api',             // External API responses
+  SYSTEM: 'system'        // System-level caching
 };
 
-class CacheManager {
-  constructor() {
-    // Create cache with reasonable defaults
-    this.cache = new NodeCache({
-      stdTTL: DEFAULT_TTL,
-      checkperiod: 120, // Check for expired keys every 2 minutes
-      useClones: false, // Store by reference for better performance
-      maxKeys: 1000 // Limit total keys to prevent memory issues
-    });
-    
-    // Keep track of namespace keys for efficient bulk operations
-    this.namespaceKeys = {};
-    for (const namespace of Object.values(CACHE_NAMESPACES)) {
-      this.namespaceKeys[namespace] = new Set();
+// Create separate cache instances for each namespace
+// This allows for different TTL and checking periods per namespace
+const cacheInstances = {
+  [CACHE_NAMESPACES.DEFAULT]: new NodeCache({ 
+    stdTTL: 300,           // 5 minutes default TTL
+    checkperiod: 60        // Check for expired keys every 60 seconds
+  }),
+  [CACHE_NAMESPACES.USER]: new NodeCache({ 
+    stdTTL: 60,            // 1 minute default TTL for user data
+    checkperiod: 30        // Check more frequently
+  }),
+  [CACHE_NAMESPACES.CONTENT]: new NodeCache({ 
+    stdTTL: 3600,          // 1 hour default TTL for content
+    checkperiod: 300       // Check every 5 minutes
+  }),
+  [CACHE_NAMESPACES.API]: new NodeCache({ 
+    stdTTL: 600,           // 10 minutes default TTL for API responses
+    checkperiod: 120       // Check every 2 minutes
+  }),
+  [CACHE_NAMESPACES.SYSTEM]: new NodeCache({ 
+    stdTTL: 86400,         // 24 hours default TTL for system data
+    checkperiod: 3600      // Check every hour
+  })
+};
+
+// Cache statistics
+let cacheStats = {
+  hits: 0,
+  misses: 0,
+  sets: 0,
+  dels: 0
+};
+
+// Cleanup interval reference for graceful shutdown
+let cleanupInterval = null;
+
+/**
+ * Initialize the cache manager
+ */
+function initCacheManager() {
+  // Setup cache statistics collection
+  cleanupInterval = setInterval(() => {
+    // Log cache statistics every hour
+    const totalOps = cacheStats.hits + cacheStats.misses;
+    if (totalOps > 0) {
+      const hitRate = (cacheStats.hits / totalOps * 100).toFixed(2);
+      console.log(`[Cache] Statistics: ${cacheStats.hits} hits, ${cacheStats.misses} misses, hit rate: ${hitRate}%`);
+      
+      // Reset stats for next period
+      cacheStats = {
+        hits: 0,
+        misses: 0,
+        sets: 0,
+        dels: 0
+      };
     }
-    
-    // Performance metrics
-    this.metrics = {
-      hits: 0,
-      misses: 0,
-      sets: 0,
-      deletes: 0
-    };
-    
-    console.log('Cache manager initialized');
+  }, 60 * 60 * 1000); // Every hour
+  
+  return true;
+}
+
+/**
+ * Shutdown cache manager and cleanup resources
+ */
+function shutdownCacheManager() {
+  if (cleanupInterval) {
+    clearInterval(cleanupInterval);
+    cleanupInterval = null;
   }
   
-  /**
-   * Create a cache key with namespace for better organization
-   * @param {string} namespace - The cache namespace
-   * @param {string} key - The specific cache key
-   * @returns {string} - The combined cache key
-   */
-  createKey(namespace, key) {
-    return `${namespace}:${key}`;
-  }
+  // Flush all caches
+  Object.values(cacheInstances).forEach(cache => cache.flushAll());
   
-  /**
-   * Get a value from cache
-   * @param {string} namespace - The cache namespace
-   * @param {string} key - The cache key
-   * @returns {any} - The cached value or undefined
-   */
-  get(namespace, key) {
-    const cacheKey = this.createKey(namespace, key);
-    const value = this.cache.get(cacheKey);
+  return true;
+}
+
+/**
+ * Get an item from the cache
+ * @param {string} namespace - Cache namespace
+ * @param {string} key - Cache key
+ * @returns {any} Cached item or undefined if not found
+ */
+async function get(namespace, key) {
+  const cache = cacheInstances[namespace] || cacheInstances[CACHE_NAMESPACES.DEFAULT];
+  
+  try {
+    const value = cache.get(key);
     
     if (value !== undefined) {
-      this.metrics.hits++;
+      cacheStats.hits++;
       return value;
     }
     
-    this.metrics.misses++;
+    cacheStats.misses++;
     return undefined;
-  }
-  
-  /**
-   * Set a value in cache
-   * @param {string} namespace - The cache namespace
-   * @param {string} key - The cache key
-   * @param {any} value - The value to cache
-   * @param {number} ttl - Time to live in seconds (optional)
-   * @returns {boolean} - Success
-   */
-  set(namespace, key, value, ttl = DEFAULT_TTL) {
-    const cacheKey = this.createKey(namespace, key);
-    const success = this.cache.set(cacheKey, value, ttl);
-    
-    if (success) {
-      this.metrics.sets++;
-      // Track key in namespace for bulk operations
-      if (this.namespaceKeys[namespace]) {
-        this.namespaceKeys[namespace].add(key);
-      }
-    }
-    
-    return success;
-  }
-  
-  /**
-   * Delete a specific cache entry
-   * @param {string} namespace - The cache namespace
-   * @param {string} key - The cache key
-   * @returns {boolean} - Success
-   */
-  delete(namespace, key) {
-    const cacheKey = this.createKey(namespace, key);
-    const success = this.cache.del(cacheKey);
-    
-    if (success) {
-      this.metrics.deletes++;
-      // Remove from namespace tracking
-      if (this.namespaceKeys[namespace]) {
-        this.namespaceKeys[namespace].delete(key);
-      }
-    }
-    
-    return success;
-  }
-  
-  /**
-   * Clear all entries in a namespace
-   * @param {string} namespace - The cache namespace to clear
-   * @returns {number} - Number of deleted entries
-   */
-  clearNamespace(namespace) {
-    if (!this.namespaceKeys[namespace]) {
-      return 0;
-    }
-    
-    let count = 0;
-    for (const key of this.namespaceKeys[namespace]) {
-      const cacheKey = this.createKey(namespace, key);
-      if (this.cache.del(cacheKey)) {
-        count++;
-      }
-    }
-    
-    // Reset namespace tracking
-    this.namespaceKeys[namespace] = new Set();
-    this.metrics.deletes += count;
-    
-    return count;
-  }
-  
-  /**
-   * Flush the entire cache
-   * @returns {void}
-   */
-  flush() {
-    this.cache.flushAll();
-    
-    // Reset all namespace tracking
-    for (const namespace of Object.values(CACHE_NAMESPACES)) {
-      this.namespaceKeys[namespace] = new Set();
-    }
-    
-    console.log('Cache flushed completely');
-  }
-  
-  /**
-   * Get cache statistics
-   * @returns {Object} - Cache statistics
-   */
-  getStats() {
-    const cacheStats = this.cache.getStats();
-    
-    return {
-      ...this.metrics,
-      keys: this.cache.keys().length,
-      memoryUsage: process.memoryUsage().heapUsed,
-      hitRate: this.metrics.hits / (this.metrics.hits + this.metrics.misses) || 0,
-      ...cacheStats
-    };
-  }
-  
-  /**
-   * Helper to cache the result of an async function
-   * @param {string} namespace - The cache namespace
-   * @param {string} key - The cache key
-   * @param {Function} fn - The async function to execute and cache
-   * @param {number} ttl - Time to live in seconds
-   * @returns {Promise<any>} - The function result (from cache or fresh)
-   */
-  async cached(namespace, key, fn, ttl = DEFAULT_TTL) {
-    // Check cache first
-    const cachedValue = this.get(namespace, key);
-    if (cachedValue !== undefined) {
-      return cachedValue;
-    }
-    
-    // Execute function and cache result
-    try {
-      const result = await fn();
-      this.set(namespace, key, result, ttl);
-      return result;
-    } catch (error) {
-      console.error(`Cache error for ${namespace}:${key}:`, error);
-      throw error;
-    }
+  } catch (error) {
+    console.error(`Cache get error for ${namespace}:${key}:`, error);
+    cacheStats.misses++;
+    return undefined;
   }
 }
 
-// Export singleton instance
-const cacheManager = new CacheManager();
-export { cacheManager, CACHE_NAMESPACES };
+/**
+ * Set an item in the cache
+ * @param {string} namespace - Cache namespace
+ * @param {string} key - Cache key
+ * @param {any} value - Value to cache
+ * @param {number} ttl - Time to live in seconds (optional, uses namespace default if not provided)
+ * @returns {boolean} Success status
+ */
+function set(namespace, key, value, ttl) {
+  const cache = cacheInstances[namespace] || cacheInstances[CACHE_NAMESPACES.DEFAULT];
+  
+  try {
+    const success = cache.set(key, value, ttl);
+    if (success) {
+      cacheStats.sets++;
+    }
+    return success;
+  } catch (error) {
+    console.error(`Cache set error for ${namespace}:${key}:`, error);
+    return false;
+  }
+}
 
-// Export some convenience methods for common cache operations
-export const getUserCache = (userId) => cacheManager.get(CACHE_NAMESPACES.USER, userId.toString());
-export const setUserCache = (userId, data, ttl) => cacheManager.set(CACHE_NAMESPACES.USER, userId.toString(), data, ttl);
-export const clearUserCache = (userId) => cacheManager.delete(CACHE_NAMESPACES.USER, userId.toString());
-export const clearAllUserCache = () => cacheManager.clearNamespace(CACHE_NAMESPACES.USER);
+/**
+ * Delete an item from the cache
+ * @param {string} namespace - Cache namespace
+ * @param {string} key - Cache key
+ * @returns {boolean} Success status
+ */
+function del(namespace, key) {
+  const cache = cacheInstances[namespace] || cacheInstances[CACHE_NAMESPACES.DEFAULT];
+  
+  try {
+    const success = cache.del(key);
+    if (success) {
+      cacheStats.dels++;
+    }
+    return success;
+  } catch (error) {
+    console.error(`Cache delete error for ${namespace}:${key}:`, error);
+    return false;
+  }
+}
 
-export const getPathCache = (pathId) => cacheManager.get(CACHE_NAMESPACES.LEARNING_PATH, pathId);
-export const setPathCache = (pathId, data, ttl) => cacheManager.set(CACHE_NAMESPACES.LEARNING_PATH, pathId, data, ttl);
-export const clearPathCache = (pathId) => cacheManager.delete(CACHE_NAMESPACES.LEARNING_PATH, pathId);
-export const clearAllPathCache = () => cacheManager.clearNamespace(CACHE_NAMESPACES.LEARNING_PATH);
+/**
+ * Flush a specific namespace or all caches
+ * @param {string} namespace - Cache namespace (optional, flushes all if not provided)
+ * @returns {boolean} Success status
+ */
+function flush(namespace) {
+  try {
+    if (namespace && cacheInstances[namespace]) {
+      // Flush specific namespace
+      cacheInstances[namespace].flushAll();
+      return true;
+    }
+    
+    // Flush all namespaces
+    Object.values(cacheInstances).forEach(cache => cache.flushAll());
+    return true;
+  } catch (error) {
+    console.error(`Cache flush error:`, error);
+    return false;
+  }
+}
 
-export const getContentCache = (contentId) => cacheManager.get(CACHE_NAMESPACES.CONTENT, contentId);
-export const setContentCache = (contentId, data, ttl) => cacheManager.set(CACHE_NAMESPACES.CONTENT, contentId, data, ttl);
-export const clearContentCache = (contentId) => cacheManager.delete(CACHE_NAMESPACES.CONTENT, contentId);
-export const clearAllContentCache = () => cacheManager.clearNamespace(CACHE_NAMESPACES.CONTENT);
+/**
+ * Get cache statistics
+ * @returns {Object} Cache statistics
+ */
+function getStats() {
+  const namespaceStats = {};
+  
+  Object.entries(cacheInstances).forEach(([namespace, cache]) => {
+    namespaceStats[namespace] = {
+      keys: cache.keys().length,
+      stats: cache.getStats()
+    };
+  });
+  
+  return {
+    operations: { ...cacheStats },
+    namespaces: namespaceStats
+  };
+}
+
+// Initialize cache on module load
+initCacheManager();
+
+// Export the cache manager
+const cacheManager = {
+  get,
+  set,
+  del,
+  flush,
+  getStats
+};
+
+module.exports = {
+  cacheManager,
+  CACHE_NAMESPACES,
+  initCacheManager,
+  shutdownCacheManager
+};
