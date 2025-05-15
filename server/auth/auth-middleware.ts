@@ -3,16 +3,16 @@
  * Enhanced for Bundle 5A security hardening
  */
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { User } from '../../shared/schema';
-import { users } from '../../shared/schema';
-import { db } from '../db';
+import jwt, { SignOptions } from 'jsonwebtoken';
+import { User } from '../../shared/schema.js';
+import { users } from '../../shared/schema.js';
+import { db } from '../db.js';
 import { eq } from 'drizzle-orm';
 import { AuthorizationError } from '../utils/errors.js';
 
 // Constants for token configuration
-const TOKEN_EXPIRATION = '4h';  // 4 hours
-const REFRESH_TOKEN_EXPIRATION = '7d';  // 7 days
+const TOKEN_EXPIRATION = 4 * 60 * 60;  // 4 hours in seconds
+const REFRESH_TOKEN_EXPIRATION = 7 * 24 * 60 * 60;  // 7 days in seconds
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
@@ -39,7 +39,7 @@ export interface AuthenticatedRequest extends Request {
 export const createToken = (userId: number, expiresIn = TOKEN_EXPIRATION) => {
   const secret = process.env.JWT_SECRET || 'fundamenta-super-secure-jwt-secret';
   const payload = { userId };
-  const options = { expiresIn };
+  const options: SignOptions = { expiresIn };
   
   return jwt.sign(payload, secret, options);
 };
@@ -114,7 +114,7 @@ export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, 
     req.userRole = user.role;
     
     next();
-  } catch (error) {
+  } catch (error: any) {
     // Token expired - try to refresh if refresh token is available
     if (error.name === 'TokenExpiredError' && req.cookies?.refresh_token) {
       try {
@@ -148,7 +148,7 @@ export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, 
         req.userRole = user.role;
         
         next();
-      } catch (refreshError) {
+      } catch (refreshError: any) {
         clearAuthCookies(res);
         return res.status(401).json({ 
           error: 'AuthenticationError', 

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { useJungleTheme } from "@/jungle-path/contexts/JungleThemeContext";
+import { useJungleTheme } from "../jungle-path/contexts/JungleThemeContext";
 
 // Define available learning themes
 type ThemeType = 'standard' | 'jungle';
