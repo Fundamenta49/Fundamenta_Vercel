@@ -4,8 +4,9 @@
  */
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { User, users } from '@shared/schema';
-import { db } from '../db.js';
+import { User } from '../../shared/schema';
+import { users } from '../../shared/schema';
+import { db } from '../db';
 import { eq } from 'drizzle-orm';
 import { AuthorizationError } from '../utils/errors.js';
 
@@ -36,11 +37,11 @@ export interface AuthenticatedRequest extends Request {
  * @returns JWT token string
  */
 export const createToken = (userId: number, expiresIn = TOKEN_EXPIRATION) => {
-  return jwt.sign(
-    { userId },
-    process.env.JWT_SECRET || 'fundamenta-super-secure-jwt-secret',
-    { expiresIn }
-  );
+  const secret = process.env.JWT_SECRET || 'fundamenta-super-secure-jwt-secret';
+  const payload = { userId };
+  const options = { expiresIn };
+  
+  return jwt.sign(payload, secret, options);
 };
 
 /**

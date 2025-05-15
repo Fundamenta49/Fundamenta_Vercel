@@ -77,6 +77,18 @@ export class ServiceUnavailableError extends Error {
 }
 
 /**
+ * RateLimitExceededError - Used when a client has made too many requests
+ * For example, when a user is sending too many requests in a short time period
+ */
+export class RateLimitExceededError extends Error {
+  constructor(message) {
+    super(message || 'Rate limit exceeded, please try again later');
+    this.name = 'RateLimitExceededError';
+    this.status = 429;
+  }
+}
+
+/**
  * Helper function to wrap async route handlers with error handling
  * This reduces redundant try/catch blocks in route handlers
  */
@@ -85,7 +97,15 @@ export function asyncHandler(fn) {
     try {
       await fn(req, res, next);
     } catch (error) {
-      console.error('API Error:', error);
+      console.error('API Error:', {
+        path: req.path,
+        method: req.method,
+        error: {
+          name: error.name,
+          message: error.message,
+          stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        }
+      });
       
       // Handle known error types with appropriate status codes
       if (error instanceof ValidationError ||
@@ -93,17 +113,45 @@ export function asyncHandler(fn) {
           error instanceof AuthorizationError ||
           error instanceof DatabaseError ||
           error instanceof ConflictError ||
-          error instanceof ServiceUnavailableError) {
+          error instanceof ServiceUnavailableError ||
+          error instanceof RateLimitExceededError) {
         return res.status(error.status).json({
           error: error.name,
-          message: error.message
+          message: error.message,
+          success: false
+        });
+      }
+      
+      // Handle Zod validation errors
+      if (error.name === 'ZodError') {
+        return res.status(400).json({
+          error: 'ValidationError',
+          message: 'Validation failed',
+          details: error.errors,
+          success: false
+        });
+      }
+      
+      // Handle JWT authentication errors
+      if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+        return res.status(401).json({
+          error: 'AuthenticationError',
+          message: error.name === 'TokenExpiredError' 
+            ? 'Your session has expired, please log in again' 
+            : 'Authentication failed',
+          success: false
         });
       }
       
       // Handle unknown errors
-      return res.status(500).json({
-        error: 'ServerError',
-        message: 'An unexpected error occurred'
+      const statusCode = error.status || error.statusCode || 500;
+      return res.status(statusCode).json({
+        error: error.name || 'ServerError',
+        message: statusCode === 500 
+          ? 'An unexpected error occurred' 
+          : error.message || 'Unknown error',
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+        success: false
       });
     }
   };

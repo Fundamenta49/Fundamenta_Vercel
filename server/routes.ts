@@ -16,6 +16,11 @@ import axios from 'axios';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import cors from 'cors';
+
+// Bundle 5A Security Imports
+import { errorHandler, notFoundHandler, rateLimitHandler } from './middleware/error-handler.js';
+import { ipRateLimiter, userRateLimiter, strictRateLimiter } from './utils/rate-limiter.js';
+
 import resumeRoutes from './routes/resume';
 import learningRoutes from './routes/learning';
 import youtubeRoutes, { youtubeSearchHandler } from './routes/youtube';
@@ -118,6 +123,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register API health monitoring routes
   apiHealthMonitor.registerHealthRoutes(app);
+  
+  // Bundle 5A: Apply general rate limiting middleware
+  // Apply lenient rate limits to all API routes
+  app.use('/api', ipRateLimiter(120, ['/api/health']));
+  
+  // Apply stricter limits to authentication endpoints
+  app.use('/api/auth/login', strictRateLimiter(10));
+  app.use('/api/auth/register', strictRateLimiter(5));
 
   // Security middleware
   if (process.env.NODE_ENV === 'production') {
@@ -1434,6 +1447,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+
+  // Bundle 5A: Add error handling middleware at the end of middleware chain
+  // Custom 404 handler for undefined routes
+  app.use(notFoundHandler);
+  
+  // Global error handler middleware
+  app.use(errorHandler);
 
   // Return an HTTP server
   return createServer(app);

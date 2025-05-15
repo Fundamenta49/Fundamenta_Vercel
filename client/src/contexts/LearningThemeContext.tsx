@@ -71,3 +71,9 @@ export const useLearningTheme = (): LearningThemeContextValue => {
   
   return context;
 };
+
+/**
+ * Alias for useLearningTheme to maintain compatibility with existing code
+ * @deprecated Use useLearningTheme instead
+ */
+export const useTheme = useLearningTheme;
