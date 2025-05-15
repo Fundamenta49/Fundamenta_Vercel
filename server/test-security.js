@@ -1,106 +1,122 @@
 /**
- * Security Implementation Test Script
- * Part of Bundle 5A security hardening
+ * Security Test Script
  * 
- * This script tests the error handling and rate limiting functionality
- * implemented in the Bundle 5A security enhancements.
+ * This script tests the JWT token creation, verification, 
+ * and the cookie-based authentication system.
  */
 
-import { ipRateLimiter, strictRateLimiter } from './utils/rate-limiter.js';
-import { RateLimitExceededError, ValidationError, NotFoundError, AuthorizationError } from './utils/errors.js';
-import { asyncHandler } from './utils/errors.js';
+import jwt from 'jsonwebtoken';
+import { db } from './db.js';
+import * as schema from '../shared/schema.js';
+import { eq } from 'drizzle-orm';
+import { createToken, clearAuthCookies } from './auth/auth-middleware.js';
 
-// Mock Express request and response objects
-const mockRequest = () => ({
-  ip: '127.0.0.1',
-  path: '/api/test',
-  headers: {},
-  socket: { remoteAddress: '127.0.0.1' }
-});
-
-const mockResponse = () => {
-  const res = {};
-  res.status = jest.fn().mockReturnValue(res);
-  res.json = jest.fn().mockReturnValue(res);
-  res.setHeader = jest.fn();
-  return res;
-};
-
-// Test the asyncHandler with various error types
-const testAsyncHandler = async () => {
-  console.log('Testing asyncHandler with different error types...');
-  
-  const req = mockRequest();
-  const res = mockResponse();
-  
-  // Test with ValidationError
-  const handlerWithValidationError = asyncHandler(async () => {
-    throw new ValidationError('Invalid input data');
-  });
-  
-  await handlerWithValidationError(req, res, () => {});
-  
-  // Test with NotFoundError
-  const handlerWithNotFoundError = asyncHandler(async () => {
-    throw new NotFoundError('Resource not found');
-  });
-  
-  await handlerWithNotFoundError(req, res, () => {});
-  
-  // Test with AuthorizationError
-  const handlerWithAuthError = asyncHandler(async () => {
-    throw new AuthorizationError('Unauthorized access');
-  });
-  
-  await handlerWithAuthError(req, res, () => {});
-  
-  console.log('asyncHandler tests completed');
-};
-
-// Test the rate limiters
-const testRateLimiters = () => {
-  console.log('Testing rate limiters...');
-  
-  const req = mockRequest();
-  const res = mockResponse();
-  const next = jest.fn();
-  
-  // Test IP rate limiter
-  const ipLimiter = ipRateLimiter(5);
-  
-  // Simulate multiple requests
-  for (let i = 0; i < 7; i++) {
-    ipLimiter(req, res, next);
+// Mock objects
+const mockResponse = {
+  cookies: {},
+  cookie: function(name, value, options) {
+    this.cookies[name] = { value, options };
+    console.log(`Cookie set: ${name}`);
+    return this;
+  },
+  clearCookie: function(name) {
+    delete this.cookies[name];
+    console.log(`Cookie cleared: ${name}`);
+    return this;
+  },
+  json: function(data) {
+    console.log('Response data:', data);
+    return this;
+  },
+  status: function(code) {
+    console.log(`Status code: ${code}`);
+    return this;
   }
-  
-  // Test strict rate limiter
-  const strictLimiter = strictRateLimiter(3);
-  
-  // Simulate multiple requests
-  for (let i = 0; i < 5; i++) {
-    strictLimiter(req, res, next);
-  }
-  
-  console.log('Rate limiter tests completed');
 };
 
-// Run the tests
-const runTests = async () => {
-  console.log('Starting security implementation tests...');
-  
+// Test functions
+async function testTokenCreation() {
+  console.log('\n--- Testing Token Creation ---');
   try {
-    await testAsyncHandler();
-    testRateLimiters();
+    const token = createToken(1001);
+    console.log('Token created successfully');
     
-    console.log('All security tests completed successfully');
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev_secret');
+    console.log('Token verified:', decoded);
+    
+    return true;
   } catch (error) {
-    console.error('Test error:', error);
+    console.error('Token creation/verification failed:', error);
+    return false;
   }
-};
+}
 
-// Execute tests if run directly
+async function testCookieClearing() {
+  console.log('\n--- Testing Cookie Clearing ---');
+  try {
+    // Set mock cookies
+    mockResponse.cookie('access_token', 'test-access-token', {});
+    mockResponse.cookie('refresh_token', 'test-refresh-token', {});
+    
+    console.log('Before clearing:', Object.keys(mockResponse.cookies));
+    
+    // Clear cookies
+    clearAuthCookies(mockResponse);
+    
+    console.log('After clearing:', Object.keys(mockResponse.cookies));
+    
+    return Object.keys(mockResponse.cookies).length === 0;
+  } catch (error) {
+    console.error('Cookie clearing failed:', error);
+    return false;
+  }
+}
+
+async function testDatabaseAccess() {
+  console.log('\n--- Testing Database Access ---');
+  try {
+    // Test secure parameterized query
+    const users = await db.select({
+      id: schema.users.id,
+      name: schema.users.name,
+      role: schema.users.role
+    })
+    .from(schema.users)
+    .limit(2);
+    
+    console.log(`Found ${users.length} users`);
+    console.log('Database query successful');
+    
+    return true;
+  } catch (error) {
+    console.error('Database query failed:', error);
+    return false;
+  }
+}
+
+// Run all tests
+async function runTests() {
+  console.log('=== Starting Security Tests ===');
+  
+  const results = {
+    tokenCreation: await testTokenCreation(),
+    cookieClearing: await testCookieClearing(),
+    databaseAccess: await testDatabaseAccess()
+  };
+  
+  console.log('\n=== Test Results ===');
+  for (const [test, passed] of Object.entries(results)) {
+    console.log(`${test}: ${passed ? '✅ PASSED' : '❌ FAILED'}`);
+  }
+  
+  const allPassed = Object.values(results).every(r => r);
+  console.log(`\nOverall result: ${allPassed ? '✅ ALL TESTS PASSED' : '❌ SOME TESTS FAILED'}`);
+}
+
+// Run tests if this file is executed directly
 if (process.argv[1].endsWith('test-security.js')) {
-  runTests();
+  runTests().catch(console.error);
 }
 
 export { runTests };

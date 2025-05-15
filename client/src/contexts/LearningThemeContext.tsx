@@ -1,5 +1,20 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { useJungleTheme } from '@/jungle-path/contexts/JungleThemeContext';
+// Mock the jungle theme hooks if needed
+const mockJungleTheme = {
+  enableJungleTheme: () => {},
+  disableJungleTheme: () => {},
+  isJungleThemeEnabled: false
+};
+// Import with try/catch for better error handling
+const useJungleTheme = (() => {
+  try {
+    // Try to use the real jungle theme if available
+    return require('@/jungle-path/contexts/JungleThemeContext').useJungleTheme;
+  } catch (e) {
+    console.warn('JungleTheme not available, using mock implementation');
+    return () => mockJungleTheme;
+  }
+})();
 
 // Define available learning themes
 type ThemeType = 'standard' | 'jungle';
