@@ -1113,6 +1113,282 @@ export class DatabaseStorage implements IStorage {
       throw new Error(`Failed to get streak for user ${userId}: ${error.message}`);
     }
   }
+
+  // Analytics methods
+  async getMentorAnalytics(mentorId: number): Promise<{
+    totalStudents: number;
+    totalPathways: number;
+    pathwayCompletionRate: number;
+    studentEngagementStats: {
+      activeStudents: number;
+      inactiveStudents: number;
+      averageStudentStreak: number;
+    };
+    recentAssignments: AssignedPathway[];
+  }> {
+    // Input validation
+    if (!Number.isInteger(mentorId) || mentorId <= 0) {
+      throw new ValidationError(`Invalid mentorId: ${mentorId}`);
+    }
+
+    try {
+      // Verify mentor exists
+      const mentorExists = await this.getUser(mentorId);
+      if (!mentorExists) {
+        throw new NotFoundError(`Mentor ${mentorId} not found`);
+      }
+
+      // Transaction to ensure consistent data
+      const result = await pool.query('BEGIN');
+
+      try {
+        // Get mentor's connected students
+        const connections = await db
+          .select()
+          .from(userConnections)
+          .where(and(
+            eq(userConnections.mentorId, mentorId),
+            eq(userConnections.status, 'active')
+          ));
+
+        const studentIds = connections.map(conn => conn.studentId).filter(Boolean);
+        const totalStudents = studentIds.length;
+
+        // Get total custom pathways
+        const pathways = await db
+          .select()
+          .from(customPathways)
+          .where(eq(customPathways.creatorId, mentorId));
+
+        const totalPathways = pathways.length;
+
+        // Get assigned pathways
+        const assignments = await db
+          .select()
+          .from(assignedPathways)
+          .where(eq(assignedPathways.assignedBy, mentorId));
+
+        // Calculate completion rate
+        const totalAssigned = assignments.length;
+        const completedAssignments = assignments.filter(a => a.status === 'completed').length;
+        const pathwayCompletionRate = totalAssigned > 0 
+          ? (completedAssignments / totalAssigned) * 100 
+          : 0;
+
+        // Calculate student engagement
+        let totalStreaks = 0;
+        let activeStudents = 0;
+
+        // Get engagement for all students
+        const currentDate = new Date();
+        const activeThreshold = new Date();
+        activeThreshold.setDate(currentDate.getDate() - 7); // Active within last 7 days
+
+        // Only proceed if there are student IDs
+        let studentEngagements = [];
+        if (studentIds.length > 0) {
+          studentEngagements = await db
+            .select()
+            .from(userEngagement)
+            .where(
+              userEngagement.userId.in(studentIds)
+            );
+        }
+
+        // Calculate engagement stats
+        for (const engagement of studentEngagements) {
+          totalStreaks += engagement.currentStreak || 0;
+          
+          if (engagement.lastCheckIn && new Date(engagement.lastCheckIn) >= activeThreshold) {
+            activeStudents++;
+          }
+        }
+
+        const inactiveStudents = totalStudents - activeStudents;
+        const averageStudentStreak = totalStudents > 0 
+          ? totalStreaks / totalStudents 
+          : 0;
+
+        // Get recent assignments
+        const recentAssignments = await db
+          .select()
+          .from(assignedPathways)
+          .where(eq(assignedPathways.assignedBy, mentorId))
+          .orderBy(desc(assignedPathways.createdAt))
+          .limit(5);
+
+        await pool.query('COMMIT');
+
+        return {
+          totalStudents,
+          totalPathways,
+          pathwayCompletionRate,
+          studentEngagementStats: {
+            activeStudents,
+            inactiveStudents,
+            averageStudentStreak,
+          },
+          recentAssignments,
+        };
+      } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+      }
+    } catch (error) {
+      if (error instanceof ValidationError || error instanceof NotFoundError) {
+        throw error;
+      }
+      throw new Error(`Failed to get mentor analytics: ${error.message}`);
+    }
+  }
+
+  async getStudentAnalytics(studentId: number): Promise<{
+    totalAssignments: number;
+    completedAssignments: number;
+    inProgressAssignments: number;
+    totalPoints: number;
+    currentStreak: number;
+    completionRate: number;
+    activityTimeline: UserActivity[];
+  }> {
+    // Input validation
+    if (!Number.isInteger(studentId) || studentId <= 0) {
+      throw new ValidationError(`Invalid studentId: ${studentId}`);
+    }
+
+    try {
+      // Verify student exists
+      const studentExists = await this.getUser(studentId);
+      if (!studentExists) {
+        throw new NotFoundError(`Student ${studentId} not found`);
+      }
+
+      // Transaction to ensure consistent data
+      const result = await pool.query('BEGIN');
+
+      try {
+        // Get assigned pathways
+        const assignments = await db
+          .select()
+          .from(assignedPathways)
+          .where(eq(assignedPathways.studentId, studentId));
+
+        const totalAssignments = assignments.length;
+        const completedAssignments = assignments.filter(a => a.status === 'completed').length;
+        const inProgressAssignments = assignments.filter(a => a.status === 'in_progress').length;
+        const completionRate = totalAssignments > 0 
+          ? (completedAssignments / totalAssignments) * 100 
+          : 0;
+
+        // Get user engagement
+        const engagement = await this.getUserEngagement(studentId);
+        const totalPoints = engagement?.totalPoints || 0;
+        const currentStreak = engagement?.currentStreak || 0;
+
+        // Get activity timeline
+        const activityTimeline = await db
+          .select()
+          .from(userActivities)
+          .where(eq(userActivities.userId, studentId))
+          .orderBy(desc(userActivities.timestamp))
+          .limit(30); // Last 30 activities
+
+        await pool.query('COMMIT');
+
+        return {
+          totalAssignments,
+          completedAssignments,
+          inProgressAssignments,
+          totalPoints,
+          currentStreak,
+          completionRate,
+          activityTimeline,
+        };
+      } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+      }
+    } catch (error) {
+      if (error instanceof ValidationError || error instanceof NotFoundError) {
+        throw error;
+      }
+      throw new Error(`Failed to get student analytics: ${error.message}`);
+    }
+  }
+
+  async getPathwayAnalytics(pathwayId: number): Promise<{
+    totalAssigned: number;
+    totalCompleted: number;
+    totalInProgress: number;
+    averageCompletionTime: number;
+    completionRate: number;
+  }> {
+    // Input validation
+    if (!Number.isInteger(pathwayId) || pathwayId <= 0) {
+      throw new ValidationError(`Invalid pathwayId: ${pathwayId}`);
+    }
+
+    try {
+      // Verify pathway exists
+      const pathwayExists = await this.getCustomPathway(pathwayId);
+      if (!pathwayExists) {
+        throw new NotFoundError(`Pathway ${pathwayId} not found`);
+      }
+
+      // Transaction to ensure consistent data
+      const result = await pool.query('BEGIN');
+
+      try {
+        // Get all assignments for this pathway
+        const assignments = await db
+          .select()
+          .from(assignedPathways)
+          .where(eq(assignedPathways.pathwayId, pathwayId));
+
+        const totalAssigned = assignments.length;
+        const completedAssignments = assignments.filter(a => a.status === 'completed' && a.completedAt);
+        const totalCompleted = completedAssignments.length;
+        const totalInProgress = assignments.filter(a => a.status === 'in_progress').length;
+        const completionRate = totalAssigned > 0 
+          ? (totalCompleted / totalAssigned) * 100 
+          : 0;
+
+        // Calculate average completion time (in days)
+        let totalCompletionTime = 0;
+        for (const assignment of completedAssignments) {
+          if (assignment.startedAt && assignment.completedAt) {
+            const startDate = new Date(assignment.startedAt);
+            const completionDate = new Date(assignment.completedAt);
+            const timeDiff = completionDate.getTime() - startDate.getTime();
+            const daysDiff = timeDiff / (1000 * 3600 * 24); // Convert to days
+            totalCompletionTime += daysDiff;
+          }
+        }
+
+        const averageCompletionTime = totalCompleted > 0 
+          ? totalCompletionTime / totalCompleted 
+          : 0;
+
+        await pool.query('COMMIT');
+
+        return {
+          totalAssigned,
+          totalCompleted,
+          totalInProgress,
+          averageCompletionTime,
+          completionRate,
+        };
+      } catch (error) {
+        await pool.query('ROLLBACK');
+        throw error;
+      }
+    } catch (error) {
+      if (error instanceof ValidationError || error instanceof NotFoundError) {
+        throw error;
+      }
+      throw new Error(`Failed to get pathway analytics: ${error.message}`);
+    }
+  }
 }
 
 export const storage = new DatabaseStorage();
