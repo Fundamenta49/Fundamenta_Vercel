@@ -157,7 +157,7 @@ export function ConnectionManager() {
             <div className="py-20 flex items-center justify-center">
               <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
             </div>
-          ) : !connections || connections.length === 0 ? (
+          ) : !connections || (!connections.asMentor?.length && !connections.asStudent?.length) ? (
             <Card>
               <CardContent className="py-10 text-center">
                 <Users className="h-10 w-10 mx-auto mb-4 text-gray-400" />
@@ -170,7 +170,34 @@ export function ConnectionManager() {
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {connections.map((connection: UserConnection) => (
+              {/* Mentor Connections */}
+              {connections.asMentor && connections.asMentor.map((connection: UserConnection) => (
+                <Card key={connection.id}>
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-base">{connection.targetUser?.username}</CardTitle>
+                      <Badge>{connection.role === 'MENTOR' ? 'Student' : 'Mentor'}</Badge>
+                    </div>
+                    <CardDescription>{connection.targetUser?.email}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="pb-2">
+                    <div className="text-sm">
+                      <p><strong>Connected since:</strong> {new Date(connection.createdAt).toLocaleDateString()}</p>
+                      <p className="mt-1"><strong>Status:</strong> {connection.status}</p>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between">
+                    <Button size="sm" variant="outline" asChild>
+                      <a href={`/mypath/connections/${connection.id}`}>Manage</a>
+                    </Button>
+                    <Button size="sm" variant="ghost" className="text-red-500 hover:text-red-700 hover:bg-red-50">
+                      Remove
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+              
+              {connections.asStudent && connections.asStudent.map((connection: UserConnection) => (
                 <Card key={connection.id}>
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
@@ -219,7 +246,7 @@ export function ConnectionManager() {
             <div className="py-20 flex items-center justify-center">
               <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
             </div>
-          ) : !pendingRequests || pendingRequests.length === 0 ? (
+          ) : !pendingRequests || !pendingRequests.length ? (
             <Card>
               <CardContent className="py-10 text-center">
                 <AlertCircle className="h-10 w-10 mx-auto mb-4 text-gray-400" />
@@ -229,7 +256,7 @@ export function ConnectionManager() {
             </Card>
           ) : (
             <div className="space-y-4">
-              {pendingRequests.map((request: UserConnection) => (
+              {pendingRequests && pendingRequests.map((request: UserConnection) => (
                 <Card key={request.id}>
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
