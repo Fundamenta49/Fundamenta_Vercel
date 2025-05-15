@@ -4,8 +4,7 @@
  */
 import { Request, Response, NextFunction } from 'express';
 import jwt, { SignOptions } from 'jsonwebtoken';
-import { User } from '../../shared/schema.js';
-import { users } from '../../shared/schema.js';
+import * as schema from '../../shared/schema.js';
 import { db } from '../db.js';
 import { eq } from 'drizzle-orm';
 import { AuthorizationError } from '../utils/errors.js';
@@ -25,6 +24,12 @@ const REFRESH_COOKIE_OPTIONS = {
 };
 
 // Extended Request interface with authenticated user
+// Define a User type for our authentication context
+type User = {
+  id: number;
+  role: string;
+};
+
 export interface AuthenticatedRequest extends Request {
   user?: User;
   userId?: number;
@@ -96,10 +101,14 @@ export const authenticateJWT = async (req: AuthenticatedRequest, res: Response, 
     req.userId = decoded.userId;
     
     // Fetch minimal user data (id and role only)
-    const user = await db.query.users.findFirst({
-      where: eq(users.id, decoded.userId),
-      columns: { id: true, role: true }
-    });
+    const user = await db.select({
+      id: schema.users.id,
+      role: schema.users.role
+    })
+    .from(schema.users)
+    .where(eq(schema.users.id, decoded.userId))
+    .limit(1)
+    .then(results => results[0]);
     
     if (!user) {
       return res.status(401).json({ 
