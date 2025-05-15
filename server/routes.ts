@@ -16,6 +16,8 @@ import axios from 'axios';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
 
 // Bundle 5A Security Imports
 import { errorHandler, notFoundHandler, rateLimitHandler } from './middleware/error-handler.js';
@@ -1477,6 +1479,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false, 
         error: 'Failed to retrieve the user guide content' 
       });
+    }
+  });
+
+  // Add a catch-all route handler for client-side routes before error handlers
+  app.get('*', (req, res, next) => {
+    // Skip API routes and static assets
+    if (req.path.startsWith('/api/') || 
+        req.path.startsWith('/assets/') || 
+        req.path.includes('.')) {
+      return next();
+    }
+    
+    // For client routes, serve the client index.html file
+    // Use path.resolve to ensure the correct absolute path
+    const indexPath = path.resolve(__dirname, '../client/index.html');
+    
+    try {
+      // Check if the file exists before trying to send it
+      if (fs.existsSync(indexPath)) {
+        return res.sendFile(indexPath);
+      }
+      
+      // If client/index.html doesn't exist, try public/index.html as fallback
+      const publicPath = path.resolve(__dirname, '../public/index.html');
+      if (fs.existsSync(publicPath)) {
+        return res.sendFile(publicPath);
+      }
+      
+      // If neither exists, let the next middleware handle it
+      next();
+    } catch (err) {
+      console.error('Error serving client application:', err);
+      next(err);
     }
   });
 
