@@ -17,6 +17,7 @@ import MyPathPage from "@/pages/mypath";
 import StudentMyPath from "@/pages/mypath/student";
 import AnalyticsDashboard from "@/pages/mypath/analytics";
 import JungleHubView from "@/pages/mypath/jungle-hub";
+import ModulePage from "@/pages/mypath/pathway/module";
 import PublicPathwaysExplore from "@/pages/explore/pathways";
 
 // Import cooking pages
