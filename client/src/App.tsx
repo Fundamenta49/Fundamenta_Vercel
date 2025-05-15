@@ -17,9 +17,7 @@ import MyPathPage from "@/pages/mypath";
 import StudentMyPath from "@/pages/mypath/student";
 import AnalyticsDashboard from "@/pages/mypath/analytics";
 import JungleHubView from "@/pages/mypath/jungle-hub";
-import ModulePage from "@/pages/mypath/pathway/module";
 import PublicPathwaysExplore from "@/pages/explore/pathways";
-import TestPage from "./pages/test-page";
 
 // Import cooking pages
 import CookingPage from "@/pages/cooking";
@@ -385,9 +383,6 @@ function Router() {
                 <MentalHealthProviders />
               </ProtectedRoute>
             </Route>
-            <Route path="/test-page">
-              <TestPage />
-            </Route>
             <Route path="/learning">
               <ProtectedRoute>
                 <Learning />
@@ -531,11 +526,6 @@ function Router() {
             <Route path="/mypath/jungle-hub">
               <ProtectedRoute>
                 <JungleHubView />
-              </ProtectedRoute>
-            </Route>
-            <Route path="/mypath/pathway/:pathwayId/module/:moduleId">
-              <ProtectedRoute>
-                <ModulePage />
               </ProtectedRoute>
             </Route>
             <Route path="/explore/pathways">
