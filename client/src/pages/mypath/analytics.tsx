@@ -13,15 +13,17 @@ import {
   Users,
   Info
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button.js";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.js";
+import { Progress } from "@/components/ui/progress.js";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.js";
+import { Separator } from "@/components/ui/separator.js";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.js";
 import { useQuery } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast.js";
+import { apiRequest } from "@/lib/queryClient.js";
+import { MentorAnalyticsDashboard } from "@/components/analytics/MentorAnalyticsDashboard.js";
+import { StudentAnalyticsDashboard } from "@/components/analytics/StudentAnalyticsDashboard.js";
 
 // Types for analytics data
 interface AnalyticsSummary {
@@ -122,10 +124,26 @@ export default function AnalyticsDashboard() {
   const [activeTab, setActiveTab] = React.useState<string>("overview");
   const { toast } = useToast();
   
-  // For demo purposes, using hardcoded user ID
-  const userId = 1;
+  // Fetch current user
+  const { data: currentUser, isLoading: isLoadingUser, error: userError } = useQuery({
+    queryKey: ['/api/auth/me'],
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/auth/me');
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+      return await response.json();
+    }
+  });
   
-  // Fetch analytics data
+  const userId = currentUser?.id || 1; // Fallback to 1 if user not loaded yet
+  const userRole = currentUser?.role || 'student';
+  
+  // For specialized dashboards
+  const isMentor = userRole === 'mentor' || userRole === 'admin';
+  const isStudent = userRole === 'student' || userRole === 'admin';
+  
+  // Fetch analytics data for backward compatibility
   const { data: analytics, isLoading, error } = useQuery({
     queryKey: [`/api/analytics/user/${userId}`],
     queryFn: async () => {
@@ -135,6 +153,7 @@ export default function AnalyticsDashboard() {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
+    enabled: !isMentor, // Only fetch this data for non-mentors
   });
   
   return (
@@ -151,46 +170,67 @@ export default function AnalyticsDashboard() {
         
         <h1 className="text-2xl font-bold flex items-center">
           <BarChart3 className="h-6 w-6 mr-2 text-primary" />
-          Learning Analytics
+          {isMentor ? 'Mentor Analytics Dashboard' : 'Learning Analytics'}
         </h1>
       </div>
 
       <div className="mb-6">
         <p className="text-muted-foreground">
-          Track your learning progress, identify strengths and areas for improvement,
-          and gain insights into your learning patterns.
+          {isMentor 
+            ? 'Track student progress, monitor engagement metrics, and gain insights into pathway effectiveness.'
+            : 'Track your learning progress, identify strengths and areas for improvement, and gain insights into your learning patterns.'}
         </p>
       </div>
       
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="inline-flex h-12 items-center justify-center rounded-lg bg-white shadow-sm border p-1 text-gray-600 w-full max-w-4xl">
-          <TabsTrigger 
-            value="overview" 
-            className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
-          >
-            Overview
-          </TabsTrigger>
-          <TabsTrigger 
-            value="progress" 
-            className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
-          >
-            Pathway Progress
-          </TabsTrigger>
-          <TabsTrigger 
-            value="activity" 
-            className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
-          >
-            Activity
-          </TabsTrigger>
-          <TabsTrigger 
-            value="assignments" 
-            className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
-          >
-            Assignments
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="overview" className="mt-6">
+      {isLoadingUser ? (
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
+          <p className="text-muted-foreground">Loading user data...</p>
+        </div>
+      ) : userError ? (
+        <Alert variant="destructive">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            Failed to load user data. Please try again later.
+          </AlertDescription>
+        </Alert>
+      ) : isMentor ? (
+        // Render Mentor Analytics Dashboard
+        <MentorAnalyticsDashboard mentorId={userId} user={currentUser} />
+      ) : isStudent ? (
+        // Render Student Analytics Dashboard
+        <StudentAnalyticsDashboard studentId={userId} user={currentUser} />
+      ) : (
+        // Legacy dashboard with tabs
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="inline-flex h-12 items-center justify-center rounded-lg bg-white shadow-sm border p-1 text-gray-600 w-full max-w-4xl">
+            <TabsTrigger 
+              value="overview" 
+              className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
+            >
+              Overview
+            </TabsTrigger>
+            <TabsTrigger 
+              value="progress" 
+              className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
+            >
+              Pathway Progress
+            </TabsTrigger>
+            <TabsTrigger 
+              value="activity" 
+              className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
+            >
+              Activity
+            </TabsTrigger>
+            <TabsTrigger 
+              value="assignments" 
+              className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-medium hover:text-primary transition-colors"
+            >
+              Assignments
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="overview" className="mt-6">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
