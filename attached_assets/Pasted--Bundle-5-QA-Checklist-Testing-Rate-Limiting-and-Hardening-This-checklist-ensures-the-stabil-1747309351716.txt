@@ -1,0 +1,71 @@
+# ✅ Bundle 5 QA Checklist – Testing, Rate Limiting, and Hardening
+
+This checklist ensures the stability, performance, and protection of the platform before public release.
+
+---
+
+## 1. Rate Limiting and Abuse Prevention
+- [ ] Sensitive API endpoints (e.g., `/api/assignments`, `/api/pathways`) are rate-limited
+- [ ] Throttle repeated POST/PATCH/DELETE requests
+- [ ] Public access endpoints (e.g., `/api/pathways?public=true`) have read-only rate limits
+- [ ] Bot activity prevention (basic protection)
+
+---
+
+## 2. Permissions & Access Control
+- [ ] Students can only view their own assignments
+- [ ] Mentors can only view/manage students they are connected to
+- [ ] Public pathways are not editable unless created by the current user
+- [ ] Unauthorized access attempts return 403/401 errors with no sensitive data
+
+---
+
+## 3. Error Handling & Fallbacks
+- [ ] All API endpoints return structured JSON error responses
+- [ ] Frontend displays helpful user messages on:
+  - 403 (Access denied)
+  - 404 (Not found)
+  - 500 (Unexpected server error)
+- [ ] Graceful fallback UI for:
+  - No assignments
+  - No public pathways
+  - API errors or network failures
+
+---
+
+## 4. Load Testing (Manual/Simulated)
+- [ ] Simulate 100+ concurrent users assigning pathways
+- [ ] Confirm response times stay below 300ms for key endpoints
+- [ ] Confirm DB connections remain stable under load
+
+---
+
+## 5. Code Quality & Linting
+- [ ] ESLint/Prettier pass on all frontend and backend files
+- [ ] No unused imports or variables
+- [ ] No console warnings in browser or Node logs
+
+---
+
+## 6. Session Security
+- [ ] Sessions use secure, HTTP-only cookies
+- [ ] Session expiration is defined and enforced
+- [ ] JWT payloads don’t expose sensitive user info
+
+---
+
+## 7. Mobile + Accessibility
+- [ ] JungleHub and PublicPathways views display properly on mobile
+- [ ] Tab navigation works for all buttons/controls
+- [ ] ARIA labels present on interactive components
+
+---
+
+## 8. Deployment Readiness
+- [ ] Routes are correctly registered in App.tsx
+- [ ] Theme toggles persist across refresh
+- [ ] All jungle assets (icons, styles) are properly bundled
+
+---
+
+Once these checks are complete, the platform is ready for staging or beta release.
