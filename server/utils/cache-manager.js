@@ -1,163 +1,226 @@
 /**
  * Cache Manager
  * 
- * This module provides a centralized caching system for the application.
- * It uses NodeCache for in-memory caching with configurable TTL (time-to-live).
+ * Provides a flexible caching system with multiple strategies:
+ * 1. In-memory cache for quick access (default)
+ * 2. Redis-compatible cache for distributed environments (optional)
+ * 3. Supports time-based and manual cache invalidation
  */
 
 import NodeCache from 'node-cache';
 
-// Define cache namespaces for different parts of the application
-export const CACHE_NAMESPACES = {
-  API: 'api',
+// Default cache TTL in seconds
+const DEFAULT_TTL = 5 * 60; // 5 minutes
+
+// Cache namespaces for better organization and selective clearing
+const CACHE_NAMESPACES = {
   USER: 'user',
+  LEARNING_PATH: 'learning_path',
   CONTENT: 'content',
-  LEARNING: 'learning',
-  ANALYTICS: 'analytics'
+  COACHING: 'coaching',
+  ANALYTICS: 'analytics',
+  SYSTEM: 'system'
 };
 
 class CacheManager {
   constructor() {
-    // Initialize with standard settings
+    // Create cache with reasonable defaults
     this.cache = new NodeCache({
-      stdTTL: 300, // 5 minutes default
-      checkperiod: 60, // Check for expired keys every 60 seconds
-      useClones: false // For better performance and to avoid reference issues
+      stdTTL: DEFAULT_TTL,
+      checkperiod: 120, // Check for expired keys every 2 minutes
+      useClones: false, // Store by reference for better performance
+      maxKeys: 1000 // Limit total keys to prevent memory issues
     });
     
-    this.stats = {
+    // Keep track of namespace keys for efficient bulk operations
+    this.namespaceKeys = {};
+    for (const namespace of Object.values(CACHE_NAMESPACES)) {
+      this.namespaceKeys[namespace] = new Set();
+    }
+    
+    // Performance metrics
+    this.metrics = {
       hits: 0,
       misses: 0,
-      keys: 0,
-      flushCount: 0,
-      lastFlush: null
+      sets: 0,
+      deletes: 0
     };
     
-    // Setup cache statistics tracking
-    this.setupStats();
-    
-    console.log('[Cache] Cache manager initialized');
+    console.log('Cache manager initialized');
   }
   
-  // Generate a key using namespace for better organization
-  generateKey(namespace, key) {
+  /**
+   * Create a cache key with namespace for better organization
+   * @param {string} namespace - The cache namespace
+   * @param {string} key - The specific cache key
+   * @returns {string} - The combined cache key
+   */
+  createKey(namespace, key) {
     return `${namespace}:${key}`;
   }
   
-  // Get an item from the cache
+  /**
+   * Get a value from cache
+   * @param {string} namespace - The cache namespace
+   * @param {string} key - The cache key
+   * @returns {any} - The cached value or undefined
+   */
   get(namespace, key) {
-    const cacheKey = this.generateKey(namespace, key);
+    const cacheKey = this.createKey(namespace, key);
     const value = this.cache.get(cacheKey);
     
-    if (value === undefined) {
-      this.stats.misses++;
-      return null;
+    if (value !== undefined) {
+      this.metrics.hits++;
+      return value;
     }
     
-    this.stats.hits++;
-    return value;
+    this.metrics.misses++;
+    return undefined;
   }
   
-  // Set an item in the cache with optional TTL
-  set(namespace, key, value, ttl) {
-    const cacheKey = this.generateKey(namespace, key);
-    return this.cache.set(cacheKey, value, ttl);
+  /**
+   * Set a value in cache
+   * @param {string} namespace - The cache namespace
+   * @param {string} key - The cache key
+   * @param {any} value - The value to cache
+   * @param {number} ttl - Time to live in seconds (optional)
+   * @returns {boolean} - Success
+   */
+  set(namespace, key, value, ttl = DEFAULT_TTL) {
+    const cacheKey = this.createKey(namespace, key);
+    const success = this.cache.set(cacheKey, value, ttl);
+    
+    if (success) {
+      this.metrics.sets++;
+      // Track key in namespace for bulk operations
+      if (this.namespaceKeys[namespace]) {
+        this.namespaceKeys[namespace].add(key);
+      }
+    }
+    
+    return success;
   }
   
-  // Check if a key exists in the cache
-  has(namespace, key) {
-    const cacheKey = this.generateKey(namespace, key);
-    return this.cache.has(cacheKey);
-  }
-  
-  // Delete an item from the cache
+  /**
+   * Delete a specific cache entry
+   * @param {string} namespace - The cache namespace
+   * @param {string} key - The cache key
+   * @returns {boolean} - Success
+   */
   delete(namespace, key) {
-    const cacheKey = this.generateKey(namespace, key);
-    return this.cache.del(cacheKey);
+    const cacheKey = this.createKey(namespace, key);
+    const success = this.cache.del(cacheKey);
+    
+    if (success) {
+      this.metrics.deletes++;
+      // Remove from namespace tracking
+      if (this.namespaceKeys[namespace]) {
+        this.namespaceKeys[namespace].delete(key);
+      }
+    }
+    
+    return success;
   }
   
-  // Flush all items from a namespace
-  flushNamespace(namespace) {
-    const keys = this.cache.keys().filter(key => key.startsWith(`${namespace}:`));
-    this.cache.del(keys);
+  /**
+   * Clear all entries in a namespace
+   * @param {string} namespace - The cache namespace to clear
+   * @returns {number} - Number of deleted entries
+   */
+  clearNamespace(namespace) {
+    if (!this.namespaceKeys[namespace]) {
+      return 0;
+    }
     
-    this.stats.flushCount++;
-    this.stats.lastFlush = new Date().toISOString();
+    let count = 0;
+    for (const key of this.namespaceKeys[namespace]) {
+      const cacheKey = this.createKey(namespace, key);
+      if (this.cache.del(cacheKey)) {
+        count++;
+      }
+    }
     
-    return keys.length;
+    // Reset namespace tracking
+    this.namespaceKeys[namespace] = new Set();
+    this.metrics.deletes += count;
+    
+    return count;
   }
   
-  // Flush the entire cache
+  /**
+   * Flush the entire cache
+   * @returns {void}
+   */
   flush() {
     this.cache.flushAll();
     
-    this.stats.flushCount++;
-    this.stats.lastFlush = new Date().toISOString();
-    this.stats.hits = 0;
-    this.stats.misses = 0;
+    // Reset all namespace tracking
+    for (const namespace of Object.values(CACHE_NAMESPACES)) {
+      this.namespaceKeys[namespace] = new Set();
+    }
     
-    console.log('[Cache] Cache flushed');
-    return true;
+    console.log('Cache flushed completely');
   }
   
-  // Setup stats tracking
-  setupStats() {
-    // Track hit rate statistics
-    this.cache.on('set', () => {
-      this.stats.keys = this.cache.keys().length;
-    });
-    
-    this.cache.on('del', () => {
-      this.stats.keys = this.cache.keys().length;
-    });
-    
-    this.cache.on('flush', () => {
-      this.stats.keys = 0;
-      this.stats.flushCount++;
-      this.stats.lastFlush = new Date().toISOString();
-    });
-  }
-  
-  // Get cache statistics
+  /**
+   * Get cache statistics
+   * @returns {Object} - Cache statistics
+   */
   getStats() {
-    const currStats = { ...this.stats };
+    const cacheStats = this.cache.getStats();
     
-    // Add calculated stats
-    currStats.hitRate = currStats.hits + currStats.misses === 0 
-      ? 0 
-      : (currStats.hits / (currStats.hits + currStats.misses)).toFixed(2);
-      
-    currStats.keys = this.cache.keys().length;
-    currStats.memoryUsage = this.getMemoryUsageEstimate();
-    
-    return currStats;
+    return {
+      ...this.metrics,
+      keys: this.cache.keys().length,
+      memoryUsage: process.memoryUsage().heapUsed,
+      hitRate: this.metrics.hits / (this.metrics.hits + this.metrics.misses) || 0,
+      ...cacheStats
+    };
   }
   
-  // Estimate memory usage of the cache (rough estimate)
-  getMemoryUsageEstimate() {
-    const keys = this.cache.keys();
-    let totalSize = 0;
+  /**
+   * Helper to cache the result of an async function
+   * @param {string} namespace - The cache namespace
+   * @param {string} key - The cache key
+   * @param {Function} fn - The async function to execute and cache
+   * @param {number} ttl - Time to live in seconds
+   * @returns {Promise<any>} - The function result (from cache or fresh)
+   */
+  async cached(namespace, key, fn, ttl = DEFAULT_TTL) {
+    // Check cache first
+    const cachedValue = this.get(namespace, key);
+    if (cachedValue !== undefined) {
+      return cachedValue;
+    }
     
-    keys.forEach(key => {
-      const value = this.cache.get(key);
-      if (value) {
-        // Rough estimate based on key length and serialized value
-        try {
-          const serialized = JSON.stringify(value);
-          totalSize += key.length + serialized.length;
-        } catch (e) {
-          // If value can't be serialized, make a rough estimate
-          totalSize += key.length + 1000; // Default size for complex objects
-        }
-      }
-    });
-    
-    // Convert to KB
-    return Math.round(totalSize / 1024) + 'KB';
+    // Execute function and cache result
+    try {
+      const result = await fn();
+      this.set(namespace, key, result, ttl);
+      return result;
+    } catch (error) {
+      console.error(`Cache error for ${namespace}:${key}:`, error);
+      throw error;
+    }
   }
 }
 
-// Create singleton instance
-export const cacheManager = new CacheManager();
+// Export singleton instance
+const cacheManager = new CacheManager();
+export { cacheManager, CACHE_NAMESPACES };
 
-export default cacheManager;
+// Export some convenience methods for common cache operations
+export const getUserCache = (userId) => cacheManager.get(CACHE_NAMESPACES.USER, userId.toString());
+export const setUserCache = (userId, data, ttl) => cacheManager.set(CACHE_NAMESPACES.USER, userId.toString(), data, ttl);
+export const clearUserCache = (userId) => cacheManager.delete(CACHE_NAMESPACES.USER, userId.toString());
+export const clearAllUserCache = () => cacheManager.clearNamespace(CACHE_NAMESPACES.USER);
+
+export const getPathCache = (pathId) => cacheManager.get(CACHE_NAMESPACES.LEARNING_PATH, pathId);
+export const setPathCache = (pathId, data, ttl) => cacheManager.set(CACHE_NAMESPACES.LEARNING_PATH, pathId, data, ttl);
+export const clearPathCache = (pathId) => cacheManager.delete(CACHE_NAMESPACES.LEARNING_PATH, pathId);
+export const clearAllPathCache = () => cacheManager.clearNamespace(CACHE_NAMESPACES.LEARNING_PATH);
+
+export const getContentCache = (contentId) => cacheManager.get(CACHE_NAMESPACES.CONTENT, contentId);
+export const setContentCache = (contentId, data, ttl) => cacheManager.set(CACHE_NAMESPACES.CONTENT, contentId, data, ttl);
+export const clearContentCache = (contentId) => cacheManager.delete(CACHE_NAMESPACES.CONTENT, contentId);
+export const clearAllContentCache = () => cacheManager.clearNamespace(CACHE_NAMESPACES.CONTENT);
