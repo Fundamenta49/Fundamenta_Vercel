@@ -7,39 +7,18 @@
  */
 
 import { RateLimitExceededError } from './errors.js';
+import NodeCache from 'node-cache';
 
-// Simple in-memory store for rate limiting
-// In production, use Redis or another persistent store for multi-node support
-const ipRequests = new Map();
-const userRequests = new Map();
-
-// Clean old requests periodically to prevent memory leaks
-setInterval(() => {
-  const now = Date.now();
-  
-  // Clean IP-based entries
-  for (const [ip, requests] of ipRequests.entries()) {
-    const filtered = requests.filter(timestamp => now - timestamp < 60000);
-    if (filtered.length === 0) {
-      ipRequests.delete(ip);
-    } else {
-      ipRequests.set(ip, filtered);
-    }
-  }
-  
-  // Clean user-based entries
-  for (const [userId, requests] of userRequests.entries()) {
-    const filtered = requests.filter(timestamp => now - timestamp < 60000);
-    if (filtered.length === 0) {
-      userRequests.delete(userId);
-    } else {
-      userRequests.set(userId, filtered);
-    }
-  }
-}, 60000); // Run every minute
+// In-memory cache for rate limiting
+// Uses standard TTL (time-to-live) mechanism
+const rateCache = new NodeCache({ 
+  stdTTL: 60, // Default expiration in seconds
+  checkperiod: 30, // Check for expired keys every 30 seconds
+  useClones: false // For better performance
+});
 
 /**
- * IP-based rate limiter
+ * IP-based rate limiter (uses the request IP address)
  * @param {number} maxRequests - Maximum requests per minute
  * @param {string[]} excludePaths - Array of paths to exclude from rate limiting
  * @returns {Function} Express middleware
@@ -50,34 +29,35 @@ export const ipRateLimiter = (maxRequests = 60, excludePaths = []) => {
     if (excludePaths.some(path => req.path.startsWith(path))) {
       return next();
     }
+
+    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const key = `ip:${ip}:${req.path}`;
     
-    const ip = req.ip || req.connection.remoteAddress;
-    const now = Date.now();
-    
-    // Initialize tracking array if it's a new IP
-    if (!ipRequests.has(ip)) {
-      ipRequests.set(ip, []);
+    try {
+      const requests = rateCache.get(key) || 0;
+      
+      if (requests >= maxRequests) {
+        throw new RateLimitExceededError(`Rate limit exceeded for ${req.ip}`);
+      }
+      
+      // Increment request count
+      rateCache.set(key, requests + 1);
+      
+      // Set rate limit headers
+      res.setHeader('X-RateLimit-Limit', maxRequests);
+      res.setHeader('X-RateLimit-Remaining', maxRequests - (requests + 1));
+      
+      next();
+    } catch (error) {
+      if (error instanceof RateLimitExceededError) {
+        return res.status(429).json({
+          error: 'RateLimitExceededError',
+          message: 'Too many requests, please try again later',
+          success: false
+        });
+      }
+      next(error);
     }
-    
-    // Get existing requests and clean old ones
-    const requests = ipRequests.get(ip);
-    const recentRequests = requests.filter(timestamp => now - timestamp < 60000);
-    
-    // Check if the IP has exceeded the limit
-    if (recentRequests.length >= maxRequests) {
-      return next(new RateLimitExceededError('Too many requests, please try again later'));
-    }
-    
-    // Add current request timestamp
-    recentRequests.push(now);
-    ipRequests.set(ip, recentRequests);
-    
-    // Add headers to help clients manage their request rate
-    res.setHeader('X-RateLimit-Limit', maxRequests);
-    res.setHeader('X-RateLimit-Remaining', Math.max(0, maxRequests - recentRequests.length));
-    res.setHeader('X-RateLimit-Reset', Math.ceil((now + 60000) / 1000));
-    
-    next();
   };
 };
 
@@ -93,39 +73,40 @@ export const userRateLimiter = (maxRequests = 120, excludePaths = []) => {
     if (excludePaths.some(path => req.path.startsWith(path))) {
       return next();
     }
-    
-    // If no authenticated user, skip this middleware
-    if (!req.user || !req.user.id) {
+
+    // Use user ID if available, otherwise fall back to IP
+    const userId = req.user?.id || req.userId;
+    if (!userId) {
       return next();
     }
     
-    const userId = req.user.id;
-    const now = Date.now();
+    const key = `user:${userId}:${req.path}`;
     
-    // Initialize tracking array if it's a new user
-    if (!userRequests.has(userId)) {
-      userRequests.set(userId, []);
+    try {
+      const requests = rateCache.get(key) || 0;
+      
+      if (requests >= maxRequests) {
+        throw new RateLimitExceededError(`Rate limit exceeded for user ID ${userId}`);
+      }
+      
+      // Increment request count
+      rateCache.set(key, requests + 1);
+      
+      // Set rate limit headers
+      res.setHeader('X-RateLimit-Limit', maxRequests);
+      res.setHeader('X-RateLimit-Remaining', maxRequests - (requests + 1));
+      
+      next();
+    } catch (error) {
+      if (error instanceof RateLimitExceededError) {
+        return res.status(429).json({
+          error: 'RateLimitExceededError',
+          message: 'Too many requests, please try again later',
+          success: false
+        });
+      }
+      next(error);
     }
-    
-    // Get existing requests and clean old ones
-    const requests = userRequests.get(userId);
-    const recentRequests = requests.filter(timestamp => now - timestamp < 60000);
-    
-    // Check if the user has exceeded the limit
-    if (recentRequests.length >= maxRequests) {
-      return next(new RateLimitExceededError('Too many requests, please try again later'));
-    }
-    
-    // Add current request timestamp
-    recentRequests.push(now);
-    userRequests.set(userId, recentRequests);
-    
-    // Add headers to help clients manage their request rate
-    res.setHeader('X-RateLimit-Limit', maxRequests);
-    res.setHeader('X-RateLimit-Remaining', Math.max(0, maxRequests - recentRequests.length));
-    res.setHeader('X-RateLimit-Reset', Math.ceil((now + 60000) / 1000));
-    
-    next();
   };
 };
 
@@ -136,32 +117,40 @@ export const userRateLimiter = (maxRequests = 120, excludePaths = []) => {
  */
 export const strictRateLimiter = (maxRequests = 10) => {
   return (req, res, next) => {
-    const ip = req.ip || req.connection.remoteAddress;
-    const now = Date.now();
+    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const key = `strict:${ip}:${req.path}`;
     
-    // Initialize tracking array if it's a new IP
-    if (!ipRequests.has(ip)) {
-      ipRequests.set(ip, []);
+    try {
+      const requests = rateCache.get(key) || 0;
+      
+      if (requests >= maxRequests) {
+        // Add exponential backoff for repeated attempts
+        const penaltyFactor = Math.min(Math.floor(requests / maxRequests), 5);
+        const penaltyTime = penaltyFactor * 60; // Additional penalty time in seconds
+        
+        rateCache.ttl(key, 60 + penaltyTime); // Extend the TTL with penalty
+        
+        throw new RateLimitExceededError(`Rate limit exceeded for ${req.ip}`);
+      }
+      
+      // Increment request count
+      rateCache.set(key, requests + 1);
+      
+      // Set rate limit headers
+      res.setHeader('X-RateLimit-Limit', maxRequests);
+      res.setHeader('X-RateLimit-Remaining', maxRequests - (requests + 1));
+      
+      next();
+    } catch (error) {
+      if (error instanceof RateLimitExceededError) {
+        return res.status(429).json({
+          error: 'RateLimitExceededError',
+          message: 'Too many requests, please try again later',
+          success: false,
+          retryAfter: 60 // Seconds until next allowed request
+        });
+      }
+      next(error);
     }
-    
-    // Get existing requests and clean old ones
-    const requests = ipRequests.get(ip);
-    const recentRequests = requests.filter(timestamp => now - timestamp < 60000);
-    
-    // Check if the IP has exceeded the limit
-    if (recentRequests.length >= maxRequests) {
-      return next(new RateLimitExceededError('Too many authentication attempts, please try again later'));
-    }
-    
-    // Add current request timestamp
-    recentRequests.push(now);
-    ipRequests.set(ip, recentRequests);
-    
-    // Add headers to help clients manage their request rate
-    res.setHeader('X-RateLimit-Limit', maxRequests);
-    res.setHeader('X-RateLimit-Remaining', Math.max(0, maxRequests - recentRequests.length));
-    res.setHeader('X-RateLimit-Reset', Math.ceil((now + 60000) / 1000));
-    
-    next();
   };
 };
