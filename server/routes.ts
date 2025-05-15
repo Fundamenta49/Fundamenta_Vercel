@@ -40,7 +40,6 @@ import poseImagesRoutes from './routes/pose-images';
 import workoutRoutes from './routes/workout';
 import pathwaysRoutes from './routes/pathways';
 import studentRoutes from './routes/student';
-import analyticsRoutes from './routes/analytics.js';
 import assignmentsRoutes from './routes/assignments';
 import authRoutes from './auth/auth-routes';
 import registerMentorshipRoutes from './routes/mentorship-routes';
@@ -1149,8 +1148,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register nutrition assessment routes
   app.use('/api/nutrition', nutritionRoutes);
   
-  // Register analytics routes
-  app.use('/api/analytics', analyticsRoutes);
+
   
   // Register comprehensive wellness assessment routes
   app.use('/api/wellness/comprehensive', comprehensiveWellnessRoutes);
