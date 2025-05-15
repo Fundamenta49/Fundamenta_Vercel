@@ -19,7 +19,7 @@ interface PathwayModule {
   title: string;
   description: string;
   order: number;
-  content: string;
+  content: any;
   completed?: boolean;
   lastAccessed?: string | null;
 }
@@ -30,12 +30,12 @@ interface Pathway {
   description: string;
   category: string;
   isPublic: boolean;
-  creatorId: string;
+  creatorId: number;
   modules: PathwayModule[];
 }
 
 interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
 }
@@ -43,21 +43,16 @@ interface User {
 interface Assignment {
   id: number;
   pathwayId: number;
-  studentId: string;
-  assignedById: string;
-  status: 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE';
+  studentId: number;
+  assignedBy: number | User;
+  status: 'assigned' | 'in_progress' | 'completed' | 'revoked';
   progress: number;
-  deadline: string | null;
+  dueDate: string | null;
   startedAt: string | null;
   completedAt: string | null;
   createdAt: string;
   updatedAt: string;
-  finalScore: number | null;
-  rating: number | null;
-  estimatedHours: number | null;
   pathway: Pathway;
-  assignedBy: User;
-  achievements?: { name: string; }[];
 }
 
 interface CategoryProgress {
@@ -169,313 +164,37 @@ const StudentMyPath: React.FC = () => {
       />
       
       {/* Learning Statistics Section */}
-      {statisticsQuery.data && !statisticsQuery.isLoading && (
-
-          {!assignedQuery.isLoading && assignedQuery.data && assignedQuery.data.length === 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>No Assignments</CardTitle>
-                <CardDescription>You don't have any assigned learning paths yet.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-500">
-                  When your teacher or mentor assigns you a learning path, it will appear here.
-                </p>
-              </CardContent>
-            </Card>
-          )}
-
-          {!assignedQuery.isLoading && assignedQuery.data && assignedQuery.data.map((assignment: Assignment) => (
-            <Card key={assignment.id} className="mb-4">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle>{assignment.pathway.title}</CardTitle>
-                    <CardDescription>
-                      Assigned by: {assignment.assignedBy?.name || 'Unknown'}
-                    </CardDescription>
-                  </div>
-                  <div className="flex flex-col items-end gap-1">
-                    {getStatusBadge(assignment.status)}
-                    <span className="text-xs text-gray-500">
-                      {getStatusMessage(assignment)}
-                    </span>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-4">
-                  <p className="text-sm">{assignment.pathway.description}</p>
-                </div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium">Progress</span>
-                  <span className="text-sm font-medium">{assignment.progress || 0}%</span>
-                </div>
-                <Progress value={assignment.progress || 0} className="h-2" />
-                <div className="flex gap-4 mt-4 text-sm text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <FileText className="h-4 w-4" />
-                    <span>{assignment.pathway.modules?.length || 0} Modules</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    <span>
-                      {assignment.estimatedHours ? `${assignment.estimatedHours} hours` : 'Time varies'}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button
-                  variant={assignment.status === 'NOT_STARTED' ? "default" : "outline"}
-                  className="flex items-center gap-1"
-                  onClick={() => setLocation(`/mypath/learn/${assignment.id}`)}
-                >
-                  {assignment.status === 'NOT_STARTED' ? 'Start Learning' : 'Continue Learning'}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </TabsContent>
-
-        {/* Completed Pathways Tab */}
-        <TabsContent value="completed" className="mt-6">
-          <h2 className="text-xl font-semibold mb-4">Completed Learning Paths</h2>
-          
-          {completedQuery.isLoading && (
-            <>
-              {[1, 2].map((i) => (
-                <Card key={i} className="mb-4">
-                  <CardHeader>
-                    <Skeleton className="h-6 w-48 mb-2" />
-                    <Skeleton className="h-4 w-24" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-4 w-full mb-4" />
-                    <Skeleton className="h-4 w-3/4 mb-4" />
-                    <div className="flex gap-4">
-                      <Skeleton className="h-8 w-8" />
-                      <Skeleton className="h-8 w-8" />
-                      <Skeleton className="h-8 w-8" />
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </>
-          )}
-          
-          {!completedQuery.isLoading && completedQuery.data && completedQuery.data.length === 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>No Completed Paths</CardTitle>
-                <CardDescription>You haven't completed any learning paths yet.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-500">
-                  When you complete an assigned learning path, it will appear here with your achievements.
-                </p>
-              </CardContent>
-            </Card>
-          )}
-
-          {!completedQuery.isLoading && completedQuery.data && completedQuery.data.map((assignment: Assignment) => (
-            <Card key={assignment.id} className="mb-4">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle>{assignment.pathway.title}</CardTitle>
-                    <CardDescription>
-                      Completed on {formatDate(assignment.completedAt)}
-                    </CardDescription>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <Badge className="bg-green-500">Completed</Badge>
-                    {assignment.finalScore !== null && (
-                      <span className="text-sm font-medium mt-1">
-                        Score: {assignment.finalScore}%
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-4">
-                  <p className="text-sm">{assignment.pathway.description}</p>
+      {statisticsQuery.data && (
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-4">My Learning Statistics</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Learning Metrics</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="flex flex-col items-center p-4 border rounded-lg">
+                  <div className="text-4xl font-bold text-blue-500 mb-2">{statisticsQuery.data.modulesCompleted}</div>
+                  <div className="text-sm text-gray-500">Modules Completed</div>
                 </div>
                 
-                <div className="flex gap-3 mt-4">
-                  {assignment.achievements && assignment.achievements.map((achievement: { name: string }, idx: number) => (
-                    <Badge key={idx} variant="outline" className="py-2 px-3 flex items-center gap-2">
-                      <Award className="h-4 w-4 text-yellow-500" />
-                      {achievement.name}
-                    </Badge>
-                  ))}
-                  
-                  {(!assignment.achievements || assignment.achievements.length === 0) && (
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Award className="h-4 w-4 mr-2" />
-                      Achievement badges will appear here
-                    </div>
-                  )}
+                <div className="flex flex-col items-center p-4 border rounded-lg">
+                  <div className="text-4xl font-bold text-green-500 mb-2">{statisticsQuery.data.assignments.completed}</div>
+                  <div className="text-sm text-gray-500">Pathways Completed</div>
+                  <div className="text-xs text-gray-400 mt-1">of {statisticsQuery.data.assignments.total} assigned</div>
                 </div>
                 
-                {assignment.rating && (
-                  <div className="flex items-center mt-4">
-                    <span className="text-sm font-medium mr-2">Your Rating:</span>
-                    <div className="flex">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <svg 
-                          key={star} 
-                          className={`h-4 w-4 ${star <= (assignment.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
-                          fill="currentColor" 
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {!assignment.rating && (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="mt-4"
-                    onClick={() => setLocation(`/mypath/rate/${assignment.id}`)}
-                  >
-                    Rate this path
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </TabsContent>
-        
-        {/* Progress & Statistics Tab */}
-        <TabsContent value="progress" className="mt-6">
-          <h2 className="text-xl font-semibold mb-4">My Learning Progress</h2>
-          
-          {statisticsQuery.isLoading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-              {[1, 2, 3, 4].map((i) => (
-                <Card key={i}>
-                  <CardHeader>
-                    <Skeleton className="h-6 w-24 mb-2" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-10 w-16 mb-4" />
-                    <Skeleton className="h-4 w-full" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-          
-          {!statisticsQuery.isLoading && statisticsQuery.data && (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-500">
-                      Modules Completed
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold">
-                      {statisticsQuery.data.modulesCompleted || 0}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Individual learning modules
-                    </p>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-500">
-                      Assignment Completion
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold">
-                      {statisticsQuery.data.assignments?.completed || 0}/{statisticsQuery.data.assignments?.total || 0}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Completed pathways
-                    </p>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-500">
-                      Average Score
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold">
-                      {statisticsQuery.data.averageScore ? 
-                        `${Math.round(statisticsQuery.data.averageScore)}%` : 
-                        'N/A'}
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Across all graded assignments
-                    </p>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-500">
-                      Learning Streak
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold">
-                      {statisticsQuery.data.streak || 0} days
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Current learning streak
-                    </p>
-                  </CardContent>
-                </Card>
+                <div className="flex flex-col items-center p-4 border rounded-lg">
+                  <div className="text-4xl font-bold text-amber-500 mb-2">{statisticsQuery.data.streak}</div>
+                  <div className="text-sm text-gray-500">Day Streak</div>
+                </div>
               </div>
-              
-              <h3 className="text-lg font-semibold mb-4">Progress by Category</h3>
-              <div className="mb-8">
-                {statisticsQuery.data.categories?.map((category: CategoryProgress) => (
-                  <div key={category.name} className="mb-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium">{category.name}</span>
-                      <span className="text-sm">
-                        {category.completedModules}/{category.totalModules} modules
-                      </span>
-                    </div>
-                    <Progress 
-                      value={(category.completedModules / Math.max(category.totalModules, 1)) * 100} 
-                      className="h-2" 
-                    />
-                  </div>
-                ))}
-                
-                {(!statisticsQuery.data.categories || statisticsQuery.data.categories.length === 0) && (
-                  <Card>
-                    <CardContent className="py-4">
-                      <p className="text-gray-500 text-center">
-                        No category data available yet
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-            </>
-          )}
-        </TabsContent>
-      </Tabs>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
-};
+}
 
 export default StudentMyPath;

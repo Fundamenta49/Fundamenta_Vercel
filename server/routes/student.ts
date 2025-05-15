@@ -1,13 +1,13 @@
 import { Router, Response } from 'express';
-import { db } from '../db';
-import { authenticateJWT, requireUser, AuthenticatedRequest } from '../auth/auth-middleware';
+import { db } from '../db.js';
+import { authenticateJWT, requireUser, AuthenticatedRequest } from '../auth/auth-middleware.js';
 import { 
   assignedPathways, 
   customPathways, 
   customPathwayModules, 
   learningProgress, 
   users 
-} from '../../shared/schema';
+} from '../../shared/schema.js';
 import { and, eq, asc, desc, ne, count, sum, avg, sql } from 'drizzle-orm';
 
 const router = Router();
