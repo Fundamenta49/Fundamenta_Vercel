@@ -1482,38 +1482,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Add a catch-all route handler for client-side routes before error handlers
-  app.get('*', (req, res, next) => {
-    // Skip API routes and static assets
-    if (req.path.startsWith('/api/') || 
-        req.path.startsWith('/assets/') || 
-        req.path.includes('.')) {
-      return next();
-    }
-    
-    // For client routes, serve the client index.html file
-    // Use path.resolve to ensure the correct absolute path
-    const indexPath = path.resolve(__dirname, '../client/index.html');
-    
-    try {
-      // Check if the file exists before trying to send it
-      if (fs.existsSync(indexPath)) {
-        return res.sendFile(indexPath);
-      }
-      
-      // If client/index.html doesn't exist, try public/index.html as fallback
-      const publicPath = path.resolve(__dirname, '../public/index.html');
-      if (fs.existsSync(publicPath)) {
-        return res.sendFile(publicPath);
-      }
-      
-      // If neither exists, let the next middleware handle it
-      next();
-    } catch (err) {
-      console.error('Error serving client application:', err);
-      next(err);
-    }
-  });
+  // Bundle 5B: Performance optimizations temporarily disabled
+  /* 
+  // We've removed our custom catch-all route handler to avoid interfering with Vite's middleware
+  // This allows Vite to properly handle serving the React application
+  */
 
   // Bundle 5A: Add error handling middleware at the end of middleware chain
   // Custom 404 handler for undefined routes
