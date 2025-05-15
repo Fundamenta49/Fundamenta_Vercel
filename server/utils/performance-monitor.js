@@ -8,103 +8,127 @@
  * - Route timing analytics
  */
 
-import { performance } from 'perf_hooks';
-
-// Track performance metrics
-const metrics = {
-  // API response time tracking
-  api: {
-    requests: 0,
+// Performance metrics storage
+let metrics = {
+  apiRequests: {
+    count: 0,
     totalResponseTime: 0,
-    slowestRoute: { route: '', time: 0 },
-    fastestRoute: { route: '', time: Infinity },
-    routeStats: {},
+    averageResponseTime: 0,
+    maxResponseTime: 0,
+    minResponseTime: Number.MAX_SAFE_INTEGER,
     errors: 0,
+    byEndpoint: {}
   },
-  
-  // Database performance
-  database: {
-    queries: 0,
+  dbQueries: {
+    count: 0,
     totalQueryTime: 0,
-    slowestQuery: { query: '', time: 0 },
-    fastestQuery: { query: '', time: Infinity },
-    queryStats: {},
+    averageQueryTime: 0,
+    maxQueryTime: 0,
+    minQueryTime: Number.MAX_SAFE_INTEGER,
     errors: 0,
+    slowQueries: []
   },
-  
-  // Memory usage
   memory: {
-    samples: 0,
-    totalHeapUsed: 0,
-    peakHeapUsed: 0,
-    lastSample: null,
-    history: [],
+    samples: [],
+    maxRss: 0,
+    maxHeapTotal: 0,
+    maxHeapUsed: 0,
+    current: null
   },
-  
-  // Application startup time
-  startup: {
-    startTime: Date.now(),
-    bootstrapTime: null,
-    fullyLoadedTime: null,
-  },
+  system: {
+    bootTime: Date.now(),
+    fullLoadTime: null,
+    lastReset: Date.now(),
+    uptime: 0
+  }
 };
+
+// Configuration for performance monitoring
+let config = {
+  sampleMemoryIntervalMs: 60000, // 1 minute
+  keepSlowQueriesCount: 20,
+  slowQueryThresholdMs: 200,
+  memoryWarningThresholdMb: 512, // 512 MB
+  routeDetailLevel: 'full', // 'minimal', 'standard', 'full'
+  enableVerboseLogging: false
+};
+
+let memoryInterval = null;
 
 /**
  * Configure the performance monitor
  * @param {Object} options - Configuration options
  */
 export function configurePerformanceMonitor(options = {}) {
-  // Record application startup time
-  metrics.startup.startTime = Date.now();
+  // Merge provided options with defaults
+  config = { ...config, ...options };
   
-  // Schedule periodic memory usage monitoring
-  const memoryMonitoringInterval = options.memoryMonitoringInterval || 60000; // 1 minute default
-  setInterval(sampleMemoryUsage, memoryMonitoringInterval);
+  // Setup memory usage sampling
+  if (memoryInterval) {
+    clearInterval(memoryInterval);
+  }
   
-  console.log(`Performance monitoring initialized (memory sampling every ${memoryMonitoringInterval / 1000}s)`);
+  memoryInterval = setInterval(sampleMemoryUsage, config.sampleMemoryIntervalMs);
+  sampleMemoryUsage(); // Take initial sample
+  
+  console.log(`Performance monitoring initialized (memory sampling every ${config.sampleMemoryIntervalMs / 1000}s)`);
+  
+  return true;
 }
 
 /**
  * Record application bootstrap completion
  */
 export function recordBootstrapComplete() {
-  metrics.startup.bootstrapTime = Date.now() - metrics.startup.startTime;
-  console.log(`Application bootstrap completed in ${metrics.startup.bootstrapTime}ms`);
+  const bootTime = Date.now() - metrics.system.bootTime;
+  metrics.system.bootstrapTime = bootTime;
+  console.log(`Application bootstrap completed in ${bootTime}ms`);
 }
 
 /**
  * Record application fully loaded state
  */
 export function recordFullyLoaded() {
-  metrics.startup.fullyLoadedTime = Date.now() - metrics.startup.startTime;
-  console.log(`Application fully loaded in ${metrics.startup.fullyLoadedTime}ms`);
+  const loadTime = Date.now() - metrics.system.bootTime;
+  metrics.system.fullLoadTime = loadTime;
 }
 
 /**
  * Sample current memory usage
  */
 function sampleMemoryUsage() {
-  const memoryUsage = process.memoryUsage();
-  const heapUsed = memoryUsage.heapUsed / 1024 / 1024; // Convert to MB
-  
-  metrics.memory.samples++;
-  metrics.memory.totalHeapUsed += heapUsed;
-  metrics.memory.lastSample = {
-    timestamp: Date.now(),
-    heapUsed,
-    rss: memoryUsage.rss / 1024 / 1024,
-    external: memoryUsage.external / 1024 / 1024,
-  };
-  
-  // Track peak memory usage
-  if (heapUsed > metrics.memory.peakHeapUsed) {
-    metrics.memory.peakHeapUsed = heapUsed;
-  }
-  
-  // Keep history of last 60 samples (1 hour at 1 sample per minute)
-  metrics.memory.history.push(metrics.memory.lastSample);
-  if (metrics.memory.history.length > 60) {
-    metrics.memory.history.shift();
+  try {
+    const memory = process.memoryUsage();
+    
+    // Convert to MB for easier readability
+    const sample = {
+      rss: Math.round(memory.rss / 1024 / 1024),
+      heapTotal: Math.round(memory.heapTotal / 1024 / 1024),
+      heapUsed: Math.round(memory.heapUsed / 1024 / 1024),
+      external: Math.round(memory.external / 1024 / 1024),
+      timestamp: Date.now()
+    };
+    
+    // Update max values
+    metrics.memory.maxRss = Math.max(metrics.memory.maxRss, sample.rss);
+    metrics.memory.maxHeapTotal = Math.max(metrics.memory.maxHeapTotal, sample.heapTotal);
+    metrics.memory.maxHeapUsed = Math.max(metrics.memory.maxHeapUsed, sample.heapUsed);
+    
+    // Add to samples array, keeping only the last 60 samples (1 hour at 1 minute intervals)
+    metrics.memory.samples.push(sample);
+    if (metrics.memory.samples.length > 60) {
+      metrics.memory.samples.shift();
+    }
+    
+    // Set current memory stats
+    metrics.memory.current = sample;
+    
+    // Check if memory usage is approaching a concerning level
+    if (sample.heapUsed > config.memoryWarningThresholdMb) {
+      console.warn(`Memory usage warning: ${sample.heapUsed}MB heap used exceeds warning threshold of ${config.memoryWarningThresholdMb}MB`);
+    }
+  } catch (error) {
+    console.error('Error sampling memory usage:', error);
   }
 }
 
@@ -115,44 +139,48 @@ function sampleMemoryUsage() {
  * @param {boolean} isError - Whether the request resulted in an error
  */
 export function recordApiPerformance(route, responseTime, isError = false) {
-  metrics.api.requests++;
-  metrics.api.totalResponseTime += responseTime;
-  
-  if (isError) {
-    metrics.api.errors++;
-  }
-  
-  // Initialize route stats if needed
-  if (!metrics.api.routeStats[route]) {
-    metrics.api.routeStats[route] = {
-      count: 0,
-      totalTime: 0,
-      avgTime: 0,
-      minTime: Infinity,
-      maxTime: 0,
-      errors: 0,
-    };
-  }
-  
-  // Update route stats
-  const routeStats = metrics.api.routeStats[route];
-  routeStats.count++;
-  routeStats.totalTime += responseTime;
-  routeStats.avgTime = routeStats.totalTime / routeStats.count;
-  routeStats.minTime = Math.min(routeStats.minTime, responseTime);
-  routeStats.maxTime = Math.max(routeStats.maxTime, responseTime);
-  
-  if (isError) {
-    routeStats.errors++;
-  }
-  
-  // Update global slowest/fastest routes
-  if (responseTime > metrics.api.slowestRoute.time) {
-    metrics.api.slowestRoute = { route, time: responseTime };
-  }
-  
-  if (responseTime < metrics.api.fastestRoute.time) {
-    metrics.api.fastestRoute = { route, time: responseTime };
+  try {
+    // Update overall metrics
+    metrics.apiRequests.count++;
+    metrics.apiRequests.totalResponseTime += responseTime;
+    metrics.apiRequests.averageResponseTime = metrics.apiRequests.totalResponseTime / metrics.apiRequests.count;
+    metrics.apiRequests.maxResponseTime = Math.max(metrics.apiRequests.maxResponseTime, responseTime);
+    metrics.apiRequests.minResponseTime = Math.min(metrics.apiRequests.minResponseTime, responseTime);
+    
+    if (isError) {
+      metrics.apiRequests.errors++;
+    }
+    
+    // Update endpoint-specific metrics
+    if (!metrics.apiRequests.byEndpoint[route]) {
+      metrics.apiRequests.byEndpoint[route] = {
+        count: 0,
+        totalResponseTime: 0,
+        averageResponseTime: 0,
+        maxResponseTime: 0,
+        minResponseTime: Number.MAX_SAFE_INTEGER,
+        errors: 0
+      };
+    }
+    
+    const endpointMetrics = metrics.apiRequests.byEndpoint[route];
+    endpointMetrics.count++;
+    endpointMetrics.totalResponseTime += responseTime;
+    endpointMetrics.averageResponseTime = endpointMetrics.totalResponseTime / endpointMetrics.count;
+    endpointMetrics.maxResponseTime = Math.max(endpointMetrics.maxResponseTime, responseTime);
+    endpointMetrics.minResponseTime = Math.min(endpointMetrics.minResponseTime, responseTime);
+    
+    if (isError) {
+      endpointMetrics.errors++;
+    }
+    
+    // Log slow API requests
+    if (responseTime > 1000) {
+      console.warn(`Slow API request: ${route} (${responseTime}ms)`);
+    }
+    
+  } catch (error) {
+    console.error('Error recording API performance:', error);
   }
 }
 
@@ -163,47 +191,41 @@ export function recordApiPerformance(route, responseTime, isError = false) {
  * @param {boolean} isError - Whether the query resulted in an error
  */
 export function recordDbPerformance(query, queryTime, isError = false) {
-  metrics.database.queries++;
-  metrics.database.totalQueryTime += queryTime;
-  
-  if (isError) {
-    metrics.database.errors++;
-  }
-  
-  // Create a sanitized query identifier (first 50 chars)
-  const queryId = query.substring(0, 50).trim().replace(/\s+/g, ' ');
-  
-  // Initialize query stats if needed
-  if (!metrics.database.queryStats[queryId]) {
-    metrics.database.queryStats[queryId] = {
-      count: 0,
-      totalTime: 0,
-      avgTime: 0,
-      minTime: Infinity,
-      maxTime: 0,
-      errors: 0,
-    };
-  }
-  
-  // Update query stats
-  const queryStats = metrics.database.queryStats[queryId];
-  queryStats.count++;
-  queryStats.totalTime += queryTime;
-  queryStats.avgTime = queryStats.totalTime / queryStats.count;
-  queryStats.minTime = Math.min(queryStats.minTime, queryTime);
-  queryStats.maxTime = Math.max(queryStats.maxTime, queryTime);
-  
-  if (isError) {
-    queryStats.errors++;
-  }
-  
-  // Update global slowest/fastest queries
-  if (queryTime > metrics.database.slowestQuery.time) {
-    metrics.database.slowestQuery = { query: queryId, time: queryTime };
-  }
-  
-  if (queryTime < metrics.database.fastestQuery.time) {
-    metrics.database.fastestQuery = { query: queryId, time: queryTime };
+  try {
+    // Update overall metrics
+    metrics.dbQueries.count++;
+    metrics.dbQueries.totalQueryTime += queryTime;
+    metrics.dbQueries.averageQueryTime = metrics.dbQueries.totalQueryTime / metrics.dbQueries.count;
+    metrics.dbQueries.maxQueryTime = Math.max(metrics.dbQueries.maxQueryTime, queryTime);
+    metrics.dbQueries.minQueryTime = Math.min(metrics.dbQueries.minQueryTime, queryTime);
+    
+    if (isError) {
+      metrics.dbQueries.errors++;
+    }
+    
+    // Track slow queries
+    if (queryTime > config.slowQueryThresholdMs) {
+      // Prepare a shorter version of the query for logging
+      const truncatedQuery = query.length > 100 ? query.substring(0, 100) + '...' : query;
+      
+      // Add to slow queries list
+      metrics.dbQueries.slowQueries.push({
+        query: truncatedQuery,
+        time: queryTime,
+        timestamp: Date.now(),
+        isError
+      });
+      
+      // Keep only the most recent slow queries
+      if (metrics.dbQueries.slowQueries.length > config.keepSlowQueriesCount) {
+        metrics.dbQueries.slowQueries.shift();
+      }
+      
+      console.warn(`Slow DB query: ${truncatedQuery} (${queryTime}ms)`);
+    }
+    
+  } catch (error) {
+    console.error('Error recording database performance:', error);
   }
 }
 
@@ -212,73 +234,119 @@ export function recordDbPerformance(query, queryTime, isError = false) {
  * @returns {Object} - Performance metrics
  */
 export function getPerformanceReport() {
-  // Calculate summary statistics
-  const apiAvgResponseTime = metrics.api.requests > 0
-    ? metrics.api.totalResponseTime / metrics.api.requests
-    : 0;
-    
-  const dbAvgQueryTime = metrics.database.queries > 0
-    ? metrics.database.totalQueryTime / metrics.database.queries
-    : 0;
-    
-  const memoryAvgUsage = metrics.memory.samples > 0
-    ? metrics.memory.totalHeapUsed / metrics.memory.samples
-    : 0;
+  // Update uptime
+  metrics.system.uptime = Math.floor((Date.now() - metrics.system.bootTime) / 1000);
   
   return {
-    timestamp: Date.now(),
-    uptime: process.uptime(),
-    
-    // API statistics
     api: {
-      totalRequests: metrics.api.requests,
-      errorRate: metrics.api.requests > 0 ? (metrics.api.errors / metrics.api.requests) : 0,
-      avgResponseTime: apiAvgResponseTime,
-      slowestRoute: metrics.api.slowestRoute,
-      fastestRoute: metrics.api.fastestRoute,
-      routeStats: Object.entries(metrics.api.routeStats)
-        .map(([route, stats]) => ({
-          route,
-          requestCount: stats.count,
-          avgTime: stats.avgTime,
-          errorRate: stats.count > 0 ? (stats.errors / stats.count) : 0,
-        }))
-        .sort((a, b) => b.requestCount - a.requestCount)
-        .slice(0, 10),
+      requests: metrics.apiRequests.count,
+      averageResponseTime: metrics.apiRequests.averageResponseTime.toFixed(2) + 'ms',
+      maxResponseTime: metrics.apiRequests.maxResponseTime + 'ms',
+      errorRate: metrics.apiRequests.count ? 
+        ((metrics.apiRequests.errors / metrics.apiRequests.count) * 100).toFixed(2) + '%' : '0%',
+      topEndpoints: getTopEndpoints(5)
     },
-    
-    // Database statistics
     database: {
-      totalQueries: metrics.database.queries,
-      errorRate: metrics.database.queries > 0 ? (metrics.database.errors / metrics.database.queries) : 0,
-      avgQueryTime: dbAvgQueryTime,
-      slowestQuery: metrics.database.slowestQuery,
-      fastestQuery: metrics.database.fastestQuery,
-      queryStats: Object.entries(metrics.database.queryStats)
-        .map(([query, stats]) => ({
-          query,
-          count: stats.count,
-          avgTime: stats.avgTime,
-          errorRate: stats.count > 0 ? (stats.errors / stats.count) : 0,
-        }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 10),
+      queries: metrics.dbQueries.count,
+      averageQueryTime: metrics.dbQueries.averageQueryTime.toFixed(2) + 'ms',
+      maxQueryTime: metrics.dbQueries.maxQueryTime + 'ms',
+      errorRate: metrics.dbQueries.count ? 
+        ((metrics.dbQueries.errors / metrics.dbQueries.count) * 100).toFixed(2) + '%' : '0%',
+      slowQueries: metrics.dbQueries.slowQueries.slice(-5) // Return last 5 slow queries
     },
-    
-    // Memory statistics
     memory: {
-      avgUsageMB: memoryAvgUsage,
-      peakUsageMB: metrics.memory.peakHeapUsed,
-      currentUsageMB: metrics.memory.lastSample?.heapUsed || 0,
-      currentRssMB: metrics.memory.lastSample?.rss || 0,
+      current: metrics.memory.current,
+      peak: {
+        rss: metrics.memory.maxRss + 'MB',
+        heapTotal: metrics.memory.maxHeapTotal + 'MB', 
+        heapUsed: metrics.memory.maxHeapUsed + 'MB'
+      },
+      trend: getSampledMemoryTrend()
     },
-    
-    // Startup statistics
-    startup: {
-      bootstrapTime: metrics.startup.bootstrapTime,
-      fullyLoadedTime: metrics.startup.fullyLoadedTime,
-    },
+    system: {
+      uptime: formatUptime(metrics.system.uptime),
+      bootTime: metrics.system.bootstrapTime + 'ms',
+      fullLoadTime: metrics.system.fullLoadTime ? metrics.system.fullLoadTime + 'ms' : 'Not fully loaded yet',
+      lastResetTime: new Date(metrics.system.lastReset).toISOString()
+    }
   };
+}
+
+/**
+ * Format uptime in a human-readable format
+ * @param {number} seconds - Uptime in seconds
+ * @returns {string} - Formatted uptime
+ */
+function formatUptime(seconds) {
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  
+  let formattedUptime = '';
+  if (days > 0) formattedUptime += `${days}d `;
+  if (hours > 0 || days > 0) formattedUptime += `${hours}h `;
+  if (minutes > 0 || hours > 0 || days > 0) formattedUptime += `${minutes}m `;
+  formattedUptime += `${secs}s`;
+  
+  return formattedUptime;
+}
+
+/**
+ * Get the top API endpoints by request count
+ * @param {number} limit - Number of endpoints to return
+ * @returns {Array} - Top endpoints
+ */
+function getTopEndpoints(limit = 5) {
+  const endpoints = Object.entries(metrics.apiRequests.byEndpoint)
+    .map(([route, data]) => ({
+      route,
+      requests: data.count,
+      avgTime: data.averageResponseTime.toFixed(2) + 'ms',
+      errors: data.errors
+    }))
+    .sort((a, b) => b.requests - a.requests)
+    .slice(0, limit);
+    
+  return endpoints;
+}
+
+/**
+ * Get a simplified memory trend from the samples
+ * @returns {Array} - Memory trend data
+ */
+function getSampledMemoryTrend() {
+  // Return a decimated set of samples to reduce data size
+  // For an hour of data at 1 minute intervals, return ~10 samples
+  const samples = metrics.memory.samples;
+  const result = [];
+  
+  if (samples.length === 0) {
+    return result;
+  }
+  
+  // Determine the sampling interval based on the number of samples
+  const interval = Math.max(1, Math.floor(samples.length / 10));
+  
+  for (let i = 0; i < samples.length; i += interval) {
+    if (samples[i]) {
+      result.push({
+        timestamp: new Date(samples[i].timestamp).toISOString(),
+        heapUsed: samples[i].heapUsed + 'MB'
+      });
+    }
+  }
+  
+  // Always include the most recent sample
+  const lastSample = samples[samples.length - 1];
+  if (lastSample && result[result.length - 1]?.timestamp !== new Date(lastSample.timestamp).toISOString()) {
+    result.push({
+      timestamp: new Date(lastSample.timestamp).toISOString(),
+      heapUsed: lastSample.heapUsed + 'MB'
+    });
+  }
+  
+  return result;
 }
 
 /**
@@ -286,15 +354,28 @@ export function getPerformanceReport() {
  * Tracks API response times and adds them to metrics
  */
 export function performanceMonitorMiddleware(req, res, next) {
-  const start = performance.now();
+  // Skip for non-API routes or static assets
+  if (!req.path.startsWith('/api') || req.path.includes('.')) {
+    return next();
+  }
   
-  // Track response completion
+  // Record start time
+  const startTime = Date.now();
+  
+  // Capture response finishing
   res.on('finish', () => {
-    const responseTime = performance.now() - start;
-    const route = req.originalUrl || req.url;
+    const responseTime = Date.now() - startTime;
+    const route = req.method + ' ' + req.baseUrl + req.path;
     const isError = res.statusCode >= 400;
     
+    // Record performance metrics
     recordApiPerformance(route, responseTime, isError);
+    
+    // Log slow responses (longer than 1 second)
+    if (responseTime > 1000 || (isError && config.enableVerboseLogging)) {
+      const message = `${isError ? 'Error' : 'Slow'} response: ${route} (${responseTime}ms, status ${res.statusCode})`;
+      console.warn(message);
+    }
   });
   
   next();
@@ -305,27 +386,45 @@ export function performanceMonitorMiddleware(req, res, next) {
  * Useful after fixing performance issues to start fresh measurements
  */
 export function resetPerformanceMetrics() {
-  metrics.api = {
-    requests: 0,
-    totalResponseTime: 0,
-    slowestRoute: { route: '', time: 0 },
-    fastestRoute: { route: '', time: Infinity },
-    routeStats: {},
-    errors: 0,
+  metrics = {
+    apiRequests: {
+      count: 0,
+      totalResponseTime: 0,
+      averageResponseTime: 0,
+      maxResponseTime: 0,
+      minResponseTime: Number.MAX_SAFE_INTEGER,
+      errors: 0,
+      byEndpoint: {}
+    },
+    dbQueries: {
+      count: 0,
+      totalQueryTime: 0,
+      averageQueryTime: 0,
+      maxQueryTime: 0,
+      minQueryTime: Number.MAX_SAFE_INTEGER,
+      errors: 0,
+      slowQueries: []
+    },
+    memory: {
+      samples: [],
+      maxRss: 0,
+      maxHeapTotal: 0,
+      maxHeapUsed: 0,
+      current: metrics.memory.current // Keep the current memory snapshot
+    },
+    system: {
+      bootTime: metrics.system.bootTime, // Preserve original boot time
+      fullLoadTime: metrics.system.fullLoadTime, // Preserve full load time
+      lastReset: Date.now(),
+      uptime: Math.floor((Date.now() - metrics.system.bootTime) / 1000)
+    }
   };
   
-  metrics.database = {
-    queries: 0,
-    totalQueryTime: 0,
-    slowestQuery: { query: '', time: 0 },
-    fastestQuery: { query: '', time: Infinity },
-    queryStats: {},
-    errors: 0,
-  };
-  
-  metrics.memory.history = [];
+  // Take a fresh memory sample
+  sampleMemoryUsage();
   
   console.log('Performance metrics have been reset');
+  return true;
 }
 
 /**
@@ -336,16 +435,32 @@ export function resetPerformanceMetrics() {
  * @returns {Promise<any>} - Query result
  */
 export async function trackDbQuery(queryFn, description) {
-  const start = performance.now();
+  const startTime = Date.now();
   let isError = false;
   
   try {
-    return await queryFn();
+    // Execute the query
+    const result = await queryFn();
+    return result;
   } catch (error) {
     isError = true;
     throw error;
   } finally {
-    const queryTime = performance.now() - start;
+    // Record performance data regardless of success/failure
+    const queryTime = Date.now() - startTime;
     recordDbPerformance(description, queryTime, isError);
   }
 }
+
+// Export all functions
+export default {
+  configurePerformanceMonitor,
+  recordBootstrapComplete,
+  recordFullyLoaded,
+  recordApiPerformance,
+  recordDbPerformance,
+  getPerformanceReport,
+  performanceMonitorMiddleware,
+  resetPerformanceMetrics,
+  trackDbQuery
+};

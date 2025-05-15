@@ -23,9 +23,10 @@ import { ipRateLimiter, userRateLimiter, strictRateLimiter } from './utils/rate-
 
 // Bundle 5B Performance Imports
 import { cacheManager, CACHE_NAMESPACES } from './utils/cache-manager.js';
-import { cacheApiResponse, cacheUserApiResponse, cacheLearningPathResponse, cacheContentResponse, setBrowserCache } from './middleware/cache-middleware.js';
+import { cacheApiResponse, cacheUserApiResponse, cacheLearningPathResponse } from './middleware/cache-middleware.js';
 import { performanceMonitorMiddleware, configurePerformanceMonitor, recordBootstrapComplete, recordFullyLoaded } from './utils/performance-monitor.js';
 import { initDatabaseOptimizations } from './db/optimizations.js';
+import performanceRoutes from './routes/performance-routes.js';
 
 import resumeRoutes from './routes/resume';
 import learningRoutes from './routes/learning';
@@ -1473,6 +1474,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: 'Failed to retrieve the user guide content' 
       });
     }
+  });
+
+  // Bundle 5B: Register performance monitoring routes
+  app.use('/api/performance', performanceRoutes);
+
+  // Mark application as fully loaded
+  recordFullyLoaded();
+  console.log('[Performance] Server fully loaded and optimized');
+
+  // Apply browser caching headers for static assets
+  app.use('/assets', (req, res, next) => {
+    // Set cache headers for static assets (1 hour)
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    next();
   });
 
   // Bundle 5A: Add error handling middleware at the end of middleware chain
