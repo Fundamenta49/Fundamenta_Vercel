@@ -163,6 +163,27 @@ app.post("/api/maintenance/sessions", async (req, res) => {
     const server = await registerRoutes(app);
     log(`Routes registered (${Date.now() - startTime}ms)`);
 
+    // Setup frontend BEFORE starting the server
+    if (app.get("env") === "development") {
+      log("Setting up Vite development server...");
+      try {
+        await setupVite(app, server);
+        log(`Vite setup complete (${Date.now() - startTime}ms)`);
+      } catch (error) {
+        log(`Failed to setup Vite: ${error instanceof Error ? error.message : String(error)}`);
+        throw error;
+      }
+    } else {
+      log("Setting up static file serving...");
+      try {
+        serveStatic(app);
+        log(`Static serving setup complete (${Date.now() - startTime}ms)`);
+      } catch (error) {
+        log(`Failed to setup static serving: ${error instanceof Error ? error.message : String(error)}`);
+        throw error;
+      }
+    }
+    
     // Start the server with enhanced deployment configuration
     const port = parseInt(process.env.PORT || '5000', 10);
     const host = "0.0.0.0"; // Always bind to all network interfaces for container compatibility
@@ -212,27 +233,6 @@ app.post("/api/maintenance/sessions", async (req, res) => {
         reject(error);
       }
     });
-
-    // Setup frontend after server is running
-    if (app.get("env") === "development") {
-      log("Setting up Vite development server...");
-      try {
-        await setupVite(app, server);
-        log(`Vite setup complete (${Date.now() - startTime}ms)`);
-      } catch (error) {
-        log(`Failed to setup Vite: ${error instanceof Error ? error.message : String(error)}`);
-        throw error;
-      }
-    } else {
-      log("Setting up static file serving...");
-      try {
-        serveStatic(app);
-        log(`Static serving setup complete (${Date.now() - startTime}ms)`);
-      } catch (error) {
-        log(`Failed to setup static serving: ${error instanceof Error ? error.message : String(error)}`);
-        throw error;
-      }
-    }
 
     // Initialize Fundi Core system
     log("Initializing Fundi Core protection system...");

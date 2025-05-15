@@ -1482,15 +1482,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Bundle 5B: Performance optimizations temporarily disabled
-  /* 
-  // We've removed our custom catch-all route handler to avoid interfering with Vite's middleware
-  // This allows Vite to properly handle serving the React application
-  */
-
-  // Bundle 5A: Add error handling middleware at the end of middleware chain
-  // Custom 404 handler for undefined routes
-  app.use(notFoundHandler);
+  // Bundle 5B: Performance optimizations
+  // Only add the notFoundHandler for API routes to avoid interfering with Vite middleware
+  app.use('/api/*', notFoundHandler);
   
   // Global error handler middleware
   app.use(errorHandler);
