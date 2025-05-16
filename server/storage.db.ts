@@ -362,6 +362,25 @@ export class DatabaseStorage implements IStorage {
   async getConnectionsByStudentId(studentId: number): Promise<UserConnection[]> {
     return this.getUserConnections(studentId, 'student');
   }
+  
+  async getPendingConnectionsByStudentId(studentId: number): Promise<UserConnection[]> {
+    if (!Number.isInteger(studentId) || studentId <= 0) {
+      throw new ValidationError(`Invalid studentId: ${studentId}`);
+    }
+
+    try {
+      return await db
+        .select()
+        .from(userConnections)
+        .where(and(
+          eq(userConnections.studentId, studentId),
+          eq(userConnections.status, 'pending')
+        ))
+        .orderBy(desc(userConnections.createdAt));
+    } catch (error) {
+      throw new Error(`Failed to fetch pending connections for student ${studentId}: ${error.message}`);
+    }
+  }
 
   async updateUserConnection(id: number, updates: Partial<InsertUserConnection>): Promise<UserConnection | undefined> {
     if (!Number.isInteger(id) || id <= 0) {
