@@ -16,6 +16,7 @@ import { LearningThemeProvider } from "@/contexts/LearningThemeContext";
 import MyPathPage from "@/pages/mypath";
 import StudentMyPath from "@/pages/mypath/student";
 import AnalyticsDashboard from "@/pages/mypath/analytics";
+import UserAnalytics from "@/pages/mypath/user-analytics";
 import JungleHubView from "@/pages/mypath/jungle-hub";
 import PublicPathwaysExplore from "@/pages/explore/pathways";
 
@@ -521,6 +522,11 @@ function Router() {
             <Route path="/mypath/analytics">
               <ProtectedRoute>
                 <AnalyticsDashboard />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/mypath/user-analytics">
+              <ProtectedRoute>
+                <UserAnalytics />
               </ProtectedRoute>
             </Route>
             <Route path="/mypath/jungle-hub">

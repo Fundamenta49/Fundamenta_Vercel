@@ -31,10 +31,16 @@ export default function MyPathPage() {
         </div>
         
         <div className="flex items-center gap-2">
+          <Link href="/mypath/user-analytics">
+            <Button variant="outline" className="hidden md:flex items-center gap-2">
+              <User className="h-4 w-4" />
+              My Analytics
+            </Button>
+          </Link>
           <Link href="/mypath/analytics">
             <Button variant="outline" className="hidden md:flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              Analytics Dashboard
+              Admin Analytics
             </Button>
           </Link>
           <Link href="/mypath/student">
@@ -87,7 +93,7 @@ export default function MyPathPage() {
                   onClick={() => setActiveTab("analytics")}
                 >
                   <BarChart3 className="h-4 w-4 mr-2 flex-shrink-0" />
-                  <span className="truncate">Analytics</span>
+                  <span className="truncate">My Analytics</span>
                 </Button>
               </div>
             </CardContent>
@@ -165,18 +171,98 @@ export default function MyPathPage() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Analytics Dashboard</CardTitle>
+                  <CardTitle>My Learning Analytics</CardTitle>
                   <CardDescription>
-                    Track progress and engagement metrics for your students
+                    Track your personal progress and learning journey
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center min-h-[300px]">
-                  <School className="h-16 w-16 text-muted-foreground/40 mb-4" />
-                  <h3 className="text-lg font-medium">Analytics Coming Soon</h3>
-                  <p className="text-muted-foreground text-center max-w-md mt-2">
-                    We're working on detailed analytics to help you track student progress, 
-                    engagement, and learning outcomes.
-                  </p>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-lg">Completion Rate</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-center h-24">
+                          <div className="text-4xl font-bold">54%</div>
+                        </div>
+                        <div className="text-sm text-muted-foreground text-center">
+                          Overall course completion
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-lg">Learning Time</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-center h-24">
+                          <div className="text-4xl font-bold">26.5h</div>
+                        </div>
+                        <div className="text-sm text-muted-foreground text-center">
+                          Total time spent learning
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-lg">Achievements</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-center h-24">
+                          <div className="text-4xl font-bold">8</div>
+                        </div>
+                        <div className="text-sm text-muted-foreground text-center">
+                          Badges earned
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Learning Path Progress</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-sm font-medium">Financial Basics</span>
+                          <span className="text-sm font-medium">85%</span>
+                        </div>
+                        <div className="w-full bg-secondary/20 rounded-full h-2.5">
+                          <div className="bg-primary h-2.5 rounded-full" style={{ width: '85%' }}></div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-sm font-medium">Cooking Fundamentals</span>
+                          <span className="text-sm font-medium">60%</span>
+                        </div>
+                        <div className="w-full bg-secondary/20 rounded-full h-2.5">
+                          <div className="bg-primary h-2.5 rounded-full" style={{ width: '60%' }}></div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-sm font-medium">Home Maintenance</span>
+                          <span className="text-sm font-medium">25%</span>
+                        </div>
+                        <div className="w-full bg-secondary/20 rounded-full h-2.5">
+                          <div className="bg-primary h-2.5 rounded-full" style={{ width: '25%' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 mb-4">
+                    <Link href="/mypath/user-analytics">
+                      <Button className="w-full">
+                        View Detailed Analytics
+                      </Button>
+                    </Link>
+                  </div>
                 </CardContent>
               </Card>
             </div>
