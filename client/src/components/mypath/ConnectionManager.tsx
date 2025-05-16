@@ -18,20 +18,20 @@ export function ConnectionManager() {
 
   // Fetch user's connections
   const { data: connections, isLoading: isLoadingConnections } = useQuery({
-    queryKey: ["/api/connections"],
+    queryKey: ["/api/mentorship/connections"],
     retry: false,
   });
 
   // Fetch pending connection requests
   const { data: pendingRequests, isLoading: isLoadingRequests } = useQuery({
-    queryKey: ["/api/connections/pending"],
+    queryKey: ["/api/mentorship/connections/pending"],
     retry: false,
   });
 
   // Generate a pairing code
   const generatePairingCodeMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/connections/generate-code");
+      const response = await apiRequest("POST", "/api/mentorship/connections/generate-code");
       return await response.json();
     },
     onSuccess: (data) => {
@@ -53,7 +53,7 @@ export function ConnectionManager() {
   // Connect using a pairing code
   const connectWithCodeMutation = useMutation({
     mutationFn: async (code: string) => {
-      const response = await apiRequest("POST", "/api/connections/connect", { code });
+      const response = await apiRequest("POST", "/api/mentorship/connections/connect", { code });
       return await response.json();
     },
     onSuccess: () => {
