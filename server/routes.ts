@@ -57,6 +57,7 @@ import workoutRoutes from './routes/workout';
 import pathwaysRoutes from './routes/pathways';
 import publicPathwaysRoutes from './routes/public-pathways';
 import studentRoutes from './routes/student';
+import studentOptimizedRoutes from './routes/student-optimized';
 import assignmentsRoutes from './routes/assignments';
 import authRoutes from './auth/auth-routes';
 import registerMentorshipRoutes from './routes/mentorship-routes';
@@ -1233,6 +1234,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register student routes for MyPath student interface
   app.use('/api/student', studentRoutes);
+  
+  // Register optimized student routes (Bundle 5B Performance Improvements)
+  app.use('/api/student-v2', studentOptimizedRoutes);
   
   // Analytics routes for learning dashboard and progress tracking
   app.use('/api/analytics', analyticsRoutes);
