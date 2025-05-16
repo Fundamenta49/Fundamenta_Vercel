@@ -1,164 +1,74 @@
-// Service Worker for Fundamenta Learning Platform
-// Version: 1.0.0
+/**
+ * Service Worker for Fundamenta
+ * 
+ * This service worker provides caching and offline support to improve
+ * performance and reliability of the application.
+ */
 
 const CACHE_NAME = 'fundamenta-cache-v1';
+const STATIC_CACHE_NAME = 'fundamenta-static-v1';
+const API_CACHE_NAME = 'fundamenta-api-v1';
 
-// Assets to cache on install
-const PRECACHE_ASSETS = [
+// Assets that should be pre-cached for offline use
+const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/favicon.ico',
-  '/manifest.json'
+  '/manifest.json',
+  // Add your main CSS and JS files here
 ];
 
-// Cache strategies
-const CACHE_STRATEGIES = {
-  // Cache first, then network as fallback
-  CACHE_FIRST: async (request) => {
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-    
-    try {
-      const networkResponse = await fetch(request);
-      // Cache successful responses
-      if (networkResponse.ok) {
-        const cache = await caches.open(CACHE_NAME);
-        cache.put(request, networkResponse.clone());
-      }
-      return networkResponse;
-    } catch (error) {
-      // Return cached offline page if available
-      if (request.mode === 'navigate') {
-        const cache = await caches.open(CACHE_NAME);
-        return cache.match('/offline.html');
-      }
-      throw error;
-    }
-  },
-  
-  // Network first with cache fallback
-  NETWORK_FIRST: async (request) => {
-    try {
-      const networkResponse = await fetch(request);
-      // Cache successful responses
-      if (networkResponse.ok) {
-        const cache = await caches.open(CACHE_NAME);
-        cache.put(request, networkResponse.clone());
-      }
-      return networkResponse;
-    } catch (error) {
-      const cachedResponse = await caches.match(request);
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      
-      // Return cached offline page if available for navigation requests
-      if (request.mode === 'navigate') {
-        const cache = await caches.open(CACHE_NAME);
-        return cache.match('/offline.html');
-      }
-      throw error;
-    }
-  },
-  
-  // Cache with network update
-  STALE_WHILE_REVALIDATE: async (request) => {
-    const cachedResponse = await caches.match(request);
-    
-    // Asynchronously update the cache
-    const updateCache = async () => {
-      try {
-        const networkResponse = await fetch(request);
-        if (networkResponse.ok) {
-          const cache = await caches.open(CACHE_NAME);
-          await cache.put(request, networkResponse.clone());
-        }
-        return networkResponse;
-      } catch (error) {
-        // Network failed, but we return cached response below anyway
-        console.error('Failed to update cache:', error);
-      }
-    };
-    
-    // Update cache in background
-    const updatePromise = updateCache();
-    
-    // Return cached response immediately if available
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-    
-    // Otherwise wait for network response
-    return updatePromise;
-  }
-};
+// API endpoints that should be cached with a network-first strategy
+const API_ROUTES = [
+  '/api/learning-paths',
+  '/api/modules',
+  '/api/categories',
+];
 
-// Select strategy based on request type
-function getStrategy(request) {
-  const url = new URL(request.url);
-  
-  // Use different strategies based on the request type
-  
-  // For API requests, always use network first
-  if (url.pathname.startsWith('/api/')) {
-    return CACHE_STRATEGIES.NETWORK_FIRST;
-  }
-  
-  // For static assets, use cache first
-  if (/\.(js|css|png|jpg|jpeg|gif|svg|woff|woff2)$/.test(url.pathname)) {
-    return CACHE_STRATEGIES.CACHE_FIRST;
-  }
-  
-  // For HTML and navigation requests, use network first
-  if (request.mode === 'navigate' || /\.(html)$/.test(url.pathname)) {
-    return CACHE_STRATEGIES.NETWORK_FIRST;
-  }
-  
-  // For everything else, use stale-while-revalidate
-  return CACHE_STRATEGIES.STALE_WHILE_REVALIDATE;
-}
-
-// Service Worker Installation
+// Install event - pre-cache static assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
+    caches.open(STATIC_CACHE_NAME)
       .then((cache) => {
-        console.log('Pre-caching assets');
-        return cache.addAll(PRECACHE_ASSETS);
+        console.log('Service Worker: Pre-caching static assets');
+        return cache.addAll(STATIC_ASSETS);
       })
       .then(() => {
-        // Skip waiting so the service worker activates immediately
+        // Skip waiting to activate the service worker immediately
         return self.skipWaiting();
       })
   );
 });
 
-// Service Worker Activation
+// Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  // Clean up old caches
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => {
-      // Claim clients so the SW controls everything immediately
-      return self.clients.claim();
-    })
+    caches.keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            // Delete outdated caches
+            if (cacheName !== STATIC_CACHE_NAME && 
+                cacheName !== API_CACHE_NAME && 
+                cacheName.startsWith('fundamenta-')) {
+              console.log('Service Worker: Removing old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+      .then(() => {
+        // Claim clients to ensure SW controls all clients immediately
+        return self.clients.claim();
+      })
   );
 });
 
-// Fetch event handling
+// Fetch event - handle different caching strategies
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  
   // Skip cross-origin requests
-  if (!event.request.url.startsWith(self.location.origin)) {
+  if (url.origin !== self.location.origin) {
     return;
   }
   
@@ -167,50 +77,183 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // Handle the fetch
-  event.respondWith(getStrategy(event.request)(event.request));
-});
-
-// Push notification handling
-self.addEventListener('push', (event) => {
-  if (!event.data) {
+  // Handle API requests with network-first strategy
+  if (isApiRequest(event.request)) {
+    event.respondWith(networkFirstStrategy(event.request));
     return;
   }
   
-  const data = event.data.json();
-  const options = {
-    body: data.body,
-    icon: '/favicon.ico',
-    badge: '/favicon.ico',
-    data: {
-      url: data.url || '/'
-    }
-  };
+  // Handle static assets with cache-first strategy
+  if (isStaticAsset(event.request)) {
+    event.respondWith(cacheFirstStrategy(event.request));
+    return;
+  }
   
-  event.waitUntil(
-    self.registration.showNotification(data.title, options)
-  );
+  // Handle HTML navigation with network-first strategy
+  if (event.request.mode === 'navigate') {
+    event.respondWith(networkFirstStrategy(event.request));
+    return;
+  }
+  
+  // Default to stale-while-revalidate for all other requests
+  event.respondWith(staleWhileRevalidateStrategy(event.request));
 });
 
-// Notification click handling
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
+/**
+ * Determine if the request is for an API endpoint
+ */
+function isApiRequest(request) {
+  const url = new URL(request.url);
+  return url.pathname.startsWith('/api/') || 
+         API_ROUTES.some(route => url.pathname.includes(route));
+}
+
+/**
+ * Determine if the request is for a static asset
+ */
+function isStaticAsset(request) {
+  const url = new URL(request.url);
   
-  event.waitUntil(
-    clients.matchAll({ type: 'window' }).then((clientList) => {
-      const url = event.notification.data.url;
-      
-      // If a tab is already open, focus it
-      for (const client of clientList) {
-        if (client.url === url && 'focus' in client) {
-          return client.focus();
-        }
-      }
-      
-      // Otherwise open a new tab
-      if (clients.openWindow) {
-        return clients.openWindow(url);
-      }
-    })
-  );
+  // Check file extensions for common static assets
+  const staticExtensions = [
+    '.js', '.css', '.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp',
+    '.woff', '.woff2', '.ttf', '.eot', '.ico', '.json'
+  ];
+  
+  return staticExtensions.some(ext => url.pathname.endsWith(ext)) ||
+         STATIC_ASSETS.includes(url.pathname);
+}
+
+/**
+ * Cache-first strategy:
+ * 1. Try to serve from cache
+ * 2. If not in cache, fetch from network and cache the response
+ */
+async function cacheFirstStrategy(request) {
+  const cache = await caches.open(STATIC_CACHE_NAME);
+  const cachedResponse = await cache.match(request);
+  
+  if (cachedResponse) {
+    // Update cache in the background (cache-first, background refresh)
+    updateCache(request, STATIC_CACHE_NAME);
+    return cachedResponse;
+  }
+  
+  // Not in cache, get from network
+  try {
+    const networkResponse = await fetch(request);
+    // Clone the response before caching so it can be used by the browser
+    await cache.put(request, networkResponse.clone());
+    return networkResponse;
+  } catch (error) {
+    console.error('Service Worker: Fetch failed for cache-first strategy', error);
+    // Could return a fallback response for certain asset types here
+    return new Response('Network error occurred', { status: 408 });
+  }
+}
+
+/**
+ * Network-first strategy:
+ * 1. Try to get fresh data from network
+ * 2. If network fails, fall back to cache
+ */
+async function networkFirstStrategy(request) {
+  const cache = await caches.open(API_CACHE_NAME);
+  
+  try {
+    // Try network first
+    const networkResponse = await fetch(request);
+    // Cache the successful response
+    await cache.put(request, networkResponse.clone());
+    return networkResponse;
+  } catch (error) {
+    console.log('Service Worker: Network request failed, falling back to cache');
+    
+    // If network fails, try cache
+    const cachedResponse = await cache.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
+    // If nothing in cache, return a custom offline response
+    if (request.mode === 'navigate') {
+      // Return offline page for navigation
+      return caches.match('/offline.html')
+        .then(response => response || new Response('You are offline', { 
+          headers: { 'Content-Type': 'text/html' },
+          status: 503
+        }));
+    }
+    
+    // Default error response
+    return new Response('Network error occurred', { status: 408 });
+  }
+}
+
+/**
+ * Stale-while-revalidate strategy:
+ * 1. Return cached response immediately (if available)
+ * 2. Fetch updated response in the background
+ * 3. Update the cache with the new response
+ */
+async function staleWhileRevalidateStrategy(request) {
+  const cache = await caches.open(CACHE_NAME);
+  
+  // Try to get from cache
+  const cachedResponse = await cache.match(request);
+  
+  // Fetch from network in the background
+  const updatePromise = fetch(request).then(async (networkResponse) => {
+    if (networkResponse.ok) {
+      await cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  }).catch(error => {
+    console.error('Service worker: Background fetch failed', error);
+  });
+  
+  // Return the cached response or wait for the network
+  return cachedResponse || updatePromise;
+}
+
+/**
+ * Helper function to update a cached resource in the background
+ */
+function updateCache(request, cacheName) {
+  fetch(request).then(response => {
+    if (response.ok) {
+      caches.open(cacheName).then(cache => {
+        cache.put(request, response);
+      });
+    }
+  }).catch(error => {
+    console.error('Service Worker: Background cache update failed', error);
+  });
+}
+
+/**
+ * Handle message events from clients
+ */
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+  
+  if (event.data && event.data.type === 'CLEAR_CACHES') {
+    event.waitUntil(
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            console.log('Service Worker: Clearing cache:', cacheName);
+            return caches.delete(cacheName);
+          })
+        );
+      }).then(() => {
+        event.ports[0].postMessage({ success: true });
+      }).catch(error => {
+        console.error('Service Worker: Cache clearing failed', error);
+        event.ports[0].postMessage({ success: false, error: error.message });
+      })
+    );
+  }
 });
