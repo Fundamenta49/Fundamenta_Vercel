@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ReloadIcon, BarChartIcon, BookOpenIcon, TrophyIcon, BarChart2 } from "lucide-react";
+import { RefreshCw, BarChart, BookOpen, Trophy, BarChart2 } from "lucide-react";
 
 const StudentProgressDashboard = () => {
   const [useOptimizedApi, setUseOptimizedApi] = useState(true);
@@ -85,12 +85,12 @@ const StudentProgressDashboard = () => {
           >
             {isLoading ? (
               <>
-                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
                 Loading...
               </>
             ) : (
               <>
-                <ReloadIcon className="mr-2 h-4 w-4" />
+                <RefreshCw className="mr-2 h-4 w-4" />
                 Refresh
               </>
             )}
@@ -157,7 +157,7 @@ const StudentProgressDashboard = () => {
               <div className="h-16 bg-muted rounded animate-pulse"></div>
             ) : (
               <div className="flex items-center">
-                <TrophyIcon className="w-12 h-12 mr-4 text-yellow-500" />
+                <Trophy className="w-12 h-12 mr-4 text-yellow-500" />
                 <div>
                   <div className="text-3xl font-bold">{statistics?.streak || 0} days</div>
                   <div className="text-sm text-muted-foreground">
@@ -198,7 +198,7 @@ const StudentProgressDashboard = () => {
               </div>
             ) : (
               <div className="text-center py-4 text-muted-foreground">
-                <BookOpenIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <BookOpen className="w-8 h-8 mx-auto mb-2 opacity-50" />
                 <p>No category data available yet</p>
               </div>
             )}
@@ -225,7 +225,7 @@ const StudentProgressDashboard = () => {
                 <div key={index} className="flex items-center gap-3 p-2 rounded-md border">
                   <div className="p-2 rounded-full bg-primary/10">
                     {activity.activityType === 'module_completed' ? (
-                      <BookOpenIcon className="h-5 w-5 text-primary" />
+                      <BookOpen className="h-5 w-5 text-primary" />
                     ) : (
                       <BarChart2 className="h-5 w-5 text-primary" />
                     )}
