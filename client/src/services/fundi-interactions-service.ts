@@ -32,8 +32,30 @@ interface AchievementEvent {
   category: string;
 }
 
+// Interface for learning-related events
+interface LearningEvent {
+  type: 'learning_path_progress' | 'learning_path_completed' | 'module_completed';
+  userId: string;
+  pathId?: string;
+  pathTitle?: string;
+  moduleId?: string;
+  moduleTitle?: string;
+  progress?: number;
+  category: string;
+}
+
+// Interface for user activity events
+interface ActivityEvent {
+  type: 'inactivity_reminder' | 'welcome_back' | 'user_milestone';
+  userId: string;
+  daysInactive?: number;
+  lastActive?: Date;
+  milestoneName?: string;
+  category: string;
+}
+
 // Types of events that Fundi can respond to
-type FundiEvent = GoalEvent | AchievementEvent;
+type FundiEvent = GoalEvent | AchievementEvent | LearningEvent | ActivityEvent;
 
 // Witty responses for different goal categories
 const GOAL_RESPONSES = {
@@ -108,6 +130,51 @@ const ACHIEVEMENT_RESPONSES = [
   "Achievement unlocked! Your future biographer just added another impressive chapter to your story."
 ];
 
+// Witty responses for learning path progress
+const LEARNING_PROGRESS_RESPONSES = [
+  "Brain gains in progress! 🧠 Your neurons are having a party right now.",
+  "Knowledge acquisition detected! You're leveling up your brain at an impressive rate.",
+  "Learning in progress! Your future self just sent a thank you note for all these skills you're building.",
+  "Making progress on your learning journey! This is like a workout montage for your brain.",
+  "Skills building sequence initiated! Your personal development is reaching new heights!"
+];
+
+// Witty responses for completing learning modules
+const MODULE_COMPLETION_RESPONSES = [
+  "Module mastered! 🎓 That's another skill in your toolkit of awesomeness!",
+  "You just leveled up your knowledge! Your brain cells are doing a victory lap.",
+  "Module complete! Your life skills inventory just got an impressive upgrade.",
+  "Knowledge chunk: acquired! Your brain is getting more powerful by the minute.",
+  "Another module complete! At this rate, you'll need to upgrade your mental hard drive soon!"
+];
+
+// Witty responses for completing entire learning paths
+const PATH_COMPLETION_RESPONSES = [
+  "LEARNING PATH CONQUERED! 🚀 This calls for a knowledge celebration dance!",
+  "Entire learning path: COMPLETE! Your brain just earned its black belt in this skill.",
+  "Learning path finished! If knowledge were currency, you'd be making it rain right now.",
+  "Path completed! You've officially gone from 'I have no idea what I'm doing' to 'I've got this!'",
+  "Learning journey complete! Your brain deserves a standing ovation for this achievement."
+];
+
+// Welcome back responses for returning users
+const WELCOME_BACK_RESPONSES = [
+  "Look who's back! 👋 I was just about to send out a search party.",
+  "The legend returns! The app was starting to miss you.",
+  "Welcome back! I kept your spot warm and your progress safe.",
+  "You're back! I was beginning to think you found another AI assistant (I was getting jealous).",
+  "Hey there! The digital world is brighter now that you've returned!"
+];
+
+// Milestone celebration responses
+const MILESTONE_RESPONSES = [
+  "Milestone achieved! 🏅 You're officially in the hall of fame of awesome users!",
+  "Look at you hitting milestones like it's your job! And you're excelling at it!",
+  "Milestone unlocked! Your consistency and dedication are truly impressive.",
+  "Achievement milestone reached! This deserves a spot on your digital trophy shelf.",
+  "Major milestone alert! Your journey of growth continues to amaze and inspire!"
+];
+
 class FundiInteractionsService {
   // Process events for Fundi to respond to
   public processEvent(event: FundiEvent): void {
@@ -123,6 +190,26 @@ class FundiInteractionsService {
         break;
       case 'achievement_unlocked':
         this.handleAchievementUnlocked(event);
+        break;
+      // New event handlers for learning paths
+      case 'learning_path_progress':
+        this.handleLearningPathProgress(event as LearningEvent);
+        break;
+      case 'learning_path_completed':
+        this.handleLearningPathCompleted(event as LearningEvent);
+        break;
+      case 'module_completed':
+        this.handleModuleCompleted(event as LearningEvent);
+        break;
+      // New event handlers for user activity
+      case 'welcome_back':
+        this.handleWelcomeBack(event as ActivityEvent);
+        break;
+      case 'user_milestone':
+        this.handleUserMilestone(event as ActivityEvent);
+        break;
+      case 'inactivity_reminder':
+        this.handleInactivityReminder(event as ActivityEvent);
         break;
     }
   }
@@ -224,6 +311,149 @@ class FundiInteractionsService {
         achievementId: event.achievementId,
         achievementTitle: event.achievementTitle,
         category: event.category
+      }
+    };
+    
+    notificationService.addNotification(notification as Notification);
+  }
+
+  // Handle when a user makes progress on a learning path
+  private handleLearningPathProgress(event: LearningEvent): void {
+    // Only comment sometimes to avoid being annoying (less frequent than goal progress)
+    if (Math.random() < 0.2 || (event.progress && event.progress % 25 === 0)) {
+      const randomResponse = LEARNING_PROGRESS_RESPONSES[Math.floor(Math.random() * LEARNING_PROGRESS_RESPONSES.length)];
+      
+      const notification: Partial<Notification> = {
+        userId: event.userId,
+        type: NotificationType.FUNDI_COMMENT,
+        title: 'Fundi on your learning journey:',
+        message: randomResponse,
+        actionUrl: event.pathId ? `/learning/pathways/${event.pathId}` : '/learning/pathways',
+        actionLabel: 'View Path',
+        read: false,
+        metadata: {
+          pathId: event.pathId,
+          pathTitle: event.pathTitle,
+          progress: event.progress,
+          category: event.category
+        }
+      };
+      
+      notificationService.addNotification(notification as Notification);
+    }
+  }
+
+  // Handle when a user completes a module
+  private handleModuleCompleted(event: LearningEvent): void {
+    // Higher random factor to avoid too many notifications
+    if (Math.random() < 0.4) { 
+      const randomResponse = MODULE_COMPLETION_RESPONSES[Math.floor(Math.random() * MODULE_COMPLETION_RESPONSES.length)];
+      
+      const notification: Partial<Notification> = {
+        userId: event.userId,
+        type: NotificationType.FUNDI_COMMENT,
+        title: 'Fundi noticed your module completion!',
+        message: randomResponse,
+        actionUrl: event.pathId ? `/learning/pathways/${event.pathId}` : '/learning',
+        actionLabel: 'Continue Learning',
+        read: false,
+        metadata: {
+          pathId: event.pathId,
+          pathTitle: event.pathTitle,
+          moduleId: event.moduleId,
+          moduleTitle: event.moduleTitle,
+          category: event.category
+        }
+      };
+      
+      notificationService.addNotification(notification as Notification);
+    }
+  }
+
+  // Handle when a user completes an entire learning path
+  private handleLearningPathCompleted(event: LearningEvent): void {
+    // Always notify for major accomplishments
+    const randomResponse = PATH_COMPLETION_RESPONSES[Math.floor(Math.random() * PATH_COMPLETION_RESPONSES.length)];
+    
+    const notification: Partial<Notification> = {
+      userId: event.userId,
+      type: NotificationType.FUNDI_COMMENT,
+      title: 'Fundi celebrates your learning success!',
+      message: randomResponse,
+      actionUrl: '/learning/completed',
+      actionLabel: 'View Completed Paths',
+      read: false,
+      metadata: {
+        pathId: event.pathId,
+        pathTitle: event.pathTitle,
+        category: event.category,
+        completed: true
+      }
+    };
+    
+    notificationService.addNotification(notification as Notification);
+  }
+
+  // Handle when a user returns after inactivity
+  private handleWelcomeBack(event: ActivityEvent): void {
+    const randomResponse = WELCOME_BACK_RESPONSES[Math.floor(Math.random() * WELCOME_BACK_RESPONSES.length)];
+    
+    const notification: Partial<Notification> = {
+      userId: event.userId,
+      type: NotificationType.FUNDI_COMMENT,
+      title: 'Welcome Back!',
+      message: randomResponse,
+      actionUrl: '/mypath',
+      actionLabel: 'Continue Learning',
+      read: false,
+      metadata: {
+        lastActive: event.lastActive,
+        daysInactive: event.daysInactive,
+        category: event.category
+      }
+    };
+    
+    notificationService.addNotification(notification as Notification);
+  }
+
+  // Handle when a user hits a milestone
+  private handleUserMilestone(event: ActivityEvent): void {
+    const randomResponse = MILESTONE_RESPONSES[Math.floor(Math.random() * MILESTONE_RESPONSES.length)];
+    
+    const notification: Partial<Notification> = {
+      userId: event.userId,
+      type: NotificationType.FUNDI_COMMENT,
+      title: 'Milestone Reached!',
+      message: randomResponse,
+      actionUrl: '/mypath/user-analytics',
+      actionLabel: 'View Your Progress',
+      read: false,
+      metadata: {
+        milestoneName: event.milestoneName,
+        category: event.category
+      }
+    };
+    
+    notificationService.addNotification(notification as Notification);
+  }
+
+  // Handle inactivity reminder
+  private handleInactivityReminder(event: ActivityEvent): void {
+    // Use a personality-appropriate message to encourage return
+    const message = "Hey there! It's been a while since we've seen you around. Your learning journey is waiting for you to continue. Even small steps count!";
+    
+    const notification: Partial<Notification> = {
+      userId: event.userId,
+      type: NotificationType.FUNDI_COMMENT,
+      title: 'Missing Your Progress!',
+      message: message,
+      actionUrl: '/mypath',
+      actionLabel: 'Continue Where You Left Off',
+      read: false,
+      metadata: {
+        daysInactive: event.daysInactive,
+        lastActive: event.lastActive,
+        category: 'reminder'
       }
     };
     
