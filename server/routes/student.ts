@@ -170,11 +170,18 @@ router.get('/statistics', authenticateJWT, requireUser, async (req: Authenticate
     const assignmentStats = await db
       .select({
         total: count(),
-        completed: count(assignedPathways.completedAt),
-        avgScore: avg(assignedPathways.finalScore)
+        completed: count(assignedPathways.completedAt)
       })
       .from(assignedPathways)
       .where(eq(assignedPathways.studentId, userId));
+      
+    // Use a separate query with SQL for average calculation to handle null values properly
+    const scoreStats = await db.execute(sql`
+      SELECT AVG(final_score::float) as average_score
+      FROM ${assignedPathways}
+      WHERE ${assignedPathways.studentId} = ${userId}
+        AND ${assignedPathways.finalScore} IS NOT NULL
+    `);
     
     // Calculate learning streak (simplified - in a real app, this would be more complex)
     // For now, we'll just return a placeholder value
@@ -240,7 +247,7 @@ router.get('/statistics', authenticateJWT, requireUser, async (req: Authenticate
         total: assignmentStats[0]?.total || 0,
         completed: assignmentStats[0]?.completed || 0,
       },
-      averageScore: assignmentStats[0]?.avgScore || null,
+      averageScore: scoreStats[0]?.average_score || null,
       streak,
       categories: categoryStats
     });

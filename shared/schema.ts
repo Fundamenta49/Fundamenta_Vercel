@@ -225,7 +225,7 @@ export const customPathwayModulesRelations = relations(customPathwayModules, ({ 
   }),
 }));
 
-export const assignedPathwaysRelations = relations(assignedPathways, ({ one }) => ({
+export const assignedPathwaysRelations = relations(assignedPathways, ({ one, many }) => ({
   pathway: one(customPathways, {
     fields: [assignedPathways.pathwayId],
     references: [customPathways.id],
@@ -238,6 +238,14 @@ export const assignedPathwaysRelations = relations(assignedPathways, ({ one }) =
     fields: [assignedPathways.assignedBy],
     references: [users.id],
     relationName: "assignmentCreator",
+  }),
+}));
+
+// Define relations for learning progress
+export const learningProgressRelations = relations(learningProgress, ({ one }) => ({
+  user: one(users, {
+    fields: [learningProgress.userId],
+    references: [users.id],
   }),
 }));
 
