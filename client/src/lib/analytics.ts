@@ -3,15 +3,17 @@ declare global {
   interface Window {
     dataLayer: any[];
     gtag: (...args: any[]) => void;
+    gaId?: string; // Add property for our measurement ID
   }
 }
 
 // Initialize Google Analytics
 export const initGA = () => {
-  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+  // Get the measurement ID from the window object (set in App.tsx)
+  const measurementId = window.gaId || 'G-N74BTEJGH6';
 
   if (!measurementId) {
-    console.warn('Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID');
+    console.warn('Missing Google Analytics Measurement ID');
     return;
   }
 
@@ -33,18 +35,22 @@ export const initGA = () => {
     });
   `;
   document.head.appendChild(script2);
+  
+  console.log('Google Analytics initialized with tracking ID:', measurementId);
 };
 
 // Track page views - useful for single-page applications
 export const trackPageView = (url: string) => {
   if (typeof window === 'undefined' || !window.gtag) return;
   
-  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+  const measurementId = window.gaId || 'G-N74BTEJGH6';
   if (!measurementId) return;
   
   window.gtag('config', measurementId, {
     page_path: url
   });
+  
+  console.log('Page view tracked:', url);
 };
 
 /**

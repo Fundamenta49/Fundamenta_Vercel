@@ -561,12 +561,17 @@ function App() {
     const initAnalytics = async () => {
       try {
         const { initGA } = await import('./lib/analytics.js');
-        // Verify required environment variable is present
-        if (!import.meta.env.VITE_GA_MEASUREMENT_ID) {
-          console.warn('Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID');
-        } else {
+        // Hard-coded the measurement ID instead of relying on environment variable
+        // This is necessary because the environment variable might not be loaded correctly
+        const measurementId = "G-N74BTEJGH6";
+        
+        if (measurementId) {
+          // Manually create a global environment variable
+          window.gaId = measurementId;
           initGA();
-          console.log('Google Analytics initialized successfully');
+          console.log('Google Analytics initialized successfully with ID:', measurementId);
+        } else {
+          console.warn('Missing Google Analytics Measurement ID');
         }
       } catch (error) {
         console.error('Failed to initialize analytics:', error);
