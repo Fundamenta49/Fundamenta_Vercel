@@ -1,6 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { cacheImage, CACHE_PRIORITY } from '../../lib/cache-utils.js';
-import { cn } from '../../lib/utils.js';
+import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from "clsx";
+
+// Bring in our own version of the cn utility
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+// Define cache priority levels to match those in cache-utils.js
+const CACHE_PRIORITY = {
+  LOW: 0,
+  NORMAL: 1,
+  HIGH: 2,
+  CRITICAL: 3
+} as const;
+
+// Simple implementation of image caching for our component
+const cacheImage = (src: string, options: any = {}): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    
+    img.onload = () => {
+      resolve(src);
+    };
+    
+    img.onerror = () => {
+      reject(new Error(`Failed to load image: ${src}`));
+    };
+    
+    img.src = src;
+  });
+};
 
 interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
