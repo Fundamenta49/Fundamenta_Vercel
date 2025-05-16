@@ -62,7 +62,7 @@ export function ConnectionManager() {
         title: "Connection Request Sent",
         description: "Your request has been sent and is pending approval.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/connections/pending"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/mentorship/connections/pending"] });
     },
     onError: (error: Error) => {
       toast({
@@ -76,7 +76,7 @@ export function ConnectionManager() {
   // Accept a connection request
   const acceptConnectionMutation = useMutation({
     mutationFn: async (connectionId: number) => {
-      const response = await apiRequest("POST", `/api/connections/${connectionId}/accept`);
+      const response = await apiRequest("POST", `/api/mentorship/connections/${connectionId}/accept`);
       return await response.json();
     },
     onSuccess: () => {
@@ -84,8 +84,8 @@ export function ConnectionManager() {
         title: "Connection Accepted",
         description: "You are now connected with this user.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/connections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/connections/pending"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/mentorship/connections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/mentorship/connections/pending"] });
     },
     onError: (error: Error) => {
       toast({
@@ -99,7 +99,7 @@ export function ConnectionManager() {
   // Reject a connection request
   const rejectConnectionMutation = useMutation({
     mutationFn: async (connectionId: number) => {
-      const response = await apiRequest("POST", `/api/connections/${connectionId}/reject`);
+      const response = await apiRequest("POST", `/api/mentorship/connections/${connectionId}/reject`);
       return await response.json();
     },
     onSuccess: () => {
@@ -107,7 +107,7 @@ export function ConnectionManager() {
         title: "Connection Rejected",
         description: "The connection request has been rejected.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/connections/pending"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/mentorship/connections/pending"] });
     },
     onError: (error: Error) => {
       toast({
@@ -147,7 +147,7 @@ export function ConnectionManager() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium">Active Connections</h3>
-            <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/connections"] })}>
+            <Button variant="outline" size="sm" className="flex items-center gap-2" onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/mentorship/connections"] })}>
               <RefreshCw className="h-4 w-4" />
               Refresh
             </Button>
@@ -235,7 +235,7 @@ export function ConnectionManager() {
               variant="outline" 
               size="sm" 
               className="flex items-center gap-2" 
-              onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/connections/pending"] })}
+              onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/mentorship/connections/pending"] })}
             >
               <RefreshCw className="h-4 w-4" />
               Refresh
