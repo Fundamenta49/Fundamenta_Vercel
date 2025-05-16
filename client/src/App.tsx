@@ -551,6 +551,27 @@ function Router() {
 }
 
 function App() {
+  // Initialize Google Analytics when app loads
+  useEffect(() => {
+    // Import dynamically to avoid server-side rendering issues
+    const initAnalytics = async () => {
+      try {
+        const { initGA } = await import('./lib/analytics.js');
+        // Verify required environment variable is present
+        if (!import.meta.env.VITE_GA_MEASUREMENT_ID) {
+          console.warn('Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID');
+        } else {
+          initGA();
+          console.log('Google Analytics initialized successfully');
+        }
+      } catch (error) {
+        console.error('Failed to initialize analytics:', error);
+      }
+    };
+    
+    initAnalytics();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
