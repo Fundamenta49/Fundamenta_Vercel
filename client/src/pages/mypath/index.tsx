@@ -97,16 +97,19 @@ export default function MyPathPage() {
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Info</CardTitle>
             </CardHeader>
-            <CardContent className="text-sm">
-              <p className="mb-2">
-                <strong>Role:</strong> Educator
-              </p>
-              <p className="mb-2">
-                <strong>Active Connections:</strong> {user ? 3 : 0}
-              </p>
-              <p>
-                <strong>Active Pathways:</strong> {user ? 5 : 0}
-              </p>
+            <CardContent className="px-4 py-3 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-sm">Role:</span>
+                <span className="text-sm">Educator</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-sm">Active Connections:</span>
+                <span className="text-sm">{user ? 3 : 0}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-sm">Active Pathways:</span>
+                <span className="text-sm">{user ? 5 : 0}</span>
+              </div>
             </CardContent>
           </Card>
         </div>

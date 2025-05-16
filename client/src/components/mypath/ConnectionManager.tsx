@@ -302,34 +302,34 @@ export function ConnectionManager() {
       
       <TabsContent value="new">
         <div className="grid md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Create Connection Code</CardTitle>
-              <CardDescription>
+          <Card className="shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-semibold">Create Connection Code</CardTitle>
+              <CardDescription className="text-sm mt-1">
                 Generate a code to share with someone who wants to connect with you
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="pt-4 px-6">
+              <div className="space-y-6">
                 <div>
-                  <Label htmlFor="connection-code">Your Connection Code</Label>
-                  <div className="flex mt-1">
+                  <Label htmlFor="connection-code" className="text-sm font-medium block mb-2">Your Connection Code</Label>
+                  <div className="flex">
                     <Input 
                       id="connection-code" 
                       value={connectionCode} 
                       readOnly 
                       placeholder="Generate a code to share"
-                      className="rounded-r-none font-mono"
+                      className="rounded-r-none font-mono text-base h-10"
                     />
                     <Button 
-                      className="rounded-l-none px-3" 
+                      className="rounded-l-none px-3 h-10" 
                       onClick={copyCodeToClipboard}
                       disabled={!connectionCode}
                     >
                       <Copy className="h-4 w-4" />
                     </Button>
                   </div>
-                  <p className="text-gray-500 text-sm mt-2">
+                  <p className="text-gray-500 text-sm mt-3">
                     This code will expire in 24 hours.
                   </p>
                 </div>
@@ -337,7 +337,7 @@ export function ConnectionManager() {
                 <Button 
                   onClick={() => generatePairingCodeMutation.mutate()}
                   disabled={generatePairingCodeMutation.isPending}
-                  className="w-full"
+                  className="w-full h-10 font-medium"
                 >
                   {connectionCode ? "Generate New Code" : "Generate Code"}
                 </Button>
@@ -345,25 +345,25 @@ export function ConnectionManager() {
             </CardContent>
           </Card>
           
-          <Card>
-            <CardHeader>
-              <CardTitle>Connect with Code</CardTitle>
-              <CardDescription>
+          <Card className="shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-semibold">Connect with Code</CardTitle>
+              <CardDescription className="text-sm mt-1">
                 Enter a connection code received from someone else
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="pt-4 px-6">
+              <div className="space-y-6">
                 <div>
-                  <Label htmlFor="pairing-code">Enter Connection Code</Label>
+                  <Label htmlFor="pairing-code" className="text-sm font-medium block mb-2">Enter Connection Code</Label>
                   <Input 
                     id="pairing-code" 
                     value={pairingCode} 
                     onChange={(e) => setPairingCode(e.target.value)} 
                     placeholder="Enter the code you received"
-                    className="font-mono"
+                    className="font-mono text-base h-10"
                   />
-                  <p className="text-gray-500 text-sm mt-2">
+                  <p className="text-gray-500 text-sm mt-3">
                     You'll need to wait for the other person to accept your connection request.
                   </p>
                 </div>
@@ -371,9 +371,9 @@ export function ConnectionManager() {
                 <Button 
                   onClick={() => connectWithCodeMutation.mutate(pairingCode)}
                   disabled={connectWithCodeMutation.isPending || !pairingCode}
-                  className="w-full"
+                  className="w-full h-10 font-medium"
                 >
-                  <UserPlus className="h-4 w-4 mr-2" />
+                  <UserPlus className="h-4 w-4 mr-2 flex-shrink-0" />
                   Connect
                 </Button>
               </div>
