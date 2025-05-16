@@ -1,53 +1,57 @@
-import React, { ReactNode } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './card';
+import React from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./card";
+import { cn } from "@/lib/utils";
+import { Skeleton } from "./skeleton";
 
 interface AnalyticsCardProps {
   title: string;
-  value: number | string;
-  icon?: ReactNode;
+  value: string | number;
   description?: string;
+  icon?: React.ReactNode;
+  trend?: {
+    value: number;
+    isPositive: boolean;
+  };
   className?: string;
+  isLoading?: boolean;
 }
 
-/**
- * A card component for displaying analytics metrics
- * 
- * @param title The title of the metric
- * @param value The value to display (number or string)
- * @param icon Optional icon to display alongside the title
- * @param description Optional description text
- * @param className Optional additional CSS classes
- */
-export function AnalyticsCard({ 
-  title, 
-  value, 
-  icon, 
-  description, 
-  className = "" 
+export function AnalyticsCard({
+  title,
+  value,
+  description,
+  icon,
+  trend,
+  className,
+  isLoading = false,
 }: AnalyticsCardProps) {
-  // Input validation with safe defaults
-  if (!title?.trim()) {
-    console.warn("AnalyticsCard received empty title");
-    title = "Untitled Metric";
-  }
-  
-  // Safe value display with type checking
-  const displayValue = typeof value === 'number' 
-    ? value.toLocaleString()
-    : String(value || '0');
-
   return (
-    <Card className={className}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium">
-          {title}
-        </CardTitle>
+    <Card className={cn("overflow-hidden", className)}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {icon && <div className="h-4 w-4 text-muted-foreground">{icon}</div>}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{displayValue}</div>
+        {isLoading ? (
+          <Skeleton className="h-7 w-24" />
+        ) : (
+          <div className="text-2xl font-bold">{value}</div>
+        )}
         {description && (
-          <p className="text-xs text-muted-foreground mt-1">{description}</p>
+          <p className="text-xs text-muted-foreground">{description}</p>
+        )}
+        {trend && (
+          <div className="mt-1 flex items-center gap-1">
+            <span
+              className={cn(
+                "text-xs",
+                trend.isPositive ? "text-green-500" : "text-red-500"
+              )}
+            >
+              {trend.isPositive ? "↑" : "↓"} {Math.abs(trend.value)}%
+            </span>
+            <span className="text-xs text-muted-foreground">vs previous period</span>
+          </div>
         )}
       </CardContent>
     </Card>

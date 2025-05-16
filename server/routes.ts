@@ -44,7 +44,7 @@ import brainTapRoutes from './routes/brain-tap';
 import nutritionRoutes from './routes/nutrition';
 import comprehensiveWellnessRoutes from './routes/comprehensive-wellness';
 import shoppingRoutes from './routes/shopping';
-import analyticsRoutes from './routes/analytics.js';
+// Analytics routes imported below
 import cookingRoutes from './routes/cooking';
 import fitnessRoutes from './routes/fitness';
 import yogaRoutes from './routes/yoga';
@@ -65,6 +65,7 @@ import { spoonacularRouter } from './routes/spoonacular';
 import testRoutes from './routes/test-routes';
 import legalRoutes from './routes/legal-routes';
 import engagementRoutes from './routes/engagement-routes';
+import analyticsRoutes from './routes/analytics-routes';
 import { searchJobs as searchJobsFromApi, getSalaryInsights as getAdzunaSalaryInsights } from './jobs';
 import { getOccupationInterviewQuestions } from './career-one-stop-service';
 import { userGuideService } from './services/user-guide-service';
@@ -209,6 +210,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Mount engagement engine routes
   app.use('/api/engagement', engagementRoutes);
+  
+  // Analytics routes
+  app.use('/api/analytics', analyticsRoutes);
   
   // Bundle 5B: Static content routes (caching temporarily disabled)
   app.use('/api/pathways', pathwaysRoutes);
