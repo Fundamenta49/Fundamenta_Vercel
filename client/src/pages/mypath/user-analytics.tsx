@@ -10,6 +10,122 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Progress } from '@/components/ui/progress';
 import { CalendarIcon, BookOpenIcon, ClockIcon, BarChartIcon, UserIcon, ArrowUpIcon } from 'lucide-react';
 
+// Demo analytics data
+const demoAnalyticsData = {
+  overallProgress: {
+    completionRate: 0.68,
+    completed: 24,
+    inProgress: 8,
+    notStarted: 12
+  },
+  pathProgress: [
+    {
+      name: "Financial Basics",
+      progress: 85,
+      modules: { completed: 17, total: 20 }
+    },
+    {
+      name: "Cooking Skills",
+      progress: 60,
+      modules: { completed: 9, total: 15 }
+    },
+    {
+      name: "Home Maintenance",
+      progress: 33,
+      modules: { completed: 4, total: 12 }
+    }
+  ],
+  completionTrend: [
+    { date: "2025-04-01", modules: 3 },
+    { date: "2025-04-08", modules: 5 },
+    { date: "2025-04-15", modules: 7 },
+    { date: "2025-04-22", modules: 4 },
+    { date: "2025-04-29", modules: 9 }
+  ]
+};
+
+// Demo achievements data
+const demoAchievements = {
+  recentAchievements: [
+    { title: "Budget Master", date: "2025-04-28", points: 100 },
+    { title: "Cooking Apprentice", date: "2025-04-25", points: 75 },
+    { title: "Home DIY Explorer", date: "2025-04-20", points: 50 }
+  ],
+  totalAchievements: 12,
+  totalPoints: 850
+};
+
+// Demo activities data
+const demoActivities = {
+  recentActivities: [
+    { 
+      title: "Completed Budget Planning Module", 
+      date: "2025-04-29T14:30:00", 
+      category: "finance",
+      pathName: "Financial Basics"
+    },
+    { 
+      title: "Watched Knife Skills Video", 
+      date: "2025-04-28T10:15:00", 
+      category: "cooking",
+      pathName: "Cooking Skills"
+    },
+    { 
+      title: "Completed Home Plumbing Quiz", 
+      date: "2025-04-27T16:45:00", 
+      category: "home",
+      pathName: "Home Maintenance"
+    },
+    { 
+      title: "Started Investment Module", 
+      date: "2025-04-26T09:20:00", 
+      category: "finance",
+      pathName: "Financial Basics"
+    }
+  ],
+  activityByDay: [
+    { day: "Monday", count: 8 },
+    { day: "Tuesday", count: 5 },
+    { day: "Wednesday", count: 10 },
+    { day: "Thursday", count: 6 },
+    { day: "Friday", count: 12 },
+    { day: "Saturday", count: 4 },
+    { day: "Sunday", count: 2 }
+  ],
+  activityByCategory: [
+    { category: "Finance", count: 15 },
+    { category: "Cooking", count: 12 },
+    { category: "Home", count: 8 },
+    { category: "General", count: 5 }
+  ]
+};
+
+// Demo time data
+const demoTimeData = {
+  totalHoursSpent: 48,
+  averageTimePerSession: 32,
+  timeByCategory: [
+    { category: "Finance", hours: 18 },
+    { category: "Cooking", hours: 15 },
+    { category: "Home", hours: 10 },
+    { category: "General", hours: 5 }
+  ],
+  timeByDay: [
+    { day: "Monday", minutes: 75 },
+    { day: "Tuesday", minutes: 60 },
+    { day: "Wednesday", minutes: 120 },
+    { day: "Thursday", minutes: 45 },
+    { day: "Friday", minutes: 150 },
+    { day: "Saturday", minutes: 30 },
+    { day: "Sunday", minutes: 15 }
+  ],
+  timeByTime: [
+    { time: "Morning", percent: 35 },
+    { time: "Afternoon", percent: 40 },
+    { time: "Evening", percent: 25 }
+  ]
+};
+
 export default function UserAnalytics() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('progress');
@@ -101,6 +217,17 @@ export default function UserAnalytics() {
     );
   }
   
+  if (!analytics || !activities || !achievements || !timeData) {
+    return (
+      <div className="container py-10">
+        <h1 className="text-3xl font-bold">Your Learning Analytics</h1>
+        <p className="text-red-500 mt-4">
+          Unable to load analytics data. Please try again later.
+        </p>
+      </div>
+    );
+  }
+  
   return (
     <div className="container py-10 space-y-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -130,7 +257,7 @@ export default function UserAnalytics() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold mb-2">
-              {analytics.overallProgress.completionRate * 100}%
+              {Math.round(analytics.overallProgress.completionRate * 100)}%
             </div>
             <Progress 
               value={analytics.overallProgress.completionRate * 100} 
@@ -263,16 +390,16 @@ export default function UserAnalytics() {
                       dataKey="date" 
                       tickFormatter={(value) => {
                         const date = new Date(value);
-                        return \`\${date.getMonth() + 1}/\${date.getDate()}\`;
+                        return `${date.getMonth() + 1}/${date.getDate()}`;
                       }}
                       tick={{ fontSize: 12 }}
                     />
                     <YAxis 
-                      tickFormatter={(value) => \`\${value}\`}
+                      tickFormatter={(value) => `${value}`}
                       tick={{ fontSize: 12 }}
                     />
                     <Tooltip 
-                      formatter={(value: number) => [`${value} modules`, 'Completed']}
+                      formatter={(value) => [`${value} modules`, 'Completed']}
                       labelFormatter={(label) => {
                         const date = new Date(label);
                         return date.toLocaleDateString();
@@ -361,11 +488,10 @@ export default function UserAnalytics() {
                         width={80}
                       />
                       <Tooltip 
-                        formatter={(value: number) => [\`\${value} activities\`, 'Count']}
+                        formatter={(value) => [`${value} activities`, 'Count']}
                       />
                       <Bar 
                         dataKey="count" 
-                        nameKey="day"
                         barSize={20}
                         radius={[0, 4, 4, 0]}
                       >
@@ -406,11 +532,10 @@ export default function UserAnalytics() {
                         width={80}
                       />
                       <Tooltip 
-                        formatter={(value: number) => [\`\${value} activities\`, 'Count']}
+                        formatter={(value) => [`${value} activities`, 'Count']}
                       />
                       <Bar 
                         dataKey="count" 
-                        nameKey="category"
                         barSize={20}
                         radius={[0, 4, 4, 0]}
                       >
@@ -427,35 +552,84 @@ export default function UserAnalytics() {
         </TabsContent>
         
         <TabsContent value="time" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="md:col-span-1">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Total Time Spent</CardTitle>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Time Spent by Category</CardTitle>
+                <CardDescription>
+                  How your learning time is distributed
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col items-center p-4">
-                  <div className="text-4xl font-bold mb-1">{timeData.totalHoursSpent}h</div>
-                  <div className="text-muted-foreground text-sm text-center">
-                    Total time spent on learning activities
-                  </div>
+                <div className="h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={timeData.timeByCategory}
+                      margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+                      layout="vertical"
+                    >
+                      <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                      <XAxis 
+                        type="number"
+                        tick={{ fontSize: 12 }}
+                      />
+                      <YAxis 
+                        dataKey="category" 
+                        type="category"
+                        tick={{ fontSize: 12 }}
+                        width={80}
+                      />
+                      <Tooltip 
+                        formatter={(value) => [`${value} hours`, 'Time Spent']}
+                      />
+                      <Bar 
+                        dataKey="hours" 
+                        barSize={20}
+                        radius={[0, 4, 4, 0]}
+                      >
+                        {timeData.timeByCategory.map((entry, index) => (
+                          <Cell key={index} fill={demoColors[index % demoColors.length]} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="md:col-span-2">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Average Session Duration</CardTitle>
+            <Card>
+              <CardHeader>
+                <CardTitle>Learning Time by Day</CardTitle>
+                <CardDescription>
+                  Minutes spent learning each day
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-col items-center p-4">
-                  <div className="text-4xl font-bold mb-1">{timeData.averageTimePerSession}m</div>
-                  <div className="text-muted-foreground text-sm text-center">
-                    Average time spent per learning session
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-2 flex items-center">
-                    <ArrowUpIcon className="h-3 w-3 mr-1 text-green-500" />
-                    <span>5% increase compared to last month</span>
-                  </div>
+                <div className="h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={timeData.timeByDay}
+                      margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                      <XAxis 
+                        dataKey="day" 
+                        tick={{ fontSize: 12 }}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 12 }}
+                      />
+                      <Tooltip 
+                        formatter={(value) => [`${value} minutes`, 'Time Spent']}
+                      />
+                      <Bar 
+                        dataKey="minutes" 
+                        fill="#3b82f6"
+                        barSize={20}
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
@@ -463,99 +637,37 @@ export default function UserAnalytics() {
           
           <Card>
             <CardHeader>
-              <CardTitle>Time Spent by Category</CardTitle>
+              <CardTitle>Learning Time Distribution</CardTitle>
               <CardDescription>
-                Hours spent on different learning categories
+                What time of day you learn best
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
-                {timeData.timeSpentByCategory.map((category, i) => (
-                  <div key={i}>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-sm font-medium">{category.category}</span>
-                      <span className="text-sm font-medium">{category.hours}h</span>
-                    </div>
-                    <div className="w-full bg-secondary/20 rounded-full h-2.5">
-                      <div 
-                        className="h-2.5 rounded-full" 
-                        style={{ 
-                          width: \`\${(category.hours / timeData.timeSpentByCategory.reduce((acc, curr) => acc + curr.hours, 0)) * 100}%\`,
-                          backgroundColor: demoColors[i % demoColors.length]
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="h-64 mt-8">
+              <div className="h-56">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
-                    data={timeData.timeSpentByCategory}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="category" />
-                    <YAxis label={{ value: 'Hours', angle: -90, position: 'insideLeft' }} />
-                    <Tooltip formatter={(value) => [\`\${value} hours\`, 'Time Spent']} />
-                    <Bar 
-                      dataKey="hours" 
-                      radius={[4, 4, 0, 0]}
-                    >
-                      {timeData.timeSpentByCategory.map((entry, index) => (
-                        <Cell key={index} fill={demoColors[index % demoColors.length]} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Time Spent by Day</CardTitle>
-              <CardDescription>
-                Minutes spent learning over the past week
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-72">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={timeData.timeSpentByDay}
+                    data={timeData.timeByTime}
                     margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis 
-                      dataKey="date" 
-                      tickFormatter={(value) => {
-                        const date = new Date(value);
-                        return \`\${date.getMonth() + 1}/\${date.getDate()}\`;
-                      }}
+                      dataKey="time" 
                       tick={{ fontSize: 12 }}
                     />
                     <YAxis 
-                      tickFormatter={(value) => \`\${value} min\`}
+                      tickFormatter={(value) => `${value}%`}
                       tick={{ fontSize: 12 }}
                     />
                     <Tooltip 
-                      formatter={(value) => [\`\${value} minutes\`, 'Time Spent']}
-                      labelFormatter={(label) => {
-                        const date = new Date(label);
-                        return date.toLocaleDateString();
-                      }}
+                      formatter={(value) => [`${value}%`, 'Of Total Time']}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="minutes" 
-                      stroke="#14b8a6" 
-                      strokeWidth={2}
-                      dot={{ r: 3 }}
-                      activeDot={{ r: 6 }}
+                    <Bar 
+                      dataKey="percent" 
+                      fill="#3b82f6"
+                      barSize={60}
+                      radius={[4, 4, 0, 0]}
                     />
-                  </LineChart>
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
@@ -565,106 +677,3 @@ export default function UserAnalytics() {
     </div>
   );
 }
-
-// Demo data
-const demoAnalyticsData = {
-  overallProgress: {
-    completed: 24,
-    inProgress: 8,
-    notStarted: 12,
-    completionRate: 0.55,
-    totalModules: 44
-  },
-  pathProgress: [
-    { id: 1, name: 'Financial Basics', progress: 85, modules: { completed: 17, total: 20 } },
-    { id: 2, name: 'Cooking Fundamentals', progress: 60, modules: { completed: 6, total: 10 } },
-    { id: 3, name: 'Home Maintenance', progress: 25, modules: { completed: 3, total: 12 } }
-  ],
-  completionTrend: [
-    { date: '2025-04-16', modules: 0 },
-    { date: '2025-04-17', modules: 1 },
-    { date: '2025-04-18', modules: 0 },
-    { date: '2025-04-19', modules: 2 },
-    { date: '2025-04-20', modules: 1 },
-    { date: '2025-04-21', modules: 0 },
-    { date: '2025-04-22', modules: 3 },
-    { date: '2025-04-23', modules: 1 },
-    { date: '2025-04-24', modules: 2 },
-    { date: '2025-04-25', modules: 0 },
-    { date: '2025-04-26', modules: 1 },
-    { date: '2025-04-27', modules: 0 },
-    { date: '2025-04-28', modules: 1 },
-    { date: '2025-04-29', modules: 2 },
-    { date: '2025-04-30', modules: 0 },
-    { date: '2025-05-01', modules: 1 },
-    { date: '2025-05-02', modules: 0 },
-    { date: '2025-05-03', modules: 2 },
-    { date: '2025-05-04', modules: 1 },
-    { date: '2025-05-05', modules: 0 },
-    { date: '2025-05-06', modules: 2 },
-    { date: '2025-05-07', modules: 1 },
-    { date: '2025-05-08', modules: 0 },
-    { date: '2025-05-09', modules: 1 },
-    { date: '2025-05-10', modules: 2 },
-    { date: '2025-05-11', modules: 1 },
-    { date: '2025-05-12', modules: 0 },
-    { date: '2025-05-13', modules: 1 },
-    { date: '2025-05-14', modules: 0 },
-    { date: '2025-05-15', modules: 2 },
-  ]
-};
-
-const demoAchievements = {
-  recentAchievements: [
-    { id: 1, title: 'Completed First Path', date: '2025-05-10', type: 'completion', points: 100 },
-    { id: 2, title: '5-Day Streak', date: '2025-05-08', type: 'streak', points: 50 },
-    { id: 3, title: 'Financial Explorer', date: '2025-05-05', type: 'skill', points: 75 }
-  ]
-};
-
-const demoActivities = {
-  recentActivities: [
-    { id: 1, type: 'module_completion', title: 'Completed "Budgeting Basics"', date: '2025-05-15T14:30:00Z', category: 'finance' },
-    { id: 2, type: 'quiz_completion', title: 'Scored 95% on "Cooking Terms"', date: '2025-05-14T10:15:00Z', category: 'cooking' },
-    { id: 3, type: 'path_started', title: 'Started "Home Maintenance" path', date: '2025-05-13T16:45:00Z', category: 'home' },
-    { id: 4, type: 'achievement', title: 'Earned "Financial Planner" badge', date: '2025-05-12T09:20:00Z', category: 'finance' },
-    { id: 5, type: 'module_completion', title: 'Completed "Simple Repairs"', date: '2025-05-11T11:50:00Z', category: 'home' }
-  ],
-  activityByDay: [
-    { day: 'Monday', count: 7 },
-    { day: 'Tuesday', count: 5 },
-    { day: 'Wednesday', count: 8 },
-    { day: 'Thursday', count: 6 },
-    { day: 'Friday', count: 9 },
-    { day: 'Saturday', count: 4 },
-    { day: 'Sunday', count: 3 }
-  ],
-  activityByCategory: [
-    { category: 'Finance', count: 12 },
-    { category: 'Cooking', count: 8 },
-    { category: 'Home', count: 5 },
-    { category: 'Personal Growth', count: 7 },
-    { category: 'Health', count: 6 }
-  ]
-};
-
-const demoTimeData = {
-  totalHoursSpent: 28.5,
-  averageTimePerSession: 32,
-  timeSpentByCategory: [
-    { category: 'Finance', hours: 10.5 },
-    { category: 'Cooking', hours: 6.2 },
-    { category: 'Home', hours: 4.8 },
-    { category: 'Personal Growth', hours: 3.5 },
-    { category: 'Health', hours: 3.5 }
-  ],
-  timeSpentByDay: [
-    { date: '2025-05-09', minutes: 45 },
-    { date: '2025-05-10', minutes: 30 },
-    { date: '2025-05-11', minutes: 60 },
-    { date: '2025-05-12', minutes: 25 },
-    { date: '2025-05-13', minutes: 40 },
-    { date: '2025-05-14', minutes: 55 },
-    { date: '2025-05-15', minutes: 70 }
-  ]
-};
