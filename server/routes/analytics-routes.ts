@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import * as analyticsService from '../services/analytics-service';
-import { authenticateJWT, requireAdmin } from '../middleware/auth-middleware';
+import * as analyticsService from '../services/analytics-service.js';
+import { authenticateJWT, requireAdmin } from '../middleware/auth-middleware.js';
 
 const router = Router();
 

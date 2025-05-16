@@ -1,5 +1,5 @@
-import { pool } from '../db';
-import { createLogger } from '../utils/logger';
+import { pool } from '../db.js';
+import { createLogger } from '../utils/logger.js';
 
 const logger = createLogger('AnalyticsService');
 

@@ -42,6 +42,10 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
+// Add static file caching middleware
+import staticCacheMiddleware from './middleware/static-cache.js';
+app.use(staticCacheMiddleware);
+
 // Content advisory middleware - applied to all responses
 import { contentAdvisoryMiddleware } from './middleware/content-advisory-middleware.js';
 app.use(contentAdvisoryMiddleware({ 
