@@ -38,6 +38,7 @@ import Wellness from "@/pages/wellness";
 import Active from "@/pages/active-fixed";
 import ActiveEnhanced from "@/pages/active-enhanced";
 import Learning from "@/pages/learning";
+import PerformanceDemo from "./pages/performance-demo";
 import YogaTest from "@/pages/yoga-test";
 import YogaPoseAnalysis from "@/pages/yoga-pose-analysis";
 import YogaProgressionPage from "@/pages/yoga-progression";
@@ -236,6 +237,9 @@ function Router() {
               <ProtectedRoute>
                 <Wellness />
               </ProtectedRoute>
+            </Route>
+            <Route path="/performance-demo">
+              <PerformanceDemo />
             </Route>
             <Route path="/wellness/:section">
               <ProtectedRoute>
