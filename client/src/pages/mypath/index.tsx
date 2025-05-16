@@ -59,35 +59,35 @@ export default function MyPathPage() {
               <div className="space-y-1">
                 <Button
                   variant={activeTab === "connections" ? "default" : "ghost"}
-                  className="w-full justify-start"
+                  className="w-full justify-start min-w-[120px] px-3"
                   onClick={() => setActiveTab("connections")}
                 >
-                  <Users className="h-4 w-4 mr-2" />
-                  Connections
+                  <Users className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <span className="truncate">Connections</span>
                 </Button>
                 <Button
                   variant={activeTab === "pathways" ? "default" : "ghost"}
-                  className="w-full justify-start"
+                  className="w-full justify-start min-w-[120px] px-3"
                   onClick={() => setActiveTab("pathways")}
                 >
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  Pathways
+                  <BookOpen className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <span className="truncate">Pathways</span>
                 </Button>
                 <Button
                   variant={activeTab === "assignments" ? "default" : "ghost"}
-                  className="w-full justify-start"
+                  className="w-full justify-start min-w-[120px] px-3"
                   onClick={() => setActiveTab("assignments")}
                 >
-                  <ClipboardList className="h-4 w-4 mr-2" />
-                  Assignments
+                  <ClipboardList className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <span className="truncate">Assignments</span>
                 </Button>
                 <Button
                   variant={activeTab === "analytics" ? "default" : "ghost"}
-                  className="w-full justify-start"
+                  className="w-full justify-start min-w-[120px] px-3"
                   onClick={() => setActiveTab("analytics")}
                 >
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  Analytics
+                  <BarChart3 className="h-4 w-4 mr-2 flex-shrink-0" />
+                  <span className="truncate">Analytics</span>
                 </Button>
               </div>
             </CardContent>
