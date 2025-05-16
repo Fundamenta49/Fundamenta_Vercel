@@ -70,7 +70,7 @@ export default function UserAnalytics() {
   const formatTime = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    return \`\${hours}h \${mins}m\`;
+    return `${hours}h ${mins}m`;
   };
   
   // Loading state
@@ -272,7 +272,7 @@ export default function UserAnalytics() {
                       tick={{ fontSize: 12 }}
                     />
                     <Tooltip 
-                      formatter={(value: number) => [\`\${value} modules\`, 'Completed']}
+                      formatter={(value: number) => [`${value} modules`, 'Completed']}
                       labelFormatter={(label) => {
                         const date = new Date(label);
                         return date.toLocaleDateString();
