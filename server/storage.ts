@@ -30,6 +30,8 @@ export interface IStorage {
   createUserConnection(connection: InsertUserConnection): Promise<UserConnection>;
   getUserConnectionByCode(code: string): Promise<UserConnection | undefined>;
   getUserConnections(userId: number, role: 'mentor' | 'student'): Promise<UserConnection[]>;
+  getConnectionsByMentorId(mentorId: number): Promise<UserConnection[]>;
+  getConnectionsByStudentId(studentId: number): Promise<UserConnection[]>;
   updateUserConnection(id: number, updates: Partial<InsertUserConnection>): Promise<UserConnection | undefined>;
   deleteUserConnection(id: number): Promise<boolean>;
   

@@ -353,6 +353,15 @@ export class DatabaseStorage implements IStorage {
       throw new Error(`Failed to fetch connections for user ${userId} as ${role}: ${error.message}`);
     }
   }
+  
+  // Adapter methods to match the API expected by mentorship-routes.ts
+  async getConnectionsByMentorId(mentorId: number): Promise<UserConnection[]> {
+    return this.getUserConnections(mentorId, 'mentor');
+  }
+  
+  async getConnectionsByStudentId(studentId: number): Promise<UserConnection[]> {
+    return this.getUserConnections(studentId, 'student');
+  }
 
   async updateUserConnection(id: number, updates: Partial<InsertUserConnection>): Promise<UserConnection | undefined> {
     if (!Number.isInteger(id) || id <= 0) {
