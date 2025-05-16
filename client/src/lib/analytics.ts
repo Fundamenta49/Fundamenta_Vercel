@@ -27,7 +27,10 @@ export const initGA = () => {
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', '${measurementId}');
+    gtag('config', '${measurementId}', {
+      send_page_view: true,
+      cookie_flags: 'samesite=none;secure'
+    });
   `;
   document.head.appendChild(script2);
 };
@@ -42,6 +45,59 @@ export const trackPageView = (url: string) => {
   window.gtag('config', measurementId, {
     page_path: url
   });
+};
+
+/**
+ * Educational Platform Event Tracking
+ */
+
+// Track learning path events
+export const trackLearningPathEvent = (
+  action: string,
+  pathId: string,
+  label?: string,
+  value?: number
+) => {
+  trackEvent(action, 'learning_path', `${pathId}${label ? `: ${label}` : ''}`, value);
+};
+
+// Track module completion events
+export const trackModuleCompletion = (
+  moduleId: string,
+  timeTaken: number,
+  score?: number
+) => {
+  trackEvent('complete_module', 'learning', moduleId, score);
+  
+  // Track time spent separately for better analytics
+  trackEvent('time_spent', 'learning', moduleId, timeTaken);
+};
+
+// Track assessment events
+export const trackAssessmentEvent = (
+  action: string,
+  assessmentId: string,
+  score?: number
+) => {
+  trackEvent(action, 'assessment', assessmentId, score);
+};
+
+// Track resource usage (videos, articles, etc.)
+export const trackResourceUsage = (
+  resourceType: string,
+  resourceId: string,
+  timeSpent?: number
+) => {
+  trackEvent('view_resource', resourceType, resourceId, timeSpent);
+};
+
+// Track feature usage 
+export const trackFeatureUsage = (
+  featureName: string,
+  action: string = 'use',
+  details?: string
+) => {
+  trackEvent(action, 'feature', `${featureName}${details ? `: ${details}` : ''}`);
 };
 
 // Track events related to user progress
