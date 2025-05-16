@@ -49,6 +49,60 @@ app.use(contentAdvisoryMiddleware({
   skipForAuthorizedUsers: false // Apply content advisories for all users
 }));
 
+// Request timeout middleware - Prevent hanging requests
+app.use('/api/mentorship', (req, res, next) => {
+  // Skip for health check endpoints
+  if (req.path.includes('/health') || req.path.includes('/_ah/')) {
+    return next();
+  }
+
+  const timeoutMs = 15000; // 15 seconds timeout for mentorship routes
+  const timeoutId = setTimeout(() => {
+    if (!res.headersSent) {
+      console.error(`[Timeout] Request to ${req.method} ${req.originalUrl} timed out after ${timeoutMs}ms`);
+      res.removeAllListeners();
+      res.status(408).json({
+        error: true,
+        message: 'Request timed out. Please try again later.',
+        code: 'REQUEST_TIMEOUT',
+        path: req.originalUrl
+      });
+    }
+  }, timeoutMs);
+
+  res.on('finish', () => clearTimeout(timeoutId));
+  res.on('close', () => clearTimeout(timeoutId));
+  next();
+});
+
+// Apply a longer timeout to AI routes
+app.use('/api/ai', (req, res, next) => {
+  // Skip for health check endpoints
+  if (req.path.includes('/health') || req.path.includes('/_ah/')) {
+    return next();
+  }
+
+  const timeoutMs = 30000; // 30 seconds timeout for AI routes
+  const timeoutId = setTimeout(() => {
+    if (!res.headersSent) {
+      console.error(`[Timeout] Request to ${req.method} ${req.originalUrl} timed out after ${timeoutMs}ms`);
+      res.removeAllListeners();
+      res.status(408).json({
+        error: true,
+        message: 'Request timed out. Please try again later.',
+        code: 'REQUEST_TIMEOUT',
+        path: req.originalUrl
+      });
+    }
+  }, timeoutMs);
+
+  res.on('finish', () => clearTimeout(timeoutId));
+  res.on('close', () => clearTimeout(timeoutId));
+  next();
+});
+
+log("Request timeout middleware applied to API routes");
+
 // Configure session store with PostgreSQL
 const PgSession = connectPgSimple(session);
 app.use(
