@@ -412,6 +412,9 @@ export default function RobotFundi({
     // Screen background is always dark
     screenBg: "#222"
   };
+  
+  // For debugging - log the category and color being used
+  console.log(`Fundi using category: ${category} with color: ${color}`);
 
   // This function handles ONLY opening the chat, separate from any drag handling
   const openChatOnly = (e: React.MouseEvent) => {
