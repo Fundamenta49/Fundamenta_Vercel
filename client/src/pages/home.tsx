@@ -6,7 +6,6 @@ import { useAuth } from "@/lib/auth-context";
 import FounderMessageDialog from "@/components/founder-message-dialog";
 import { TourGuide, TourButton } from "@/components/home-tour";
 import { FundiColorTest } from "@/components/fundi-color-test";
-import FundiRedesignTest from "../components/fundi-redesign-test";
 
 const features = [
   {
@@ -117,12 +116,6 @@ export default function Home() {
       {/* Fundi Color Test Component */}
       <div className="max-w-md mx-auto mb-8">
         <FundiColorTest />
-      </div>
-      
-      {/* Fundi Redesign Test Component */}
-      <div className="max-w-4xl mx-auto mb-8 p-4 bg-white rounded-lg shadow">
-        <h2 className="text-xl font-bold mb-4 text-center">New Fundi Design Test</h2>
-        <FundiRedesignTest />
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-2 sm:gap-4 md:gap-6 max-w-5xl mx-auto">
