@@ -84,6 +84,7 @@ import ProtectedRoute from "@/components/protected-route";
 import { SkeletonDemoPage } from "@/components/SkeletonDemoPage";
 import DisclaimerHub from "@/pages/disclaimer-hub";
 import ComponentTest from "@/pages/component-test";
+import FundiTest from "@/pages/fundi-test";
 import { FeatureFlagsProvider } from "@/contexts/feature-flags-context";
 import FindingProfessionals from "@/pages/resources/finding-professionals";
 import ProfessionalQuestions from "@/pages/resources/professional-questions";
@@ -300,6 +301,9 @@ function Router() {
               <ProtectedRoute>
                 <YogaTest />
               </ProtectedRoute>
+            </Route>
+            <Route path="/fundi-test">
+              <FundiTest />
             </Route>
             <Route path="/yoga-pose-analysis">
               <ProtectedRoute>
