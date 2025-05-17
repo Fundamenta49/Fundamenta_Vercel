@@ -13,3 +13,31 @@ vite.config.ts.*
 .env.development.local
 .env.test.local
 .env.production.local
+.env.vercel
+.env.vercel-paste
+
+# Temporary files
+temp_*
+*.tmp
+*.bak
+*.log
+*~
+temp-fix.js
+
+# Backup directories
+temp_audio/
+temp_unzip/
+zombie-backup*/
+backups/
+
+# Test and debug files
+test-*.js
+*-backup.tsx
+running-app-backup.tsx
+closing-cost-calculator-backup.tsx
+ccc-backup.tsx
+
+# Replit specific files
+.replit.deployment-health
+.replit.deployments
+.replit.rules
