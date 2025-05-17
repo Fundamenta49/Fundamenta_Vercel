@@ -14,6 +14,14 @@ The following components have been migrated to use `ChatRedirect` to Fundi:
 4. **Finance Advisor** ✓ (migrated)
 5. **Emergency Assistant** ✓ (migrated)
 
+### Knowledge Base Integration
+Fundi's knowledge has been enhanced with comprehensive understanding of the following specialized components:
+
+1. **PicFix Repair Assistant** ✓ (knowledge integrated)
+2. **Cooking Guide** ✓ (knowledge integrated)
+3. **Legal Rights Guide** ✓ (knowledge integrated)
+4. **Emergency Guide** ✓ (knowledge integrated)
+
 ## AI Coach Components
 
 ### Core Coach Components
