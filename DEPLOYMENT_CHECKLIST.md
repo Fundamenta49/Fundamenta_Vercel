@@ -1,90 +1,57 @@
-# Fundamenta Deployment Checklist
+# Fundamenta Vercel Deployment Checklist
 
-Use this checklist to ensure a successful deployment of the Fundamenta Life Skills platform.
+## 1. Prerequisites
+- [x] GitHub repository setup
+- [x] Supabase project created
+- [x] Vercel account ready
 
-## Pre-Deployment Checks
+## 2. Environment Variables Setup
+- [ ] `DATABASE_URL` - Supabase connection string with the format:
+      `postgresql://postgres.[PROJECT-ID]:[PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true`
+- [ ] `USE_SUPABASE` - Set to "true"
+- [ ] `OPENAI_API_KEY` - Your OpenAI API key 
+- [ ] `SESSION_SECRET` - A secure random string for session encryption
+- [ ] Other application-specific variables from .env
 
-- [ ] **Environment Variables**
-  - [ ] `DATABASE_URL` is set correctly
-  - [ ] `SESSION_SECRET` is set
-  - [ ] `OPENAI_API_KEY` is set
-  - [ ] Other API keys are set as needed (Stripe, Adzuna, Spoonacular)
+## 3. Configuration Files
+- [x] vercel.json created
+- [x] Database adapter files updated
 
-- [ ] **Database**
-  - [ ] PostgreSQL database is created and accessible
-  - [ ] Database migrations can run successfully
-  - [ ] Test database connection with `node deploy-validation.js`
+## 4. Build Configuration
+- [ ] Framework set to "Other" (not auto-detected)
+- [ ] Build Command: `npm run build`
+- [ ] Output Directory: `dist`
+- [ ] Node.js Version: 18.x or later
 
-- [ ] **Build Process**
-  - [ ] TypeScript compilation succeeds with `npm run check`
-  - [ ] Build completes successfully with `npm run build`
-  - [ ] Client assets are generated in the expected location
+## 5. Database Setup
+- [ ] Run migrations with `npm run db:push` before deploying
+- [ ] Test database connection with test deploy
 
-- [ ] **Health Checks**
-  - [ ] Health endpoints respond correctly in development
-  - [ ] Verify health checks with `node deployment/verify-health.js`
+## 6. Project Repository
+- [ ] Push all changes to GitHub
+- [ ] Connect GitHub repository to Vercel project
 
-## Deployment Process
+## 7. Deployment Process
+- [ ] Import project in Vercel dashboard
+- [ ] Configure build settings according to step 4
+- [ ] Add all environment variables from step 2
+- [ ] Click "Deploy" to start the deployment
 
-- [ ] **Choose Deployment Method**
-  - [ ] Replit Deployment (easiest)
-  - [ ] Docker/CloudRun Deployment
-  - [ ] Traditional Node.js Deployment
+## 8. Post-Deployment Verification
+- [ ] Test API endpoints (GET /api/health)
+- [ ] Verify database connection
+- [ ] Check all major application features
+- [ ] Test user authentication
+- [ ] Review application logs for errors
 
-- [ ] **Replit Deployment**
-  - [ ] Run `node deployment/replit-deployment.js`
-  - [ ] Verify `deployment.json` is created
-  - [ ] Click the Deploy button in Replit interface
+## 9. Domain Configuration (Optional)
+- [ ] Add custom domain in Vercel project settings
+- [ ] Configure DNS settings according to Vercel instructions
 
-- [ ] **Docker Deployment**
-  - [ ] Build Docker image with `docker build -f deployment/cloudrun.Dockerfile -t fundamenta-app .`
-  - [ ] Test locally with `docker run -p 8080:8080 --env-file .env fundamenta-app`
-  - [ ] Push to container registry
-  - [ ] Deploy to cloud platform
+## 10. CI/CD Setup (Optional)
+- [ ] Configure pull request previews
+- [ ] Set up branch deployment rules
 
-- [ ] **Traditional Node.js Deployment**
-  - [ ] Run `npm run build`
-  - [ ] Copy dist directory to production server
-  - [ ] Set up environment variables on production server
-  - [ ] Start with `NODE_ENV=production node deployment/production-server.js`
-
-## Post-Deployment Verification
-
-- [ ] **Basic Checks**
-  - [ ] Application is accessible at deployment URL
-  - [ ] `/health` endpoint returns `{"status":"ok"}`
-  - [ ] Login and authentication work
-
-- [ ] **Functionality Checks**
-  - [ ] Navigation works correctly
-  - [ ] AI features function properly
-  - [ ] Exercise recommendations load
-  - [ ] Nutrition features work
-  - [ ] Job search features work
-
-- [ ] **Performance Checks**
-  - [ ] Page load times are acceptable
-  - [ ] API responses are timely
-  - [ ] No console errors in browser
-
-## Troubleshooting Common Issues
-
-- **Health Check Fails**
-  - Verify the application is running
-  - Check server logs for errors
-  - Ensure port configuration is correct
-
-- **Database Connection Issues**
-  - Verify `DATABASE_URL` is correct
-  - Check for network/firewall restrictions
-  - Confirm PostgreSQL instance is running
-
-- **API Features Not Working**
-  - Verify API keys are set correctly
-  - Check for rate limiting issues
-  - Confirm API endpoints are accessible from deployment environment
-
-- **Client Assets Missing**
-  - Verify build process completed
-  - Check static file paths
-  - Ensure proper distribution directory is configured
+## 11. Monitoring and Analytics
+- [ ] Set up Vercel Analytics
+- [ ] Configure error monitoring
