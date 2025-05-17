@@ -759,11 +759,13 @@ export default function RobotFundi({
         <rect x="45" y="15" width="10" height="5" rx="2.5" fill={robotColors.main} />
         <rect x="47.5" y="10" width="5" height="5" rx="2.5" fill={robotColors.antennaLight} />
         
-        {/* Robot body */}
-        <path 
-          d="M30,60 C30,80 30,90 50,90 C70,90 70,80 70,60 Z" 
-          fill={robotColors.veryLightBg} 
-        />
+        {/* Robot body - only show in non-jungle mode */}
+        {!isJungleTheme && (
+          <path 
+            d="M30,60 C30,80 30,90 50,90 C70,90 70,80 70,60 Z" 
+            fill={robotColors.veryLightBg} 
+          />
+        )}
         
         {/* Jungle adventure outfit */}
         {isJungleTheme && (
