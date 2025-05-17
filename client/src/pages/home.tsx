@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth-context";
 import FounderMessageDialog from "@/components/founder-message-dialog";
 import { TourGuide, TourButton } from "@/components/home-tour";
-import { FundiColorTest } from "@/components/fundi-color-test";
 
 const features = [
   {
@@ -112,11 +111,6 @@ export default function Home() {
       />
       
       {/* Weather Widget removed */}
-      
-      {/* Fundi Color Test Component */}
-      <div className="max-w-md mx-auto mb-8">
-        <FundiColorTest />
-      </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-2 sm:gap-4 md:gap-6 max-w-5xl mx-auto">
         {features.map((feature) => (
