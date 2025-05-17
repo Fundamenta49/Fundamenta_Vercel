@@ -1,0 +1,47 @@
+<svg viewBox="0 0 100 100" className={sizeClass}>
+  <g id="base">
+    <!-- Head -->
+    <rect x="25" y="10" width="50" height="40" rx="15" fill="#C0C0C0"/>
+    <!-- Faceplate -->
+    <rect x="30" y="15" width="40" height="30" fill="#000"/>
+    <!-- Eyes -->
+    <ellipse cx="40" cy="25" rx="5" ry="7" fill={categoryColor || "#00BFFF"}>
+      <animate attributeName="rx" values="5;6;5" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="ry" values="7;8;7" dur="2s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="60" cy="25" rx="5" ry="7" fill={categoryColor || "#00BFFF"}/>
+    <!-- Antenna Ears -->
+    <circle cx="25" cy="15" r="5" fill="#C0C0C0"/>
+    <circle cx="70" cy="15" r="5" fill="#C0C0C0"/>
+    <!-- Body -->
+    <rect x="30" y="50" width="40" height="30" rx="10" fill="#C0C0C0"/>
+    <!-- Chest Orb -->
+    <circle cx="45" cy="55" r="5" fill={categoryColor || "#00BFFF"}/>
+    <!-- Arms -->
+    <rect x="20" y="50" width="10" height="15" rx="5" fill="#C0C0C0">
+      <animateTransform attributeName="transform" type="rotate" values="-5 25 50;5 25 50;-5 25 50" dur="3s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="70" y="50" width="10" height="15" rx="5" fill="#C0C0C0"/>
+    <!-- Base Glow -->
+    <ellipse cx="50" cy="90" rx="20" ry="10" fill={categoryColor || "#00BFFF"}>
+      <animate attributeName="opacity" values="0.9;1;0.9" dur="1s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- Data Streams -->
+    <circle cx="50" cy="70" r="2" fill="rgba(0,191,255,0.5)">
+      <animate attributeName="cy" values="70;50" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;0" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <!-- Add more circles for full effect -->
+  </g>
+  <g id="jungle" style={{ display: isJungleTheme ? 'block' : 'none' }}>
+    <!-- Jungle Body -->
+    <rect x="30" y="50" width="40" height="30" rx="10" fill="#2A6D4D"/>
+    <!-- Vine Overlay -->
+    <rect x="35" y="20" width="10" height="10" fill="url(#leafPattern)"/>
+    <!-- Jungle Base Glow -->
+    <ellipse cx="50" cy="90" rx="20" ry="10" fill="#2A6D4D">
+      <animate attributeName="rx" values="20;22;20" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="ry" values="10;12;10" dur="2s" repeatCount="indefinite"/>
+    </ellipse>
+  </g>
+</svg>
