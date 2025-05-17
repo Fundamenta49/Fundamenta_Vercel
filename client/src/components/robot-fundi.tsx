@@ -599,6 +599,24 @@ export default function RobotFundi({
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleOpenChat}
     >
+      {/* Radiating glow effect */}
+      <div 
+        style={{ 
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          width: '90%',
+          height: '90%',
+          borderRadius: '50%',
+          backgroundColor: robotColors.main,
+          filter: 'blur(10px)',
+          opacity: 0.3,
+          transform: 'translate(-50%, -50%)',
+          zIndex: -1,
+          pointerEvents: 'none',
+          transition: 'background-color 0.3s ease'
+        }}
+      />
       {/* Removed "Click to chat" indicator as requested by the user */}
       <svg
         viewBox="0 0 100 100"
