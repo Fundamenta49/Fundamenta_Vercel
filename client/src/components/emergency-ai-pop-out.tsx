@@ -6,7 +6,8 @@ import {
   FullScreenDialogBody,
 } from "@/components/ui/full-screen-dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import ChatInterface, { EMERGENCY_CATEGORY } from "@/components/chat-interface";
+import ChatRedirect from "@/components/chat-redirect";
+import { EMERGENCY_CATEGORY } from "@/components/chat-interface";
 
 export default function EmergencyAIPopOut() {
   return (
@@ -30,7 +31,7 @@ export default function EmergencyAIPopOut() {
           </AlertDescription>
         </Alert>
         
-        <ChatInterface category={EMERGENCY_CATEGORY} />
+        <ChatRedirect category={EMERGENCY_CATEGORY} />
       </FullScreenDialogBody>
     </div>
   );

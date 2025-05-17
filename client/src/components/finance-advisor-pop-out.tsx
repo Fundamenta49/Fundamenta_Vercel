@@ -6,7 +6,8 @@ import {
   FullScreenDialogBody,
 } from "@/components/ui/full-screen-dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import ChatInterface, { FINANCE_CATEGORY } from "@/components/chat-interface";
+import ChatRedirect from "@/components/chat-redirect";
+import { FINANCE_CATEGORY } from "@/components/chat-interface";
 
 export default function FinanceAdvisorPopOut() {
   return (
@@ -30,7 +31,7 @@ export default function FinanceAdvisorPopOut() {
           </AlertDescription>
         </Alert>
         
-        <ChatInterface category={FINANCE_CATEGORY} />
+        <ChatRedirect category={FINANCE_CATEGORY} />
       </FullScreenDialogBody>
     </div>
   );
