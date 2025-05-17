@@ -681,7 +681,7 @@ export default function RobotFundi({
               cx="40" 
               cy="40" 
               r="5" 
-              fill={color}
+              fill={robotColors.main}
               opacity="0.8"
               className={speaking ? "animate-pulse" : ""}
             />
@@ -689,7 +689,7 @@ export default function RobotFundi({
               cx="60" 
               cy="40" 
               r="5" 
-              fill={color}
+              fill={robotColors.main}
               opacity="0.8"
               className={speaking ? "animate-pulse" : ""}
             />
@@ -701,7 +701,7 @@ export default function RobotFundi({
               cx="40" 
               cy="40" 
               r="5" 
-              fill={color}
+              fill={robotColors.main}
               className="animate-ping"
               style={{ animationDuration: '3s' }}
             />
@@ -709,7 +709,7 @@ export default function RobotFundi({
               cx="60" 
               cy="40" 
               r="5" 
-              fill={color}
+              fill={robotColors.main}
               className="animate-ping"
               style={{ animationDuration: '3s' }}
             />
@@ -721,14 +721,14 @@ export default function RobotFundi({
               cx="40" 
               cy="40" 
               r="5" 
-              fill={color}
+              fill={robotColors.main}
               className={speaking ? "animate-pulse" : ""}
             />
             <circle 
               cx="60" 
               cy="40" 
               r="5" 
-              fill={color}
+              fill={robotColors.main}
               className={speaking ? "animate-pulse" : ""}
             />
           </>
@@ -787,7 +787,7 @@ export default function RobotFundi({
         {speaking ? (
           <path 
             d="M42,75 Q50,80 58,75" 
-            stroke={color} 
+            stroke={robotColors.main} 
             strokeWidth="3" 
             fill="none"
             className="animate-pulse"
@@ -795,7 +795,7 @@ export default function RobotFundi({
         ) : emotion === 'happy' || lastResponse?.sentiment === 'encouraging' ? (
           <path 
             d="M42,75 Q50,80 58,75" 
-            stroke={color} 
+            stroke={robotColors.main} 
             strokeWidth="3" 
             fill="none"
           />
@@ -804,13 +804,13 @@ export default function RobotFundi({
             cx="50" 
             cy="75" 
             r="5" 
-            fill={color} 
+            fill={robotColors.main} 
             opacity="0.8"
           />
         ) : emotion === 'supportive' || lastResponse?.sentiment === 'empathetic' ? (
           <path 
             d="M42,77 L58,77" 
-            stroke={color} 
+            stroke={robotColors.main} 
             strokeWidth="3"
             opacity="0.8" 
           />
@@ -819,7 +819,7 @@ export default function RobotFundi({
             cx="50" 
             cy="75" 
             r="8" 
-            fill={color} 
+            fill={robotColors.main} 
             className={speaking ? "animate-pulse" : ""} 
             opacity="0.8"
           />
