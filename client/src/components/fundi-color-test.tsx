@@ -20,19 +20,26 @@ export function FundiColorTest() {
     <div className="p-4 mt-4 bg-gray-50 rounded-xl">
       <h2 className="text-xl font-bold mb-4">Fundi Category Color Test</h2>
       
-      <div className="flex flex-col items-center mb-4 relative">
-        {/* Radiating glow effect */}
-        <div 
-          className="absolute w-52 h-52 rounded-full blur-xl opacity-40 transition-colors duration-300"
-          style={{ backgroundColor: categories[category], transform: 'scale(1.2)' }}
-        />
-        
-        <div className="relative z-10">
-          <RobotFundi 
-            size="xl" 
-            category={category}
-            interactive={true}
+      <div className="flex flex-col items-center mb-4">
+        <div className="relative">
+          {/* Radiating glow effect - positioned directly behind Fundi */}
+          <div 
+            className="absolute top-1/2 left-1/2 w-36 h-36 rounded-full blur-md opacity-30 transition-colors duration-300"
+            style={{ 
+              backgroundColor: categories[category], 
+              transform: 'translate(-50%, -50%)',
+              zIndex: 0
+            }}
           />
+          
+          {/* Robot Fundi positioned on top of the glow */}
+          <div className="relative" style={{ zIndex: 1 }}>
+            <RobotFundi 
+              size="xl" 
+              category={category}
+              interactive={true}
+            />
+          </div>
         </div>
       </div>
       
