@@ -398,6 +398,20 @@ export default function RobotFundi({
   const color = isJungleTheme 
     ? '#2A6D4D' // Jungle green for eyes/features when in jungle mode 
     : (categoryColors[category] || categoryColors.general);
+    
+  // Define accent colors for different parts of the robot based on the main color
+  const robotColors = {
+    // Main accent color (from category)
+    main: color,
+    // Light background for head and body in non-jungle mode
+    lightBg: isJungleTheme ? "#ECEFD2" : "#e6e6e6",
+    // Very light background for body in non-jungle mode
+    veryLightBg: isJungleTheme ? "#EFF3D6" : "#f5f5f5",
+    // Antenna light color - uses category color in non-jungle mode
+    antennaLight: isJungleTheme ? "#AECBA9" : color,
+    // Screen background is always dark
+    screenBg: "#222"
+  };
 
   // This function handles ONLY opening the chat, separate from any drag handling
   const openChatOnly = (e: React.MouseEvent) => {
@@ -611,16 +625,16 @@ export default function RobotFundi({
           </>
         )}
         
-        {/* Robot head - green-tinted for jungle mode */}
+        {/* Robot head */}
         <rect 
           x="25" 
           y="20" 
           width="50" 
           height="40" 
           rx="10" 
-          fill={isJungleTheme ? "#ECEFD2" : "#e6e6e6"} 
+          fill={robotColors.lightBg} 
         />
-        <rect x="30" y="30" width="40" height="20" rx="5" fill="#222" />
+        <rect x="30" y="30" width="40" height="20" rx="5" fill={robotColors.screenBg} />
         
         {/* Eyes - change based on emotions */}
         {emotion === 'happy' || lastResponse?.sentiment === 'encouraging' ? (
@@ -628,14 +642,14 @@ export default function RobotFundi({
           <>
             <path 
               d="M35,40 Q40,35 45,40" 
-              stroke={color} 
+              stroke={robotColors.main} 
               strokeWidth="3" 
               fill="none"
               className={speaking ? "animate-pulse" : ""}
             />
             <path 
               d="M55,40 Q60,35 65,40" 
-              stroke={color} 
+              stroke={robotColors.main} 
               strokeWidth="3" 
               fill="none"
               className={speaking ? "animate-pulse" : ""}
@@ -649,14 +663,14 @@ export default function RobotFundi({
               cy="40" 
               rx="5" 
               ry="4" 
-              fill={color}
+              fill={robotColors.main}
               className={thinking ? "animate-pulse" : ""}
             />
             <circle 
               cx="60" 
               cy="40" 
               r="6" 
-              fill={color}
+              fill={robotColors.main}
               className={thinking ? "animate-pulse" : ""}
             />
           </>
@@ -720,14 +734,14 @@ export default function RobotFundi({
           </>
         )}
         
-        {/* Antenna - jungle-colored with green light when in jungle theme */}
-        <rect x="45" y="15" width="10" height="5" rx="2.5" fill={color} />
-        <rect x="47.5" y="10" width="5" height="5" rx="2.5" fill={isJungleTheme ? "#AECBA9" : "#e6e6e6"} />
+        {/* Antenna */}
+        <rect x="45" y="15" width="10" height="5" rx="2.5" fill={robotColors.main} />
+        <rect x="47.5" y="10" width="5" height="5" rx="2.5" fill={robotColors.antennaLight} />
         
-        {/* Robot body - with optional jungle styling */}
+        {/* Robot body */}
         <path 
           d="M30,60 C30,80 30,90 50,90 C70,90 70,80 70,60 Z" 
-          fill={isJungleTheme ? "#EFF3D6" : "#f5f5f5"} 
+          fill={robotColors.veryLightBg} 
         />
         
         {/* Jungle adventure outfit */}
