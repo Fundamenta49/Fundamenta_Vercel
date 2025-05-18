@@ -6,10 +6,8 @@ import { getFundiPersonalityElements } from "./fundi-personality-integration";
 import { userGuideService } from "../services/user-guide-service";
 import { userGuideContent, quickGuideInstructions } from "./user-guide-content";
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+// Initialize OpenAI client - moved to the OpenAIProvider class
+// This ensures proper initialization in both development and production environments
 
 /**
  * Message interface for conversation history
@@ -71,7 +69,14 @@ export class OpenAIProvider implements AIProvider {
   private client: OpenAI;
   
   constructor() {
-    this.client = openai;
+    if (!process.env.OPENAI_API_KEY) {
+      console.warn("OPENAI_API_KEY not provided, Fundi will use fallback systems");
+    }
+    
+    // Initialize the OpenAI client properly to ensure it works in all environments
+    this.client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY
+    });
   }
   
   async generateResponse(
