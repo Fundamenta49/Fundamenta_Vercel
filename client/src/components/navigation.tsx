@@ -556,32 +556,15 @@ export default function Navigation() {
 
         </div>
         
-        {/* Login Button for Desktop */}
-        <div className={cn(
-          "pt-6", 
-          isMinimized 
-            ? "absolute bottom-24 left-0 right-0 flex flex-col items-center" 
-            : "pt-6 flex flex-col"
-        )}>
-          <div className={cn(!isMinimized && "px-3", "flex justify-center")}>
-            <LoginButton />
-          </div>
-        </div>
+
         
-        {/* Login Button and Notification Panel */}
+        {/* Notification Panel */}
         <div className={cn(
           "mt-auto pt-2", 
           isMinimized 
             ? "absolute bottom-4 left-0 right-0 flex flex-col items-center" 
             : "mt-auto pt-2 flex flex-col"
         )}>
-          {/* Login Button - Only when not minimized */}
-          {!isMinimized && (
-            <div className="px-3 mb-4">
-              <LoginButton className="w-full" />
-            </div>
-          )}
-          
           <div className={cn(!isMinimized && "px-3", "flex justify-center")}>
             <NotificationPanel />
           </div>
