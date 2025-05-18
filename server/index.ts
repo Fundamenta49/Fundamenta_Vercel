@@ -344,7 +344,7 @@ import path from 'path';
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api')) return next();
 
-  const indexPath = path.resolve(__dirname, '../public/index.html');
+  const indexPath = path.join(process.cwd(), 'dist', 'public', 'index.html');
   res.sendFile(indexPath, (err) => {
     if (err) {
       console.error('Error serving index.html:', err);
