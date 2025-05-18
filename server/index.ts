@@ -338,6 +338,20 @@ app.post("/api/maintenance/sessions", async (req, res) => {
     process.exit(1);
   }
 })();
+import path from 'path';
+
+// Catch-all fallback route for SPA support
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+
+  const indexPath = path.resolve(__dirname, '../public/index.html');
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      console.error('Error serving index.html:', err);
+      res.status(500).send('Internal server error');
+    }
+  });
+});
 
 // Error handling middleware
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
