@@ -18,7 +18,7 @@ import { db, pool } from "./db.js";
 import { ChatMessage } from "@shared/types.js";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
-import { IStorage } from "./storage.js";
+import { IStorage, UpsertUser } from "./storage.js";
 
 // Custom error classes for better error handling
 class NotFoundError extends Error {
@@ -128,8 +128,8 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
-    if (!Number.isInteger(id) || id <= 0) {
+  async updateUser(id: string, updates: Partial<InsertUser>): Promise<User | undefined> {
+    if (!id) {
       throw new ValidationError(`Invalid userId: ${id}`);
     }
 
@@ -170,6 +170,50 @@ export class DatabaseStorage implements IStorage {
         throw error;
       }
       throw new Error(`Failed to update user ${id}: ${error.message}`);
+    }
+  }
+  
+  // Implementation of upsertUser for Replit Auth
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    if (!userData.id) {
+      throw new ValidationError("User ID is required for upsert operation");
+    }
+
+    try {
+      // Check if user exists
+      const [existingUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, userData.id));
+
+      if (existingUser) {
+        // Update the existing user
+        const [updatedUser] = await db
+          .update(users)
+          .set({
+            ...userData,
+            updatedAt: new Date(),
+          })
+          .where(eq(users.id, userData.id))
+          .returning();
+        
+        return updatedUser;
+      } else {
+        // Create a new user
+        const [newUser] = await db
+          .insert(users)
+          .values({
+            ...userData,
+            name: userData.firstName || "User", // Default name based on firstName
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .returning();
+        
+        return newUser;
+      }
+    } catch (error) {
+      throw new Error(`Failed to upsert user: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 

@@ -68,10 +68,13 @@ export type ConnectionStatus = keyof typeof connectionStatuses;
 
 // User Table
 export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  password: text("password").notNull(),
+  id: varchar("id").primaryKey(), // Changed to varchar for Replit Auth's string ID
+  name: text("name"),
+  email: text("email").unique(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  password: text("password"),
   role: text("role").default("user"),
   emailVerified: boolean("email_verified").default(false),
   privacyConsent: boolean("privacy_consent").default(false),

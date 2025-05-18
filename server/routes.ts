@@ -5,6 +5,7 @@ import { storage } from "./storage";
 import { orchestrateAIResponse } from "./ai/index";
 import { fallbackAIService } from "./ai/ai-fallback-strategy";
 import { getFundiPersonalityElements, getFundiPersonalityPrompt } from "./ai/fundi-personality-integration";
+import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertUserGoalSchema, insertNotificationSchema, insertUserAchievementSchema, insertUserInfoSchema, insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 import { userService, userInfoService, conversationService, messageService } from './db/services';

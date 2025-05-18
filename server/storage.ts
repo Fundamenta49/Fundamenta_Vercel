@@ -13,13 +13,23 @@ import {
 import { ChatMessage } from "@shared/types.js";
 import session from "express-session";
 
+// Define type for Replit Auth user upsert
+export interface UpsertUser {
+  id: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  profileImageUrl?: string;
+}
+
 export interface IStorage {
   // User management
-  getUser(id: number): Promise<User | undefined>;
+  getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined>;
+  updateUser(id: string, updates: Partial<InsertUser>): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
   
   // Conversations
   getConversations(userId: number): Promise<Conversation[]>;
