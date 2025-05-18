@@ -59,8 +59,19 @@ echo "Build preparation complete!"
 # Run the modified build to ensure health checks are included
 echo "Running customized build process..."
 
-# First, build the frontend with Vite
-vite build
+# First build the frontend
+echo "Building frontend Vite application..."
+cd client && npm run build && cd ..
+
+# Create a proper public directory for the static build
+echo "Creating public directory for static assets..."
+mkdir -p dist/public
+mkdir -p dist/client
+
+# Copy the Vite build output to where our server expects it
+echo "Copying frontend build to proper location..."
+cp -r client/dist/* dist/public/
+cp -r client/dist/* dist/client/
 
 # Then build the backend with esbuild, including all necessary API modules
 echo "Building backend with all required API modules..."
