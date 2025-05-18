@@ -13,7 +13,8 @@ import {
   Users, 
   ClipboardList, 
   BarChart3, 
-  School
+  School,
+  User
 } from "lucide-react";
 
 export default function MyPathPage() {
