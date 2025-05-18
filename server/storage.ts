@@ -9,8 +9,8 @@ import {
   UserEngagement, InsertUserEngagement,
   UserAchievement, InsertUserAchievement,
   UserActivity, InsertUserActivity
-} from "@shared/schema.js";
-import { ChatMessage } from "@shared/types.js";
+} from "@shared/schema";
+import { ChatMessage } from "@shared/types";
 import session from "express-session";
 
 // Define type for Replit Auth user upsert
@@ -116,5 +116,5 @@ export interface IStorage {
 }
 
 // Import from the DatabaseStorage implementation
-import { DatabaseStorage } from './storage.db.js';
+import { DatabaseStorage } from './storage.db';
 export const storage = new DatabaseStorage();
