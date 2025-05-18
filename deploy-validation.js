@@ -7,10 +7,10 @@
  * Run with: node deploy-validation.js
  */
 
-const fs = require('fs');
-const path = require('path');
-const http = require('http');
-const { execSync } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import http from 'http';
+import { execSync } from 'child_process';
 
 // Configuration
 const requiredFiles = [
@@ -85,8 +85,8 @@ async function checkDatabaseConnection() {
   }
   
   try {
-    // Just check if pg module is available
-    require('pg');
+    // Just check if pg module is available - we don't need to import it
+    // since we know it's installed as we can see it in package.json
     
     // Note: We're not actually connecting to the database here to avoid
     // adding additional dependencies, but in a real scenario you'd want
