@@ -62,9 +62,20 @@ echo "Running customized build process..."
 # First, build the frontend with Vite
 vite build
 
-# Then build the backend with esbuild, explicitly including all health check modules
-echo "Building backend with health check modules..."
-esbuild server/index.ts server/health-checks.ts server/cloud-run-health.ts server/direct-health.ts server/bare-health.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+# Then build the backend with esbuild, including all necessary API modules
+echo "Building backend with all required API modules..."
+esbuild server/index.ts server/health-checks.ts server/cloud-run-health.ts server/direct-health.ts server/bare-health.ts server/ai.ts server/openai.ts server/replitAuth.ts server/routes.ts server/fundi-core/fundi-facade.ts server/ai/ai-fallback-strategy.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+# Make sure Fundi API directories are copied
+echo "Ensuring Fundi API directories are included in build..."
+mkdir -p dist/server/ai
+mkdir -p dist/server/fundi-core
+mkdir -p dist/server/services
+
+# Copy important Fundi API files if not already bundled
+cp -r server/ai/* dist/server/ai/ 2>/dev/null || true
+cp -r server/fundi-core/* dist/server/fundi-core/ 2>/dev/null || true 
+cp -r server/services/* dist/server/services/ 2>/dev/null || true
 
 # Final check - ensure all health check files are available
 echo "Adding deployment health check verification..."

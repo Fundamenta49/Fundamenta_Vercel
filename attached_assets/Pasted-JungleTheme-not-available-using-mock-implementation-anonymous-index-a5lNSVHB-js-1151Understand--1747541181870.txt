@@ -1,0 +1,131 @@
+JungleTheme not available, using mock implementation
+(anonymous) @ index-a5lNSVHB.js:1151Understand this warning
+analytics-GTm6ZFiK.js:9 Google Analytics initialized with tracking ID: G-N74BTEJGH6
+index-a5lNSVHB.js:1875 Google Analytics initialized successfully with ID: G-N74BTEJGH6
+index-a5lNSVHB.js:1126 Notification monitoring started (calendar functionality removed)
+/api/user-info:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-a5lNSVHB.js:49 API Request error: Error: 404: {"error":"API endpoint not found"}
+    at ohe (index-a5lNSVHB.js:49:43880)
+    at async is (index-a5lNSVHB.js:49:44427)
+    at async queryFn (index-a5lNSVHB.js:1126:179514)
+is @ index-a5lNSVHB.js:49Understand this error
+index-a5lNSVHB.js:1126 Could not retrieve user info - using default guest user
+index-a5lNSVHB.js:1126 Saving user message to API, conversationId: 6578
+/api/messages:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-a5lNSVHB.js:49 API Request error: Error: 404: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /api/messages</pre>
+</body>
+</html>
+
+    at ohe (index-a5lNSVHB.js:49:43880)
+    at async is (index-a5lNSVHB.js:49:44427)
+    at async Object.mutationFn (index-a5lNSVHB.js:1126:181511)
+is @ index-a5lNSVHB.js:49Understand this error
+index-a5lNSVHB.js:1126 Message saved successfully: Object
+/api/chat/orchestrator:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-a5lNSVHB.js:49 API Request error: Error: 404: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /api/chat/orchestrator</pre>
+</body>
+</html>
+
+    at ohe (index-a5lNSVHB.js:49:43880)
+    at async is (index-a5lNSVHB.js:49:44427)
+    at async V (index-a5lNSVHB.js:1126:192782)
+is @ index-a5lNSVHB.js:49Understand this error
+index-a5lNSVHB.js:1126 AI Response Error: Error: 404: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /api/chat/orchestrator</pre>
+</body>
+</html>
+
+    at ohe (index-a5lNSVHB.js:49:43880)
+    at async is (index-a5lNSVHB.js:49:44427)
+    at async V (index-a5lNSVHB.js:1126:192782)
+V @ index-a5lNSVHB.js:1126Understand this error
+index-a5lNSVHB.js:1126 Saving user message to API, conversationId: 6578
+/api/messages:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-a5lNSVHB.js:49 API Request error: Error: 404: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /api/messages</pre>
+</body>
+</html>
+
+    at ohe (index-a5lNSVHB.js:49:43880)
+    at async is (index-a5lNSVHB.js:49:44427)
+    at async Object.mutationFn (index-a5lNSVHB.js:1126:181511)
+is @ index-a5lNSVHB.js:49Understand this error
+index-a5lNSVHB.js:1126 Message saved successfully: Object
+/api/chat/orchestrator:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-a5lNSVHB.js:49 API Request error: Error: 404: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /api/chat/orchestrator</pre>
+</body>
+</html>
+
+    at ohe (index-a5lNSVHB.js:49:43880)
+    at async is (index-a5lNSVHB.js:49:44427)
+    at async V (index-a5lNSVHB.js:1126:192782)
+is @ index-a5lNSVHB.js:49Understand this error
+index-a5lNSVHB.js:1126 AI Response Error: Error: 404: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /api/chat/orchestrator</pre>
+</body>
+</html>
+
+    at ohe (index-a5lNSVHB.js:49:43880)
+    at async is (index-a5lNSVHB.js:49:44427)
+    at async V (index-a5lNSVHB.js:1126:192782)
+V @ index-a5lNSVHB.js:1126Understand this error
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
