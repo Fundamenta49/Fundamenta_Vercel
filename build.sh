@@ -71,11 +71,92 @@ echo "Ensuring Fundi API directories are included in build..."
 mkdir -p dist/server/ai
 mkdir -p dist/server/fundi-core
 mkdir -p dist/server/services
+mkdir -p dist/server/routes
+mkdir -p dist/server/data
 
-# Copy important Fundi API files if not already bundled
-cp -r server/ai/* dist/server/ai/ 2>/dev/null || true
-cp -r server/fundi-core/* dist/server/fundi-core/ 2>/dev/null || true 
-cp -r server/services/* dist/server/services/ 2>/dev/null || true
+# Copy ALL server directories to ensure complete API functionality
+echo "Copying ALL server directories to ensure complete functionality..."
+cp -r server/* dist/server/ 2>/dev/null || true
+
+# Create specific API endpoints file for chat functionality
+echo "Creating API routes configuration for chat functionality..."
+cat > dist/chat-api-routes.js << 'EOF'
+// Chat API routes configuration
+import express from 'express';
+import { fallbackAIService } from './server/ai/ai-fallback-strategy.js';
+import { FundiFacade } from './server/fundi-core/fundi-facade.js';
+
+export function setupChatRoutes(app) {
+  // Chat orchestrator endpoint
+  app.post('/api/chat/orchestrator', async (req, res) => {
+    try {
+      const { message, category, conversationId, previousMessages } = req.body;
+      const fundiFacade = FundiFacade.getInstance();
+      fundiFacade.initialize();
+      
+      const response = await fundiFacade.generateResponse(
+        message,
+        conversationId || 0,
+        previousMessages || []
+      );
+      
+      res.json(response);
+    } catch (error) {
+      console.error('Chat orchestrator error:', error);
+      res.status(500).json({
+        success: false,
+        response: "I'm sorry, I encountered an error. Please try again.",
+        error: error.message
+      });
+    }
+  });
+
+  // Messages API endpoint
+  app.post('/api/messages', async (req, res) => {
+    try {
+      const message = req.body;
+      // Simply return success as this is just for storing messages
+      res.json({ 
+        success: true,
+        id: Date.now(),
+        ...message
+      });
+    } catch (error) {
+      console.error('Messages API error:', error);
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  // AI fallback status endpoint
+  app.get('/api/ai/fallback-status', (req, res) => {
+    try {
+      const status = fallbackAIService.getFallbackStatus();
+      res.json({ success: true, status });
+    } catch (error) {
+      console.error('AI fallback status error:', error);
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  console.log('Chat API routes successfully configured');
+  return app;
+}
+EOF
+
+# Add the chat API routes to the main server file
+echo "Adding chat API routes to the server..."
+cat >> dist/index.js << 'EOF'
+
+// Import and set up chat API routes
+import { setupChatRoutes } from './chat-api-routes.js';
+try {
+  console.log('Setting up chat API routes...');
+  setupChatRoutes(app);
+  console.log('Chat API routes configured successfully');
+} catch (error) {
+  console.error('Failed to set up chat API routes:', error);
+}
+EOF
 
 # Final check - ensure all health check files are available
 echo "Adding deployment health check verification..."
