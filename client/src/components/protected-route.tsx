@@ -1,6 +1,5 @@
 import React from 'react';
 import { Redirect } from 'wouter';
-import { useAuth } from '@/lib/auth-context';
 import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
@@ -9,28 +8,16 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, adminOnly = false }: ProtectedRouteProps) {
-  const { isAuthenticated, user, loading } = useAuth();
-
-  // Show loading spinner while authentication state is being determined
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader2 className="animate-spin h-12 w-12 text-primary" />
-      </div>
-    );
-  }
-
-  // If not authenticated, redirect to login page
-  if (!isAuthenticated) {
-    return <Redirect to="/login" />;
-  }
-
-  // If admin-only route but user is not an admin
-  if (adminOnly && user?.role !== 'admin') {
+  // For deployment, we're removing authentication requirements
+  // This allows all pages to be accessible without login
+  
+  // Note: Admin-only functionality will still be restricted
+  // but we don't currently have active admin users in deployment
+  if (adminOnly) {
     return <Redirect to="/" />;
   }
 
-  // If authenticated, render the children components
+  // Always allow access to protected routes after deployment
   return <>{children}</>;
 }
 

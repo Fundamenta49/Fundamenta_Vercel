@@ -168,32 +168,13 @@ function JungleHubRedirect() {
   return null;
 }
 
-// Component to handle redirects from /login to /auth
-function AuthRedirect() {
-  const [, navigate] = useLocation();
-  
-  useEffect(() => {
-    // Redirect to new auth page
-    navigate('/auth');
-  }, [navigate]);
-  
-  return null;
-}
+// Auth redirect removed for deployment
 
 function Router() {
   // Define a separate route configuration for the login page
   return (
     <Switch>
-      <Route path="/login">
-        {/* Login page is completely separated from app layout */}
-        <div className="login-container">
-          <LoginPage />
-        </div>
-      </Route>
-      <Route path="/auth">
-        {/* New Auth page is completely separated from app layout */}
-        <AuthPage />
-      </Route>
+      {/* Login routes have been removed for deployment */}
       <Route path="/privacy-policy">
         {/* Privacy policy page without protected route */}
         <PrivacyPolicyPage />
