@@ -148,6 +148,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup middleware for security
   app.use(cookieParser()); // For JWT cookies
   
+  // Setup Replit Auth
+  try {
+    console.log("Setting up Replit Auth...");
+    await setupAuth(app);
+    console.log("Replit Auth setup complete");
+  } catch (error) {
+    console.error("Failed to setup Replit Auth:", error);
+    // Continue with server startup even if Replit Auth setup fails
+  }
+  
   /*
   // Bundle 5B: Apply performance monitoring middleware
   app.use(performanceMonitorMiddleware);
@@ -199,6 +209,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Mount auth routes (no caching for security endpoints)
   app.use('/api/auth', authRoutes);
+  
+  // Additional auth routes for Replit Auth
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
   
   // Mount mentorship routes (for parent/teacher portal)
   app.use('/api/mentorship', registerMentorshipRoutes);

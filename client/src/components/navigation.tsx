@@ -33,6 +33,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useState, useEffect } from "react";
 import { Separator } from "@/components/ui/separator";
 import NotificationPanel from "@/components/notification-panel";
+import { LoginButton } from "@/components/auth/LoginButton";
 
 const defaultNavItems = [
   { href: "/", label: "Home", icon: Home },
@@ -346,6 +347,11 @@ export default function Navigation() {
 
             </div>
             
+            {/* Login Button */}
+            <div className="mt-4 mx-2">
+              <LoginButton />
+            </div>
+            
             {/* Notification Panel */}
             <div className="mt-4 mx-2 flex justify-center">
               <NotificationPanel />
@@ -550,12 +556,24 @@ export default function Navigation() {
 
         </div>
         
+        {/* Login Button for Desktop */}
+        <div className={cn(
+          "pt-6", 
+          isMinimized 
+            ? "absolute bottom-24 left-0 right-0 flex flex-col items-center" 
+            : "pt-6 flex flex-col"
+        )}>
+          <div className={cn(!isMinimized && "px-3", "flex justify-center")}>
+            <LoginButton />
+          </div>
+        </div>
+        
         {/* Notification Panel */}
         <div className={cn(
-          "mt-auto pt-6", 
+          "mt-auto pt-2", 
           isMinimized 
             ? "absolute bottom-4 left-0 right-0 flex flex-col items-center" 
-            : "mt-auto pt-6 flex flex-col"
+            : "mt-auto pt-2 flex flex-col"
         )}>
           <div className={cn(!isMinimized && "px-3", "flex justify-center")}>
             <NotificationPanel />
