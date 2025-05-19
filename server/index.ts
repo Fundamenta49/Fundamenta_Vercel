@@ -12,6 +12,8 @@ import { rootHealthCheckMiddleware, healthCheckRouter } from "./health-checks.js
 import { cloudRunHealthMiddleware, setupCloudRunHealthChecks } from "./cloud-run-health.js";
 import { setupDirectHealthCheck } from "./direct-health.js";
 import { installBareHealthCheck } from "./bare-health.js";
+import { existsSync } from "fs";
+import { join } from "path";
 
 const startTime = Date.now();
 log("Starting server...");
@@ -338,19 +340,18 @@ app.post("/api/maintenance/sessions", async (req, res) => {
     process.exit(1);
   }
 })();
-import path from 'path';
+// Catch-all fallback route for SPA (for Vercel static deployment)
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api")) return next();
 
-// Catch-all fallback route for SPA support
-app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api')) return next();
+  const indexPath = join(process.cwd(), "dist", "public", "index.html");
 
-  const indexPath = path.join(process.cwd(), 'dist', 'public', 'index.html');
-  res.sendFile(indexPath, (err) => {
-    if (err) {
-      console.error('Error serving index.html:', err);
-      res.status(500).send('Internal server error');
-    }
-  });
+  if (!existsSync(indexPath)) {
+    console.error("Fallback index.html not found:", indexPath);
+    return res.status(500).send("Frontend not built or index.html missing.");
+  }
+
+  res.sendFile(indexPath);
 });
 
 // Error handling middleware
