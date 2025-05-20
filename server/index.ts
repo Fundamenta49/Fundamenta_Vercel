@@ -130,7 +130,7 @@ app.use(
 );
 
 // Serve static files from the public directory
-app.use(express.static('public'));
+app.use(express.static(join(process.cwd(), "dist", "public")));
 
 // Request logging middleware
 app.use((req, res, next) => {
