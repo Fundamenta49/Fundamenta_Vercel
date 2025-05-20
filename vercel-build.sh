@@ -1,71 +1,36 @@
 #!/bin/bash
 
-# Vercel Build Script for Fundamenta
-# This script runs during the Vercel build process and ensures both 
-# client and server are properly built and configured
+# Fundamenta Vercel Build Script - Clean Version
 
-echo "Starting Fundamenta build process for Vercel deployment..."
-echo "Node version: $(node -v)"
-echo "NPM version: $(npm -v)"
+echo "Starting Fundamenta build process..."
+
+# Print versions
+echo "Node: $(node -v)"
+echo "NPM: $(npm -v)"
 
 # Install dependencies
 echo "Installing dependencies..."
 npm install
 
-# Build client
-echo "Building client..."
+# Build frontend (inside /client)
+echo "Building Vite frontend..."
+cd client
+npm install
 npm run build
+cd ..
 
-# Build server standalone for Vercel
-echo "Building server..."
-npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist/server
+# Copy frontend build output to server directory
+echo "Copying frontend build to dist/public..."
+mkdir -p dist/public
+cp -r client/dist/* dist/public/
 
-# Create a Vercel-friendly server entry point
-echo "Creating server entry point..."
-cat > dist/server/index.js <<EOL
-import { createServer } from 'http';
-import { parse } from 'url';
-import nextServer from './server.js';
+# Build backend (your real Express server)
+echo "Bundling Express backend..."
+npx esbuild server/index.ts \
+  --bundle \
+  --platform=node \
+  --target=node18 \
+  --outfile=dist/index.js \
+  --format=cjs
 
-const server = createServer(async (req, res) => {
-  try {
-    const parsedUrl = parse(req.url, true);
-    const { pathname, query } = parsedUrl;
-    
-    // Handle API routes
-    if (pathname.startsWith('/api/')) {
-      await nextServer(req, res);
-      return;
-    }
-
-    // Serve static files
-    res.setHeader('Content-Type', 'text/html');
-    res.statusCode = 200;
-    res.end('Fundamenta is running!');
-  } catch (err) {
-    console.error('Error occurred handling request:', err);
-    res.statusCode = 500;
-    res.end('Internal Server Error');
-  }
-});
-
-const port = process.env.PORT || 3000;
-server.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
-EOL
-
-echo "Creating health check endpoint..."
-mkdir -p dist/api
-cat > dist/api/health.js <<EOL
-export default function handler(req, res) {
-  res.status(200).json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
-    version: process.env.npm_package_version || 'unknown'
-  });
-}
-EOL
-
-echo "Build completed successfully!"
+echo "Build complete!"
