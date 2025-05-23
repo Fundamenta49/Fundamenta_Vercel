@@ -372,3 +372,4 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   }
 });
 export default app;
+module.exports = app;
