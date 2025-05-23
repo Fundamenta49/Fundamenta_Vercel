@@ -250,15 +250,12 @@ app.post("/api/maintenance/sessions", async (req, res) => {
 
     log(`Attempting to start server on ${host}:${port}...`);
 
-    await new Promise<void>((resolve, reject) => {
-      try {
-        // Enhanced server configuration for deployment scenarios
-        const listenOptions = {
-          port,
-          host,
-          // Support cluster mode in production
-          reusePort: true,
-        };
+   if (process.env.NODE_ENV !== "production") {
+  app.listen(port, () => {
+    log(`Dev server running locally on http://localhost:${port}`);
+  });
+}
+
         
         // Add special error handling for the listen operation
         server.on('error', (error: any) => {
@@ -374,3 +371,4 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     }
   }
 });
+export default app;
